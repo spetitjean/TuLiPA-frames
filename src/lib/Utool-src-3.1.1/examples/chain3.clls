@@ -1,0 +1,3 @@
+[label(y0 a0) label(x1 f1(xl1 xr1)) label(y1 a1) label(x2 f2(xl2 xr2))
+label(y2 a2) label(x3 f3(xl3 xr3)) label(y3 a3) dom(xl1 y0) 
+dom(xr1 y1) dom(xl2 y1) dom(xr2 y2) dom(xl3 y2) dom(xr3 y3)]

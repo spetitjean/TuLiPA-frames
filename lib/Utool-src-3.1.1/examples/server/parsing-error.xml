@@ -1,0 +1,5 @@
+<utool cmd='solve' output-codec='domcon-oz' >
+  <usr codec='domcon-oz' string='
+    label(&apos;_x&apos; f(y)) dom(y z) label(z &apos;&amp;&apos;)]
+' />
+</utool>

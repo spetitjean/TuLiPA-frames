@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="TuLiPA">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="build.dir" value="${basedir}/bin"/>
+	<property name="src.dir" value="${basedir}/src"/>
+    <path id="TuLiPA.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/DTool.jar"/>
+        <pathelement location="lib/postagger-2006-05-21.jar"/>
+        <pathelement location="lib/Utool-src-3.1.1.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src" excludes="**/*.launch, **/*.java"/>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="TuLiPA.classpath"/>
+        </javac>
+    </target>
+	<target depends="init" name="jar">
+		  <jar destfile="${build.dir}/TuLiPA.jar" >
+		    <fileset dir="${build.dir}"
+			     includes="**/*.class"/>
+		    <fileset dir="${src.dir}"
+			     includes="**/*.png **/*.svg **/*.xar **/*.gif **/*.dtd,xml"/>
+		    <fileset dir="${lib.dir}" includes="**/*.jar"/>
+		    <manifest>
+		      <attribute name="Rsrc-Class-Path" value="./ postagger-2006-05-21.jar xalan.jar xercesImpl.jar 
+							       serializer.jar DTool.jar Utool-src-3.1.1.jar"/>
+		      <attribute name="Class-Path" value="."/>
+
+		      <attribute name="Main-Class" value="de.tuebingen.ui.Interface"/>
+		    </manifest>
+		  </jar>
+	</target>
+</project>

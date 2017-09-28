@@ -1,0 +1,186 @@
+2006-11-24  3.1.1
+    - Some minor bugfixes.
+
+2006-11-13  3.1
+    - Much more of the functionality of Utool is now also
+      available from Ubench.  For instance, Ubench now supports
+      codec options and offers simple control over the Utool
+      Server.  Moreover, Ubench now has a GUI for displaying
+      and modifying dominance charts and supports printing.
+      
+    - The Utool Server now no longer waits for the client to
+      close its socket, but starts working immediately after
+      recognising a command.  This makes it easier to access
+      from programming environments that don't support the
+      socket shutdown function.
+
+    - Architecture change: Codecs now contain metadata as Java 5.0
+      annotations. This reduces the amount of boilerplate code
+      in a codec class, and allows us to use codec options in a
+      uniform way, both from the command line and from Ubench.
+      
+    - The examples that come bundled with Utool can now be
+      accessed as "ex:examplename", i.e. they can be used without
+      unpacking the Utool Jar file.
+      
+    - Ubench can now be started directly via a link from the
+      website (Java Webstart).
+      
+    - Many minor improvements and bug fixes.
+      
+
+2006-06-19  3.0
+    - This is a complete reimplementation of Utool in Java, which
+      makes it more portable, more stable, and on some platforms, even
+      more efficient. We have taken the opportunity to completely
+      redesign the system architecture, which is now much cleaner.
+
+    - Utool now contains the Underspecification Workbench (Ubench), a
+      GUI frontend from which most of Utool's functionality can be
+      accessed. 
+
+    - Utool can now run in "server mode", which accepts commands via a
+      socket and sends the results back over the socket too.
+
+    - New functionality: Utool can now eliminate logical redundancy
+      using the algorithm described in Koller & Thater's paper at ACL
+      2006.
+
+    - New codecs:
+      * term-prolog and term-oz output simple solved forms as terms in
+        Prolog and Oz syntax.
+      * domgraph-dot outputs labelled dominance graphs using the "dot"
+        graph description language, which can be used from a variety
+	    of tools such as graphviz.
+
+    - Licence change: The entire Utool package is now distributed
+      under the GPL because it is linked against Getopt. We might
+      change this licence to something less restrictive in the future,
+      but at this point this just seems to be the most convenient way
+      to go.
+
+    - Many minor bugfixes.
+
+
+2005-08-10  2.0
+    - The new input codec "domcon-gxl" will now read dominance graphs
+      in the XML-based GXL format. This codec uses the Xerces-C
+      library for XML parsing, and will only be compiled in if the
+      "configure" script can find your Xerces-C installation 
+      (RFE #1060866). 
+
+    - The new input codec "mrs-xml" will now read MRS descriptions in
+      XML syntax. Like domcon-gxl, it uses the Xerces-C library; this
+      codec too is only compiled if the library is available 
+      (RFE #1060865).
+
+    - Implemented a new algorithm for enumerating the solved forms of
+      a chart. The new implementation is about 10% slower than the
+      older one, but it is much clearer and supports incremental
+      enumeration.
+
+    - Portability improvements: Utool can now be compiled under Windows 
+      using Microsoft Visual C++ and the Intel C++ compiler. Starting
+      with this release, we provide a binary distribution for
+      libdomgraph and utool under Windows.
+
+    - Portability improvements: Utool can now be compiled using Gnu
+      C++ versions 3.4 and 4.0 because the source code conforms more
+      strictly to ISO C++.
+
+    - Portability improvements: The Swig/Java integration now also
+      works under Windows and Mac OS X.
+
+    - Architecture change: This distribution now builds two targets:
+      Libdomgraph (a dynamic library that contains all the former
+      utool functionality) and utool (which is now just a command-line
+      frontend to libdomgraph). Libdomgraph continues to be
+      distributed under the LGPL; utool is licenced under the GPL.
+
+    - The Swig/Java integration is now much more powerful and provides
+      methods e.g. for solving an underspecified description and
+      accessing the solved forms.
+
+    - Fixed bug #1224183, which caused the holesem-comsem output codec
+      to generate syntactically ill-formed Prolog terms for some
+      inputs.
+
+
+2005-04-26  1.2.2
+    - The Hole Semantics input and output codec will now correctly
+      read and write Hole Semantics descriptions in the format used by
+      the (official) software package at
+      http://www.cogsci.ed.ac.uk/~jbos/comsem/.  
+
+    - Added the output codec domcon-udraw, which converts the
+      underspecified description as a graph suitable for display in
+      the uDraw(Graph) tool available at
+      http://www.informatik.uni-bremen.de/uDrawGraph/en/index.html.
+
+
+2005-04-08  1.2.1
+ 
+    - Fixed bug #1179115: Utool now consistently uses exit codes >=
+      128 to signal errors. The exact exit codes are described in
+      exitcode.h.
+
+    - The MRS input codec now understands the "geq" atom that is
+      occasionally used in the ERG.
+
+    - Leaf-labelledness can now be checked, e.g. by utool classify.
+
+    - Provided code that makes it possible to use utool functionality
+      from Java programs (in tools/java).
+
+
+2005-03-31  1.2
+
+    - Supports the command "classify". This command checks whether an
+      underspecified description belongs to one of the interesting
+      subclasses of dominance graphs (normal, compact, compactifiable,
+      hypernormally connected) and returns the result in the exit
+      code (RFE #1060869).
+
+    - The input codec "mrs-prolog" provides full support for MRS in
+      Prolog syntax, as used in the LKB system.
+
+    - The output codec "plugging-lkb" prints solved forms as MRS
+      pluggings that can be used in the LKB system.
+
+    - Provided code for the integration of utool with the LKB system
+      (in tools/lkb).
+
+    - Codecs are now associated with filename extensions, and utool
+      will guess the codec for a file with such an extension.
+
+    - The commands "convert", "solve", and "solvable" now check more
+      carefully whether they are applicable on the input graph. In
+      particular, "solve" and "solvable" require that the graph is
+      weakly normal and compactifiable (RFE #1060876).
+
+    - Fixed bug #1169258: Dominance edges into non-roots are now moved
+      up to the respective roots.
+
+
+2005-02-25  1.1
+
+    - Supports the command "solvable". This command only checks
+      whether an underspecified description has any readings (rather
+      than actually computing them, as "solve" does), and doesn't
+      enumerate them all. The command also computes the number of
+      readings of a solvable description.
+
+    - The codec "holesem-comsem" provides full support for Hole
+      Semantics in the syntax of the Blackburn & Bos Computational
+      Semantics book.
+
+    - The codec "domcon-gxl" is an output codec for dominance graphs
+      in the XML-based GXL format.
+
+
+2004-11-05  1.0
+
+    Initial version.  Supports the commands "solve" and "convert", and
+    the codecs "domcon-oz" and "chain".
+
+

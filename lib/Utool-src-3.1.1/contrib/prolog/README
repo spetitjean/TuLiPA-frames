@@ -1,0 +1,24 @@
+
+           Calling Utool from Prolog
+           -------------------------
+           
+This folder contains a file that will let you connect to the Utool
+Server from a Prolog program.  What you will do is to consult the file
+"utool-interface.pl".  This will define the predicate "utool_request",
+which sends requests to Utool via a socket (as described in the Utool
+manual) and parses the results. 
+
+The Prolog Utool interface was developed and tested under Sicstus
+Prolog.  We encourage you to try it under different dialects of
+Prolog, assuming that you understand that it may not work as expected
+due to Prolog differences.  You will need the Sicstus XML library in
+this case, which you can get at
+http://www.zen37763.zen.co.uk/xml.pl.html.
+
+The Prolog interface was developed by Stefan Mueller
+(Stefan.Mueller@cl.uni-bremen.de) in the context of the Trale grammar
+development system and Stefan's Grammix distribution
+(http://www.cl.uni-bremen.de/Software/Grammix/), and kindly provided
+to Utool as a contributed package.
+
+

@@ -1,0 +1,305 @@
+/*
+ *  File TreeDeriver.java
+ *
+ *  Authors:
+ *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
+ *     
+ *  Copyright:
+ *     Johannes Dellert, 2007
+ *
+ *  Last modified:
+ *     Di 16. Okt 11:06:49 CEST 2007
+ *
+ *  This file is part of the TuLiPA system
+ *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *
+ *  TuLiPA is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  TuLiPA is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package de.tuebingen.derive;
+
+//import de.tuebingen.gui.XMLTreeViewer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.TagTree;
+import de.tuebingen.tag.UnifyException;
+
+public class TreeDeriver {
+    public static DerivedTree deriveTree(Node derivationTree,
+            Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
+            ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
+            List<String> semlabels, boolean needsAnchoring) {
+
+        // System.out.println(derivationTree);
+
+        DerivedTree derivedTree = null;
+        boolean failed = false;
+        try {
+            Document D = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder().getDOMImplementation()
+                    .createDocument(null, "tree", null);
+            Node initialTreeNode = derivationTree.getFirstChild()
+                    .getFirstChild();
+            String initialTreeID = initialTreeNode.getAttributes()
+                    .getNamedItem("id").getNodeValue();
+            ElementaryTree iniTree = getTreeInstance(initialTreeID, treeDict, D,
+                    eTrees, needsAnchoring);
+            if (iniTree != null) {
+                derivedTree = new DerivedTree(iniTree);
+                if (steps != null) {
+                    derivedTree.updateTopDownFeatures(derivedTree.root, false,
+                            false);
+                    ElementaryTree newStep = (new ElementaryTree(
+                            derivedTree.root, "", "", derivedTree.topFeatures,
+                            derivedTree.bottomFeatures, derivedTree.semantics,
+                            derivedTree.frames)).createDumpingInstance(D);
+                    newStep.setID("Step " + steps.size());
+                    steps.add(newStep);
+                }
+                // XMLTreeViewer.displayTree(derivedTree.root);
+                // System.err.println(" === NEW DERIVATION TREE === ");
+                ArrayList<String> etree_used = new ArrayList<String>();
+                ArrayList<Object[]> operations = prepareOperations(
+                        initialTreeNode, treeDict, D, eTrees, needsAnchoring,
+                        etree_used);
+                iniTree.applyOperations(operations, derivedTree, steps);
+                for (Object[] operation : operations) {
+                    recursivelyDeriveTree((Node) operation[4],
+                            (ElementaryTree) operation[2], treeDict, D,
+                            derivedTree, eTrees, steps, needsAnchoring,
+                            etree_used);
+                }
+                // XMLTreeViewer.displayTree(derivedTree.root);
+            } else {
+                System.err.println(
+                        "ERROR: Tree not found in grammar: " + initialTreeID);
+                System.exit(1);
+            }
+            // System.err.println("Pre-final environment: " + derivedTree.env);
+            // System.err.println("Pre-final sem: " +
+            // derivedTree.semantics.toString());
+            derivedTree.updateTopDownFeatures(derivedTree.root, true, false);
+            // System.err.println("Environment after TOP-BOT: " +
+            // derivedTree.env);
+            ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
+                    false);
+
+            // System.err.println("Sem after TOP-BOT: " +
+            // derivedTree.semantics.toString());
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
+                    false);
+            // System.err.println("Environment after TOP-BOT: " +
+            // derivedTree.env);
+
+            // for variables and semantic labels renaming:
+            // System.err.println("Sem labels:\n" + semlabels);
+            derivedTree.env.setSemlabels(semlabels);
+            Environment.rename(derivedTree.env);
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+            ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
+                    true);
+            // Environment.rename(derivedTree.env);
+
+            // System.out.println("Environment: "+derivedTree.env);
+            // System.out.println("Update frames in TreeDeriver");
+            derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
+                    derivedTree.env, true);
+            // System.out.println("Updated frames: " + derivedTree.frames);
+            // System.out.println("Another round");
+            derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
+                    derivedTree.env, true);
+        } catch (UnifyException e) {
+            System.err.println("Unify Exception (derived tree building): "
+                    + e.getMessage());
+            failed = true;
+        } catch (DuplicateException e) {
+            System.err.println(
+                    "Duplicate Exception (derivation tree discarded): \n"
+                            + e.getMessage() + "\n");
+            failed = true;
+        } catch (Exception e) {
+            System.err.println("Error while deriving tree:");
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        // TODO: find threshold here by taking input size into consideration
+        if (needsAnchoring && derivedTree.numTerminals < Integer.MIN_VALUE) {
+            System.err.println("Incomplete tree discarded!\n");
+            failed = true;
+        }
+        if (failed) {
+            if (!returnIncompleteTrees)
+                return null;
+            derivedTree.success = false;
+        }
+        return derivedTree;
+    }
+
+    public static void recursivelyDeriveTree(Node treeNode,
+            ElementaryTree elementaryTree, Map<String, TagTree> treeDict,
+            Document D, DerivedTree t, ArrayList<ElementaryTree> eTrees,
+            ArrayList<ElementaryTree> steps, boolean needsAnchoring,
+            ArrayList<String> etree_used)
+            throws DuplicateException, UnifyException {
+        // System.out.println(
+        // "Test output: recursivelyDeriveTree in TreeDeriver was used");
+        ArrayList<Object[]> operations = prepareOperations(treeNode, treeDict,
+                D, eTrees, needsAnchoring, etree_used);
+        elementaryTree.applyOperations(operations, t, steps);
+        for (Object[] operation : operations) {
+            recursivelyDeriveTree((Node) operation[4],
+                    (ElementaryTree) operation[2], treeDict, D, t, eTrees,
+                    steps, needsAnchoring, etree_used);
+        }
+    }
+
+    /**
+     * Instantiation of elementary trees during the derived tree building
+     * 
+     * @param id
+     * @param treeDict
+     * @param D
+     * @param eTrees
+     * @param needsAnchoring
+     *            : if we are handling a formal grammar (i.e. no anchoring), we
+     *            need to create tree-based name space, otherwise, we can the
+     *            tuple name space.
+     * @return
+     */
+    public static ElementaryTree getTreeInstance(String id,
+            Map<String, TagTree> treeDict, Document D,
+            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
+        // System.err.println(treeDict.keySet());
+        // tree dict entries are accessed without disambiguation IDs
+        // if (id.indexOf("__") >= 0) id = id.substring(0,id.indexOf("__"));
+        ElementaryTree tree = new ElementaryTree(treeDict.get(id));
+        // ----------------------------
+        // added tree renaming (c.f. lexical ambiguity)
+        tree.setID(treeDict.get(id).getOriginalId());
+        // ----------------------------
+        if (eTrees != null)
+            eTrees.add(tree);
+        if (needsAnchoring)
+            return tree.createDumpingInstance(D);
+        else
+            return tree.instantiate(D);
+    }
+
+    public static ArrayList<Object[]> prepareOperations(Node treeNode,
+            Map<String, TagTree> treeDict, Document D,
+            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring,
+            ArrayList<String> etree_used) throws DuplicateException {
+        // System.out.println(treeNode);
+        ArrayList<Object[]> operations = new ArrayList<Object[]>();
+        for (int i = 0; i < treeNode.getChildNodes().getLength(); i++) {
+            Node op = treeNode.getChildNodes().item(i);
+            if (op.getNodeName().equals("adj")) {
+                Object[] operation = new Object[5];
+                operation[0] = getOpId(op);
+                operation[1] = "adj";
+
+                for (int j = 0; j < op.getChildNodes().getLength(); j++) {
+
+                    Node child = op.getChildNodes().item(j);
+                    // System.err.println(DOMWriter.elementToString(child, 0));
+                    if (child.getNodeName().equals("tree")) {
+
+                        String adjoinedTreeId = child.getAttributes()
+                                .getNamedItem("id").getNodeValue();
+                        // System.err.println(adjoinedTreeId);
+                        if (needsAnchoring) {
+                            if (!etree_used.contains(adjoinedTreeId))
+                                etree_used.add(adjoinedTreeId);
+                            else
+                                throw new DuplicateException(
+                                        "Duplicate elementary trees "
+                                                + treeDict.get(adjoinedTreeId)
+                                                        .getOriginalId());
+                        }
+                        String address = op.getAttributes().getNamedItem("node")
+                                .getNodeValue();
+                        ElementaryTree adjoinedTree = getTreeInstance(
+                                adjoinedTreeId, treeDict, D, eTrees,
+                                needsAnchoring);
+                        if (adjoinedTree != null) {
+                            operation[2] = adjoinedTree;
+                            operation[3] = address;
+                            operation[4] = child;
+                        } else {
+                            System.err.println(
+                                    "ERROR: Tree not found in grammar: "
+                                            + adjoinedTreeId);
+                            System.exit(1);
+                        }
+                    }
+
+                }
+                operations.add(operation);
+            } else if (op.getNodeName().equals("subst")) {
+                Object[] operation = new Object[5];
+                operation[0] = getOpId(op);
+                operation[1] = "subst";
+                for (int j = 0; j < op.getChildNodes().getLength(); j++) {
+                    Node child = op.getChildNodes().item(j);
+                    if (child.getNodeName().equals("tree")) {
+                        String substTreeId = child.getAttributes()
+                                .getNamedItem("id").getNodeValue();
+                        // System.err.println(substTreeId);
+                        if (needsAnchoring) {
+                            if (!etree_used.contains(substTreeId))
+                                etree_used.add(substTreeId);
+                            else
+                                throw new DuplicateException(
+                                        "Duplicate elementary trees "
+                                                + treeDict.get(substTreeId)
+                                                        .getOriginalId());
+                        }
+                        String address = op.getAttributes().getNamedItem("node")
+                                .getNodeValue();
+                        ElementaryTree substTree = getTreeInstance(substTreeId,
+                                treeDict, D, eTrees, needsAnchoring);
+                        if (substTree != null) {
+                            operation[2] = substTree;
+                            operation[3] = address;
+                            operation[4] = child;
+                        } else {
+                            System.err.println(
+                                    "ERROR: Tree not found in grammar: "
+                                            + substTreeId);
+                            System.exit(1);
+                        }
+                    }
+                }
+                operations.add(operation);
+            }
+        }
+        return operations;
+    }
+
+    public static int getOpId(Node op) {
+        String idString = op.getAttributes().getNamedItem("id").getNodeValue();
+        idString = idString.replaceAll("_", "");
+        int id = Integer.parseInt(idString);
+        return id;
+    }
+}

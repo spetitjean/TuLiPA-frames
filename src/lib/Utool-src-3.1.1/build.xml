@@ -1,0 +1,382 @@
+<?xml version="1.0"?>
+
+<project name="domgraph" default="utool">
+	<!-- the main paths -->
+	<property name="prefix" location="." />
+	
+	<property name="build" location="${prefix}/build" />
+	<property name="source" location="${prefix}/src" />
+	<property name="packages" location="${prefix}/packages" />
+	<property name="doc.api" location="${prefix}/docs/api" />
+
+	<property name="build.classes" location="${build}/classes" />
+	<property name="build.lib" location="${build}/lib" />
+
+	<!-- tools we use for compiling -->
+	<property name="javacchome" location="${packages}/javacc-4.0" />
+	<property name="testng.jar" value="${packages}/testng-4.6.1/testng-4.6.1-jdk15.jar" />
+	
+	
+	<!-- included Jars and the classes they unpack to -->
+	<property name="jgrapht.jar" location="${packages}/jgrapht-0.6.0/jgrapht-0.6.0.jar" />
+	<property name="jgrapht.unpacked.classes" value="org/_3pq/jgrapht/**" />
+
+	<property name="getopt.jar" location="${packages}/java-getopt-1.0.9.jar" />
+	<property name="getopt.unpacked.classes" value="gnu/getopt/*"/>
+
+	<property name="itext.jar" location="${packages}/itext-1.3.1.jar" />
+	<property name="itext.unpacked.classes" value="com/lowagie/**" />
+
+	<property name="jgraph.jar" location="${packages}/jgraph.jar" />
+	<property name="jgraphaddons.jar" location="${packages}/jgraphaddons.jar" />
+	<property name="jgraph.unpacked.classes" value="org/jgraph/**" />
+
+
+	<property name="coli" value="de/saar" />
+	<property name="chorus" value="de/saar/chorus" />
+	
+	<property name="domgraph.properties" value="${source}/${chorus}/domgraph/domgraph.properties" />
+	<property file="${domgraph.properties}" />
+
+
+	<!-- file sets -->
+	<property name="domgraph.jar" value="${build.lib}/Utool-${domgraph.version}.jar" />
+	<property name="domgraph-compact.jar" value="${build.lib}/Utool-compact-${domgraph.version}.jar" />
+	<property name="domgraph.jar.classes" value="${chorus}/domgraph/**,${coli}/getopt/*,${coli}/basic/*, ${chorus}/ubench/*,${chorus}/treelayout/*,${chorus}/ubench/gui/*,${chorus}/ubench/gui/chartviewer/*,${chorus}/jgraph/*" />
+	<property name="domgraph.allsourcefiles" value="${chorus}/domgraph/**/*.java, ${chorus}/domgraph/**/*.jj, ${chorus}/domgraph/**/*.properties, ${coli}/basic/*.java, ${coli}/getopt/*.java,${chorus}/ubench/*.java,${chorus}/ubench/gui/chartviewer/*.java,${chorus}/treelayout/*.java,${chorus}/ubench/gui/*.java,${chorus}/jgraph/*.java" />
+	<property name="pictures" value="${prefix}/projects/Domgraph/pictures"/>
+	
+	<!-- parameters for the distribution -->
+	<property name="domgraph-dist.jar" value="${build.lib}/Utool-src-${domgraph.version}.jar" />
+	<property name="distribution.exclude" value="**/testsuite/**" />
+	
+	<!-- deployment -->
+	<property name="deploy.dir" value="/web/www.coli.uni-saarland.de/html/projects/chorus/utool" />
+	<property name="deploy.hostname" value="httpd.coli.uni-saarland.de" />
+	
+
+
+
+	<!-- Jars -->
+	<target name="utool" depends="compile-all">
+		<jar jarfile="${domgraph.jar}">
+			<fileset dir="${build.classes}"
+		         includes="${domgraph.jar.classes},${jgrapht.unpacked.classes},${jgraph.unpacked.classes},
+								   ${getopt.unpacked.classes},${itext.unpacked.classes}"
+					excludes="**/*$UnitTests.class,**/testsuite/**" />
+			<fileset dir="." includes="examples/**/*, pictures/**/*" />
+			<manifest>
+				<attribute name="Main-Class"
+                           value="de.saar.chorus.domgraph.utool.Utool" />
+			</manifest>
+		</jar>
+		
+	</target>
+	
+	
+	<target name="compile-all" depends="init,domconOz.javacc,holesemComsem.javacc,mrs.javacc,glue.javacc,jgrapht.unpacked,itext.unpacked,getopt.unpacked,jgraph.unpacked">
+		<javac srcdir="${source}"
+               destdir="${build.classes}"
+               debug="true"
+               includes="${domgraph.allsourcefiles}"
+               excludes="**/Test*.java"
+               source="1.5"
+			fork="yes" memoryMaximumSize="512m"
+			>
+
+			<classpath>
+				<pathelement path="${build.classes}" />
+				<pathelement path="${testng.jar}" />
+			</classpath>
+		</javac>
+
+		<copy todir="${build.classes}">
+			<fileset dir="${source}" includes="${chorus}/**/*.properties" />
+		</copy>
+	</target>
+
+
+	<!-- distributing -->
+
+	<target name="source-dist" depends="compile-all,javadoc,make-manual">
+		<!-- source files -->
+		<copy todir="tmp_Domgraph/src">
+			<fileset dir="${source}" includes="${domgraph.allsourcefiles}" excludes="${distribution.exclude}" />
+			<fileset dir="${source}" includes="${prefix}/*.properties" excludes="${distribution.exclude}" />
+		</copy>
+
+		<!-- buildfile, rootfiles, apidoc -->
+		<copy todir="tmp_Domgraph">
+			<fileset dir="${prefix}/projects/Domgraph/" includes="build.xml,examples/**/*,pictures/**/*,tools/**/*,contrib/**/*" excludes="*~" />
+			<fileset dir="${prefix}/projects/Domgraph/rootfiles" includes="*" excludes="*~" />
+			<fileset dir="${prefix}" includes="docs/**/*" excludes="${distribution.exclude}" />
+		</copy>
+		
+		<replace file="tmp_Domgraph/build.xml" 
+			token="&lt;property name=&quot;prefix&quot; location=&quot;../..&quot; /&gt;"
+			value="&lt;property name=&quot;prefix&quot; location=&quot;.&quot; /&gt;"
+		/>
+
+		<!-- manual -->
+		<copy tofile="tmp_Domgraph/docs/manual.pdf" file="${prefix}/projects/Domgraph/doc/0.pdf" />
+		
+		<!-- packages -->
+		<copy todir="tmp_Domgraph">
+			<fileset dir="${prefix}" includes="packages/javacc-4.0/**, packages/testng-4.6.1/**" />
+		</copy>
+
+		
+		<jar jarfile="${domgraph-dist.jar}"
+             basedir="${build.classes}"
+             includes="${domgraph.jar.classes},${jgrapht.unpacked.classes},${getopt.unpacked.classes},
+			${itext.unpacked.classes},${jgraph.unpacked.classes}"
+					excludes="**/*$UnitTests.class,**/testsuite/**">
+
+			<manifest>
+				<attribute name="Main-Class" value="de.saar.chorus.domgraph.utool.Utool" />
+			</manifest>
+			
+			<fileset dir="tmp_Domgraph/"/>
+		</jar>
+
+		<delete dir="tmp_Domgraph/" />
+	</target>
+
+	
+
+	
+	<!-- exact command for deployment on Alexander's laptop:
+	
+	CLASSPATH=packages/jsch-0.1.28.jar:$CLASSPATH ~/Applications/apache-ant-1.6.5/bin/ant \
+	   -f projects/Domgraph/build.xml deploy -Dkeystore=/Users/alex/.keystore -Dkeystore.alias=chorus \
+	   -Dkeystore.password=... -Ddeploy.username=koller -Ddeploy.password=...
+	    
+	   Remember to use Java 1.5!!
+	   
+	-->
+	
+	<!-- deploy a new distribution as follows:
+	
+	     ant -Ddeploy.username=... -Ddeploy.password=...                   [for deployment]
+  	         -Dkeystore=... -Dkeystore.alias=... -Dkeystore.password=...   [for Jar signing]
+ 	         deploy
+
+     -->
+	<target name="deploy" depends="source-dist,signed-utool">
+		<!-- deploy Jars -->
+		<sshexec host="${deploy.hostname}" username="${deploy.username}" password="${deploy.password}"
+			trust="yes"
+			command="mkdir -p ${deploy.dir}/download" />
+		<scp todir="${deploy.username}@${deploy.hostname}:${deploy.dir}/download"
+			trust="true" 
+			password="${deploy.password}">
+			<fileset file="${domgraph.jar}" />
+			<fileset file="${domgraph-dist.jar}" />
+		</scp>
+		
+		<!-- deploy Webstart configuration file -->
+		<scp todir="${deploy.username}@${deploy.hostname}:${deploy.dir}"
+			trust="true"
+			password="${deploy.password}">
+			<fileset file="utool.jnlp" />
+		</scp>
+
+		<!-- deploy documentation -->
+		<sshexec host="${deploy.hostname}" username="${deploy.username}" password="${deploy.password}"
+			trust="yes"
+			command="mkdir -p ${deploy.dir}/docs/${domgraph.version}/api" />
+		<sshexec host="${deploy.hostname}" username="${deploy.username}" password="${deploy.password}"
+			trust="yes"
+			command="mkdir -p ${deploy.dir}/docs/${domgraph.version}/manual" />
+		
+		<scp remoteTofile="${deploy.username}@${deploy.hostname}:${deploy.dir}/docs/${domgraph.version}/utool-manual-${domgraph.version}.pdf"
+			localFile="doc/0.pdf"
+			trust="true" password="${deploy.password}"/>
+		<scp todir="${deploy.username}@${deploy.hostname}:${deploy.dir}/docs/${domgraph.version}/manual"
+			trust="true" password="${deploy.password}">
+			<fileset dir="doc" includes="*.html,*.png,*.gif,*.css" />
+		</scp>
+		<scp todir="${deploy.username}@${deploy.hostname}:${deploy.dir}/docs/${domgraph.version}/api"
+			trust="true" 
+			password="${deploy.password}">
+			<fileset dir="${doc.api}" includes="**/*" />
+		</scp>
+	</target>
+	
+	
+	
+	<!-- create a new signed jar:
+		
+		     ant -Dkeystore=... -Dkeystore.alias=... -Dkeystore.password=... signed-utool
+
+	     -->
+	<target name="signed-utool" depends="utool">
+		<signjar jar="${domgraph.jar}" alias="${keystore.alias}" 
+					storepass="${keystore.password}"	keystore="${keystore}"/>
+	</target>
+	
+	<!-- compile the manual
+	   Note that hevea and hacha must be on the PATH when you call this target
+	-->
+	<target name="make-manual">
+		<exec executable="make" dir="doc">
+			<arg line="0.pdf" />
+		</exec>
+
+		<exec executable="make" dir="doc">
+			<arg line="index.html" />
+		</exec>
+	</target>
+
+
+	
+	<!-- JavaCC -->
+	<target name="domconOz.javacc">
+		<javacc 
+			javacchome="${javacchome}" 
+			target="${source}/${chorus}/domgraph/codec/domcon/DomconOzInputCodec.jj" />
+	</target>
+
+	<target name="holesemComsem.javacc">
+		<javacc 
+			javacchome="${javacchome}" 
+			target="${source}/${chorus}/domgraph/codec/holesem/HolesemComsemInputCodec.jj" />
+	</target>
+
+        <target name="mrs.javacc">
+                <javacc 
+                        javacchome="${javacchome}" 
+                        target="${source}/${chorus}/domgraph/codec/mrs/MrsPrologInputCodec.jj" />
+        </target>
+
+    <target name="glue.javacc">
+            <javacc 
+                    javacchome="${javacchome}" 
+                    target="${source}/${chorus}/domgraph/codec/glue/GlueInputCodec.jj" />
+    </target>
+
+	<!-- JAR Unpacking -->
+
+	<!-- Unpack the Jar file at the path "unpack.jar", unless the
+	       unpacked version is already up to date. Up-to-dateness is
+	       recorded with a timestamp. "unpack.jar.id" is a unique id for
+	       this Jar. -->
+	<target name="unpack" depends="check.unpack" unless="nobuild.unpack">
+		<unjar src="${unpack.jar}" dest="${build.classes}" />
+		<touch file="${build.classes}/timestamps-unpackjar/${unpack.jar.id}" />
+	</target>
+
+	<target name="check.unpack">
+		<uptodate property="nobuild.unpack"
+	    targetfile="${build.classes}/timestamps-unpackjar/${unpack.jar.id}">
+			<srcfiles dir="." includes="${unpack.jar}" />
+		</uptodate>
+	</target>
+
+	<target name="jgrapht.unpacked" depends="init" if="jgrapht.jar.present">
+		<antcall target="unpack" >
+			<param name="unpack.jar" value="${jgrapht.jar}" />
+			<param name="unpack.jar.id" value="jgrapht" />
+		</antcall>
+	</target>
+
+	<target name="jgraph.unpacked" depends="init" if="jgraph.jar.present">
+		<antcall target="unpack" >
+			<param name="unpack.jar" value="${jgraph.jar}" />
+			<param name="unpack.jar.id" value="jgraph" />
+		</antcall>
+
+		<antcall target="unpack" >
+			<param name="unpack.jar" value="${jgraphaddons.jar}" />
+			<param name="unpack.jar.id" value="jgraphaddons" />
+		</antcall>
+	</target>
+
+	<target name="getopt.unpacked" depends="init" if="getopt.jar.present">
+		<antcall target="unpack">
+			<param name="unpack.jar" value="${getopt.jar}" />
+			<param name="unpack.jar.id" value="getopt" />
+		</antcall>
+	</target>
+
+	<target name="itext.unpacked" depends="init" if="itext.jar.present">
+		<antcall target="unpack">
+			<param name="unpack.jar" value="${itext.jar}" />
+			<param name="unpack.jar.id" value="itext" />
+		</antcall>
+	</target>
+
+
+	<!-- Javadoc -->
+
+	<target name="javadoc" depends="compile-all">
+		<javadoc destdir="${doc.api}" access="public" noqualifier="all" maxmemory="512m"
+			excludepackagenames="de.saar.chorus.domgraph.testsuite.*">
+			<fileset dir="${source}" 
+				includes="${domgraph.allsourcefiles}" 
+				excludes="**/*.jj, **/*.properties, **/testsuite/**/*" />
+			
+			<classpath>
+				<pathelement path="${build.classes}" />
+				<pathelement path="${testng.jar}" />
+			</classpath>
+		</javadoc>
+	</target>
+
+
+	<!-- Init -->
+
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.classes}/timestamps-unpackjar" />
+		<mkdir dir="${build.lib}" />
+		<mkdir dir="${doc.api}" />
+
+		<available file="${jgrapht.jar}" property="jgrapht.jar.present"/>
+		<available file="${jgraphaddons.jar}" property="jgraphaddons.jar.present"/>
+		<available file="${getopt.jar}" property="getopt.jar.present"/>
+		<available file="${itext.jar}" property="itext.jar.present"/>
+		<available file="${jgraph.jar}" property="jgraph.jar.present"/>
+		<available file="${jgraphaddons.jar}" property="jgraphaddons.jar.present"/>
+	</target>
+
+	<!-- Delete all compiled files -->
+	<target name="clean" depends="init">
+		<delete>
+			<fileset dir="${build.classes}" includes="${domgraph.jar.classes}" />
+			<fileset dir="${build.lib}" />
+			<fileset dir="${doc.api}" />
+		</delete>
+	</target>
+	
+	<target name="veryclean">
+		<delete dir="${build}" />
+		<delete dir="${doc.api}" />
+	</target>
+	
+	
+	<target name="prepare" depends="init">
+		<copy todir="${build.classes}">
+			<fileset dir="${prefix}" includes="com/**, de/**, gnu/**, org/**" />
+		</copy>
+		
+		<delete includeemptydirs="true">
+			<fileset dir="com" />
+			<fileset dir="de" />
+			<fileset dir="gnu" />
+			<fileset dir="org" />
+			<fileset dir="META-INF" />
+		</delete>
+		
+		<antcall target="clean" />
+	</target>
+        
+        <!-- Run target for Netbeans -->
+        <target name="run" depends="utool">
+            <input message="Utool command-line parameters:" addproperty="params" />
+            <java fork="true" jar="${domgraph.jar}">
+                <arg value="${params}" />
+            </java>
+        </target>
+</project>

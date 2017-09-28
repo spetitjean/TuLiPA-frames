@@ -1,0 +1,31 @@
+Utool was developed by the following people:
+ * Michaela Regneri <regneri@coli.uni-sb.de>
+   Underspecification Workbench GUI
+
+ * Stefan Thater <stth@coli.uni-sb.de>
+   MRS and LKB plugging codecs, integration with LKB
+
+ * Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
+   Tree layout algorithm
+
+ * Alexander Koller <koller@coli.uni-sb.de>
+   most of the rest
+
+
+Utool is linked against the following external software packages:
+ * GNU Java Getopt 1.0.9, by Aaron Renn
+   (for parsing command-line options)
+   http://www.urbanophile.com/~arenn/hacking/download.html
+
+ * JGraphT 0.6.0, by Barak Naveh and contributors
+   (for representing graphs and elementary graph algorithms)
+   http://jgrapht.sourceforge.net/
+
+ * JGraph 1.0.3 & JGraphAddons 1.0, by Gaudenz Alder et al.
+   (for drawing graphs)
+   http://www.jgraph.com/
+
+ * iText 1.3.1 by Bruno Lowagie
+   (for PDF exporting)
+   http://www.lowagie.com/iText/
+

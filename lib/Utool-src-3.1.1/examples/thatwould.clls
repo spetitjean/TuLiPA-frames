@@ -1,0 +1,24 @@
+[dom(h5 h46) dom(h6 h3) dom(h12 h7) dom(h20 h18) dom(h33 h25) dom(h37
+h28) dom(h42 h13) dom(h44 h41) dom(h45 h48) dom(h47 h43) dom(h49 h63)
+dom(h52 h55) dom(h60 h56) dom(h6 h32) dom(h6 h58) dom(h6 h19) dom(h6
+h36) dom(h6 h9) dom(h6 h50) dom(h21 h13) dom(h11 h13) dom(h53 h63)
+dom(h59 h63) dom(h35 h28) dom(h38 h13) label(hnew6 unspec_loc_rel(node14
+node15)) label(node1 d23) label(h41 prpstn_rel(h42)) label(h46
+prpstn_rel(h47)) label(h50 def_rel_x51(h52 h53)) label(node16 x57)
+label(hnew1 '_give_rel'(node2 node3)) label(hnew4 unspec_rel(node4
+node5)) label(node8 x57) label(node17 x8) label(node9 x26) label(h13
+'&'(hnew5 hnew6)) label(h58 def_rel_x57(h60 h59)) label(node12 'TUE')
+label(h48 hypo_rel(h49)) label(node10 x57) label(h9
+'_that_dem_rel_x8'(h12 h11)) label(node6 x17) label(node13 x51)
+label(h25 unnamed_day_rel(node9)) label(h1 prpstn_rel(h6)) label(node5
+x26) label(h32 udef_rel_x26(h33 h35)) label(node3 x17) label(node15 d23)
+label(node4 x29) label(h3 '_but_scop_rel'(h5)) label(node2 x8)
+label(node14 x29) label(node11 x29) label(h55 pron_rel(node13))
+label(hnew2 '_all_deg_rel'(node1)) label(h19 def_rel_x17(h20 h21))
+label(h56 '&'(hnew7 hnew8)) label(hnew8 '_there_rel'(node16))
+label(node7 x51) label(hnew7 glbtype553(node10)) label(h36
+def_np_rel_x29(h37 h38)) label(h63 unspec_loc_rel(node7 node8))
+label(h43 '_in_order_to_rel'(h44 h45)) label(hnew5 '&'(hnew1 hnew2))
+label(h18 pron_rel(node6)) label(hnew3 dofw_rel(node11 node12))
+label(h28 '&'(hnew3 hnew4)) label(h7 generic_nom_rel(node17))]
+
