@@ -1,0 +1,89 @@
+<!-- XML Document Type Definition 
+
+     Authors: 
+       Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ 
+     Description:
+       XML Encoding of derivation and derived trees
+
+     Acknowledgment:
+       This DTD derives from XML code produced by Johannes Dellert <johannes.dellert@sfs.uni-tuebingen.de>
+
+     Version: 1.0
+
+     Typical usage:  
+
+            <?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE grammar SYSTEM "tulipa-parses.dtd,xml">
+	    	<parses>
+            ...
+            </parses>
+
+-->
+
+<!-- List of parses -->
+
+<!ELEMENT  parses (parse*)>
+<!ATTLIST  parses   sentence    CDATA   #IMPLIED>
+
+<!-- for a given parse -->
+
+<!ELEMENT  parse  (derivationTree, derivedTree, semantics, specified_semantics)>
+
+<!-- derivation tree  -->
+
+<!ELEMENT  derivationTree  (tree+)>
+
+<!-- node composing the derivation tree -->
+
+<!ELEMENT  tree  (tree*)>
+<!ATTLIST  tree   id    CDATA   #IMPLIED
+                  op    (adj | subst)   #IMPLIED
+                  node  CDATA   #IMPLIED>
+
+<!-- derived tree -->
+
+<!ELEMENT  derivedTree  (node+)>
+
+<!-- nodes -->
+
+<!ELEMENT  node  (narg? , node*)>
+<!ATTLIST  node  type ( std | lex ) #REQUIRED>
+<!ATTLIST  node  value  CDATA #IMPLIED>
+
+<!ELEMENT  narg (fs)>
+
+<!ELEMENT  fs  (f*)>
+
+<!ELEMENT  f  (sym | vAlt | fs)>
+<!ATTLIST  f  name  CDATA #REQUIRED>
+
+<!ELEMENT  vAlt  (sym+)>
+<!ATTLIST  vAlt  coref CDATA "">
+
+<!ELEMENT  sym EMPTY>
+<!ATTLIST  sym 
+	   value   CDATA #IMPLIED
+	   varname CDATA #IMPLIED>
+
+<!-- semantic representations -->
+
+<!ELEMENT  semantics  (literal | sym | semdominance)*>
+
+<!ELEMENT  literal   (label? , predicate, arg*)>
+<!ATTLIST  literal   negated  CDATA  "no">
+
+<!ELEMENT  label  (sym)>
+
+<!ELEMENT  predicate  (sym)>
+
+<!ELEMENT  arg  (sym | fs)>
+
+<!ELEMENT  semdominance  (sym+)>
+<!ATTLIST  semdominance  op   CDATA   "ge">
+
+<!-- specified semantic representations -->
+
+<!ELEMENT  specified_semantics 	(reading)*>
+
+<!ELEMENT  reading  (#PCDATA)>

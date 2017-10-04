@@ -1,0 +1,76 @@
+<!-- XML Document Type Definition 
+
+     Authors: 
+	Wolfgang Maier <wo.maier@uni-tuebingen.de>
+ 
+     Description:
+	XML Encoding of Range Concatenation Grammars
+
+     Version: 1.0
+
+	See Boullier (2000).        
+	A Range Concatenation Grammar provides a set of clauses 
+        consisting of predicates with arguments.
+
+-->
+
+<!ENTITY % RCG.Version "-//TUEBINGEN//DTD RCG 1.0//EN">
+
+<!-- rcg -->
+<!-- 
+     an rcg consists of clauses.
+     attributes:
+     "degree" is the highest arity of any predicate contained in the grammar.
+     		(The degree is determined automatically by TuLiPA, so this 
+     		 attribute is only decoration) 
+-->
+
+<!ELEMENT  rcg     (clause*)>
+<!ATTLIST  rcg      degree         CDATA         #IMPLIED
+		   		    start	       CDATA         #IMPLIED>
+
+<!-- clauses -->
+<!-- 
+     a clause consists at least of a lhs predicate
+     attributes (both unused by TuLiPA):     
+     "name" is the name of the lhs predicate    
+     "id"   is there for clause numbering    
+-->
+
+<!ELEMENT  clause  (pred+)>
+<!ATTLIST  clause   id             ID            #IMPLIED
+                    name           CDATA         #IMPLIED>
+
+<!-- predicates -->
+<!-- 
+     a predicate has arguments which are ranges. 
+     attributes:
+     "name"  is the name of the predicate
+     "isstart" must be defined on exactly one predicate name in the grammar.
+-->
+<!ELEMENT  pred    (argument+)>
+<!ATTLIST  pred     name           CDATA         #REQUIRED
+                    isstart        (y)           #IMPLIED>
+
+<!-- arguments -->
+<!ELEMENT  argument    (range+)>
+
+<!-- ranges -->
+<!--
+     a range spans a portion of some string.
+     attributes:
+     "type"     designates the type of the range: variable, constant 
+                or sequence of ranges, or empty
+     optional: 
+     "content"  is the content of a range
+     currently ignored by TuLiPA:
+     "l"        left index of span covered
+     "r"        right index of span covered
+-->
+
+<!ELEMENT  range    (range*)>
+<!ATTLIST  range    type           (var|const|eps|seq)  #REQUIRED
+                    content        CDATA                #IMPLIED
+                    l              CDATA                #IMPLIED
+                    r              CDATA                #IMPLIED>
+                    
