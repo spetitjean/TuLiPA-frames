@@ -84,7 +84,7 @@ public class DerivedTreeViewer {
                     XMLViewTree derivedTree = ViewTreeBuilder
                             .makeViewableDerivedTree(dTree);
                     // if (dTree.success) derivedTree.collapseAllAttributes();
-                    String semanticsString = "Underspecified semantic representation:<br>";
+                    String semanticsString = "Semantic representation:<br>";
                     for (SemLit sl : dTree.semantics) {
                         semanticsString += sl.toString() + "<br>";
                     }

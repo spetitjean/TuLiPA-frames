@@ -6,6 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 
+ * @author david
+ *
+ */
 public class TypeHierarchy {
 
     private HashMap<Integer, Set<Type>> tyHi;
