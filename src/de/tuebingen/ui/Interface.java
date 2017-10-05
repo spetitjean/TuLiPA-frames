@@ -1082,8 +1082,8 @@ public class Interface {
 
         res += "for inputs:\n\t";
         res += "-g <path to the XML grammar>\n\t";
-        res += "-f <path to the XML frame file>";
-        res += "-th <path to the XML type hierarchy>";
+        res += "-f <path to the XML frame file>\n\t";
+        res += "-th <path to the XML type hierarchy>\n\t";
         res += "-l <path to the XML lemmas>\n\t";
         res += "-m <path to the XML morphs>\n\t";
         res += "-a <axiom> \n\t";
