@@ -9,7 +9,11 @@ To start the parser without the example grammar, run `java -jar bin/TuLiPA.jar`
 
 To get more information on the executions of the parser, run `java -jar bin/TuLiPA.jar -h`
 
-## Example Grammar
+## Download
+If you want to use an executable version without having to download the code, download `bin/TuLiPA-frames.jar` . To run it, run the command `java -jar TuLiPA-frames.jar` 
+You can use the test grammar on the parser as described below.
+
+## Test Grammar
 The example grammar parses the sentences `John loves Mary` and `John sleeps`. 
 The syntactic information and the frames are stored in one file, `verbs_frames.xml`. 
 The type hierarchy with respect to which the frames are unified is stored in `more.mac`.
