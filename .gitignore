@@ -1,0 +1,7 @@
+
+# Eclipse files
+.project
+bin/.*
+
+# jar file: don't commit it all the time, just build it
+bin/TuLiPA.jar
