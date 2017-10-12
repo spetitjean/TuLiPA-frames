@@ -51,16 +51,16 @@ public class FSPrinter {
     private static String printFS(Fs fs, int recursiondepth) {
 
         StringBuffer sb = new StringBuffer();
-
+	recursiondepth++;
         if (fs.isTyped()) {
-            sb.append(fs.getCoref());
+            sb.append(fs.getCoref()+":");
             sb.append("<br>");
             sb.append(appRecDepth(recursiondepth));
             sb.append("type: ");
             sb.append(fs.getType().toString());
             sb.append("</br>");
         }
-
+	
         Set<String> keys = fs.getAVlist().keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
@@ -68,7 +68,8 @@ public class FSPrinter {
             sb.append("<br>");
             sb.append(appRecDepth(recursiondepth));
             sb.append(k);
-            sb.append(" = ");
+	    String sep=" = ";
+            sb.append(sep);
 
             Value v = fs.getAVlist().get(k);
 
