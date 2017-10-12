@@ -14,7 +14,8 @@ If you want to use an executable version without having to download the code, do
 You can use the test grammar on the parser as described below.
 
 ## Test Grammar
-The example grammar parses the sentences `John loves Mary` and `John sleeps`. 
+The example grammar parses sentences like `John loves Mary` and `John sleeps`. 
+The axiom is 's'.
 The syntactic information and the frames are stored in one file, `verbs_frames.xml`. 
 The type hierarchy with respect to which the frames are unified is stored in `more.mac`.
 The lexical information processed by TuLiPA is 2-layered. 
