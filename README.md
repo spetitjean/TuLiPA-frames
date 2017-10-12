@@ -5,17 +5,22 @@ It is extended with semantic frames paired with the elementary trees.
 
 ## Execution
 You can start the parser with the example grammar by running `./test.sh`
-To start the parser without the example grammar, run `java -jar bin/TuLiPA.jar`
+To start the parser without the example grammar, run 
+```
+ant jar
+java -jar bin/TuLiPA.jar
+```
 
 To get more information on the executions of the parser, run `java -jar bin/TuLiPA.jar -h`
 
 ## Download
-If you want to use an executable version without having to download the code, download `bin/TuLiPA-frames.jar` . To run it, run the command `java -jar TuLiPA-frames.jar` 
+If you want to use an executable version without having to download the code, download `bin/TuLiPA-frames.jar` . 
+To run it, run the command `java -jar TuLiPA-frames.jar` 
 You can use the test grammar on the parser as described below.
 
 ## Test Grammar
 The example grammar parses sentences like `John loves Mary` and `John sleeps`. 
-The axiom is 's'.
+The axiom is `s`.
 The syntactic information and the frames are stored in one file, `verbs_frames.xml`. 
 The type hierarchy with respect to which the frames are unified is stored in `more.mac`.
 The lexical information processed by TuLiPA is 2-layered. 
