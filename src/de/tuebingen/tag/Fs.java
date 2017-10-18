@@ -32,6 +32,8 @@ package de.tuebingen.tag;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import de.duesseldorf.frames.Type;
 import de.tuebingen.anchoring.NameFactory;
@@ -562,4 +564,57 @@ public class Fs {
         return res;
     }
 
+    public static List<Fs> mergeFS(List<Fs> frames){
+	boolean cont=true;
+	List <Value> seen = new ArrayList<Value>();
+	Hashtable <Value,Fs> corefs=new Hashtable<Value, Fs>(); 
+	List<Fs> merge=new ArrayList<Fs>();
+	while(cont){
+	    cont=false;
+	    for (Fs fs : frames){
+		boolean b=fs.mergeFS1(seen,corefs);
+		if(b){cont=true;}
+	    }
+	}
+	return merge;
+    }
+
+    public boolean mergeFS1(List <Value> seen, Hashtable<Value,Fs> corefs){
+	boolean cont=false;
+	Value coref= this.coref;
+	if(!seen.contains(coref)){
+	    //System.out.println("Add "+coref.getVarVal());
+	    seen.add(coref);
+	}
+	else{
+	    if(!corefs.keySet().contains(coref)){
+		//System.out.println("Found coreference with "+coref.getVarVal()+", I will solve it next round.");
+		cont=true;
+	    }
+	}
+	corefs.put(coref,this);
+	Iterator<String> i = this.AVlist.keySet().iterator();
+	while (i.hasNext()) {
+	    String f = i.next();
+	    Value v=this.AVlist.get(f);
+	    if(v.is(Value.AVM)){
+		v.getAvmVal().mergeFS1(seen,corefs);
+	    }
+	    
+	    if(v.is(Value.VAR)){
+		if(!seen.contains(v)){
+		    //System.out.println("Add "+v.getVarVal());
+		    seen.add(v);
+		}
+		else{
+		    //System.out.println("Found coreference with "+v.getVarVal());
+		    if(corefs.keySet().contains(v)){
+			this.AVlist.put(f,new Value(corefs.get(v)));
+		    }
+		}
+	    }
+	    
+	}
+	return cont;
+    }
 }
