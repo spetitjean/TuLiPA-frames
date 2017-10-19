@@ -32,7 +32,6 @@ package de.duesseldorf.frames;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,11 +44,11 @@ public class TypeHierarchy {
     private HashMap<Integer, Set<Type>> tyHi;
 
     /**
-     * given a list of Types, create a type hierarchy.
+     * given a Collection of Types, create a type hierarchy.
      * 
      * @param l
      */
-    public TypeHierarchy(List<Type> l) {
+    public TypeHierarchy(Iterable<Type> l) {
         this.tyHi = new HashMap<Integer, Set<Type>>();
 
         for (Type type : l) {
