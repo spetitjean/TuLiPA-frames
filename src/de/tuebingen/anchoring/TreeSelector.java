@@ -249,7 +249,8 @@ public class TreeSelector {
                                 new Value(Value.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
-                                new Environment(5));
+                                new Environment(5),
+                                situation.getTypeHierarchy());
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
                         ((TagNode) head.getAnchor()).getLabel().setFeat("cat",
@@ -409,7 +410,9 @@ public class TreeSelector {
         Fs uniface = null;
         if (ancfs != null && iface != null) {
             try {
-                uniface = Fs.unify(ancfs, iface, env);
+                uniface = Fs.unify(ancfs, iface, env,
+                        situation.getTypeHierarchy());
+
             } catch (UnifyException e) {
                 System.err.println("Interface unification failed on tree "
                         + tt.getOriginalId() + " for filter "
@@ -549,7 +552,8 @@ public class TreeSelector {
                     Fs semFs = new Fs(lemmaSem.get(k).getArgs());
                     try {
 
-                        Fs.unify(semFs, tt.getIface(), env);
+                        Fs.unify(semFs, tt.getIface(), env,
+                                situation.getTypeHierarchy());
                         // the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics

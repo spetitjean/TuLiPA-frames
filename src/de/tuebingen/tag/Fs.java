@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.duesseldorf.frames.Type;
+import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
 
 /**
@@ -375,6 +376,21 @@ public class Fs {
     }
 
     /**
+     * Temporary method so that nothing breaks
+     * 
+     * @param fs1
+     * @param fs2
+     * @param env
+     * @param tyHi
+     * @return
+     * @throws UnifyException
+     */
+    public static Fs unify(Fs fs1, Fs fs2, Environment env)
+            throws UnifyException {
+        return unify(fs1, fs2, env, null);
+    }
+
+    /**
      * Unifies two feature structures according to an environment
      * 
      * @param fs1,
@@ -387,7 +403,7 @@ public class Fs {
      *            and that
      *            is used to store the variables' bindings.
      */
-    public static Fs unify(Fs fs1, Fs fs2, Environment env)
+    public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi)
             throws UnifyException {
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
