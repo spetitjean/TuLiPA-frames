@@ -293,6 +293,7 @@ public class ElementaryTree {
     public void applyOperations(ArrayList<Object[]> operations,
             DerivedTree dTree, ArrayList<ElementaryTree> steps)
             throws UnifyException {
+        System.out.println("applyOperations in ElTree");
         // first store the nodes to operate on (addresses will be misled by
         // adjunctions)
         for (Object[] op : operations) {
@@ -382,7 +383,7 @@ public class ElementaryTree {
              * }
              */
             addedTopFs = Fs.unify(addedTopFs,
-                    adjoinedTree.topFeatures.get(rootNode), dTree.env);
+                    adjoinedTree.topFeatures.get(rootNode), dTree.env, null);
         }
         dTree.topFeatures.put(rootNode, addedTopFs);
         if (adjoinedTree.bottomFeatures.get(rootNode) != null) {

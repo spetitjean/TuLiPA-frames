@@ -391,7 +391,11 @@ public class Fs {
     }
 
     /**
-     * Unifies two feature structures according to an environment
+     * Unifies two feature structures according to an environment and a Type
+     * Hierarchy. To compute the unification of untyped feature structurs, set
+     * the value of the typehierarchy null.
+     * 
+     * 
      * 
      * @param fs1,
      *            fs2, env
@@ -466,12 +470,14 @@ public class Fs {
         // 4. set the type of the resulting FS
         // TODO sth useful for the types
         Type resType = null;
-        if (fs1.isTyped() && !fs2.isTyped()) {
-            resType = fs1.getType();
-        } else if (!fs1.isTyped() && fs2.isTyped()) {
-            resType = fs2.getType();
-            // } else if (fs1.isTyped() && fs2.isTyped()) {
-            // resType =
+        if (tyHi != null) {
+            if (fs1.isTyped() && !fs2.isTyped()) {
+                resType = fs1.getType();
+            } else if (!fs1.isTyped() && fs2.isTyped()) {
+                resType = fs2.getType();
+                // } else if (fs1.isTyped() && fs2.isTyped()) {
+                // resType =
+            }
         }
 
         // 5. set the coref of the resulting FS
