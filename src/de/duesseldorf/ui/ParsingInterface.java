@@ -59,63 +59,6 @@ public class ParsingInterface {
 
     }
 
-    public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
-            String sentence) throws TokenizerException, IOException {
-        boolean res = false;
-
-        RCGParser p = null;
-
-        if (op.check("q2") || op.check("earley")) {
-            // full parser from Kallmeyer&Maier&Parmentier(2009), using
-            // constraint programming
-            p = new RCGParserConstraintEarley(g);
-        } else if (op.check("lcfrs") || op.check("c")) {
-            p = new SimpleRCGParserEarley(g);
-        }
-        if (p == null) {
-            p = new RCGParserBoullier2(op.check("v"), g, null,
-                    new Hashtable<String, Integer>());
-        }
-
-        Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
-
-        tok.setSentence(sentence);
-        List<Word> l = tok.tokenize();
-
-        long startTime = System.nanoTime();
-        res = p.parseSentence(op.check("v"), l);
-        long estimatedTime = System.nanoTime() - startTime;
-        if (res) {
-            System.err.println("Sentence \"" + sentence + "\" parsed.");
-
-            // forest stuff for new algorithms not yet implemented
-            if (!(p instanceof RCGParserBoullier2)) {
-                System.err.println("Parsing time : "
-                        + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
-            }
-
-            Document doc = RCGparseOutput.produceDOMparse(op.check("v"),
-                    (RCG) g, p.getAnswers(), p.getEmptyRHS(), p.getParse());
-            String txtForest = RCGparseOutput.printForest(p.getParse());
-            System.err.println(txtForest);
-            if (op.check("o")) {
-                XMLUtilities.writeXML(doc, op.getVal("o"), "rcg-forest.dtd,xml",
-                        true);
-                System.err.println(
-                        "XML parse printed in file : " + op.getVal("o"));
-            } else {
-                XMLUtilities.writeXML(doc, "stdout", "rcg-forest.dtd,xml",
-                        true);
-                System.err.println("XML parse printed in stdout");
-            }
-        } else {
-            System.err.println("Sentence \"" + sentence + "\" not parsed.");
-        }
-        System.err.println("Parsing time : "
-                + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
-        return res;
-    }
-
     public static boolean parseSentence(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
 
@@ -379,6 +322,10 @@ public class ParsingInterface {
             extractor.extract();
             long estfTime = System.nanoTime() - fTime;
 
+            System.err.println("\nForest extraction time for sentence \""
+                    + sentence + "\": " + (estfTime) / (Math.pow(10, 9))
+                    + " sec.");
+
             if (verbose)
                 System.err.println("**" + extractor.printForest());
 
@@ -471,4 +418,60 @@ public class ParsingInterface {
         return res;
     }
 
+    public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
+            String sentence) throws TokenizerException, IOException {
+        boolean res = false;
+
+        RCGParser p = null;
+
+        if (op.check("q2") || op.check("earley")) {
+            // full parser from Kallmeyer&Maier&Parmentier(2009), using
+            // constraint programming
+            p = new RCGParserConstraintEarley(g);
+        } else if (op.check("lcfrs") || op.check("c")) {
+            p = new SimpleRCGParserEarley(g);
+        }
+        if (p == null) {
+            p = new RCGParserBoullier2(op.check("v"), g, null,
+                    new Hashtable<String, Integer>());
+        }
+
+        Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
+
+        tok.setSentence(sentence);
+        List<Word> l = tok.tokenize();
+
+        long startTime = System.nanoTime();
+        res = p.parseSentence(op.check("v"), l);
+        long estimatedTime = System.nanoTime() - startTime;
+        if (res) {
+            System.err.println("Sentence \"" + sentence + "\" parsed.");
+
+            // forest stuff for new algorithms not yet implemented
+            if (!(p instanceof RCGParserBoullier2)) {
+                System.err.println("Parsing time : "
+                        + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
+            }
+
+            Document doc = RCGparseOutput.produceDOMparse(op.check("v"),
+                    (RCG) g, p.getAnswers(), p.getEmptyRHS(), p.getParse());
+            String txtForest = RCGparseOutput.printForest(p.getParse());
+            System.err.println(txtForest);
+            if (op.check("o")) {
+                XMLUtilities.writeXML(doc, op.getVal("o"), "rcg-forest.dtd,xml",
+                        true);
+                System.err.println(
+                        "XML parse printed in file : " + op.getVal("o"));
+            } else {
+                XMLUtilities.writeXML(doc, "stdout", "rcg-forest.dtd,xml",
+                        true);
+                System.err.println("XML parse printed in stdout");
+            }
+        } else {
+            System.err.println("Sentence \"" + sentence + "\" not parsed.");
+        }
+        System.err.println("Parsing time : "
+                + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
+        return res;
+    }
 }
