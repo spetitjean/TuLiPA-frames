@@ -134,7 +134,6 @@ public class Interface {
             try {
                 if (g instanceof TTMCTAG) {
                     ParsingInterface.parseSentence(op, sit, sentence);
-                    ParsingInterface.parseSentence(op, g, sentence);
                 } else {
                     // RCG/CFG/simple RCG parse
                     ParsingInterface.parseNonTAG(op, g, sentence);
