@@ -1097,7 +1097,7 @@ public class InputGUI implements ActionListener {
             localops.removeAll();
         }
         if (additionalOpts.length() > 0) {
-            localops = Interface.processCommandLine(addOptsSplit);
+            localops = CommandLineProcesses.processCommandLine(addOptsSplit);
             // System.err.println(" *** " + localops.toString());
             ops.merge(localops);
             // System.err.println("Set options:\n" + ops.toString());
