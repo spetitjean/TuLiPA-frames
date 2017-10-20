@@ -1,6 +1,12 @@
 package de.tuebingen.ui;
 
+import java.util.Scanner;
+
 public class CommandLineProcesses {
+
+    private static String charsetName = "UTF-8";
+    private static Scanner scanner = new Scanner(System.in, charsetName);
+
     public static CommandLineOptions processCommandLine(String[] cmdline) {
         // Command line processing
         CommandLineOptions op = new CommandLineOptions();
@@ -124,6 +130,25 @@ public class CommandLineProcesses {
         return op;
     }
 
+    public static String printPrompt(History history) {
+
+        String res = "";
+        System.err.println(
+                "Please enter a sentence to parse: (-1 to quit, + or - followed by enter for history)");
+        res = scanner.nextLine();
+        if (res.equals("+")) {
+            res = history.getNext();
+            System.err.println(res);
+        } else if (res.equals("-")) {
+            res = history.getPrevious();
+            System.err.println(res);
+        } else {
+            history.add(res);
+            history.setLast();
+        }
+        return res;
+    }
+
     /**
      * 
      * @return
@@ -175,5 +200,14 @@ public class CommandLineProcesses {
         res += "for output: (default is graphical output)\n\t";
         res += "-o <path to the output XML file>\n\n";
         return res;
+    }
+
+    public static void error(String msg, CommandLineOptions op)
+            throws Exception {
+        if (!op.check("gui")) {
+            System.err.println(msg);
+            System.exit(1);
+        } else
+            throw new Exception(msg);
     }
 }

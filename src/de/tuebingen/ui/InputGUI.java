@@ -81,6 +81,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.ui.ParsingInterface;
+import de.duesseldorf.ui.WorkbenchLoader;
 import de.tuebingen.tag.TTMCTAG;
 import de.tuebingen.tree.Grammar;
 
@@ -830,7 +832,7 @@ public class InputGUI implements ActionListener {
             Grammar frameG = null;
             Situation sit = null;
             try {
-                sit = Interface.loadGrammar(ops, gramF.getText(),
+                sit = WorkbenchLoader.loadSituation(ops, gramF.getText(),
                         fgramF.getText(), lemmaF.getText(), morphF.getText(),
                         tyHiF.getText());
                 g = sit.getGrammar();
@@ -845,10 +847,10 @@ public class InputGUI implements ActionListener {
             boolean parseres = false;
             try {
                 if (g instanceof TTMCTAG) {
-                    parseres = Interface.parseSentence(ops, sit, sentence);
+                    parseres = ParsingInterface.parseSentence(ops, sit, sentence);
                     // parseres = Interface.parseSentence(ops, g, sentence);
                 } else {
-                    parseres = Interface.parseNonTAG(ops, g, sentence);
+                    parseres = ParsingInterface.parseNonTAG(ops, g, sentence);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(guiFrame, e + "\n",
