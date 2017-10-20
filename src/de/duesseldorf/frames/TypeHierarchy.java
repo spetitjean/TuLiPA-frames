@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.tuebingen.tag.UnifyException;
+
 /**
  * 
  * @author david
@@ -68,7 +70,7 @@ public class TypeHierarchy {
      *         - is subsumed by the union of types a and b
      *         - if there is no such type in the type hierarchy, return null
      */
-    public Type leastSpecificSubtype(Type a, Type b) {
+    public Type leastSpecificSubtype(Type a, Type b) throws UnifyException {
         Type union = a.union(b);
         int max = Collections.max(tyHi.keySet());
 
