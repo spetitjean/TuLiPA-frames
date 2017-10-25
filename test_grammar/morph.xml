@@ -317,5 +317,14 @@
                 </fs>
             </lemmaref>
         </morph>
+        <morph lex="really" >
+            <lemmaref cat="adv"  name="really" >
+                <fs>
+                    <f name="i" >
+                        <sym value="really" />
+                    </f>
+                </fs>
+            </lemmaref>
+        </morph>
     </morphs>
 </mcgrammar>

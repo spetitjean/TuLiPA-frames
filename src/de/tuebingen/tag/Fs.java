@@ -588,11 +588,10 @@ public class Fs {
         return res;
     }
 
-    public static List<Fs> mergeFS(List<Fs> frames) {
+    public static void mergeFS(List<Fs> frames) {
         boolean cont = true;
         List<Value> seen = new ArrayList<Value>();
         Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
-        List<Fs> merge = new ArrayList<Fs>();
         while (cont) {
             cont = false;
             for (Fs fs : frames) {
@@ -602,7 +601,7 @@ public class Fs {
                 }
             }
         }
-        return merge;
+        return;
     }
 
     public boolean mergeFS1(List<Value> seen, Hashtable<Value, Fs> corefs) {
@@ -618,11 +617,32 @@ public class Fs {
                 cont = true;
             }
         }
-        corefs.put(coref, this);
-        Iterator<String> i = this.AVlist.keySet().iterator();
+        Fs New = this;
+        if (corefs.keySet().contains(coref)) {
+            // in this case we have to unify the feature structures, but we need
+            // an environment
+            try {
+                New = unify(this, corefs.get(coref), new Environment(0));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            corefs.remove(coref);
+            // for the time being, we do this very brutally
+            // Iterator<String> i =
+            // corefs.get(coref).AVlist.keySet().iterator();
+            // while (i.hasNext()) {
+            // String f = i.next();
+            // Value v = corefs.get(coref).AVlist.get(f);
+            // New.AVlist.put(f, v);
+            // }
+
+        }
+        corefs.put(coref, New);
+        Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
-            Value v = this.AVlist.get(f);
+            Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
                 v.getAvmVal().mergeFS1(seen, corefs);
             }

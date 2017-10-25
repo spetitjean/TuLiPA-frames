@@ -238,5 +238,13 @@
                 <sem/>
             </anchor>
         </lemma>
+	<lemma name="really"  cat="adv" >
+            <anchor tree_id="family[@name=adverb]" >
+                <filter>
+                    <fs/>
+                </filter>
+                <sem/>
+            </anchor>
+        </lemma>
     </lemmas>
 </mcgrammar>
