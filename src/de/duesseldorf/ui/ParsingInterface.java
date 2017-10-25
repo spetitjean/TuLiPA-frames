@@ -353,9 +353,9 @@ public class ParsingInterface {
             if (op.check("x")) { // XML output of the derivations!
                 long xmlTime = System.nanoTime();
                 Document dparses = DOMderivationBuilder.buildDOMderivation(
-                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, grammarDict,
-                                false, false, false, needsAnchoring, slabels,
-                                noUtool),
+                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, sit,
+                                grammarDict, false, false, false,
+                                needsAnchoring, slabels, noUtool),
                         sentence);
                 XMLUtilities.writeXML(dparses, outputfile,
                         "tulipa-parses.dtd,xml", true);
@@ -369,7 +369,7 @@ public class ParsingInterface {
                 totalTime += estXMLTime;
             } else { // graphical output (default)
                 long estDTime = System.nanoTime();
-                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
+                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc, sit,
                         grammarDict, true, op.check("w"), op.check("w"),
                         needsAnchoring, slabels, noUtool);
                 long dDTime = System.nanoTime() - estDTime;

@@ -293,7 +293,6 @@ public class ElementaryTree {
     public void applyOperations(ArrayList<Object[]> operations,
             DerivedTree dTree, ArrayList<ElementaryTree> steps)
             throws UnifyException {
-        System.out.println("applyOperations in ElTree");
         // first store the nodes to operate on (addresses will be misled by
         // adjunctions)
         for (Object[] op : operations) {
