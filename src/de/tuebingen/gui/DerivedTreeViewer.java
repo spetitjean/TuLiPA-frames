@@ -100,7 +100,7 @@ public class DerivedTreeViewer {
                         semanticsString += sl.toString() + "<br>";
                     }
                     if (dTree.frames != null) {
-                        List<Fs> mergedFrames=Fs.mergeFS(dTree.frames);
+                        List<Fs> mergedFrames=Fs.mergeFS(dTree.frames,situation);
                         // clean up the list here
                         for (Fs fs : mergedFrames) {
                             semanticsString += FSPrinter.printFS(fs);

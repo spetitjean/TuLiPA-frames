@@ -72,6 +72,7 @@ public class TypeHierarchy {
      */
     public Type leastSpecificSubtype(Type a, Type b) throws UnifyException {
         Type union = a.union(b);
+	System.out.println(union);
         int max = Collections.max(tyHi.keySet());
         if (union.getSpec() <= max) {
             for (int i = union.getSpec(); i <= max; i++) {

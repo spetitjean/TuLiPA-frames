@@ -37,6 +37,7 @@ import java.util.Set;
 
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.duesseldorf.frames.Situation;
 import de.tuebingen.anchoring.NameFactory;
 
 /**
@@ -484,6 +485,7 @@ public class Fs {
             // // resType =
             // }
             if (fs1.isTyped() && fs2.isTyped()) {
+		System.out.println("Trying leastSpecificSubtype"+fs1.getType()+fs2.getType());
                 resType = tyHi.leastSpecificSubtype(fs1.getType(),
                         fs2.getType());
             } else if (fs1.isTyped()) {
@@ -619,7 +621,7 @@ public class Fs {
         return res;
     }
 
-    public static List<Fs> mergeFS(List<Fs> frames) {
+    public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
         //boolean cont = true;
         //List<Value> seen = new ArrayList<Value>();
 	List<Fs> newFrames= new ArrayList<Fs>();
@@ -627,7 +629,7 @@ public class Fs {
         // while (cont) {
         //     cont = false;
 	for (Fs fs : frames) {
-	    fs.collect_corefs(corefs);
+	    fs.collect_corefs(corefs, situation);
 	}
 	for (Fs fs : frames) {
 	    fs=fs.update_corefs(corefs);
@@ -645,7 +647,7 @@ public class Fs {
         return newFrames;
     }
     
-    public void collect_corefs(Hashtable<Value, Fs> corefs){
+    public void collect_corefs(Hashtable<Value, Fs> corefs, Situation situation){
 	Value coref = this.coref;
 	Fs New = this;
         if (corefs.keySet().contains(coref) ) {
@@ -653,7 +655,8 @@ public class Fs {
             // an environment
             try {
 		//System.out.println("Start unify with "+this+corefs.get(coref));
-                New = unify(this, corefs.get(coref), new Environment(0));
+		System.out.println(situation.getTypeHierarchy());
+                New = unify(this, corefs.get(coref), new Environment(0), situation.getTypeHierarchy());
 		corefs.remove(coref);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -669,7 +672,7 @@ public class Fs {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs( corefs);
+                v.getAvmVal().collect_corefs( corefs, situation);
             }
 
 

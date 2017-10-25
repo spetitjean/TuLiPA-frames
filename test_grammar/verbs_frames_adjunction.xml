@@ -8,7 +8,7 @@
     <frame >
       <fs coref="@Frame1">
         <ctype>
-          <type val="event"/>
+          <type val="psych_state"/>
         </ctype>
         <f name="intensity">
           <sym value="strong"/>
