@@ -371,6 +371,10 @@ public class Fs {
         this.coref = coref;
     }
 
+    public void setType(Type type) {
+	this.type = type;
+    }
+    
     public boolean isTyped() {
         return this.is_typed;
     }
@@ -597,79 +601,152 @@ public class Fs {
         return res;
     }
 
-    public static void mergeFS(List<Fs> frames) {
-        boolean cont = true;
-        List<Value> seen = new ArrayList<Value>();
+    public static List<Fs> mergeFS(List<Fs> frames) {
+        //boolean cont = true;
+        //List<Value> seen = new ArrayList<Value>();
+	List<Fs> newFrames= new ArrayList<Fs>();
         Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
-        while (cont) {
-            cont = false;
-            for (Fs fs : frames) {
-                boolean b = fs.mergeFS1(seen, corefs);
-                if (b) {
-                    cont = true;
-                }
-            }
-        }
-        return;
-    }
+        // while (cont) {
+        //     cont = false;
+	for (Fs fs : frames) {
+	    fs.collect_corefs(corefs);
+	}
+	for (Fs fs : frames) {
+	    fs=fs.update_corefs(corefs);
+	    newFrames.add(fs);
+	    
+	}
 
-    public boolean mergeFS1(List<Value> seen, Hashtable<Value, Fs> corefs) {
-        boolean cont = false;
-        Value coref = this.coref;
-        if (!seen.contains(coref)) {
-            // System.out.println("Add "+coref.getVarVal());
-            seen.add(coref);
-        } else {
-            if (!corefs.keySet().contains(coref)) {
-                // System.out.println("Found coreference with
-                // "+coref.getVarVal()+", I will solve it next round.");
-                cont = true;
-            }
-        }
-        Fs New = this;
-        if (corefs.keySet().contains(coref)) {
+	    
+	//     boolean b = fs.mergeFS1(seen, corefs);
+        //         if (b) {
+        //             cont = true;
+        //         }
+        //     }
+        // }
+        return newFrames;
+    }
+    
+    public void collect_corefs(Hashtable<Value, Fs> corefs){
+	Value coref = this.coref;
+	Fs New = this;
+	System.out.println(New.isTyped());
+        if (corefs.keySet().contains(coref) ) {
             // in this case we have to unify the feature structures, but we need
             // an environment
             try {
                 New = unify(this, corefs.get(coref), new Environment(0));
+		System.out.println(corefs.get(coref));
+		System.out.println(New);
+		corefs.remove(coref);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            corefs.remove(coref);
-            // for the time being, we do this very brutally
-            // Iterator<String> i =
-            // corefs.get(coref).AVlist.keySet().iterator();
-            // while (i.hasNext()) {
-            // String f = i.next();
-            // Value v = corefs.get(coref).AVlist.get(f);
-            // New.AVlist.put(f, v);
-            // }
-
+          
         }
-        corefs.put(coref, New);
+	
+	corefs.put(coref, New);
+
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().mergeFS1(seen, corefs);
+                v.getAvmVal().collect_corefs( corefs);
+            }
+
+
+	}
+	
+    }
+    
+    public Fs update_corefs(Hashtable<Value, Fs> corefs){
+	Fs result= this;
+	if (corefs.keySet().contains(this.coref) ) {
+	    System.out.println("Updating an FS");
+	    result=corefs.get(this.coref);
+	    System.out.println(result);
+	}
+        Iterator<String> i = this.AVlist.keySet().iterator();
+        while (i.hasNext()) {
+            String f = i.next();
+            Value v = this.AVlist.get(f);
+            if (v.is(Value.AVM)) {
+                v.getAvmVal().update_corefs( corefs);
             }
 
             if (v.is(Value.VAR)) {
-                if (!seen.contains(v)) {
-                    // System.out.println("Add "+v.getVarVal());
-                    seen.add(v);
-                } else {
-                    // System.out.println("Found coreference with
-                    // "+v.getVarVal());
-                    if (corefs.keySet().contains(v)) {
-                        this.AVlist.put(f, new Value(corefs.get(v)));
-                    }
-                }
-            }
-
-        }
-        return cont;
+		if (corefs.keySet().contains(v)) {
+		    this.AVlist.put(f, new Value(corefs.get(v)));
+		}
+	    }
+	}
+	return result;
     }
+	
+   
+    
+    
+
+    // public boolean mergeFS1(List<Value> seen, Hashtable<Value, Fs> corefs) {
+    //     boolean cont = false;
+    //     Value coref = this.coref;
+    //     if (!seen.contains(coref)) {
+    //         // System.out.println("Add "+coref.getVarVal());
+    //         seen.add(coref);
+    //     } else {
+    //         if (!corefs.keySet().contains(coref)) {
+    //             // System.out.println("Found coreference with
+    //             // "+coref.getVarVal()+", I will solve it next round.");
+    //             cont = true;
+    //         }
+    //     }
+    //     Fs New = this;
+    //     if (corefs.keySet().contains(coref) ) {
+    //         // in this case we have to unify the feature structures, but we need
+    //         // an environment
+    // 	    System.out.println("Here");
+    //         try {
+    //             New = unify(this, corefs.get(coref), new Environment(0));
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //         }
+
+    //         corefs.remove(coref);
+    //         // for the time being, we do this very brutally
+    //         // Iterator<String> i =
+    //         // corefs.get(coref).AVlist.keySet().iterator();
+    //         // while (i.hasNext()) {
+    //         // String f = i.next();
+    //         // Value v = corefs.get(coref).AVlist.get(f);
+    //         // New.AVlist.put(f, v);
+    //         // }
+
+    //     }
+    //     corefs.put(coref, New);
+    //     Iterator<String> i = New.AVlist.keySet().iterator();
+    //     while (i.hasNext()) {
+    //         String f = i.next();
+    //         Value v = New.AVlist.get(f);
+    //         if (v.is(Value.AVM)) {
+    //             v.getAvmVal().mergeFS1(seen, corefs);
+    //         }
+
+    //         if (v.is(Value.VAR)) {
+    //             if (!seen.contains(v)) {
+    //                 // System.out.println("Add "+v.getVarVal());
+    //                 seen.add(v);
+    //             } else {
+    //                 // System.out.println("Found coreference with
+    //                 // "+v.getVarVal());
+    //                 if (corefs.keySet().contains(v)) {
+    //                     this.AVlist.put(f, new Value(corefs.get(v)));
+    //                 }
+    //             }
+    //         }
+
+    //     }
+    //     return cont;
+    // }
 }
