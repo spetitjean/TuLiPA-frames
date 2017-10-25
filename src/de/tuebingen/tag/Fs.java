@@ -492,6 +492,24 @@ public class Fs {
                 resType = fs2.getType();
             }
         }
+	// we need this only until the hierarchy is accessible from DerivedTreeViewer
+	else{
+        // baseline algo: delete when sth better works
+            // if (fs1.isTyped() && !fs2.isTyped()) {
+            // resType = fs1.getType();
+            // } else if (!fs1.isTyped() && fs2.isTyped()) {
+            // resType = fs2.getType();
+            // // } else if (fs1.isTyped() && fs2.isTyped()) {
+            // // resType =
+            // }
+            if (fs1.isTyped() && fs2.isTyped()) {
+		resType = fs1.getType();
+            } else if (fs1.isTyped()) {
+                resType = fs1.getType();
+            } else if (fs2.isTyped()) {
+                resType = fs2.getType();
+            }
+	}
 
         // 5. set the coref of the resulting FS
         Value resCoref;
@@ -630,14 +648,12 @@ public class Fs {
     public void collect_corefs(Hashtable<Value, Fs> corefs){
 	Value coref = this.coref;
 	Fs New = this;
-	System.out.println(New.isTyped());
         if (corefs.keySet().contains(coref) ) {
             // in this case we have to unify the feature structures, but we need
             // an environment
             try {
+		//System.out.println("Start unify with "+this+corefs.get(coref));
                 New = unify(this, corefs.get(coref), new Environment(0));
-		System.out.println(corefs.get(coref));
-		System.out.println(New);
 		corefs.remove(coref);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -664,9 +680,7 @@ public class Fs {
     public Fs update_corefs(Hashtable<Value, Fs> corefs){
 	Fs result= this;
 	if (corefs.keySet().contains(this.coref) ) {
-	    System.out.println("Updating an FS");
 	    result=corefs.get(this.coref);
-	    System.out.println(result);
 	}
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
