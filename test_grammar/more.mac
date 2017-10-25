@@ -8,7 +8,7 @@
     </entry>
     <entry>
       <ctype>
-        <type val="round"/>
+        <type val="psych_state"/>
       </ctype>
       <constraints>
       </constraints>
@@ -16,14 +16,7 @@
     <entry>
       <ctype>
         <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="love"/>
-        <type val="round"/>
+        <type val="psych_state"/>
       </ctype>
       <constraints>
       </constraints>
@@ -31,31 +24,6 @@
     <entry>
       <ctype>
         <type val="event"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="event"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="event"/>
-        <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="event"/>
-        <type val="love"/>
-        <type val="round"/>
       </ctype>
       <constraints>
       </constraints>
@@ -70,31 +38,14 @@
     <entry>
       <ctype>
         <type val="entity"/>
-        <type val="round"/>
+        <type val="person"/>
       </ctype>
       <constraints>
       </constraints>
     </entry>
     <entry>
       <ctype>
-        <type val="entity"/>
-        <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
-        <type val="love"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
+        <type val="activity"/>
         <type val="event"/>
       </ctype>
       <constraints>
@@ -102,104 +53,9 @@
     </entry>
     <entry>
       <ctype>
-        <type val="entity"/>
+        <type val="activity"/>
         <type val="event"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
-        <type val="event"/>
-        <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
-        <type val="event"/>
-        <type val="love"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="event"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="event"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="event"/>
-        <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="event"/>
-        <type val="love"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="entity"/>
-        <type val="event"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="entity"/>
-        <type val="event"/>
-        <type val="round"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="entity"/>
-        <type val="event"/>
-        <type val="love"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="causation"/>
-        <type val="entity"/>
-        <type val="event"/>
-        <type val="love"/>
-        <type val="round"/>
+        <type val="sleep"/>
       </ctype>
       <constraints>
       </constraints>
@@ -208,7 +64,58 @@
   <type_constraints>
     <type_constraint type="implies">
       <ctype1>
-        <type val="causation"/>
+        <type val="person"/>
+      </ctype1>
+      <ctype2>
+        <type val="entity"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="sleep"/>
+      </ctype1>
+      <ctype2>
+        <type val="activity"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="love"/>
+      </ctype1>
+      <ctype2>
+        <type val="psych_state"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="entity"/>
+        <type val="psych_state"/>
+      </ctype1>
+      <ctype2>
+        <type val="false"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="entity"/>
+        <type val="event"/>
+      </ctype1>
+      <ctype2>
+        <type val="false"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="psych_state"/>
+        <type val="event"/>
+      </ctype1>
+      <ctype2>
+        <type val="false"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="activity"/>
       </ctype1>
       <ctype2>
         <type val="event"/>

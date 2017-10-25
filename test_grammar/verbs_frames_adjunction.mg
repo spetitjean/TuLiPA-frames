@@ -122,7 +122,7 @@ declare ?X0
 	  node (mark=foot)[cat=vp]
 	  }
   };
-  <frame>{?X0[event,
+  <frame>{?X0[psych-state,
               intensity:strong]}
 }
 

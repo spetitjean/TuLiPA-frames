@@ -485,7 +485,6 @@ public class Fs {
             // // resType =
             // }
             if (fs1.isTyped() && fs2.isTyped()) {
-		System.out.println("Trying leastSpecificSubtype"+fs1.getType()+fs2.getType());
                 resType = tyHi.leastSpecificSubtype(fs1.getType(),
                         fs2.getType());
             } else if (fs1.isTyped()) {
@@ -655,7 +654,6 @@ public class Fs {
             // an environment
             try {
 		//System.out.println("Start unify with "+this+corefs.get(coref));
-		System.out.println(situation.getTypeHierarchy());
                 New = unify(this, corefs.get(coref), new Environment(0), situation.getTypeHierarchy());
 		corefs.remove(coref);
             } catch (Exception e) {
