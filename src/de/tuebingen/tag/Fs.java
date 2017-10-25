@@ -471,12 +471,21 @@ public class Fs {
         // TODO sth useful for the types
         Type resType = null;
         if (tyHi != null) {
-            if (fs1.isTyped() && !fs2.isTyped()) {
+            // baseline algo: delete when sth better works
+            // if (fs1.isTyped() && !fs2.isTyped()) {
+            // resType = fs1.getType();
+            // } else if (!fs1.isTyped() && fs2.isTyped()) {
+            // resType = fs2.getType();
+            // // } else if (fs1.isTyped() && fs2.isTyped()) {
+            // // resType =
+            // }
+            if (fs1.isTyped() && fs2.isTyped()) {
+                resType = tyHi.leastSpecificSubtype(fs1.getType(),
+                        fs2.getType());
+            } else if (fs1.isTyped()) {
                 resType = fs1.getType();
-            } else if (!fs1.isTyped() && fs2.isTyped()) {
+            } else if (fs2.isTyped()) {
                 resType = fs2.getType();
-                // } else if (fs1.isTyped() && fs2.isTyped()) {
-                // resType =
             }
         }
 
