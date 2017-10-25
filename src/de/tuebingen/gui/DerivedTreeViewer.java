@@ -154,9 +154,19 @@ public class DerivedTreeViewer {
             Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
             boolean derivationStepOutput, boolean debugMode,
             boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
+        displayTreesfromDOM(s, d, null, treeDict, elementaryTreeOutput,
+                derivationStepOutput, debugMode, needsAnchoring, semlabels,
+                noUtool);
+    }
+
+    public static void displayTreesfromDOM(final String s, Document d,
+            Situation situation, Map<String, TagTree> treeDict,
+            boolean elementaryTreeOutput, boolean derivationStepOutput,
+            boolean debugMode, boolean needsAnchoring, List<String> semlabels,
+            boolean noUtool) {
         final ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
-                treeDict, elementaryTreeOutput, derivationStepOutput, debugMode,
-                needsAnchoring, semlabels, noUtool);
+                situation, treeDict, elementaryTreeOutput, derivationStepOutput,
+                debugMode, needsAnchoring, semlabels, noUtool);
         if (viewTrees.size() > 0) {
             XMLTreeDisplay display = new XMLTreeDisplay(s, viewTrees);
             // display.setSize(1000, 750);

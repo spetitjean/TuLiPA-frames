@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.duesseldorf.frames.Type;
+import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
 
 /**
@@ -379,7 +380,26 @@ public class Fs {
     }
 
     /**
-     * Unifies two feature structures according to an environment
+     * Temporary method so that nothing breaks
+     * 
+     * @param fs1
+     * @param fs2
+     * @param env
+     * @param tyHi
+     * @return
+     * @throws UnifyException
+     */
+    public static Fs unify(Fs fs1, Fs fs2, Environment env)
+            throws UnifyException {
+        return unify(fs1, fs2, env, null);
+    }
+
+    /**
+     * Unifies two feature structures according to an environment and a Type
+     * Hierarchy. To compute the unification of untyped feature structurs, set
+     * the value of the typehierarchy null.
+     * 
+     * 
      * 
      * @param fs1,
      *            fs2, env
@@ -391,7 +411,7 @@ public class Fs {
      *            and that
      *            is used to store the variables' bindings.
      */
-    public static Fs unify(Fs fs1, Fs fs2, Environment env)
+    public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi)
             throws UnifyException {
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
@@ -454,12 +474,23 @@ public class Fs {
         // 4. set the type of the resulting FS
         // TODO sth useful for the types
         Type resType = null;
-        if (fs1.isTyped() && !fs2.isTyped()) {
-            resType = fs1.getType();
-        } else if (!fs1.isTyped() && fs2.isTyped()) {
-            resType = fs2.getType();
-	} else if (fs1.isTyped() && fs2.isTyped()) {
-            resType = fs1.getType();
+        if (tyHi != null) {
+            // baseline algo: delete when sth better works
+            // if (fs1.isTyped() && !fs2.isTyped()) {
+            // resType = fs1.getType();
+            // } else if (!fs1.isTyped() && fs2.isTyped()) {
+            // resType = fs2.getType();
+            // // } else if (fs1.isTyped() && fs2.isTyped()) {
+            // // resType =
+            // }
+            if (fs1.isTyped() && fs2.isTyped()) {
+                resType = tyHi.leastSpecificSubtype(fs1.getType(),
+                        fs2.getType());
+            } else if (fs1.isTyped()) {
+                resType = fs1.getType();
+            } else if (fs2.isTyped()) {
+                resType = fs2.getType();
+            }
         }
 
         // 5. set the coref of the resulting FS
