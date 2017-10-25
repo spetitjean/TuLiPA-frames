@@ -599,15 +599,21 @@ public class Fs {
         if (corefs.keySet().contains(coref)) {
             // in this case we have to unify the feature structures, but we need
             // an environment
-            // unify(New,corefs.get(coref), new Environment(0));
-
-            // for the time being, we do this very brutally
-            Iterator<String> i = corefs.get(coref).AVlist.keySet().iterator();
-            while (i.hasNext()) {
-                String f = i.next();
-                Value v = corefs.get(coref).AVlist.get(f);
-                New.AVlist.put(f, v);
+            try {
+                New = unify(this, corefs.get(coref), new Environment(0));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            corefs.remove(coref);
+            // for the time being, we do this very brutally
+            // Iterator<String> i =
+            // corefs.get(coref).AVlist.keySet().iterator();
+            // while (i.hasNext()) {
+            // String f = i.next();
+            // Value v = corefs.get(coref).AVlist.get(f);
+            // New.AVlist.put(f, v);
+            // }
 
         }
         corefs.put(coref, New);

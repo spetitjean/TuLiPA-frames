@@ -89,7 +89,8 @@ public class DerivedTreeViewer {
                         semanticsString += sl.toString() + "<br>";
                     }
                     if (dTree.frames != null) {
-		        Fs.mergeFS(dTree.frames);
+                        Fs.mergeFS(dTree.frames);
+                        // clean up the list here
                         for (Fs fs : dTree.frames) {
                             semanticsString += FSPrinter.printFS(fs);
                         }
@@ -184,6 +185,5 @@ public class DerivedTreeViewer {
                     "\nDerivedTreeViewer: No derivation trees found in forest!");
         }
     }
-
 
 }
