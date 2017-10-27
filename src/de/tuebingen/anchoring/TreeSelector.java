@@ -674,6 +674,7 @@ public class TreeSelector {
          * Method used when no anchoring is needed, the tree selector
          * then only stores the trees to the dictionary and lists.
          */
+	System.out.println("Using store");
         Set<String> keys = grammar.keySet();
         Iterator<String> it = keys.iterator();
         while (it.hasNext()) {
