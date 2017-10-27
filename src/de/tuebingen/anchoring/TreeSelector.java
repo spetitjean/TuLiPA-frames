@@ -643,6 +643,7 @@ public class TreeSelector {
         // we add the head's polarities
         tt.getPolarities(p);
         x.setHead(tt);
+	System.out.println(tt.getLexItems());
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
@@ -656,6 +657,7 @@ public class TreeSelector {
                 treeHash.put(tl.get(l).getId(), tl.get(l));
                 xTrees.add(tl.get(l).getId());
                 tl.get(l).getPolarities(p);
+		System.out.println(tt.getLexItems());
                 ptl.addLexicals(tl.get(l).getLexItems());
             }
             x.setArguments(tl);

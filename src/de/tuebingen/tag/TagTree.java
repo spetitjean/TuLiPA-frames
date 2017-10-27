@@ -369,6 +369,7 @@ public class TagTree implements Tree {
             subst.add(n);
         } else if (((TagNode) n).getType() == TagNode.LEX) { // lexical node
             lexNodes.add(n);
+	    System.out.println("Added "+n+" to LexNodes");
         } else if (((TagNode) n).getType() == TagNode.COANCHOR) { // coanchor
                                                                   // node
             coAnchors.add(n);
