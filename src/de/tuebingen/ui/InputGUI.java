@@ -4,16 +4,18 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
  *     
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
+ *     David Arps, 2017
  *
  *  Last modified:
- *     Di 16. Okt 09:31:05 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -81,6 +83,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.ui.CommandLineProcesses;
 import de.duesseldorf.ui.ParsingInterface;
 import de.duesseldorf.ui.WorkbenchLoader;
 import de.tuebingen.tag.TTMCTAG;
@@ -847,7 +850,8 @@ public class InputGUI implements ActionListener {
             boolean parseres = false;
             try {
                 if (g instanceof TTMCTAG) {
-                    parseres = ParsingInterface.parseSentence(ops, sit, sentence);
+                    parseres = ParsingInterface.parseSentence(ops, sit,
+                            sentence);
                     // parseres = Interface.parseSentence(ops, g, sentence);
                 } else {
                     parseres = ParsingInterface.parseNonTAG(ops, g, sentence);

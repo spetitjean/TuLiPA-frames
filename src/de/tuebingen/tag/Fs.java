@@ -3,15 +3,19 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
+ *     Simon Petitjean <petitjean@phil.hhu.de>
  *     
  *  Copyright:
  *     Yannick Parmentier, 2007
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *
  *  Last modified:
- *     Di 16. Okt 09:44:40 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,9 +39,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeHierarchy;
-import de.duesseldorf.frames.Situation;
 import de.tuebingen.anchoring.NameFactory;
 
 /**
@@ -373,9 +377,9 @@ public class Fs {
     }
 
     public void setType(Type type) {
-	this.type = type;
+        this.type = type;
     }
-    
+
     public boolean isTyped() {
         return this.is_typed;
     }
@@ -493,9 +497,10 @@ public class Fs {
                 resType = fs2.getType();
             }
         }
-	// we need this only until the hierarchy is accessible from DerivedTreeViewer
-	else{
-        // baseline algo: delete when sth better works
+        // we need this only until the hierarchy is accessible from
+        // DerivedTreeViewer
+        else {
+            // baseline algo: delete when sth better works
             // if (fs1.isTyped() && !fs2.isTyped()) {
             // resType = fs1.getType();
             // } else if (!fs1.isTyped() && fs2.isTyped()) {
@@ -504,13 +509,13 @@ public class Fs {
             // // resType =
             // }
             if (fs1.isTyped() && fs2.isTyped()) {
-		resType = fs1.getType();
+                resType = fs1.getType();
             } else if (fs1.isTyped()) {
                 resType = fs1.getType();
             } else if (fs2.isTyped()) {
                 resType = fs2.getType();
             }
-	}
+        }
 
         // 5. set the coref of the resulting FS
         Value resCoref;
@@ -621,147 +626,143 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
-        //boolean cont = true;
-        //List<Value> seen = new ArrayList<Value>();
-	List<Fs> newFrames= new ArrayList<Fs>();
+        // boolean cont = true;
+        // List<Value> seen = new ArrayList<Value>();
+        List<Fs> newFrames = new ArrayList<Fs>();
         Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
         // while (cont) {
-        //     cont = false;
-	for (Fs fs : frames) {
-	    fs.collect_corefs(corefs, situation);
-	}
-	for (Fs fs : frames) {
-	    fs=fs.update_corefs(corefs);
-	    newFrames.add(fs);
-	    
-	}
+        // cont = false;
+        for (Fs fs : frames) {
+            fs.collect_corefs(corefs, situation);
+        }
+        for (Fs fs : frames) {
+            fs = fs.update_corefs(corefs);
+            newFrames.add(fs);
 
-	    
-	//     boolean b = fs.mergeFS1(seen, corefs);
-        //         if (b) {
-        //             cont = true;
-        //         }
-        //     }
+        }
+
+        // boolean b = fs.mergeFS1(seen, corefs);
+        // if (b) {
+        // cont = true;
+        // }
+        // }
         // }
         return newFrames;
     }
-    
-    public void collect_corefs(Hashtable<Value, Fs> corefs, Situation situation){
-	Value coref = this.coref;
-	Fs New = this;
-        if (corefs.keySet().contains(coref) ) {
+
+    public void collect_corefs(Hashtable<Value, Fs> corefs,
+            Situation situation) {
+        Value coref = this.coref;
+        Fs New = this;
+        if (corefs.keySet().contains(coref)) {
             // in this case we have to unify the feature structures, but we need
             // an environment
             try {
-		//System.out.println("Start unify with "+this+corefs.get(coref));
-                New = unify(this, corefs.get(coref), new Environment(0), situation.getTypeHierarchy());
-		corefs.remove(coref);
+                // System.out.println("Start unify with
+                // "+this+corefs.get(coref));
+                New = unify(this, corefs.get(coref), new Environment(0),
+                        situation.getTypeHierarchy());
+                corefs.remove(coref);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-          
         }
-	
-	corefs.put(coref, New);
+
+        corefs.put(coref, New);
 
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs( corefs, situation);
+                v.getAvmVal().collect_corefs(corefs, situation);
             }
 
+        }
 
-	}
-	
     }
-    
-    public Fs update_corefs(Hashtable<Value, Fs> corefs){
-	Fs result= this;
-	if (corefs.keySet().contains(this.coref) ) {
-	    result=corefs.get(this.coref);
-	}
+
+    public Fs update_corefs(Hashtable<Value, Fs> corefs) {
+        Fs result = this;
+        if (corefs.keySet().contains(this.coref)) {
+            result = corefs.get(this.coref);
+        }
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = this.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().update_corefs( corefs);
+                v.getAvmVal().update_corefs(corefs);
             }
 
             if (v.is(Value.VAR)) {
-		if (corefs.keySet().contains(v)) {
-		    this.AVlist.put(f, new Value(corefs.get(v)));
-		}
-	    }
-	}
-	return result;
+                if (corefs.keySet().contains(v)) {
+                    this.AVlist.put(f, new Value(corefs.get(v)));
+                }
+            }
+        }
+        return result;
     }
-	
-   
-    
-    
 
     // public boolean mergeFS1(List<Value> seen, Hashtable<Value, Fs> corefs) {
-    //     boolean cont = false;
-    //     Value coref = this.coref;
-    //     if (!seen.contains(coref)) {
-    //         // System.out.println("Add "+coref.getVarVal());
-    //         seen.add(coref);
-    //     } else {
-    //         if (!corefs.keySet().contains(coref)) {
-    //             // System.out.println("Found coreference with
-    //             // "+coref.getVarVal()+", I will solve it next round.");
-    //             cont = true;
-    //         }
-    //     }
-    //     Fs New = this;
-    //     if (corefs.keySet().contains(coref) ) {
-    //         // in this case we have to unify the feature structures, but we need
-    //         // an environment
-    // 	    System.out.println("Here");
-    //         try {
-    //             New = unify(this, corefs.get(coref), new Environment(0));
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         }
+    // boolean cont = false;
+    // Value coref = this.coref;
+    // if (!seen.contains(coref)) {
+    // // System.out.println("Add "+coref.getVarVal());
+    // seen.add(coref);
+    // } else {
+    // if (!corefs.keySet().contains(coref)) {
+    // // System.out.println("Found coreference with
+    // // "+coref.getVarVal()+", I will solve it next round.");
+    // cont = true;
+    // }
+    // }
+    // Fs New = this;
+    // if (corefs.keySet().contains(coref) ) {
+    // // in this case we have to unify the feature structures, but we need
+    // // an environment
+    // System.out.println("Here");
+    // try {
+    // New = unify(this, corefs.get(coref), new Environment(0));
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
 
-    //         corefs.remove(coref);
-    //         // for the time being, we do this very brutally
-    //         // Iterator<String> i =
-    //         // corefs.get(coref).AVlist.keySet().iterator();
-    //         // while (i.hasNext()) {
-    //         // String f = i.next();
-    //         // Value v = corefs.get(coref).AVlist.get(f);
-    //         // New.AVlist.put(f, v);
-    //         // }
+    // corefs.remove(coref);
+    // // for the time being, we do this very brutally
+    // // Iterator<String> i =
+    // // corefs.get(coref).AVlist.keySet().iterator();
+    // // while (i.hasNext()) {
+    // // String f = i.next();
+    // // Value v = corefs.get(coref).AVlist.get(f);
+    // // New.AVlist.put(f, v);
+    // // }
 
-    //     }
-    //     corefs.put(coref, New);
-    //     Iterator<String> i = New.AVlist.keySet().iterator();
-    //     while (i.hasNext()) {
-    //         String f = i.next();
-    //         Value v = New.AVlist.get(f);
-    //         if (v.is(Value.AVM)) {
-    //             v.getAvmVal().mergeFS1(seen, corefs);
-    //         }
+    // }
+    // corefs.put(coref, New);
+    // Iterator<String> i = New.AVlist.keySet().iterator();
+    // while (i.hasNext()) {
+    // String f = i.next();
+    // Value v = New.AVlist.get(f);
+    // if (v.is(Value.AVM)) {
+    // v.getAvmVal().mergeFS1(seen, corefs);
+    // }
 
-    //         if (v.is(Value.VAR)) {
-    //             if (!seen.contains(v)) {
-    //                 // System.out.println("Add "+v.getVarVal());
-    //                 seen.add(v);
-    //             } else {
-    //                 // System.out.println("Found coreference with
-    //                 // "+v.getVarVal());
-    //                 if (corefs.keySet().contains(v)) {
-    //                     this.AVlist.put(f, new Value(corefs.get(v)));
-    //                 }
-    //             }
-    //         }
+    // if (v.is(Value.VAR)) {
+    // if (!seen.contains(v)) {
+    // // System.out.println("Add "+v.getVarVal());
+    // seen.add(v);
+    // } else {
+    // // System.out.println("Found coreference with
+    // // "+v.getVarVal());
+    // if (corefs.keySet().contains(v)) {
+    // this.AVlist.put(f, new Value(corefs.get(v)));
+    // }
+    // }
+    // }
 
-    //     }
-    //     return cont;
+    // }
+    // return cont;
     // }
 }

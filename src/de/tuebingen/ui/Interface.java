@@ -4,17 +4,21 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *     David Arps <david.arps@hhu.de>
+ *     Simon Petitjean <petitjean@phil.hhu.de>
+ *         
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *
- *  Last modified:
- *     Di 16. Okt 09:32:10 CEST 2007
+ * Last modified:
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
- *
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
+ *     
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -39,6 +43,7 @@ import java.io.IOException;
 import javax.swing.SwingUtilities;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.ui.CommandLineProcesses;
 import de.duesseldorf.ui.ParsingInterface;
 import de.duesseldorf.ui.WorkbenchLoader;
 import de.tuebingen.tag.TTMCTAG;

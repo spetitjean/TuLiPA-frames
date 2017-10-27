@@ -3,15 +3,17 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
  *     
  *  Copyright:
  *     Johannes Dellert, 2007
+ *     David Arps, 2017
  *
  *  Last modified:
- *     Di 16. Okt 10:53:00 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

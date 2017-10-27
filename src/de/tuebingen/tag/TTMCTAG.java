@@ -31,11 +31,11 @@
  */
 package de.tuebingen.tag;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.tuebingen.lexicon.Lemma;
@@ -43,99 +43,99 @@ import de.tuebingen.lexicon.MorphEntry;
 import de.tuebingen.tree.Grammar;
 
 public class TTMCTAG implements Grammar {
-	
-	private Map<String, List<Tuple>>           grammar;
-	private Map<String, List<Lemma>>            lemmas;
-	private Map<String, List<MorphEntry>> morphEntries;
-	private boolean                     needsAnchoring;
-	
-	public TTMCTAG() {
-		grammar = new HashMap<String,List<Tuple>>();
-		needsAnchoring = false;
-	}
-	
-	public void add2family(String f, Tuple t) {
-		if (grammar.containsKey(f)) {
-			List<Tuple> lt = grammar.get(f);
-			lt.add(t);
-		} else { 
-			List<Tuple> lt = new LinkedList<Tuple>();
-			lt.add(t);
-			grammar.put(f, lt);
-		}
-	}
-	
-	public TTMCTAG(Map<String, List<Tuple>> l){
-		grammar = l;
-		needsAnchoring = false;
-	}
-	
-	public Map<String, List<Tuple>> getGrammar() {
-		return grammar;
-	}
 
-	public boolean needsAnchoring() {
-		return needsAnchoring;
-	}
+    private Map<String, List<Tuple>> grammar;
+    private Map<String, List<Lemma>> lemmas;
+    private Map<String, List<MorphEntry>> morphEntries;
+    private boolean needsAnchoring;
 
-	public void setNeedsAnchoring(boolean needsAnchoring) {
-		this.needsAnchoring = needsAnchoring;
-	}
+    public TTMCTAG() {
+        grammar = new HashMap<String, List<Tuple>>();
+        needsAnchoring = false;
+    }
 
-	public void setGrammar(Map<String, List<Tuple>> grammar) {
-		this.grammar = grammar;
-	}
+    public void add2family(String f, Tuple t) {
+        if (grammar.containsKey(f)) {
+            List<Tuple> lt = grammar.get(f);
+            lt.add(t);
+        } else {
+            List<Tuple> lt = new LinkedList<Tuple>();
+            lt.add(t);
+            grammar.put(f, lt);
+        }
+    }
 
-	public Map<String, List<Lemma>> getLemmas() {
-		return lemmas;
-	}
+    public TTMCTAG(Map<String, List<Tuple>> l) {
+        grammar = l;
+        needsAnchoring = false;
+    }
 
-	public void setLemmas(Map<String, List<Lemma>> lemmas) {
-		this.lemmas = lemmas;
-	}
+    public Map<String, List<Tuple>> getGrammar() {
+        return grammar;
+    }
 
-	public Map<String, List<MorphEntry>> getMorphEntries() {
-		return morphEntries;
-	}
+    public boolean needsAnchoring() {
+        return needsAnchoring;
+    }
 
-	public void setMorphEntries(Map<String, List<MorphEntry>> morphEntries) {
-		this.morphEntries = morphEntries;
-	}
+    public void setNeedsAnchoring(boolean needsAnchoring) {
+        this.needsAnchoring = needsAnchoring;
+    }
 
-	public String toString(){
-		String res="";
-		Set<String> keys = grammar.keySet();
-		Iterator<String> it = keys.iterator();
-		while(it.hasNext()){
-			String k = it.next();
-		
-			for (int i=0;i<grammar.get(k).size(); i++) {
-				res+=grammar.get(k).get(i).toString();
-			}
-		}
-		String res1="";
-		String res2="";
-		if (needsAnchoring) {
-			keys = lemmas.keySet();
-			it   = keys.iterator();
-			while(it.hasNext()){
-				String k = it.next();
-				
-				for (int i=0;i<lemmas.get(k).size(); i++){
-					res1+=lemmas.get(k).get(i).toString();
-				}
-			}
-			
-			keys = morphEntries.keySet();
-			it   = keys.iterator();
-			while(it.hasNext()){
-				String k = it.next();
-			
-					for (int i=0;i<morphEntries.get(k).size();i++){
-						res2+=morphEntries.get(k).get(i).toString();
-					}
-			}
-		}
-		return res+"\n"+res1+"\n"+res2;
-	}
+    public void setGrammar(Map<String, List<Tuple>> grammar) {
+        this.grammar = grammar;
+    }
+
+    public Map<String, List<Lemma>> getLemmas() {
+        return lemmas;
+    }
+
+    public void setLemmas(Map<String, List<Lemma>> lemmas) {
+        this.lemmas = lemmas;
+    }
+
+    public Map<String, List<MorphEntry>> getMorphEntries() {
+        return morphEntries;
+    }
+
+    public void setMorphEntries(Map<String, List<MorphEntry>> morphEntries) {
+        this.morphEntries = morphEntries;
+    }
+
+    public String toString() {
+        String res = "";
+        Set<String> keys = grammar.keySet();
+        Iterator<String> it = keys.iterator();
+        while (it.hasNext()) {
+            String k = it.next();
+
+            for (int i = 0; i < grammar.get(k).size(); i++) {
+                res += grammar.get(k).get(i).toString();
+            }
+        }
+        String res1 = "";
+        String res2 = "";
+        if (needsAnchoring) {
+            keys = lemmas.keySet();
+            it = keys.iterator();
+            while (it.hasNext()) {
+                String k = it.next();
+
+                for (int i = 0; i < lemmas.get(k).size(); i++) {
+                    res1 += lemmas.get(k).get(i).toString();
+                }
+            }
+
+            keys = morphEntries.keySet();
+            it = keys.iterator();
+            while (it.hasNext()) {
+                String k = it.next();
+
+                for (int i = 0; i < morphEntries.get(k).size(); i++) {
+                    res2 += morphEntries.get(k).get(i).toString();
+                }
+            }
+        }
+        return res + "\n" + res1 + "\n" + res2;
+    }
 }

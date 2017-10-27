@@ -1,3 +1,38 @@
+/*
+ *  File ParsingInterface.java
+ *
+ *  Authors:
+ *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
+ *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
+ *     Simon Petitjean <petitjean@phil.hhu.de>
+ *         
+ *  Copyright:
+ *     Wolfgang Maier, 2007
+ *     Yannick Parmentier, 2007
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
+ *
+ * Last modified:
+ *     2017
+ *
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
+ *     
+ *  TuLiPA is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  TuLiPA is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package de.duesseldorf.ui;
 
 import java.io.File;
@@ -37,7 +72,6 @@ import de.tuebingen.tokenizer.TokenizerException;
 import de.tuebingen.tokenizer.Word;
 import de.tuebingen.tree.Grammar;
 import de.tuebingen.ui.CommandLineOptions;
-import de.tuebingen.ui.CommandLineProcesses;
 import de.tuebingen.util.CollectionUtilities;
 import de.tuebingen.util.XMLUtilities;
 
@@ -59,6 +93,18 @@ public class ParsingInterface {
 
     }
 
+    /**
+     * 
+     * A TAG is converted into a RCG and then parsed.
+     * 
+     * @param op
+     * @param sit
+     *            The Situation - constisting of the grammar, possibly frames
+     *            and a type hierarchy
+     * @param sentence
+     * @return
+     * @throws Exception
+     */
     public static boolean parseSentence(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
 

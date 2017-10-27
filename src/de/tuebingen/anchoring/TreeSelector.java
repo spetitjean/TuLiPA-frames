@@ -3,15 +3,19 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
+ *     Simon Petitjean <petitjean@phil.hhu.de>
  *     
  *  Copyright:
  *     Yannick Parmentier, 2007
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *
  *  Last modified:
- *     Di 16. Okt 11:13:42 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -338,6 +342,7 @@ public class TreeSelector {
          * in order to anchor it (unification between FS and lexical anchoring
          * of the head)
          */
+
         if (verbose)
             System.err.println("\nAnchoring ... " + t.getId() + "\n");
         NameFactory nf = new NameFactory();
@@ -394,7 +399,8 @@ public class TreeSelector {
                 targ.setOriginalTupleId(newTupleId);
                 targ.setTupleAncPos(tt.getTupleAncPos());
                 tl.add(targ);
-                // we do not update the tree dictionary yet since we do not know
+                // we do not update the tree dictionary yet since we do not
+                // know
                 // whether the anchoring will succeed
                 // treeHash.put(targ.getId(), targ);
             }
@@ -477,7 +483,6 @@ public class TreeSelector {
 
         // c) add the new lexical item under the anchor node
         // comes with unification of morph features
-
         try {
             tt.anchor(t.getLemma().getLexItem().getInToken(),
                     t.getLemma().getLref(), env);
@@ -643,7 +648,7 @@ public class TreeSelector {
         // we add the head's polarities
         tt.getPolarities(p);
         x.setHead(tt);
-	System.out.println(tt.getLexItems());
+        System.out.println(tt.getLexItems());
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
@@ -657,7 +662,7 @@ public class TreeSelector {
                 treeHash.put(tl.get(l).getId(), tl.get(l));
                 xTrees.add(tl.get(l).getId());
                 tl.get(l).getPolarities(p);
-		System.out.println(tt.getLexItems());
+                System.out.println(tt.getLexItems());
                 ptl.addLexicals(tl.get(l).getLexItems());
             }
             x.setArguments(tl);

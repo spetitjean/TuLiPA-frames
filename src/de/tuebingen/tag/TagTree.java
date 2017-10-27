@@ -4,16 +4,20 @@
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *     
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *
  *  Last modified:
- *     Di 16. Okt 09:48:15 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -146,11 +150,11 @@ public class TagTree implements Tree {
             List<Fs> oldFrames = t.getFrames();
             List<Fs> newFrames = new ArrayList<Fs>();
             for (Fs oldFrame : oldFrames) {
-                //System.err.println("Recreating frame, before: " + oldFrame);
+                // System.err.println("Recreating frame, before: " + oldFrame);
 
                 Fs newFrame = new Fs(oldFrame, nf);
                 newFrames.add(newFrame);
-                //System.err.println("After: " + newFrame);
+                // System.err.println("After: " + newFrame);
 
             }
             this.frames = newFrames;
@@ -369,7 +373,7 @@ public class TagTree implements Tree {
             subst.add(n);
         } else if (((TagNode) n).getType() == TagNode.LEX) { // lexical node
             lexNodes.add(n);
-	    System.out.println("Added "+n+" to LexNodes");
+            System.out.println("Added " + n + " to LexNodes");
         } else if (((TagNode) n).getType() == TagNode.COANCHOR) { // coanchor
                                                                   // node
             coAnchors.add(n);

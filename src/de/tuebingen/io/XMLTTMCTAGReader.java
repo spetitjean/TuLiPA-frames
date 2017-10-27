@@ -3,15 +3,19 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
+ *     David Arps <david.arps@hhu.de>
+ *     Simon Petitjean <petitjean@phil.hhu.de>
  *     
  *  Copyright:
+ *     David Arps, 2017
+ *     Simon Petitjean, 2017
  *     Yannick Parmentier, 2007
  *
  *  Last modified:
- *     Di 16. Okt 10:49:21 CEST 2007
+ *     2017
  *
- *  This file is part of the TuLiPA system
- *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
+ *  This file is part of the TuLiPA-frames system
+ *     https://github.com/spetitjean/TuLiPA-frames
  *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
