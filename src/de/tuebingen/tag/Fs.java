@@ -390,7 +390,6 @@ public class Fs {
      * @param fs1
      * @param fs2
      * @param env
-     * @param tyHi
      * @return
      * @throws UnifyException
      */
@@ -415,6 +414,9 @@ public class Fs {
      *            env is an environment global to the 2 feature structures,
      *            and that
      *            is used to store the variables' bindings.
+     * @param tyHi
+     *            the type hierarchy with respect to which fs1 and fs2 are
+     *            unified inn case they are typed
      */
     public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi)
             throws UnifyException {
@@ -496,18 +498,7 @@ public class Fs {
             } else if (fs2.isTyped()) {
                 resType = fs2.getType();
             }
-        }
-        // we need this only until the hierarchy is accessible from
-        // DerivedTreeViewer
-        else {
-            // baseline algo: delete when sth better works
-            // if (fs1.isTyped() && !fs2.isTyped()) {
-            // resType = fs1.getType();
-            // } else if (!fs1.isTyped() && fs2.isTyped()) {
-            // resType = fs2.getType();
-            // // } else if (fs1.isTyped() && fs2.isTyped()) {
-            // // resType =
-            // }
+        } else {
             if (fs1.isTyped() && fs2.isTyped()) {
                 resType = fs1.getType();
             } else if (fs1.isTyped()) {
