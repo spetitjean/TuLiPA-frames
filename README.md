@@ -4,7 +4,7 @@ This is an extension for the existing TuLiPA (Tuebingen Linguistic Parsing Archi
 It is extended with semantic frames paired with the elementary trees. 
 
 ## Execution
-You can start the parser with the example grammar by running `./test.sh`
+You can start the parser with the example grammar by running `run/test.sh`
 To start the parser without the example grammar, run 
 ```
 ant jar
