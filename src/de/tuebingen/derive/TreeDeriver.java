@@ -125,6 +125,7 @@ public class TreeDeriver {
 
             // System.out.println("Environment: "+derivedTree.env);
             // System.out.println("Update frames in TreeDeriver");
+
             derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
                     derivedTree.env, true);
             // System.out.println("Updated frames: " + derivedTree.frames);
@@ -144,7 +145,7 @@ public class TreeDeriver {
             System.err.println("Error while deriving tree:");
             System.err.println(e.getMessage());
             e.printStackTrace();
-            System.exit(1);
+            // System.exit(1);
         }
         // TODO: find threshold here by taking input size into consideration
         if (needsAnchoring && derivedTree.numTerminals < Integer.MIN_VALUE) {

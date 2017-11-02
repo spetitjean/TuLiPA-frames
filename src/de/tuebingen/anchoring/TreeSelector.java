@@ -271,11 +271,11 @@ public class TreeSelector {
                                 lt.get(family).get(l), il);
 
                         try {
-                            // System.err.println("[1-] ");
+                            // System.out.println("[1-] ");
 
                             InstantiatedTuple x = this.anchor(plm, it, l,
                                     slabels);
-                            // System.err.println("[2-] ");
+                            // System.out.println("[2-] ");
 
                             anctuples.add(x);
                         } catch (AnchoringException e) {
@@ -307,7 +307,6 @@ public class TreeSelector {
         int amb = ambiguity.get(word);
         amb += cpt_tmp;
         ambiguity.put(word, amb);
-
     }
 
     /**
@@ -648,7 +647,7 @@ public class TreeSelector {
         // we add the head's polarities
         tt.getPolarities(p);
         x.setHead(tt);
-        System.out.println(tt.getLexItems());
+        // System.out.println(tt.getLexItems());
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
@@ -679,7 +678,6 @@ public class TreeSelector {
          * Method used when no anchoring is needed, the tree selector
          * then only stores the trees to the dictionary and lists.
          */
-	System.out.println("Using store");
         Set<String> keys = grammar.keySet();
         Iterator<String> it = keys.iterator();
         while (it.hasNext()) {

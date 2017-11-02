@@ -213,7 +213,6 @@ public class ElementaryTree {
             else if (sl instanceof Value)
                 newSemantics.add(new Value((Value) sl, nf));
         }
-        System.out.println("ElementaryTree: instantiate");
         List<Fs> newFrames = frames;
         return new ElementaryTree(
                 copyNodeStructure(nf, root, D, newTopFeatures,
@@ -497,9 +496,10 @@ public class ElementaryTree {
         List<Fs> newFrames = new ArrayList<Fs>();
         for (Fs fs : frames) {
             // System.out.println("Before: " + fs);
-            newFrames.add(Fs.updateFS(fs, env, finalUpdate));
-            // System.out.println("After: " + fs);
-
+            if (fs != null) {
+                newFrames.add(Fs.updateFS(fs, env, finalUpdate));
+                // System.out.println("After: " + fs);
+            }
         }
         return newFrames;
     }

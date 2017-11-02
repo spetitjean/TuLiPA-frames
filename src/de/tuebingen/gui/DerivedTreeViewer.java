@@ -104,6 +104,8 @@ public class DerivedTreeViewer {
                         semanticsString += sl.toString() + "<br>";
                     }
                     if (dTree.frames != null) {
+                        // here, when fixing the copy language, the FS in
+                        // dTree.frames are null
                         List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
                                 situation);
                         // clean up the list here
@@ -150,7 +152,7 @@ public class DerivedTreeViewer {
             for (int i = 0; i < stack.length; i++) {
                 System.err.println(stack[i]);
             }
-            System.exit(0);
+            // System.exit(0);
         }
         return new ArrayList<ParseTreeCollection>();
     }

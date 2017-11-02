@@ -530,7 +530,7 @@ public class Fs {
         // System.err.println("updating [" + fs.toString() + "] env: " +
         // env.toString());
         // System.out.println("Starting UpdateFS");
-        Fs res;
+        Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
             Value vderef = env.deref(coref);
@@ -547,6 +547,7 @@ public class Fs {
         } else {
             res = new Fs(fs.getSize());
         }
+
         Hashtable<String, Value> avm = fs.getAVlist();
         Set<String> keys = avm.keySet();
         Iterator<String> i = keys.iterator();
@@ -554,7 +555,8 @@ public class Fs {
             String k = (String) i.next();
             Value fval = avm.get(k);
 
-            // System.err.println("Processing ... " + k+":"+fval.toString());
+            // System.err.println("Processing ... " +
+            // k+":"+fval.toString());
 
             switch (fval.getType()) {
             case Value.VAL: // for semantic labels
@@ -569,7 +571,8 @@ public class Fs {
                 if (!(v.equals(fval))) { // it is bound:
                     res.setFeat(k, Value.unify(fval, v, env));
                 } else { // it is not:
-                    // System.err.println("Variable not bound ... " + k + ":"
+                    // System.err.println("Variable not bound ... " + k +
+                    // ":"
                     // + fval.toString());
                     res.setFeat(k, fval);
                     // This was added for testing
@@ -589,7 +592,6 @@ public class Fs {
             }
         }
         // System.out.println("Finished UpdateFS");
-
         return res;
     }
 

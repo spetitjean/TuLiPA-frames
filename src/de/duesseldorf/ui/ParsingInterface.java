@@ -196,7 +196,7 @@ public class ParsingInterface {
                         System.err.println(ptk.toString());
                     }
                 }
-		System.out.println("LexNodes: "+ ts.getLexNodes());
+                // System.out.println("LexNodes: " + ts.getLexNodes());
                 PolarityAutomaton pa = new PolarityAutomaton(toksentence, lptk,
                         axiom, verbose, ts.getLexNodes(), ts.getCoancNodes());
                 List<List<String>> tupleSets = pa.getPossibleTupleSets();
@@ -245,8 +245,8 @@ public class ParsingInterface {
         RCG rcggrammar = null;
         long startTime = System.nanoTime();
         if (subgrammars != null) { // i.e. we used lexical disambiguation
-        //if (false) { // i.e. we used lexical disambiguation
-	    System.out.println("Doing subgrammars: "+subgrammars);
+            // if (false) { // i.e. we used lexical disambiguation
+            // System.out.println("Doing subgrammars: " + subgrammars);
             rcggrammar = new RCG();
             for (int sI = 0; sI < subgrammars.size(); sI++) {
                 List<Tuple> ltuples = subgrammars.get(sI);
@@ -263,7 +263,6 @@ public class ParsingInterface {
                 // rcggrammar.addGrammar(ogc.getRcggrammar(), grammarDict);
             }
         } else {
-	    System.out.println("Doing RCG");
             GrammarConvertor gc = new GrammarConvertor(anchoredTuples, verbose,
                     toksentence, grammarDict, !needsAnchoring, k_limit, limit);
             gc.buildAllClauses(axiom);
