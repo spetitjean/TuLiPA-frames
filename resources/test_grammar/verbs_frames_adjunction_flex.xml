@@ -44,6 +44,15 @@
             </narg>
           </node>
         </node>
+        <node type="anchor" name="NAME">
+          <narg>
+            <fs coref="@AVM18">
+              <f name="cat">
+                <sym value="adv"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
         <node type="foot" name="XMG_VAR_15">
           <narg>
             <fs coref="@AVM5">
