@@ -28,5 +28,5 @@ The lexical information processed by TuLiPA is 2-layered.
 The morphological lexicon maps inflected tokens to their lemma, storing morphological information in a feature structure. 
 The lemmas are stored among with semantic information and the tree families to which the lemmas can be anchored.
 
-To see an example of adjunction, run 'run/test_adj.sh' or use 'verbs_frames_adjunction.xml' as a Grammar file. 
-This grammar parses sentences like 'John really loves Mary'
+To see an example of adjunction, run `run/test_adj.sh` or use `verbs_frames_adjunction.xml` as a Grammar file. 
+This grammar parses sentences like `John really loves Mary`.
