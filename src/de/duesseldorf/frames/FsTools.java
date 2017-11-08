@@ -29,7 +29,10 @@
  */
 package de.duesseldorf.frames;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import de.tuebingen.tag.Fs;
@@ -40,7 +43,57 @@ import de.tuebingen.tag.Value;
  * @author david
  *
  */
-public class FSPrinter {
+public class FsTools {
+
+    public static List<Fs> cleanup(List<Fs> frames) {
+        List<Fs> noSimpleDoubleoccurence = new LinkedList<Fs>();
+
+        // check for FS that occur multiple times and only keep one instance
+
+        // keep track of corefs you have already seen in order to avoid multiple
+        // addings
+        Set<Value> seenCorefs = new HashSet<Value>();
+
+        for (Fs fs : frames) {
+            Value v = fs.getCoref();
+            if (!seenCorefs.contains(v)) {
+                noSimpleDoubleoccurence.add(fs);
+                seenCorefs.add(v);
+            }
+        }
+
+        // tmp:
+        // return noSimpleDoubleoccurence;
+
+        // only keep a FS if it is not a value of any other Fs
+        // TODO somehow still not working completely
+        List<Fs> clean = new LinkedList<Fs>();
+        for (Fs fs : noSimpleDoubleoccurence) {
+            Value fsv = fs.getCoref();
+            // System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%\nFS: \nCoref: "
+            // + fsv + "\n" + printFS(fs));
+            boolean keep = true;
+            for (Fs fscompare : noSimpleDoubleoccurence) {
+                if (noSimpleDoubleoccurence.indexOf(
+                        fscompare) != noSimpleDoubleoccurence.indexOf(fs)) {
+                    // System.out.println("%%\nFScompare: \n" +
+                    // printFS(fscompare)
+                    // + "\n\n\n");
+                    for (Value v : fscompare.getAVlist().values()) {
+                        if (v.is(Value.AVM)
+                                && v.getAvmVal().getCoref().equals(fsv)) {
+                            keep = false;
+                        }
+                    }
+                }
+            }
+            if (keep) {
+                clean.add(fs);
+            }
+        }
+
+        return clean;
+    }
 
     /**
      * returns a naive string representation of a (probably recursive) typed or
@@ -57,7 +110,6 @@ public class FSPrinter {
     }
 
     private static String printFS(Fs fs, int recursiondepth) {
-
         StringBuffer sb = new StringBuffer();
         recursiondepth++;
         if (fs.isTyped()) {

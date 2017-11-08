@@ -33,9 +33,9 @@
  */
 package de.tuebingen.tag;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -619,27 +619,15 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
-        // boolean cont = true;
-        // List<Value> seen = new ArrayList<Value>();
-        List<Fs> newFrames = new ArrayList<Fs>();
+        List<Fs> newFrames = new LinkedList<Fs>();
         Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
-        // while (cont) {
-        // cont = false;
         for (Fs fs : frames) {
             fs.collect_corefs(corefs, situation);
         }
         for (Fs fs : frames) {
             fs = fs.update_corefs(corefs);
             newFrames.add(fs);
-
         }
-
-        // boolean b = fs.mergeFS1(seen, corefs);
-        // if (b) {
-        // cont = true;
-        // }
-        // }
-        // }
         return newFrames;
     }
 
@@ -659,11 +647,8 @@ public class Fs {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
         corefs.put(coref, New);
-
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
@@ -671,9 +656,7 @@ public class Fs {
             if (v.is(Value.AVM)) {
                 v.getAvmVal().collect_corefs(corefs, situation);
             }
-
         }
-
     }
 
     public Fs update_corefs(Hashtable<Value, Fs> corefs) {

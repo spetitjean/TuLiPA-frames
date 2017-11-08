@@ -47,7 +47,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.duesseldorf.frames.FSPrinter;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
@@ -104,13 +104,12 @@ public class DerivedTreeViewer {
                         semanticsString += sl.toString() + "<br>";
                     }
                     if (dTree.frames != null) {
-                        // here, when fixing the copy language, the FS in
-                        // dTree.frames are null
                         List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
                                 situation);
                         // clean up the list here
-                        for (Fs fs : mergedFrames) {
-                            semanticsString += FSPrinter.printFS(fs);
+                        List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+                        for (Fs fs : cleanFrames) {
+                            semanticsString += FsTools.printFS(fs);
                         }
                     } else {
                         semanticsString += "frame null";
