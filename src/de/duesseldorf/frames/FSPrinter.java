@@ -42,27 +42,6 @@ import de.tuebingen.tag.Value;
  */
 public class FSPrinter {
 
-    // public String toString() {
-    // String res = "";
-    //
-    // if (isTyped()) {
-    // res = "("+coref+")" + res + type + " - ";
-    //
-    // }
-    //
-    // Set<String> keys = AVlist.keySet();
-    // Iterator<String> i = keys.iterator();
-    // while (i.hasNext()) {
-    // String k = (String) i.next();
-    // res += k + " = " + AVlist.get(k).toString() + ", ";
-    // }
-    // if (res.length() > 2) {
-    // // we remove the last ", "
-    // res = res.substring(0, (res.length() - 2));
-    // }
-    // return res;
-    // }
-
     /**
      * returns a naive string representation of a (probably recursive) typed or
      * untyped FS
