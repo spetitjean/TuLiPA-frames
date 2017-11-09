@@ -119,6 +119,10 @@ public class TagNode implements Node {
 		word     = n.getWord();
 		isAncLex = n.isAncLex(); 
 		adjStatus= n.getAdjStatus();
+
+		//ADDED_BY_TS
+		children = null;	
+		//END_ADDED_BY_TS
 	}
 	
 	public TagNode(TagNode n, NameFactory nf) {
@@ -354,8 +358,75 @@ public class TagNode implements Node {
 		return adjStatus;
 	}
 
-	public void setAdjStatus(int adjStatus) {
-		this.adjStatus = adjStatus;
+    public void setAdjStatus(int adjStatus) {
+	    this.adjStatus = adjStatus;
 	}
+    
+    //ADDED_BY_TS
+    public void getAllNodesChildrenFirst(List<TagNode> list) {
+
+	assert(list != null);
+
+	if (children != null) {
+	    for (int i=0; i < children.size(); i++){
+	    
+		assert(children.get(i) != null);
+		TagNode child = (TagNode)  children.get(i);
+		assert(child != null);
+		
+		//System.err.println("child: " + child.toString());
+		
+		child.getAllNodesChildrenFirst(list);
+	    }
+	}
+	    
+	list.add(this);
+    }
+
+
+    public void getAllNodesParentFirst(List<TagNode> list) {
+
+	assert(list != null);
+
+	list.add(this);
+
+	if (children != null) {
+	    for (int i=0; i < children.size(); i++){
+	    
+		assert(children.get(i) != null);
+		TagNode child = (TagNode)  children.get(i);
+		assert(child != null);
+		
+		//System.err.println("child: " + child.toString());
+		
+		child.getAllNodesParentFirst(list);
+	    }
+	}
+    }
+
+    public String print() {
+
+	String s = "(";
+	if (category != "Eps")
+	    s = s + category; 
+
+	//note: we are currently ignoring the features
+
+	if (type == FOOT)
+	    s = s + "*";
+	else if (type == LEX)
+	    s = s + "<>";
+	else if (children == null || children.size() == 0)
+	    s = s + "!";
+
+	if (children != null) {
+	    for (Node n : children) {
+		s = s + " " + ((TagNode) n).print();
+	    }
+	}
+
+	return s + ")";
+    }
+    //END_ADDED_BY_TS
 	
 }

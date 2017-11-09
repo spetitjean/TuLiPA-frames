@@ -40,7 +40,14 @@ public class Combination implements Iterable<TreeOp> {
 	public Combination(){
 		operations = new LinkedList<TreeOp>();
 	}
-	
+
+    	//ADDED_BY_TS
+	public Combination(Combination toCopy) {
+
+	    operations = new LinkedList<TreeOp>(toCopy.getOperations());
+	}
+	//END_ADDED_BY_TS
+    
 	public void addOp(TreeOp to) {
 		operations.add(to);
 	}

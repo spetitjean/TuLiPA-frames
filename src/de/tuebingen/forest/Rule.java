@@ -38,6 +38,14 @@ public class Rule {
 		lhs = ti;
 		rhs = new Combination();
 	}
+
+        //ADDED_BY_TS
+        public Rule (Rule toCopy) {
+	
+	    lhs = toCopy.getLhs();
+	    rhs = new Combination(toCopy.getRhs());
+        }
+        //END_ADDED_BY_TS
 	
 	public Tidentifier getLhs() {
 		return lhs;
