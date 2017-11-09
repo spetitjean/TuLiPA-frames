@@ -667,7 +667,6 @@ public class ParsingInterface {
         Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
         List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
                 axiom);
-        System.out.println("665: reached");
         long parsingTime = System.nanoTime() - parseTime;
         System.err.println("Total time for parsing and tree extraction: "
                 + (parsingTime) / (Math.pow(10, 9)) + " sec.");
@@ -695,9 +694,9 @@ public class ParsingInterface {
             if (op.check("x")) { // XML output of the derivations!
                 long xmlTime = System.nanoTime();
                 Document dparses = DOMderivationBuilder.buildDOMderivation(
-                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, grammarDict,
-                                false, false, false, needsAnchoring, slabels,
-                                noUtool),
+                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, sit,
+                                grammarDict, false, false, false,
+                                needsAnchoring, slabels, noUtool),
                         sentence);
                 XMLUtilities.writeXML(dparses, outputfile,
                         "tulipa-parses.dtd,xml", true);
@@ -711,7 +710,7 @@ public class ParsingInterface {
                 totalTime += estXMLTime;
             } else { // graphical output (default)
                 long estDTime = System.nanoTime();
-                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
+                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc, sit,
                         grammarDict, true, op.check("w"), op.check("w"),
                         needsAnchoring, slabels, noUtool);
                 long dDTime = System.nanoTime() - estDTime;
