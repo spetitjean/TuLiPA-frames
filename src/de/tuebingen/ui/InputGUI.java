@@ -851,8 +851,7 @@ public class InputGUI implements ActionListener {
             try {
                 if (g instanceof TTMCTAG) {
                     // bruteforce new method. TODO: create Butten for tag2rcg
-                    parseres = ParsingInterface.parseTAG(ops,
-                            (TTMCTAG) sit.getGrammar(), sentence);
+                    parseres = ParsingInterface.parseTAG(ops, sit, sentence);
                     // parseres = ParsingInterface.parseSentence(ops, sit,
                     // sentence);
                     // parseres = Interface.parseSentence(ops, g, sentence);

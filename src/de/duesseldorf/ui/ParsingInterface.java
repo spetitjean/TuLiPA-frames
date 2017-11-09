@@ -479,15 +479,21 @@ public class ParsingInterface {
         return res;
     }
 
-    // BY TS
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
+            String sentence) throws Exception {
+        Situation sit = new Situation(g, null, null);
+        return parseTAG(op, sit, sentence);
+    }
+
+    // BY TS
+    public static boolean parseTAG(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
 
         boolean res = false;
         long totalTime = 0;
         boolean verbose = op.check("v");
         boolean noUtool = op.check("n");
-        boolean needsAnchoring = g.needsAnchoring();
+        boolean needsAnchoring = sit.getGrammar().needsAnchoring();
 
         String outputfile = "";
         if (op.check("o")) {
@@ -512,7 +518,6 @@ public class ParsingInterface {
         }
         List<String> toksentence = Tokenizer.tok2string(tokens);
         // System.err.println("\t@@ Length " + toksentence.size());
-
         /* ******** external POS tagging ************/
         ExternalTagger tagger = new ExternalTagger();
         File taggerExec = op.check("t") ? new File(op.getVal("t")) : null;
@@ -540,8 +545,14 @@ public class ParsingInterface {
             // 5-c. According to the instantiated lemmas, we instantiate the
             // pertinent tuples
             // 6. Tree anchoring
-            ts.retrieve(g.getMorphEntries(), g.getLemmas(), g.getGrammar(),
-                    slabels);
+            try {
+                ts.retrieve(sit, slabels);
+                // ts.retrieve(g.getMorphEntries(), g.getLemmas(),
+                // g.getGrammar(),
+                // slabels);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             // System.err.println(ts.toString());
             // System.err.println(ts.getTupleHash());
 
@@ -588,7 +599,7 @@ public class ParsingInterface {
                                 + ts.getambig() + "\n");
             }
         } else {
-            ts.store(g.getGrammar());
+            ts.store(sit.getGrammar().getGrammar());
         }
         // Tree Selection results stored in specific variables to avoid
         // keeping a pointer to the ts variable (and wasting memory)
@@ -649,7 +660,6 @@ public class ParsingInterface {
         // END_DEBUG
 
         long sTime = System.nanoTime();
-
         // parse
         long parseTime = System.nanoTime();
         // TAGParser parser = new TAGParser(grammarDict);
@@ -657,10 +667,10 @@ public class ParsingInterface {
         Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
         List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
                 axiom);
+        System.out.println("665: reached");
         long parsingTime = System.nanoTime() - parseTime;
         System.err.println("Total time for parsing and tree extraction: "
                 + (parsingTime) / (Math.pow(10, 9)) + " sec.");
-
         res = (forest_roots.size() > 0);
 
         if (res) {
