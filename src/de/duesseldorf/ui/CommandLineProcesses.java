@@ -46,6 +46,10 @@ public class CommandLineProcesses {
     public static CommandLineOptions processCommandLine(String[] cmdline) {
         // Command line processing
         CommandLineOptions op = new CommandLineOptions();
+        // we declare the optional tag2rcg option to parse TAGs with rcg
+        // conversion
+        op.add(CommandLineOptions.Prefix.DASH, "tag2rcg",
+                CommandLineOptions.Separator.BLANK, false);
         // we declare the optional th option for the type hierarchy
         op.add(CommandLineOptions.Prefix.DASH, "th",
                 CommandLineOptions.Separator.BLANK, true);
@@ -214,6 +218,7 @@ public class CommandLineProcesses {
 
         res += "where OPTIONS are:\n\t";
         res += "for functionalities:\n\t";
+        res += "-tag2rcg     (use TAG to RCG conversion)";
         res += "-r      (rcg parser, default is TAG/TT-MCTAG)\n\t";
         res += "-k N    (limits the size of the list of pending arguments to N)\n\t";
         res += "-v      (verbose mode, for debugging purposes, information dumped in stderr)\n\t";

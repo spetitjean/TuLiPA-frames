@@ -159,8 +159,12 @@ public class Interface {
                         quit = true;
                     } else {
                         try {
-                            if (g instanceof TTMCTAG) {
+                            // tag2rcg conversion
+                            if (op.check("tag2rcg")) {
                                 ParsingInterface.parseSentence(op, g, sentence);
+                            } else if (g instanceof TTMCTAG) {
+                                ParsingInterface.parseTAG(op, (TTMCTAG) g,
+                                        sentence);
                             } else {
                                 // RCG/CFG/simple RCG parse
                                 ParsingInterface.parseNonTAG(op, g, sentence);

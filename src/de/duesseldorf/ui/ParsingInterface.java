@@ -37,22 +37,32 @@ package de.duesseldorf.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.parser.SlimTAGParser;
+import de.saar.chorus.dtool.DTool;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
 import de.tuebingen.converter.GrammarConvertor;
+import de.tuebingen.dependency.DependencyDOMbuilder;
+import de.tuebingen.dependency.DependencyExtractor;
 import de.tuebingen.disambiguate.ComputeSubGrammar;
 import de.tuebingen.disambiguate.PolarityAutomaton;
 import de.tuebingen.disambiguate.PolarizedToken;
 import de.tuebingen.expander.DOMderivationBuilder;
 import de.tuebingen.forest.ProduceDOM;
+import de.tuebingen.forest.Rule;
+import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.gui.DerivedTreeViewer;
 import de.tuebingen.parser.ForestExtractor;
 import de.tuebingen.parser.ForestExtractorFactory;
@@ -63,6 +73,8 @@ import de.tuebingen.parserconstraints.RCGParserConstraintEarley;
 import de.tuebingen.rcg.RCG;
 import de.tuebingen.rcg.RCGDOMbuilder;
 import de.tuebingen.rcg.RCGparseOutput;
+import de.tuebingen.tag.TTMCTAG;
+import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
 import de.tuebingen.tagger.ExternalTagger;
@@ -466,6 +478,272 @@ public class ParsingInterface {
 
         return res;
     }
+
+    // BY TS
+    public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
+            String sentence) throws Exception {
+
+        boolean res = false;
+        long totalTime = 0;
+        boolean verbose = op.check("v");
+        boolean noUtool = op.check("n");
+        boolean needsAnchoring = g.needsAnchoring();
+
+        String outputfile = "";
+        if (op.check("o")) {
+            outputfile = op.getVal("o");
+        } else {
+            outputfile = "stdout";
+        }
+        String axiom = "v"; // default axiom's value is v
+        if (op.check("a")) {
+            axiom = op.getVal("a");
+        }
+
+        List<String> slabels = new LinkedList<String>();
+
+        // 4. Load the tokenizer
+        Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
+        List<Word> tokens = null;
+        tok.setSentence(sentence);
+        tokens = tok.tokenize();
+        if (verbose) {
+            System.err.println("Tokenized sentence: " + tokens.toString());
+        }
+        List<String> toksentence = Tokenizer.tok2string(tokens);
+        // System.err.println("\t@@ Length " + toksentence.size());
+
+        /* ******** external POS tagging ************/
+        ExternalTagger tagger = new ExternalTagger();
+        File taggerExec = op.check("t") ? new File(op.getVal("t")) : null;
+        tagger.setExec(taggerExec);
+        tagger.setParams("");
+        try {
+            tagger.doTagging(tokens);
+        } catch (TaggerException e) {
+            System.err.println(" ********** Tagging Exception *********");
+            System.err.println(e.toString());
+        }
+        // ExternalTagger.printPosToken(tokens);
+        /* ******************************************/
+
+        // 5. Lexical selection and Anchoring
+        TreeSelector ts = new TreeSelector(tokens, verbose);
+        List<List<Tuple>> subgrammars = null;
+
+        if (needsAnchoring) {
+            long ancTime = System.nanoTime();
+            // 5-a. According to the tokens, we retrieve the pertinent morph
+            // entries
+            // 5-b. According to the morph entries, we instantiate the pertinent
+            // lemmas
+            // 5-c. According to the instantiated lemmas, we instantiate the
+            // pertinent tuples
+            // 6. Tree anchoring
+            ts.retrieve(g.getMorphEntries(), g.getLemmas(), g.getGrammar(),
+                    slabels);
+            // System.err.println(ts.toString());
+            // System.err.println(ts.getTupleHash());
+
+            long anchoredTime = System.nanoTime() - ancTime;
+            System.err.println("Grammar anchoring time: "
+                    + (anchoredTime) / (Math.pow(10, 9)) + " sec.");
+            if (verbose)
+                System.err.println("Anchoring results:\n" + ts.toString());
+            totalTime += anchoredTime;
+            if (!op.check("nofiltering")) {
+                // --------------------------------------------------------
+                // before RCG conversion, we apply lexical disambiguation:
+                // --------------------------------------------------------
+                List<PolarizedToken> lptk = ts.getPtokens();
+                if (verbose) {
+                    for (PolarizedToken ptk : lptk) {
+                        System.err.println(ptk.toString());
+                    }
+                }
+                PolarityAutomaton pa = new PolarityAutomaton(toksentence, lptk,
+                        axiom, verbose, ts.getLexNodes(), ts.getCoancNodes());
+                List<List<String>> tupleSets = pa.getPossibleTupleSets();
+                subgrammars = ComputeSubGrammar.computeSubGrammar(verbose,
+                        tupleSets, ts.getTupleHash(), ts.getTreeHash());
+
+                System.err.println(
+                        "\t@@##Tree combinations before classical polarity filtering   : "
+                                + ts.getambig());
+                System.err.println(
+                        "\t@@##Tree combinations after classical polarity filtering   : "
+                                + CollectionUtilities.computeAmbig(tupleSets,
+                                        toksentence)
+                                + "\n");
+
+                if (verbose) {
+                    System.err.println("Valid tuple sets:\n" + tupleSets);
+                    // System.err.println("\nCorresponding sub-grammars:\n" +
+                    // subgrammars);
+                }
+                // --------------------------------------------------------
+            } else {
+                System.err.println(
+                        "\n\t@@##Tree combinations after left polarity filtering   : "
+                                + ts.getambig() + "\n");
+            }
+        } else {
+            ts.store(g.getGrammar());
+        }
+        // Tree Selection results stored in specific variables to avoid
+        // keeping a pointer to the ts variable (and wasting memory)
+        Map<String, TagTree> grammarDict = ts.getTreeHash();
+
+        // to be sure that we are as efficient as possible, we do a separate
+        // filtering stage here
+        {
+            Set<String> words = new HashSet<String>();
+            for (int k = 0; k < tokens.size(); k++)
+                words.add(tokens.get(k).getWord());
+            // explicitly add empty word
+            words.add(null);
+            words.add("");
+
+            List<String> to_remove = new LinkedList<String>();
+
+            Iterator<String> its = grammarDict.keySet().iterator();
+            while (its.hasNext()) {
+
+                String key = its.next();
+                TagTree tree = grammarDict.get(key);
+
+                List<TagNode> nodes = new LinkedList<TagNode>();
+                ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
+
+                for (TagNode n : nodes) {
+
+                    if (n.getType() == TagNode.LEX
+                            && !words.contains(n.getCategory())) {
+
+                        System.err.println("########Removing tree due to word "
+                                + n.getCategory());
+
+                        to_remove.add(key);
+                        break;
+                    }
+                }
+            }
+
+            for (String r : to_remove)
+                grammarDict.remove(r);
+        }
+
+        // DEBUG
+        // For debugging:
+        // Iterator<String> its = grammarDict.keySet().iterator();
+        // File save_grammar = new File("save_grammar.txt");
+        // FileWriter fw = new FileWriter(save_grammar);
+        // while (its.hasNext()) {
+        // String k = its.next();
+        // TagTree tagt = grammarDict.get(k);
+        // System.err.println("printing tree with index "+k+"\n");
+        // System.err.println(tagt.toString(""));
+        // fw.write("x x\t X\t" + tagt.print() + "\n");
+        // }
+        // fw.close();
+        // END_DEBUG
+
+        long sTime = System.nanoTime();
+
+        // parse
+        long parseTime = System.nanoTime();
+        // TAGParser parser = new TAGParser(grammarDict);
+        SlimTAGParser parser = new SlimTAGParser(grammarDict);
+        Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
+        List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
+                axiom);
+        long parsingTime = System.nanoTime() - parseTime;
+        System.err.println("Total time for parsing and tree extraction: "
+                + (parsingTime) / (Math.pow(10, 9)) + " sec.");
+
+        res = (forest_roots.size() > 0);
+
+        if (res) {
+            // visualize parses
+            Document fdoc = ProduceDOM.buildDOMForest(forest_rules,
+                    forest_roots, tok.getSentence(), op.getVal("g"),
+                    new NameFactory(), null);
+
+            // DEBUG(by TS)
+            // XMLUtilities.writeXML(fdoc,"fdoc.xml","tulipa-forest3.dtd,xml",
+            // true);
+            // END_DEBUG
+
+            if (op.check("f")) {
+                Document fdoc2 = ProduceDOM.buildDOMForest(forest_rules,
+                        forest_roots, tok.getSentence(), op.getVal("g"),
+                        new NameFactory(), grammarDict);
+                XMLUtilities.writeXML(fdoc2, op.getVal("f"),
+                        "tulipa-forest3.dtd,xml", true);
+            }
+
+            if (op.check("x")) { // XML output of the derivations!
+                long xmlTime = System.nanoTime();
+                Document dparses = DOMderivationBuilder.buildDOMderivation(
+                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, grammarDict,
+                                false, false, false, needsAnchoring, slabels,
+                                noUtool),
+                        sentence);
+                XMLUtilities.writeXML(dparses, outputfile,
+                        "tulipa-parses.dtd,xml", true);
+                long estXMLTime = System.nanoTime();
+                System.err.println(
+                        "Parses available (in XML) in " + outputfile + ".");
+                estXMLTime = System.nanoTime() - xmlTime;
+
+                System.err.println("XML production time: "
+                        + (estXMLTime) / (Math.pow(10, 9)) + " sec.");
+                totalTime += estXMLTime;
+            } else { // graphical output (default)
+                long estDTime = System.nanoTime();
+                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
+                        grammarDict, true, op.check("w"), op.check("w"),
+                        needsAnchoring, slabels, noUtool);
+                long dDTime = System.nanoTime() - estDTime;
+                System.err.println("Derivation trees extraction time: "
+                        + (dDTime) / (Math.pow(10, 9)) + " sec.");
+                totalTime += dDTime;
+            }
+
+            if (op.check("d")) { // dependency output
+                // cannot set file and path to dependency output from the jar
+                // String deppath = op.getVal("d") + File.separator;
+                String deppath = System.getProperty("user.dir")
+                        + File.separator;
+                String depfile = "dependencies.xml";
+                String pdffile = "structure-*.pdf";
+                // get dependencies
+                DependencyExtractor de = new DependencyExtractor(tokens, fdoc,
+                        grammarDict, needsAnchoring);
+                de.processAll();
+                // System.err.println(de.toString());
+                Document ddd = DependencyDOMbuilder.buildAllDep(tokens,
+                        sentence, de.getDependences());
+                XMLUtilities.writeXML(ddd, deppath + depfile,
+                        "http://w3.msi.vxu.se/~nivre/research/MALTXML.dtd,xml",
+                        false);
+                System.err.println("XML dependency structures available in "
+                        + deppath + File.separator + depfile + ".");
+                DTool.toPDF(System.getProperty("user.dir") + File.separator
+                        + depfile);
+                System.err.println("PDF dependency structures available in "
+                        + deppath + File.separator + pdffile + ".");
+            }
+
+        } else {
+            long noTime = System.nanoTime() - sTime;
+            totalTime += noTime;
+            System.err.println("No derivation forest available.");
+        }
+
+        return res;
+    }
+    // END_BY_TS
 
     public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
             String sentence) throws TokenizerException, IOException {
