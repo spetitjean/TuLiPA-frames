@@ -131,6 +131,7 @@ public class InputGUI implements ActionListener {
     private static final String TTMCTAG = "ttmctag";
     private static final String CFG = "cfg";
     private static final String LCFRS = "lcfrs";
+    private static final String TAG2RCG = "tag2rcg";
 
     private static final String splashLocation = "images/splash.gif";
     private static final String logoLocation = "images/tulipa-logo.gif";
@@ -172,6 +173,7 @@ public class InputGUI implements ActionListener {
     private JRadioButton ttmctagb = null;
     private JRadioButton cfgb = null;
     private JRadioButton lcfrsb = null;
+    private JRadioButton tag2rcgb = null;
 
     private JLabel sText = null;
     private JComboBox<Object> toParse = null;
@@ -325,6 +327,9 @@ public class InputGUI implements ActionListener {
         lcfrsb = new JRadioButton();
         lcfrsb.setText("LCFRS");
         lcfrsb.setSelected(false);
+        tag2rcgb = new JRadioButton();
+        tag2rcgb.setText("TAG to RCG");
+        tag2rcgb.setSelected(false);
 
         grammarButtonGroup.add(rcgb);
         rcgb.addKeyListener(new GrammarKeyListener(this));
@@ -336,6 +341,8 @@ public class InputGUI implements ActionListener {
         cfgb.addKeyListener(new GrammarKeyListener(this));
         grammarButtonGroup.add(lcfrsb);
         lcfrsb.addKeyListener(new GrammarKeyListener(this));
+        grammarButtonGroup.add(tag2rcgb);
+        tag2rcgb.addKeyListener(new GrammarKeyListener(this));
 
         JPanel grammarOpts = new JPanel();
         grammarOpts.setLayout(new GridLayout(2, 3));
@@ -344,6 +351,7 @@ public class InputGUI implements ActionListener {
         grammarOpts.add(rcgb);
         grammarOpts.add(tagb);
         grammarOpts.add(ttmctagb);
+        grammarOpts.add(tag2rcgb);
         grammarOpts.setBorder(new TitledBorder("Mode"));
 
         JPanel tagOpts = new JPanel();
@@ -849,12 +857,11 @@ public class InputGUI implements ActionListener {
             }
             boolean parseres = false;
             try {
-                if (g instanceof TTMCTAG) {
-                    // bruteforce new method. TODO: create Butten for tag2rcg
+                if (tag2rcgb.isSelected()) {
+                    parseres = ParsingInterface.parseSentence(ops, sit,
+                            sentence);
+                } else if (g instanceof TTMCTAG) {
                     parseres = ParsingInterface.parseTAG(ops, sit, sentence);
-                    // parseres = ParsingInterface.parseSentence(ops, sit,
-                    // sentence);
-                    // parseres = Interface.parseSentence(ops, g, sentence);
                 } else {
                     parseres = ParsingInterface.parseNonTAG(ops, g, sentence);
                 }
@@ -894,6 +901,9 @@ public class InputGUI implements ActionListener {
         } else if (gram.equals(LCFRS)) {
             lcfrsb.setSelected(true);
             lcfrsb.requestFocus();
+        } else if (gram.equals(TAG2RCG)) {
+            tag2rcgb.setSelected(true);
+            tag2rcgb.requestFocus();
         }
     }
 
@@ -910,6 +920,8 @@ public class InputGUI implements ActionListener {
             ret = CFG;
         } else if (lcfrsb.isSelected()) {
             ret = LCFRS;
+        } else if (tag2rcgb.isSelected()) {
+            ret = TAG2RCG;
         }
         return ret;
     }
@@ -957,6 +969,9 @@ public class InputGUI implements ActionListener {
         } else if (ttmctagb.isSelected()) {
             xmlBox.setSelected(true);
             setGram(RCG);
+        } else if (tag2rcgb.isSelected()) {
+            xmlBox.setSelected(true);
+            setGram(TAG2RCG);
         } else {
             xmlBox.setSelected(true);
             setGram(RCG);
@@ -1023,6 +1038,8 @@ public class InputGUI implements ActionListener {
             setGram("rcg");
         } else if (ops.check("c")) {
             setGram("cfg");
+        } else if (ops.check("tag2rcg")) {
+            setGram(TAG2RCG);
         } else if (ops.check("lcfrs")) {
             setGram("lcfrs");
         } else {
@@ -1064,7 +1081,8 @@ public class InputGUI implements ActionListener {
             ops.setOurVal("c", "");
         } else if (LCFRS.equals(getGram())) {
             ops.setOurVal("lcfrs", "");
-        } else {
+        } else if (TAG2RCG.equals(getGram())) {
+            ops.setOurVal(TAG2RCG, "");
         }
         if (verboseBox.isSelected()) {
             ops.setOurVal("v", "");

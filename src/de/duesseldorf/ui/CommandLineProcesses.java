@@ -218,7 +218,7 @@ public class CommandLineProcesses {
 
         res += "where OPTIONS are:\n\t";
         res += "for functionalities:\n\t";
-        res += "-tag2rcg     (use TAG to RCG conversion)";
+        res += "-tag2rcg     (use TAG to RCG conversion)\n\t";
         res += "-r      (rcg parser, default is TAG/TT-MCTAG)\n\t";
         res += "-k N    (limits the size of the list of pending arguments to N)\n\t";
         res += "-v      (verbose mode, for debugging purposes, information dumped in stderr)\n\t";
