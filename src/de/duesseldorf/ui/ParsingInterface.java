@@ -50,12 +50,9 @@ import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.parser.SlimTAGParser;
-import de.saar.chorus.dtool.DTool;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
 import de.tuebingen.converter.GrammarConvertor;
-import de.tuebingen.dependency.DependencyDOMbuilder;
-import de.tuebingen.dependency.DependencyExtractor;
 import de.tuebingen.disambiguate.ComputeSubGrammar;
 import de.tuebingen.disambiguate.PolarityAutomaton;
 import de.tuebingen.disambiguate.PolarizedToken;
@@ -89,396 +86,6 @@ import de.tuebingen.util.XMLUtilities;
 
 public class ParsingInterface {
 
-    /**
-     * A TAG is converted into a RCG and then parsed.
-     * 
-     * @param op
-     * @param g
-     * @param sentence
-     * @return true if the sentence is parsed successfully
-     * @throws Exception
-     */
-    public static boolean parseSentence(CommandLineOptions op, Grammar g,
-            String sentence) throws Exception {
-        Situation sit = new Situation(g, null, null);
-        return parseSentence(op, sit, sentence);
-
-    }
-
-    /**
-     * 
-     * A TAG is converted into a RCG and then parsed.
-     * 
-     * @param op
-     * @param sit
-     *            The Situation - constisting of the grammar, possibly frames
-     *            and a type hierarchy
-     * @param sentence
-     * @return
-     * @throws Exception
-     */
-    public static boolean parseSentence(CommandLineOptions op, Situation sit,
-            String sentence) throws Exception {
-
-        // you might want to check if everything is in order here
-        // try {
-        // // System.out.println(sit.getGrammar().toString());
-        // // System.out.println(sit.getFrameGrammar().toString());
-        // // System.out.println(sit.getTypeHierarchy().toString());
-        // } catch (Exception e) {
-        // System.err.println("sth is null in Interface.622");
-        // e.printStackTrace();
-        // }
-        boolean res = false;
-        long totalTime = 0;
-        boolean verbose = op.check("v");
-        boolean noUtool = op.check("n");
-        boolean needsAnchoring = sit.getGrammar().needsAnchoring();
-
-        String outputfile = "";
-        if (op.check("o")) {
-            outputfile = op.getVal("o");
-        } else {
-            outputfile = "stdout";
-        }
-        String axiom = "v"; // default axiom's value is v
-        if (op.check("a")) {
-            axiom = op.getVal("a");
-        }
-
-        List<String> slabels = new LinkedList<String>();
-
-        // 4. Load the tokenizer
-        Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
-        List<Word> tokens = null;
-        tok.setSentence(sentence);
-        tokens = tok.tokenize();
-        if (verbose) {
-            System.err.println("Tokenized sentence: " + tokens.toString());
-        }
-        List<String> toksentence = Tokenizer.tok2string(tokens);
-        // System.err.println("\t@@ Length " + toksentence.size());
-
-        /* ******** external POS tagging ************/
-        ExternalTagger tagger = new ExternalTagger();
-        File taggerExec = op.check("t") ? new File(op.getVal("t")) : null;
-        tagger.setExec(taggerExec);
-        tagger.setParams("");
-        try {
-            tagger.doTagging(tokens);
-        } catch (TaggerException e) {
-            System.err.println(" ********** Tagging Exception *********");
-            System.err.println(e.toString());
-        }
-        // ExternalTagger.printPosToken(tokens);
-        /* ******************************************/
-
-        // 5. Lexical selection and Anchoring
-        TreeSelector ts = new TreeSelector(tokens, verbose);
-        List<List<Tuple>> subgrammars = null;
-
-        if (needsAnchoring) {
-            long ancTime = System.nanoTime();
-            // 5-a. According to the tokens, we retrieve the pertinent morph
-            // entries
-            // 5-b. According to the morph entries, we instantiate the pertinent
-            // lemmas
-            // 5-c. According to the instantiated lemmas, we instantiate the
-            // pertinent tuples
-            // 6. Tree anchoring
-            ts.retrieve(sit, slabels);
-            // ts.retrieve(g.getMorphEntries(), g.getLemmas(), g.getGrammar(),
-            // slabels);
-            // System.out.println(ts.toString());
-            // System.err.println(ts.getTupleHash());
-
-            long anchoredTime = System.nanoTime() - ancTime;
-            System.err.println("Grammar anchoring time: "
-                    + (anchoredTime) / (Math.pow(10, 9)) + " sec.");
-            if (verbose)
-                System.err.println("Anchoring results:\n" + ts.toString());
-            totalTime += anchoredTime;
-            if (!op.check("nofiltering")) {
-                // --------------------------------------------------------
-                // before RCG conversion, we apply lexical disambiguation:
-                // --------------------------------------------------------
-                List<PolarizedToken> lptk = ts.getPtokens();
-                if (verbose) {
-                    for (PolarizedToken ptk : lptk) {
-                        System.err.println(ptk.toString());
-                    }
-                }
-                // System.out.println("LexNodes: " + ts.getLexNodes());
-                PolarityAutomaton pa = new PolarityAutomaton(toksentence, lptk,
-                        axiom, verbose, ts.getLexNodes(), ts.getCoancNodes());
-                List<List<String>> tupleSets = pa.getPossibleTupleSets();
-                subgrammars = ComputeSubGrammar.computeSubGrammar(verbose,
-                        tupleSets, ts.getTupleHash(), ts.getTreeHash());
-
-                System.err.println(
-                        "\t@@##Tree combinations before classical polarity filtering: "
-                                + ts.getambig());
-                System.err.println(
-                        "\t@@##Tree combinations after classical polarity filtering: "
-                                + CollectionUtilities.computeAmbig(tupleSets,
-                                        toksentence)
-                                + "\n");
-
-                if (verbose) {
-                    System.err.println("Valid tuple sets:\n" + tupleSets);
-                    // System.err.println("\nCorresponding sub-grammars:\n" +
-                    // subgrammars);
-                }
-                // --------------------------------------------------------
-            } else {
-                System.err.println(
-                        "\n\t@@##Tree combinations after left polarity filtering   : "
-                                + ts.getambig() + "\n");
-            }
-        } else {
-            ts.store(sit.getGrammar().getGrammar());
-        }
-        // Tree Selection results stored in specific variables to avoid
-        // keeping a pointer to the ts variable (and wasting memory)
-        Map<String, TagTree> grammarDict = ts.getTreeHash();
-        List<Tuple> anchoredTuples = ts.getAnctuples();
-        // For debugging:
-        /*
-         * Iterator<String> its = grammarDict.keySet().iterator(); while
-         * (its.hasNext()) { String k = its.next(); TagTree tagt =
-         * grammarDict.get(k); System.err.println(tagt.toString("")); }
-         * for(Tuple t : ts.getAnctuples()) { System.err.println(t); }
-         */
-
-        // 7. RCG conversion
-        int limit = op.check("z") ? Integer.parseInt(op.getVal("z")) : -1;
-        int k_limit = op.check("k") ? Integer.parseInt(op.getVal("k")) : -1;
-
-        RCG rcggrammar = null;
-        long startTime = System.nanoTime();
-        if (subgrammars != null) { // i.e. we used lexical disambiguation
-            // if (false) { // i.e. we used lexical disambiguation
-            // System.out.println("Doing subgrammars: " + subgrammars);
-            rcggrammar = new RCG();
-            for (int sI = 0; sI < subgrammars.size(); sI++) {
-                List<Tuple> ltuples = subgrammars.get(sI);
-                System.err.println("Converting sub-grammar " + sI + "...");
-                GrammarConvertor gc = new GrammarConvertor(ltuples, verbose,
-                        toksentence, grammarDict, !needsAnchoring, k_limit,
-                        limit);
-                gc.buildAllClauses(axiom);
-                rcggrammar.addGrammar(gc.getRcggrammar(), grammarDict);
-                // OptimizedGrammarConverter ogc = new
-                // OptimizedGrammarConverter(anchoredTuples, verbose,
-                // toksentence, grammarDict, !needsAnchoring);
-                // ogc.buildAllClauses(axiom);
-                // rcggrammar.addGrammar(ogc.getRcggrammar(), grammarDict);
-            }
-        } else {
-            GrammarConvertor gc = new GrammarConvertor(anchoredTuples, verbose,
-                    toksentence, grammarDict, !needsAnchoring, k_limit, limit);
-            gc.buildAllClauses(axiom);
-            // OptimizedGrammarConverter ogc = new
-            // OptimizedGrammarConverter(anchoredTuples, verbose, toksentence,
-            // grammarDict, !needsAnchoring);
-            // ogc.buildAllClauses(axiom);
-            rcggrammar = new RCG();
-            rcggrammar.addGrammar(gc.getRcggrammar(), grammarDict);
-            // rcggrammar.addGrammar(ogc.getRcggrammar(), grammarDict);
-        }
-        long estimatedTime = System.nanoTime() - startTime;
-        totalTime += estimatedTime;
-        if (rcggrammar == null || rcggrammar.getStartPredicateLabel() == null) {
-            // System.err.println("Grammar conversion failed. \nPlease check the
-            // value of the axiom.");
-            throw new Exception(
-                    "Polarity filtering / grammar conversion failed. \nPlease check the value of the axiom and the lexicon.");
-        } else
-            System.err.println("Grammar conversion time: "
-                    + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
-        // for printing the RCG grammar computed
-        // either pretty printed:
-        // System.out.println(rcggrammar.toString(ts.getTreeHash()) + "\n");
-        // --------------------------------------------------------------
-        // or not (i.e. the real grammar + id interpretations):
-        /*
-         * //if (true) { if (verbose) { Iterator<String> itt =
-         * grammarDict.keySet().iterator(); while(itt.hasNext()) { String ttree
-         * = itt.next(); System.err.println("Tree " + ttree + "\t := " +
-         * grammarDict.get(ttree).getOriginalId() + " " +
-         * grammarDict.get(ttree).toString("")); }
-         * //System.err.println(rcggrammar.toString()); }
-         */
-
-        // 7'. RCG XML export (for DyALog)
-        if (op.check("e")) {
-            System.err.println(rcggrammar.toString(grammarDict));
-            Document rcgd = RCGDOMbuilder.exportGrammar(rcggrammar,
-                    grammarDict);
-            XMLUtilities.writeXML(rcgd, op.getVal("e"), "rcg.dtd,xml", true);
-        }
-
-        // 8. RCG parsing
-        RCG rcgg = rcggrammar;
-
-        RCGParser parser = null;
-        if (op.check("q2") || op.check("earley")) {
-            if (verbose)
-                System.err.println("Using CSP earley parser");
-            // full parser from Kallmeyer&Maier&Parmentier(2009), using
-            // constraint programming
-            parser = new RCGParserConstraintEarley(rcgg);
-            int verb = (verbose) ? 0 : -2;
-            ((RCGParserConstraintEarley) parser).setVerbose(verb);
-            ((RCGParserConstraintEarley) parser).setGDict(grammarDict);
-        } else if (op.check("full")) {
-            if (verbose)
-                System.err
-                        .println("Using Top-Down parser from Boullier (2000)");
-            parser = new RCGParserBoullier2(verbose, rcgg, grammarDict,
-                    rcgg.getCategories());
-        }
-        // simple RCG parser is the default
-        if (parser == null) {
-            if (verbose)
-                System.err.println("Using simple RCG parser");
-            parser = new SimpleRCGParserEarley(rcgg);
-        }
-
-        // for printing the categories modifiable within the subgrammar:
-        // System.out.println(rcgg.getCategories());
-
-        long sTime = System.nanoTime();
-        // the first parameter of parseSentence defines the verbosity
-        boolean parseres = false;
-        try {
-            parseres = parser.parseSentence(verbose, tokens);
-        } catch (Exception e) {
-            // to get the stats anyway (even if there is no parse)
-            long estTime = System.nanoTime() - sTime;
-            System.err.println(
-                    "Total parsing time (no parse found) for sentence \""
-                            + sentence + "\": "
-                            + (totalTime + estTime) / (Math.pow(10, 9))
-                            + " sec.");
-            // ----------------------------------------------------
-            CommandLineProcesses.error("No parse found.", op);
-        }
-        long estTime = System.nanoTime() - sTime;
-        System.err.println(
-                "Parsing time: " + (estTime) / (Math.pow(10, 9)) + " sec.");
-        if (parseres) {
-            System.err
-                    .println("Sentence \"" + tok.getSentence() + "\" parsed.");
-            // for printing the RCG derivation forest (also printed by the
-            // parser in verbose mode)
-            // System.err.println(parser.printForest());
-
-            // 9. Forest extraction
-            ForestExtractor extractor = ForestExtractorFactory
-                    .getForestExtractor(parser);
-            extractor.init(verbose, rcgg,
-                    parser.getForestExtractorInitializer());
-            long fTime = System.nanoTime();
-            extractor.extract();
-            long estfTime = System.nanoTime() - fTime;
-
-            System.err.println("\nForest extraction time for sentence \""
-                    + sentence + "\": " + (estfTime) / (Math.pow(10, 9))
-                    + " sec.");
-
-            if (verbose)
-                System.err.println("**" + extractor.printForest());
-
-            Document fdoc = ProduceDOM.buildDOMForest(extractor.getForest(),
-                    extractor.getStart(), tok.getSentence(), op.getVal("g"),
-                    new NameFactory(), null);
-            // DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
-            // grammarDict, true, op.check("w"), op.check("w"), needsAnchoring,
-            // slabels, noUtool);
-            // 9'. forest XML export
-            // if (op.check("f")) {
-            // Document fdoc2 = ProduceDOM.buildDOMForest(
-            // extractor.getForest(), extractor.getStart(),
-            // tok.getSentence(), op.getVal("g"), new NameFactory(),
-            // grammarDict);
-            // XMLUtilities.writeXML(fdoc2, op.getVal("f"),
-            // "tulipa-forest3.dtd,xml", true);
-            // }
-            // System.err.println("Forest extraction time: "
-            // + (estfTime) / (Math.pow(10, 9)) + " sec.");
-            // // update the time counter
-            // totalTime += estTime + estfTime;
-
-            // 10. GUI or XML output of the parses (and dependencies if needed)
-            if (op.check("x")) { // XML output of the derivations!
-                long xmlTime = System.nanoTime();
-                Document dparses = DOMderivationBuilder.buildDOMderivation(
-                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, sit,
-                                grammarDict, false, false, false,
-                                needsAnchoring, slabels, noUtool),
-                        sentence);
-                XMLUtilities.writeXML(dparses, outputfile,
-                        "tulipa-parses.dtd,xml", true);
-                long estXMLTime = System.nanoTime();
-                System.err.println(
-                        "Parses available (in XML) in " + outputfile + ".");
-                estXMLTime = System.nanoTime() - xmlTime;
-
-                System.err.println("XML production time: "
-                        + (estXMLTime) / (Math.pow(10, 9)) + " sec.");
-                totalTime += estXMLTime;
-            } else { // graphical output (default)
-                long estDTime = System.nanoTime();
-                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc, sit,
-                        grammarDict, true, op.check("w"), op.check("w"),
-                        needsAnchoring, slabels, noUtool);
-                long dDTime = System.nanoTime() - estDTime;
-                System.err.println("Derivation trees extraction time: "
-                        + (dDTime) / (Math.pow(10, 9)) + " sec.");
-                totalTime += dDTime;
-            }
-
-            // if (op.check("d")) { // dependency output
-            // // cannot set file and path to dependency output from the jar
-            // //String deppath = op.getVal("d") + File.separator;
-            // String deppath = System.getProperty("user.dir") + File.separator;
-            // String depfile = "dependencies.xml";
-            // String pdffile = "structure-*.pdf";
-            // // get dependencies
-            // DependencyExtractor de = new DependencyExtractor(tokens, fdoc,
-            // grammarDict, needsAnchoring);
-            // de.processAll();
-            // //System.err.println(de.toString());
-            // Document ddd = DependencyDOMbuilder.buildAllDep(tokens, sentence,
-            // de.getDependences());
-            // XMLUtilities.writeXML(ddd, deppath + depfile,
-            // "http://w3.msi.vxu.se/~nivre/research/MALTXML.dtd,xml", false);
-            // System.err.println("XML dependency structures available in " +
-            // deppath + File.separator + depfile + ".");
-            // DTool.toPDF(System.getProperty("user.dir") + File.separator +
-            // depfile);
-            // System.err.println("PDF dependency structures available in " +
-            // deppath + File.separator + pdffile + ".");
-            // }
-
-            res = true;
-
-        } else {
-            long noTime = System.nanoTime() - sTime;
-            totalTime += noTime;
-            System.err.println("No derivation forest available.");
-            res = false;
-        }
-
-        // total = loading + anchoring + conversion + parsing + forest + XML /
-        // derivation trees
-        System.err.println("\nTotal parsing time for sentence \"" + sentence
-                + "\": " + (totalTime) / (Math.pow(10, 9)) + " sec.");
-
-        return res;
-    }
-
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
         Situation sit = new Situation(g, null, null);
@@ -488,12 +95,20 @@ public class ParsingInterface {
     // BY TS
     public static boolean parseTAG(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
-
+        // you might want to check if everything is in order here
+        // try {
+        // // System.out.println(sit.getGrammar().toString());
+        // // System.out.println(sit.getFrameGrammar().toString());
+        // // System.out.println(sit.getTypeHierarchy().toString());
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
         boolean res = false;
         long totalTime = 0;
         boolean verbose = op.check("v");
         boolean noUtool = op.check("n");
         boolean needsAnchoring = sit.getGrammar().needsAnchoring();
+        Document fdoc = null;
 
         String outputfile = "";
         if (op.check("o")) {
@@ -605,9 +220,187 @@ public class ParsingInterface {
         // keeping a pointer to the ts variable (and wasting memory)
         Map<String, TagTree> grammarDict = ts.getTreeHash();
 
-        // to be sure that we are as efficient as possible, we do a separate
-        // filtering stage here
-        {
+        if (op.check("tag2rcg")) {
+            List<Tuple> anchoredTuples = ts.getAnctuples();
+            // For debugging:
+            /*
+             * Iterator<String> its = grammarDict.keySet().iterator(); while
+             * (its.hasNext()) { String k = its.next(); TagTree tagt =
+             * grammarDict.get(k); System.err.println(tagt.toString("")); }
+             * for(Tuple t : ts.getAnctuples()) { System.err.println(t); }
+             */
+
+            // 7. RCG conversion
+            int limit = op.check("z") ? Integer.parseInt(op.getVal("z")) : -1;
+            int k_limit = op.check("k") ? Integer.parseInt(op.getVal("k")) : -1;
+
+            RCG rcggrammar = null;
+            long startTime = System.nanoTime();
+            if (subgrammars != null) { // i.e. we used lexical disambiguation
+                // if (false) { // i.e. we used lexical disambiguation
+                // System.out.println("Doing subgrammars: " + subgrammars);
+                rcggrammar = new RCG();
+                for (int sI = 0; sI < subgrammars.size(); sI++) {
+                    List<Tuple> ltuples = subgrammars.get(sI);
+                    System.err.println("Converting sub-grammar " + sI + "...");
+                    GrammarConvertor gc = new GrammarConvertor(ltuples, verbose,
+                            toksentence, grammarDict, !needsAnchoring, k_limit,
+                            limit);
+                    gc.buildAllClauses(axiom);
+                    rcggrammar.addGrammar(gc.getRcggrammar(), grammarDict);
+                    // OptimizedGrammarConverter ogc = new
+                    // OptimizedGrammarConverter(anchoredTuples, verbose,
+                    // toksentence, grammarDict, !needsAnchoring);
+                    // ogc.buildAllClauses(axiom);
+                    // rcggrammar.addGrammar(ogc.getRcggrammar(), grammarDict);
+                }
+            } else {
+                GrammarConvertor gc = new GrammarConvertor(anchoredTuples,
+                        verbose, toksentence, grammarDict, !needsAnchoring,
+                        k_limit, limit);
+                gc.buildAllClauses(axiom);
+                // OptimizedGrammarConverter ogc = new
+                // OptimizedGrammarConverter(anchoredTuples, verbose,
+                // toksentence,
+                // grammarDict, !needsAnchoring);
+                // ogc.buildAllClauses(axiom);
+                rcggrammar = new RCG();
+                rcggrammar.addGrammar(gc.getRcggrammar(), grammarDict);
+                // rcggrammar.addGrammar(ogc.getRcggrammar(), grammarDict);
+            }
+            long estimatedTime = System.nanoTime() - startTime;
+            totalTime += estimatedTime;
+            if (rcggrammar == null
+                    || rcggrammar.getStartPredicateLabel() == null) {
+                // System.err.println("Grammar conversion failed. \nPlease check
+                // the
+                // value of the axiom.");
+                throw new Exception(
+                        "Polarity filtering / grammar conversion failed. \nPlease check the value of the axiom and the lexicon.");
+            } else
+                System.err.println("Grammar conversion time: "
+                        + (estimatedTime) / (Math.pow(10, 9)) + " sec.");
+            // for printing the RCG grammar computed
+            // either pretty printed:
+            // System.out.println(rcggrammar.toString(ts.getTreeHash()) + "\n");
+            // --------------------------------------------------------------
+            // or not (i.e. the real grammar + id interpretations):
+            /*
+             * //if (true) { if (verbose) { Iterator<String> itt =
+             * grammarDict.keySet().iterator(); while(itt.hasNext()) { String
+             * ttree
+             * = itt.next(); System.err.println("Tree " + ttree + "\t := " +
+             * grammarDict.get(ttree).getOriginalId() + " " +
+             * grammarDict.get(ttree).toString("")); }
+             * //System.err.println(rcggrammar.toString()); }
+             */
+
+            // 7'. RCG XML export (for DyALog)
+            if (op.check("e")) {
+                System.err.println(rcggrammar.toString(grammarDict));
+                Document rcgd = RCGDOMbuilder.exportGrammar(rcggrammar,
+                        grammarDict);
+                XMLUtilities.writeXML(rcgd, op.getVal("e"), "rcg.dtd,xml",
+                        true);
+            }
+
+            // 8. RCG parsing
+            RCG rcgg = rcggrammar;
+
+            RCGParser rcgparser = null;
+            if (op.check("q2") || op.check("earley")) {
+                if (verbose)
+                    System.err.println("Using CSP earley parser");
+                // full parser from Kallmeyer&Maier&Parmentier(2009), using
+                // constraint programming
+                rcgparser = new RCGParserConstraintEarley(rcgg);
+                int verb = (verbose) ? 0 : -2;
+                ((RCGParserConstraintEarley) rcgparser).setVerbose(verb);
+                ((RCGParserConstraintEarley) rcgparser).setGDict(grammarDict);
+            } else if (op.check("full")) {
+                if (verbose)
+                    System.err.println(
+                            "Using Top-Down parser from Boullier (2000)");
+                rcgparser = new RCGParserBoullier2(verbose, rcgg, grammarDict,
+                        rcgg.getCategories());
+            }
+            // simple RCG parser is the default
+            if (rcgparser == null) {
+                if (verbose)
+                    System.err.println("Using simple RCG parser");
+                rcgparser = new SimpleRCGParserEarley(rcgg);
+            }
+
+            // for printing the categories modifiable within the subgrammar:
+            // System.out.println(rcgg.getCategories());
+
+            long sTime = System.nanoTime();
+            // the first parameter of parseSentence defines the verbosity
+            boolean parseres = false;
+            try {
+                parseres = rcgparser.parseSentence(verbose, tokens);
+            } catch (Exception e) {
+                // to get the stats anyway (even if there is no parse)
+                long estTime = System.nanoTime() - sTime;
+                System.err.println(
+                        "Total parsing time (no parse found) for sentence \""
+                                + sentence + "\": "
+                                + (totalTime + estTime) / (Math.pow(10, 9))
+                                + " sec.");
+                // ----------------------------------------------------
+                CommandLineProcesses.error("No parse found.", op);
+            }
+            long estTime = System.nanoTime() - sTime;
+            System.err.println(
+                    "Parsing time: " + (estTime) / (Math.pow(10, 9)) + " sec.");
+            if (parseres) {
+                System.err.println(
+                        "Sentence \"" + tok.getSentence() + "\" parsed.");
+                // for printing the RCG derivation forest (also printed by the
+                // parser in verbose mode)
+                // System.err.println(parser.printForest());
+
+                // 9. Forest extraction
+                ForestExtractor extractor = ForestExtractorFactory
+                        .getForestExtractor(rcgparser);
+                extractor.init(verbose, rcgg,
+                        rcgparser.getForestExtractorInitializer());
+                long fTime = System.nanoTime();
+                extractor.extract();
+                long estfTime = System.nanoTime() - fTime;
+
+                System.err.println("\nForest extraction time for sentence \""
+                        + sentence + "\": " + (estfTime) / (Math.pow(10, 9))
+                        + " sec.");
+
+                if (verbose)
+                    System.err.println("**" + extractor.printForest());
+
+                fdoc = ProduceDOM.buildDOMForest(extractor.getForest(),
+                        extractor.getStart(), tok.getSentence(), op.getVal("g"),
+                        new NameFactory(), null);
+                // DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
+                // grammarDict, true, op.check("w"), op.check("w"),
+                // needsAnchoring,
+                // slabels, noUtool);
+                // 9'. forest XML export
+                // if (op.check("f")) {
+                // Document fdoc2 = ProduceDOM.buildDOMForest(
+                // extractor.getForest(), extractor.getStart(),
+                // tok.getSentence(), op.getVal("g"), new NameFactory(),
+                // grammarDict);
+                // XMLUtilities.writeXML(fdoc2, op.getVal("f"),
+                // "tulipa-forest3.dtd,xml", true);
+                // }
+                // System.err.println("Forest extraction time: "
+                // + (estfTime) / (Math.pow(10, 9)) + " sec.");
+                // // update the time counter
+                // totalTime += estTime + estfTime;
+                res = parseres;
+            }
+        } else {
+            // to be sure that we are as efficient as possible, we do a separate
+            // filtering stage here
             Set<String> words = new HashSet<String>();
             for (int k = 0; k < tokens.size(); k++)
                 words.add(tokens.get(k).getWord());
@@ -642,55 +435,55 @@ public class ParsingInterface {
 
             for (String r : to_remove)
                 grammarDict.remove(r);
-        }
 
-        // DEBUG
-        // For debugging:
-        // Iterator<String> its = grammarDict.keySet().iterator();
-        // File save_grammar = new File("save_grammar.txt");
-        // FileWriter fw = new FileWriter(save_grammar);
-        // while (its.hasNext()) {
-        // String k = its.next();
-        // TagTree tagt = grammarDict.get(k);
-        // System.err.println("printing tree with index "+k+"\n");
-        // System.err.println(tagt.toString(""));
-        // fw.write("x x\t X\t" + tagt.print() + "\n");
-        // }
-        // fw.close();
-        // END_DEBUG
-
-        long sTime = System.nanoTime();
-        // parse
-        long parseTime = System.nanoTime();
-        // TAGParser parser = new TAGParser(grammarDict);
-        SlimTAGParser parser = new SlimTAGParser(grammarDict);
-        Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
-        List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
-                axiom);
-        long parsingTime = System.nanoTime() - parseTime;
-        System.err.println("Total time for parsing and tree extraction: "
-                + (parsingTime) / (Math.pow(10, 9)) + " sec.");
-        res = (forest_roots.size() > 0);
-
-        if (res) {
-            // visualize parses
-            Document fdoc = ProduceDOM.buildDOMForest(forest_rules,
-                    forest_roots, tok.getSentence(), op.getVal("g"),
-                    new NameFactory(), null);
-
-            // DEBUG(by TS)
-            // XMLUtilities.writeXML(fdoc,"fdoc.xml","tulipa-forest3.dtd,xml",
-            // true);
+            // DEBUG
+            // For debugging:
+            // Iterator<String> its = grammarDict.keySet().iterator();
+            // File save_grammar = new File("save_grammar.txt");
+            // FileWriter fw = new FileWriter(save_grammar);
+            // while (its.hasNext()) {
+            // String k = its.next();
+            // TagTree tagt = grammarDict.get(k);
+            // System.err.println("printing tree with index "+k+"\n");
+            // System.err.println(tagt.toString(""));
+            // fw.write("x x\t X\t" + tagt.print() + "\n");
+            // }
+            // fw.close();
             // END_DEBUG
 
-            if (op.check("f")) {
-                Document fdoc2 = ProduceDOM.buildDOMForest(forest_rules,
-                        forest_roots, tok.getSentence(), op.getVal("g"),
-                        new NameFactory(), grammarDict);
-                XMLUtilities.writeXML(fdoc2, op.getVal("f"),
-                        "tulipa-forest3.dtd,xml", true);
-            }
+            long sTime = System.nanoTime();
+            // parse
+            long parseTime = System.nanoTime();
+            // TAGParser parser = new TAGParser(grammarDict);
+            SlimTAGParser parser = new SlimTAGParser(grammarDict);
+            Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
+            List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
+                    axiom);
+            long parsingTime = System.nanoTime() - parseTime;
+            System.err.println("Total time for parsing and tree extraction: "
+                    + (parsingTime) / (Math.pow(10, 9)) + " sec.");
+            res = (forest_roots.size() > 0);
+            if (res) {
+                // visualize parses
+                fdoc = ProduceDOM.buildDOMForest(forest_rules, forest_roots,
+                        tok.getSentence(), op.getVal("g"), new NameFactory(),
+                        null);
 
+                // DEBUG(by TS)
+                // XMLUtilities.writeXML(fdoc,"fdoc.xml","tulipa-forest3.dtd,xml",
+                // true);
+                // END_DEBUG
+
+                if (op.check("f")) {
+                    Document fdoc2 = ProduceDOM.buildDOMForest(forest_rules,
+                            forest_roots, tok.getSentence(), op.getVal("g"),
+                            new NameFactory(), grammarDict);
+                    XMLUtilities.writeXML(fdoc2, op.getVal("f"),
+                            "tulipa-forest3.dtd,xml", true);
+                }
+            }
+        }
+        if (res) {
             if (op.check("x")) { // XML output of the derivations!
                 long xmlTime = System.nanoTime();
                 Document dparses = DOMderivationBuilder.buildDOMderivation(
@@ -719,36 +512,39 @@ public class ParsingInterface {
                 totalTime += dDTime;
             }
 
-            if (op.check("d")) { // dependency output
-                // cannot set file and path to dependency output from the jar
-                // String deppath = op.getVal("d") + File.separator;
-                String deppath = System.getProperty("user.dir")
-                        + File.separator;
-                String depfile = "dependencies.xml";
-                String pdffile = "structure-*.pdf";
-                // get dependencies
-                DependencyExtractor de = new DependencyExtractor(tokens, fdoc,
-                        grammarDict, needsAnchoring);
-                de.processAll();
-                // System.err.println(de.toString());
-                Document ddd = DependencyDOMbuilder.buildAllDep(tokens,
-                        sentence, de.getDependences());
-                XMLUtilities.writeXML(ddd, deppath + depfile,
-                        "http://w3.msi.vxu.se/~nivre/research/MALTXML.dtd,xml",
-                        false);
-                System.err.println("XML dependency structures available in "
-                        + deppath + File.separator + depfile + ".");
-                DTool.toPDF(System.getProperty("user.dir") + File.separator
-                        + depfile);
-                System.err.println("PDF dependency structures available in "
-                        + deppath + File.separator + pdffile + ".");
-            }
+            // if (op.check("d")) { // dependency output
+            // // cannot set file and path to dependency output from the
+            // // jar
+            // // String deppath = op.getVal("d") + File.separator;
+            // String deppath = System.getProperty("user.dir")
+            // + File.separator;
+            // String depfile = "dependencies.xml";
+            // String pdffile = "structure-*.pdf";
+            // // get dependencies
+            // DependencyExtractor de = new DependencyExtractor(tokens,
+            // fdoc, grammarDict, needsAnchoring);
+            // de.processAll();
+            // // System.err.println(de.toString());
+            // Document ddd = DependencyDOMbuilder.buildAllDep(tokens,
+            // sentence, de.getDependences());
+            // XMLUtilities.writeXML(ddd, deppath + depfile,
+            // "http://w3.msi.vxu.se/~nivre/research/MALTXML.dtd,xml",
+            // false);
+            // System.err.println("XML dependency structures available in "
+            // + deppath + File.separator + depfile + ".");
+            // DTool.toPDF(System.getProperty("user.dir") + File.separator
+            // + depfile);
+            // System.err.println("PDF dependency structures available in "
+            // + deppath + File.separator + pdffile + ".");
+            // }
 
         } else {
-            long noTime = System.nanoTime() - sTime;
-            totalTime += noTime;
             System.err.println("No derivation forest available.");
         }
+        // total = loading + anchoring + conversion + parsing + forest + XML
+        // /
+        // derivation trees
+        System.err.println("\nTotal parsing time for sentence \"" + sentence);
 
         return res;
     }

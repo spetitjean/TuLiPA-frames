@@ -857,10 +857,11 @@ public class InputGUI implements ActionListener {
             }
             boolean parseres = false;
             try {
-                if (tag2rcgb.isSelected()) {
-                    parseres = ParsingInterface.parseSentence(ops, sit,
-                            sentence);
-                } else if (g instanceof TTMCTAG) {
+                // if (tag2rcgb.isSelected()) {
+                // parseres = ParsingInterface.parseSentence(ops, sit,
+                // sentence);
+                // } else if (g instanceof TTMCTAG) {
+                if (g instanceof TTMCTAG) {
                     parseres = ParsingInterface.parseTAG(ops, sit, sentence);
                 } else {
                     parseres = ParsingInterface.parseNonTAG(ops, g, sentence);

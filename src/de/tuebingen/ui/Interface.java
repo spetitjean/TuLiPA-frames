@@ -138,7 +138,7 @@ public class Interface {
             String sentence = op.getVal("s");
             try {
                 if (g instanceof TTMCTAG) {
-                    ParsingInterface.parseSentence(op, sit, sentence);
+                    ParsingInterface.parseTAG(op, sit, sentence);
                 } else {
                     // RCG/CFG/simple RCG parse
                     ParsingInterface.parseNonTAG(op, g, sentence);
@@ -159,12 +159,11 @@ public class Interface {
                         quit = true;
                     } else {
                         try {
-                            // tag2rcg conversion
-                            if (op.check("tag2rcg")) {
-                                ParsingInterface.parseSentence(op, g, sentence);
-                            } else if (g instanceof TTMCTAG) {
-                                ParsingInterface.parseTAG(op, (TTMCTAG) g,
-                                        sentence);
+                            // // tag2rcg conversion
+                            // if (op.check("tag2rcg")) {
+                            // ParsingInterface.parseSentence(op, g, sentence);}
+                            if (g instanceof TTMCTAG) {
+                                ParsingInterface.parseTAG(op, sit, sentence);
                             } else {
                                 // RCG/CFG/simple RCG parse
                                 ParsingInterface.parseNonTAG(op, g, sentence);
@@ -176,8 +175,10 @@ public class Interface {
                     }
                 }
             }
-        } else if (op.check("b")) { // batch processing
-            // Load the input from a file
+        } else if (op.check("b"))
+
+        { // batch processing
+          // Load the input from a file
             File input = new File(op.getVal("b"));
             BufferedReader r = new BufferedReader(new FileReader(input));
             String is = "";
@@ -226,7 +227,7 @@ public class Interface {
                             // since the extended one has been performed:
                             op.setVal("nofiltering", "true");
                         }
-                        ParsingInterface.parseSentence(op, g, is);
+                        ParsingInterface.parseTAG(op, sit, is);
                     }
                 } catch (Exception e) {
                     System.err.println(
@@ -236,7 +237,7 @@ public class Interface {
             }
             r.close();
         } else { // graphical mode
-            // arguments needs to be final
+                 // arguments needs to be final
             final CommandLineOptions ops = op;
             // Input GUI
             SwingUtilities.invokeLater(new Runnable() {
