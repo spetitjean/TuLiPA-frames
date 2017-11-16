@@ -96,13 +96,13 @@ public class ParsingInterface {
     public static boolean parseTAG(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
         // you might want to check if everything is in order here
-        // try {
-        // // System.out.println(sit.getGrammar().toString());
-        // // System.out.println(sit.getFrameGrammar().toString());
-        // // System.out.println(sit.getTypeHierarchy().toString());
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
+        try {
+            // System.out.println(sit.getGrammar().toString());
+            System.out.println(sit.getFrameGrammar().toString());
+            // System.out.println(sit.getTypeHierarchy().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         boolean res = false;
         long totalTime = 0;
         boolean verbose = op.check("v");
@@ -474,13 +474,15 @@ public class ParsingInterface {
                 // true);
                 // END_DEBUG
 
-                if (op.check("f")) {
-                    Document fdoc2 = ProduceDOM.buildDOMForest(forest_rules,
-                            forest_roots, tok.getSentence(), op.getVal("g"),
-                            new NameFactory(), grammarDict);
-                    XMLUtilities.writeXML(fdoc2, op.getVal("f"),
-                            "tulipa-forest3.dtd,xml", true);
-                }
+                // Deactivated, because it crashes with the separate
+                // framegrammar file
+                // if (op.check("f")) {
+                // Document fdoc2 = ProduceDOM.buildDOMForest(forest_rules,
+                // forest_roots, tok.getSentence(), op.getVal("g"),
+                // new NameFactory(), grammarDict);
+                // XMLUtilities.writeXML(fdoc2, op.getVal("f"),
+                // "tulipa-forest3.dtd,xml", true);
+                // }
             }
         }
         if (res) {

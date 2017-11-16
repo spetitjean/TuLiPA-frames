@@ -200,6 +200,9 @@ public class WorkbenchLoader {
                     needsAnchoring = fxgr.needsAnchoring();
                     frameG.setNeedsAnchoring(needsAnchoring);
                     fxgr.close();
+                    // for (String s : frameG.getLemmas().keySet()) {
+                    // System.out.print(s + "\t" + frameG.getLemmas().get(s));
+                    // }
                 }
 
                 // 1b Type hierarchy processing
