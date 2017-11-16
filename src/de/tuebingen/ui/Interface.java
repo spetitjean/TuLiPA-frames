@@ -214,7 +214,6 @@ public class Interface {
                                         lem, mo);
                                 g = sit.getGrammar();
                                 frameG = sit.getFrameGrammar();
-
                                 op.removeVal("s"); // reinit once the filtering
                                 // is done
                             } catch (Exception e) {

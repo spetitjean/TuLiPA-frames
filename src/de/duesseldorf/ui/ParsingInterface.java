@@ -98,7 +98,7 @@ public class ParsingInterface {
         // you might want to check if everything is in order here
         try {
             // System.out.println(sit.getGrammar().toString());
-            System.out.println(sit.getFrameGrammar().toString());
+            // System.out.println(sit.getFrameGrammar().toString());
             // System.out.println(sit.getTypeHierarchy().toString());
         } catch (Exception e) {
             e.printStackTrace();
