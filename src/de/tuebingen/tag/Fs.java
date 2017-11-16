@@ -620,11 +620,17 @@ public class Fs {
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
         List<Fs> newFrames = new LinkedList<Fs>();
+        List<Fs> cleanFrames = new LinkedList<Fs>();
         Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
-        for (Fs fs : frames) {
+	for (Fs fs : frames) {
+	    if(fs.getType()!=null){
+		cleanFrames.add(fs);
+	    }
+	}
+        for (Fs fs : cleanFrames) {
             fs.collect_corefs(corefs, situation);
         }
-        for (Fs fs : frames) {
+        for (Fs fs : cleanFrames) {
             fs = fs.update_corefs(corefs);
             newFrames.add(fs);
         }

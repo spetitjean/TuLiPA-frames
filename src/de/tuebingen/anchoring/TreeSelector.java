@@ -537,9 +537,13 @@ public class TreeSelector {
 
             if (tt.getFrames() != null) {
                 List<Fs> frames = tt.getFrames();
-                frames.addAll(tlist.get(0).getHead().getFrames());
+		if(tlist!=null){
+		    if(tlist.get(0)!=null){
+			frames.addAll(tlist.get(0).getHead().getFrames());}}
             } else {
-                tt.setFrames(tlist.get(0).getHead().getFrames());
+		if(tlist!=null){
+		    if(tlist.get(0)!=null){
+			tt.setFrames(tlist.get(0).getHead().getFrames());}}
             }
         }
 
@@ -661,7 +665,7 @@ public class TreeSelector {
                 treeHash.put(tl.get(l).getId(), tl.get(l));
                 xTrees.add(tl.get(l).getId());
                 tl.get(l).getPolarities(p);
-                System.out.println(tt.getLexItems());
+                //System.out.println(tt.getLexItems());
                 ptl.addLexicals(tl.get(l).getLexItems());
             }
             x.setArguments(tl);
