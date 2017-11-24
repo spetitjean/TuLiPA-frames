@@ -680,7 +680,7 @@ public class Fs {
 
             if (v.is(Value.VAR)) {
                 if (corefs.keySet().contains(v)) {
-                    this.AVlist.put(f, new Value(corefs.get(v)));
+                    result.AVlist.put(f, new Value(corefs.get(v)));
                 }
             }
         }

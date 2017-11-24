@@ -79,12 +79,11 @@ public class FsTools {
                     // System.out.println("%%\nFScompare: \n" +
                     // printFS(fscompare)
                     // + "\n\n\n");
-                    for (Value v : fscompare.getAVlist().values()) {
-                        if (v.is(Value.AVM)
-                                && v.getAvmVal().getCoref().equals(fsv)) {
-                            keep = false;
-                        }
-                    }
+		    if(included(fs,fscompare)){
+			keep=false;
+			break;
+		    }
+		    
                 }
             }
             if (keep) {
@@ -93,6 +92,24 @@ public class FsTools {
         }
 
         return clean;
+    }
+
+
+    public static boolean included(Fs fs1, Fs fs2){
+	for (Value v : fs2.getAVlist().values()) {
+	    if (v.is(Value.AVM)
+		&& v.getAvmVal().getCoref().equals(fs1.getCoref())) {
+		return true;
+	    }
+	    else{
+		if (v.is(Value.AVM)){
+		    if (included(fs1,v.getAvmVal())){
+			return true;
+		    }
+		}
+	    }
+	}
+	return false;
     }
 
     /**
