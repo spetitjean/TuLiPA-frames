@@ -74,8 +74,8 @@ public class FsTools {
             // + fsv + "\n" + printFS(fs));
             boolean keep = true;
             for (Fs fscompare : noSimpleDoubleoccurence) {
-                if (noSimpleDoubleoccurence.indexOf(
-                        fscompare) != noSimpleDoubleoccurence.indexOf(fs)) {
+		
+                if (fs.getCoref() != fscompare.getCoref()) {
                     // System.out.println("%%\nFScompare: \n" +
                     // printFS(fscompare)
                     // + "\n\n\n");
@@ -96,6 +96,7 @@ public class FsTools {
 
 
     public static boolean included(Fs fs1, Fs fs2){
+	System.out.println("Testing "+fs1.getCoref()+" and "+fs2.getCoref());
 	for (Value v : fs2.getAVlist().values()) {
 	    if (v.is(Value.AVM)
 		&& v.getAvmVal().getCoref().equals(fs1.getCoref())) {
