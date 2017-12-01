@@ -74,7 +74,12 @@ public class FsTools {
             // + fsv + "\n" + printFS(fs));
             boolean keep = true;
             for (Fs fscompare : noSimpleDoubleoccurence) {
+<<<<<<< HEAD
                 if (fscompare.getCoref() != fs.getCoref()) {
+=======
+		
+                if (fs.getCoref() != fscompare.getCoref()) {
+>>>>>>> 83e02ba271f0f93c6a7758bad27072aab9f49745
                     // System.out.println("%%\nFScompare: \n" +
                     // printFS(fscompare)
                     // + "\n\n\n");
@@ -92,6 +97,7 @@ public class FsTools {
         return clean;
     }
 
+<<<<<<< HEAD
     public static boolean included(Fs fs1, Fs fs2) {
         for (Value v : fs2.getAVlist().values()) {
             if (v.is(Value.AVM)
@@ -106,6 +112,25 @@ public class FsTools {
             }
         }
         return false;
+=======
+
+    public static boolean included(Fs fs1, Fs fs2){
+	System.out.println("Testing "+fs1.getCoref()+" and "+fs2.getCoref());
+	for (Value v : fs2.getAVlist().values()) {
+	    if (v.is(Value.AVM)
+		&& v.getAvmVal().getCoref().equals(fs1.getCoref())) {
+		return true;
+	    }
+	    else{
+		if (v.is(Value.AVM)){
+		    if (included(fs1,v.getAvmVal())){
+			return true;
+		    }
+		}
+	    }
+	}
+	return false;
+>>>>>>> 83e02ba271f0f93c6a7758bad27072aab9f49745
     }
 
     /**
