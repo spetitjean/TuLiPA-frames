@@ -143,10 +143,10 @@ public class DerivedTreeViewer {
                                 // for some reason, the display of the sem. rep.
                                 // was always one step ahead, so we remove the
                                 // frame that has been added last.
-                                if (eTree.frames.size() > 1) {
-                                    eTree.frames
-                                            .remove(eTree.frames.size() - 1);
-                                }
+                                // if (eTree.frames.size() > 1) {
+                                // eTree.frames
+                                // .remove(eTree.frames.size() - 1);
+                                // }
                             }
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
@@ -156,7 +156,6 @@ public class DerivedTreeViewer {
                     }
                     viewTrees.add(trees);
                 }
-
             }
             return viewTrees;
         } catch (Exception e) {
