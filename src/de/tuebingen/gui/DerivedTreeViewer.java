@@ -98,7 +98,6 @@ public class DerivedTreeViewer {
                     }
                     XMLViewTree derivedTree = ViewTreeBuilder
                             .makeViewableDerivedTree(dTree);
-                    // if (dTree.success) derivedTree.collapseAllAttributes();
                     String semanticsString = "Semantic representation:<br>";
                     for (SemLit sl : dTree.semantics) {
                         semanticsString += sl.toString() + "<br>";
@@ -121,7 +120,7 @@ public class DerivedTreeViewer {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : eTrees) {
                             // old method which might have worked for semlits
-                            // but doesnt work for frames:
+                            // but doesnt care about frames:
                             // eTree.updateTBFeatures(eTree.root, dTree.env,
                             // false);
                             List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
@@ -139,15 +138,6 @@ public class DerivedTreeViewer {
                     if (steps != null) {
                         ArrayList<XMLViewTree> viewStepTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : steps) {
-                            if (eTree.frames != null) {
-                                // for some reason, the display of the sem. rep.
-                                // was always one step ahead, so we remove the
-                                // frame that has been added last.
-                                // if (eTree.frames.size() > 1) {
-                                // eTree.frames
-                                // .remove(eTree.frames.size() - 1);
-                                // }
-                            }
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
                             viewStepTrees.add(elemTree);

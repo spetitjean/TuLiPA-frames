@@ -74,46 +74,43 @@ public class FsTools {
             // + fsv + "\n" + printFS(fs));
             boolean keep = true;
             for (Fs fscompare : noSimpleDoubleoccurence) {
-                if (noSimpleDoubleoccurence.indexOf(
-                        fscompare) != noSimpleDoubleoccurence.indexOf(fs)) {
+                if (fscompare.getCoref() != fs.getCoref()) {
                     // System.out.println("%%\nFScompare: \n" +
                     // printFS(fscompare)
                     // + "\n\n\n");
-		    if(included(fs,fscompare)){
-			keep=false;
-			break;
-		    }
-		    
+                    if (included(fs, fscompare)) {
+                        keep = false;
+                        break;
+                    }
+
                 }
             }
             if (keep) {
                 clean.add(fs);
             }
         }
-
         return clean;
     }
 
-
-    public static boolean included(Fs fs1, Fs fs2){
-	for (Value v : fs2.getAVlist().values()) {
-	    if (v.is(Value.AVM)
-		&& v.getAvmVal().getCoref().equals(fs1.getCoref())) {
-		return true;
-	    }
-	    else{
-		if (v.is(Value.AVM)){
-		    if (included(fs1,v.getAvmVal())){
-			return true;
-		    }
-		}
-	    }
-	}
-	return false;
+    public static boolean included(Fs fs1, Fs fs2) {
+        for (Value v : fs2.getAVlist().values()) {
+            if (v.is(Value.AVM)
+                    && v.getAvmVal().getCoref().equals(fs1.getCoref())) {
+                return true;
+            } else {
+                if (v.is(Value.AVM)) {
+                    if (included(fs1, v.getAvmVal())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
-     * returns a naive string representation of a (probably recursive) typed or
+     * returns a naively formatted string representation of a (probably
+     * recursive) typed or
      * untyped FS
      * 
      * @param fs
