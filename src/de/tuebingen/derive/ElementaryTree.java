@@ -319,7 +319,6 @@ public class ElementaryTree {
                 }
             } else if (((String) op[1]).equals("subst")) {
                 if (substitute((ElementaryTree) op[2], (Node) op[3], dTree)) {
-
                     dTree.topFeatures.put(root,
                             Fs.unify(dTree.topFeatures.get(root),
                                     dTree.topFeatures.get(dTree.root),
@@ -337,7 +336,7 @@ public class ElementaryTree {
                 dTree.updateTopDownFeatures(dTree.root, false, false);
                 ElementaryTree newStep = (new ElementaryTree(dTree.root, "", "",
                         dTree.topFeatures, dTree.bottomFeatures,
-                        dTree.semantics))
+                        dTree.semantics, dTree.frames))
                                 .createDumpingInstance(root.getOwnerDocument());
                 newStep.setID("Step " + steps.size());
                 steps.add(newStep);

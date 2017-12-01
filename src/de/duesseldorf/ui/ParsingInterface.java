@@ -92,7 +92,6 @@ public class ParsingInterface {
         return parseTAG(op, sit, sentence);
     }
 
-    // BY TS
     public static boolean parseTAG(CommandLineOptions op, Situation sit,
             String sentence) throws Exception {
         // you might want to check if everything is in order here
@@ -451,7 +450,6 @@ public class ParsingInterface {
             // fw.close();
             // END_DEBUG
 
-            long sTime = System.nanoTime();
             // parse
             long parseTime = System.nanoTime();
             // TAGParser parser = new TAGParser(grammarDict);

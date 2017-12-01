@@ -120,10 +120,16 @@ public class DerivedTreeViewer {
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : eTrees) {
-                            // doesn't work at the moment; elementary tree
-                            // display not very helpful feature-wise
+                            // old method which might have worked for semlits
+                            // but doesnt work for frames:
                             // eTree.updateTBFeatures(eTree.root, dTree.env,
                             // false);
+                            List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
+                                    situation);
+                            // clean up the list here
+                            List<Fs> cleanFrames = FsTools
+                                    .cleanup(mergedFrames);
+                            eTree.frames = cleanFrames;
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
                             viewElemTrees.add(elemTree);
@@ -133,6 +139,15 @@ public class DerivedTreeViewer {
                     if (steps != null) {
                         ArrayList<XMLViewTree> viewStepTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : steps) {
+                            if (eTree.frames != null) {
+                                // for some reason, the display of the sem. rep.
+                                // was always one step ahead, so we remove the
+                                // frame that has been added last.
+                                if (eTree.frames.size() > 1) {
+                                    eTree.frames
+                                            .remove(eTree.frames.size() - 1);
+                                }
+                            }
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
                             viewStepTrees.add(elemTree);

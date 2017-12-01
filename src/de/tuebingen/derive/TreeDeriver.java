@@ -54,7 +54,6 @@ public class TreeDeriver {
             List<String> semlabels, boolean needsAnchoring) {
 
         // System.out.println(derivationTree);
-
         DerivedTree derivedTree = null;
         boolean failed = false;
         try {
@@ -125,7 +124,6 @@ public class TreeDeriver {
 
             // System.out.println("Environment: "+derivedTree.env);
             // System.out.println("Update frames in TreeDeriver");
-
             derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
                     derivedTree.env, true);
             // System.out.println("Updated frames: " + derivedTree.frames);

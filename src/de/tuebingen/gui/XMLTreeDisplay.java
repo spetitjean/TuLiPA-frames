@@ -188,7 +188,6 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
         // create the Text Panel at the bottom (for semantic information)
         semText = new JTextPane();
         semText.setContentType("text/html");
-        // System.out.println("thing: " + trees.get(displayTreeID).semantics);
         semText.setText("<b>" + trees.get(displayTreeID).semantics + "</b>");
         this.semTextPane = new JScrollPane(semText);
 
@@ -336,7 +335,6 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
             semText.setText(semPaneText);
         }
 
-        //
         if (e.getSource() == eTreeList) {
             eTreeID = eTreeList.getSelectedIndex();
             if (eTreeID >= 0) {
@@ -358,6 +356,7 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
                 JScrollPane eTreeDisplayPane = new JScrollPane(eTreeDisplay);
                 displayTab.add(((XMLViewTree) eTreeDisplay.t).description,
                         eTreeDisplayPane);
+
                 semText.setText("<b>" + trees.get(displayTreeID).elementaryTrees
                         .get(eTreeID).prettySem + "</b>");
             }
@@ -462,7 +461,7 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
              * chooser.showOpenDialog(this);
              * File xmlFile = chooser.getSelectedFile();
              * trees =
-             * DerivationTreeViewer.getViewTreesFromFile(xmlFile.getAbsolutePath
+             * DerivationTreeViewer.getViewkFromFile(xmlFile.getAbsolutePath
              * ());
              * updateDisplay();
              */

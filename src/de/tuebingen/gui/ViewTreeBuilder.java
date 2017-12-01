@@ -41,6 +41,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.FsTools;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.gui.tree.view.TreeViewNode;
@@ -349,6 +350,17 @@ public class ViewTreeBuilder {
         String semanticsString = "";
         for (SemLit sl : xvt.sem) {
             semanticsString += sl.toString() + "<br>";
+        }
+        // add frames to Elementary trees
+        if (eTree.frames != null) {
+            // try doing this here by adding situation as parameter. Also see
+            // DTV
+            // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames, situation);
+            // // clean up the list here
+            // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+            for (Fs fs : eTree.frames) {
+                semanticsString += FsTools.printFS(fs);
+            }
         }
         xvt.prettySem = semanticsString;
         return xvt;
