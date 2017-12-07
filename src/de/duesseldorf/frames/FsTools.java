@@ -95,8 +95,6 @@ public class FsTools {
     }
 
     public static boolean included(Fs fs1, Fs fs2) {
-        System.out.println(
-                "Testing " + fs1.getCoref() + " and " + fs2.getCoref());
         for (Value v : fs2.getAVlist().values()) {
             if (v.is(Value.AVM)
                     && v.getAvmVal().getCoref().equals(fs1.getCoref())) {

@@ -127,7 +127,6 @@ public class TreeSelector {
         retrieve(sit.getGrammar().getMorphEntries(),
                 sit.getGrammar().getLemmas(), sit.getGrammar().getGrammar(),
                 slabels);
-
     }
 
     /**
@@ -537,7 +536,7 @@ public class TreeSelector {
         if (lemmaSem.size() > 1) {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
-        if (situation.getFrameGrammar() != null) {
+        if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
             // as lemmaSem.size = 1, we dont need a loop
