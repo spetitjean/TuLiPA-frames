@@ -36,32 +36,33 @@ import java.io.IOException;
  *
  */
 public class BuiltinTokenizer extends Tokenizer {
-	
-	public static final String GERMAN = "german";
-	public String germanTest = "Hat die AWO Spendengeld veruntreut?";
-	public String germanFile = "tokenizerGerman.fst";
-	
-	public static final String WHITESPACE = "whitespace";
-	public static final String PRE = "pre";
-	public String whitespaceTest = "Hat die AWO Spendengeld veruntreut ?";
-	
-	public BuiltinTokenizer() throws TokenizerException, IOException {
-		this(GERMAN);
-	}
-	
-	public BuiltinTokenizer(String mode) throws TokenizerException, IOException {
-		mode = mode.toLowerCase();
-		if (GERMAN.equals(mode)) {
-			setSentence(germanTest);
-			FiniteStateReader r = new FiniteStateReader(germanFile, true);
-			setT(r.getTransducer());
-		} else if (WHITESPACE.equals(mode)) {
-			setSentence(whitespaceTest);
-			setErasePunctuation(true);
-		} else {
-			// split at whitespace
-			setSentence(whitespaceTest);
-		}
-	}
+
+    public static final String GERMAN = "german";
+    public String germanTest = "Hat die AWO Spendengeld veruntreut?";
+    public String fstFile = "tokenizerFrench.fst";
+
+    public static final String WHITESPACE = "whitespace";
+    public static final String PRE = "pre";
+    public String whitespaceTest = "Hat die AWO Spendengeld veruntreut ?";
+
+    public BuiltinTokenizer() throws TokenizerException, IOException {
+        this(GERMAN);
+    }
+
+    public BuiltinTokenizer(String mode)
+            throws TokenizerException, IOException {
+        mode = mode.toLowerCase();
+        if (GERMAN.equals(mode)) {
+            setSentence(germanTest);
+            FiniteStateReader r = new FiniteStateReader(fstFile, true);
+            setT(r.getTransducer());
+        } else if (WHITESPACE.equals(mode)) {
+            setSentence(whitespaceTest);
+            setErasePunctuation(true);
+        } else {
+            // split at whitespace
+            setSentence(whitespaceTest);
+        }
+    }
 
 }

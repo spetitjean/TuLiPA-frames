@@ -132,6 +132,7 @@ public class ParsingInterface {
         }
         List<String> toksentence = Tokenizer.tok2string(tokens);
         // System.err.println("\t@@ Length " + toksentence.size());
+
         /* ******** external POS tagging ************/
         ExternalTagger tagger = new ExternalTagger();
         File taggerExec = op.check("t") ? new File(op.getVal("t")) : null;

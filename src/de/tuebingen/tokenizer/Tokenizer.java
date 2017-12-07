@@ -37,197 +37,205 @@ import java.util.List;
 
 public abstract class Tokenizer {
 
-	protected static final int MAXSENTLEN = 30;
-	protected static final String punctstring = ",.!?;";
-	
-	private String sentence;
-	private FiniteState t;
-	// erase left-over punctuation from result
-	private boolean erasePunctuation;
+    protected static final int MAXSENTLEN = 30;
+    protected static final String punctstring = ",.!?;";
 
-	public Tokenizer() {
-		super();
-		sentence = "";
-		t = null;
-		erasePunctuation = false;
-	}  
-	
-	private Collection<String> punctuation() {
-		ArrayList<String> ret = new ArrayList<String>();
-		String[] puncts = punctstring.split("");
-		for (int i = 0; i < puncts.length; ++i) {
-			ret.add(puncts[i]);
-		}
-		return ret;
-	}
-	
-	/**
-	 * @return a list of words converted into a list of String
-	 */
-	public static List<String> tok2string(List<Word> toks) {
-		List<String> res = new ArrayList<String>();
-		for(int i = 0 ; i < toks.size() ; i++){
-			Word w = toks.get(i);
-			res.add(w.getWord());
-		}
-		return res;
-	}
+    private String sentence;
+    private FiniteState t;
+    // erase left-over punctuation from result
+    private boolean erasePunctuation;
 
-	/**
-	 * @return a list of words converted into a list of String with position suffixed
-	 */
-	public static List<String> tok2stringPos(List<Word> toks) {
-		List<String> res = new ArrayList<String>();
-		for(int i = 0 ; i < toks.size() ; i++){
-			Word w = toks.get(i);
-			res.add(w.getWord()+""+w.getEnd());
-		}
-		return res;
-	}
+    public Tokenizer() {
+        super();
+        sentence = "";
+        t = null;
+        erasePunctuation = false;
+    }
 
-	/**
-	 * @return an array of strings converted into a list of words
-	 * @throws TokenizerException if a string (a word) contains whitespace
-	 */
-	public static List<Word> strings2words(String[] strings) {
-		List<Word> al = new ArrayList<Word>(strings.length);
-		for (int i = 0; i < strings.length; ++i) {
-			String word = strings[i].trim();
-			if (word.length() > 0) {
-				Word w = new Word(word);
-				w.setStart(i);
-				w.setEnd(i + 1);
-				al.add(w);
-			}
-		}
-		return al;
-	}
+    private Collection<String> punctuation() {
+        ArrayList<String> ret = new ArrayList<String>();
+        String[] puncts = punctstring.split("");
+        for (int i = 0; i < puncts.length; ++i) {
+            ret.add(puncts[i]);
+        }
+        return ret;
+    }
 
-	public FiniteState getT() {
-		return t;
-	}
+    /**
+     * @return a list of words converted into a list of String
+     */
+    public static List<String> tok2string(List<Word> toks) {
+        List<String> res = new ArrayList<String>();
+        for (int i = 0; i < toks.size(); i++) {
+            Word w = toks.get(i);
+            res.add(w.getWord());
+        }
+        return res;
+    }
 
-	public void setT(FiniteState t) {
-		this.t = t;
-	}
-	
-	public boolean hasTransducer() {
-		return t != null;
-	}
+    /**
+     * @return a list of words converted into a list of String with position
+     *         suffixed
+     */
+    public static List<String> tok2stringPos(List<Word> toks) {
+        List<String> res = new ArrayList<String>();
+        for (int i = 0; i < toks.size(); i++) {
+            Word w = toks.get(i);
+            res.add(w.getWord() + "" + w.getEnd());
+        }
+        return res;
+    }
 
-	public boolean isErasePunctuation() {
-		return erasePunctuation;
-	}
-	
-	public void setErasePunctuation(boolean erasePunctuation) {
-		this.erasePunctuation = erasePunctuation;
-	}
-	
-	/**
-	 * get the sentence
-	 * @return the sentence
-	 */
-	public String getSentence() {
-		return sentence;
-	}
+    /**
+     * @return an array of strings converted into a list of words
+     * @throws TokenizerException
+     *             if a string (a word) contains whitespace
+     */
+    public static List<Word> strings2words(String[] strings) {
+        List<Word> al = new ArrayList<Word>(strings.length);
+        for (int i = 0; i < strings.length; ++i) {
+            String word = strings[i].trim();
+            if (word.length() > 0) {
+                Word w = new Word(word);
+                w.setStart(i);
+                w.setEnd(i + 1);
+                al.add(w);
+            }
+        }
+        return al;
+    }
 
-	/**
-	 * set the sentence
-	 * @param sentence the sentence
-	 */
-	public void setSentence(String sentence) {
-		this.sentence = sentence;
-	}
+    public FiniteState getT() {
+        return t;
+    }
 
-	/**
-	 * Tokenize a sentence. 
-	 */
-	public List<Word> tokenize() throws TokenizerException {
-		ArrayList<Word> ret = null; 
-		
-		if (hasTransducer()) {
-			ret = new ArrayList<Word>(MAXSENTLEN);
-			int i = 0;
-			String sw = "";
-			Word word = new Word();
-			while (i < sentence.length()) {
-				// we try to read as far as we can
-				while (i < sentence.length() && t.read(sentence.charAt(i))) {
-					++i;
-				}
-				// we are in start state, there's input left and we couldn't read: 
-				// unknown input symbol! Fast forward to next whitespace.
-				if (t.getStartState().equals(t.getState()) && i < sentence.length()) {
-					int auxind = i;
-					while (auxind < sentence.length()
-							&& !Character.isWhitespace(sentence.charAt(auxind))) { 
-						++auxind;
-					}
-					// append to last word if possible
-					if (ret.size() > 0) {
-						sw = ret.get(ret.size() - 1).getWord();
-						ret.remove(ret.size() - 1);
-					}
-					// set flag in Word to indicate unknown character
-					sw += sentence.substring(i, auxind);
-					i = auxind;
-					word.setStrangeToken(true);
-					// go back to the last final state (or start state if there is
-					// no final state on the path)
-				} else {
-					while (!t.isFinalState(t.getState()) && t.unread()) {
-						--i;
-					}	
-					sw = t.getStringOutput();
-				}
-				if (!sw.equals("")) {
-					// save the output
-					word.setWord(sw);
-					word.setStart(ret.size());
-					word.setEnd(ret.size() + 1);
-					ret.add(word);
-					word = new Word();
-					sw = "";
-				}
-				// new word: reset automaton to start state and empty output
-				t.reset();
-			}
-			// if there is only one word, try to split again by whitespace
-			if (ret.size() == 1) {
-				String[] result = sentence.split("\\s+");
-				ret = (ArrayList<Word>)strings2words(result);
-			}
-		} else { // if (hasTranducer())
-			// no transducer -> whitespace
-			String[] result = sentence.split("\\s+");
-			ret = (ArrayList<Word>)strings2words(result);
-		}
-		
-		if (isErasePunctuation()) {
-			Collection<String> punctuation = punctuation();
-			ArrayList<Word> newret = new ArrayList<Word>();
-			int cnt = 0;
-			Iterator<Word> it = ret.iterator();
-			while (it.hasNext()) {
-				Word w = it.next();
-				if (!punctuation.contains(w.getWord())) {
-					w.setStart(cnt);
-					w.setEnd(cnt + 1);
-					newret.add(w);
-					++cnt;
-				}
-			}
-			ret = newret;
-		}
-		
-		return ret;
-	}
+    public void setT(FiniteState t) {
+        this.t = t;
+    }
 
-	/**
-	 * @return toString() of the underlying transducer
-	 */
-	public String toString() {
-		return t.toString();
-	}
+    public boolean hasTransducer() {
+        return t != null;
+    }
+
+    public boolean isErasePunctuation() {
+        return erasePunctuation;
+    }
+
+    public void setErasePunctuation(boolean erasePunctuation) {
+        this.erasePunctuation = erasePunctuation;
+    }
+
+    /**
+     * get the sentence
+     * 
+     * @return the sentence
+     */
+    public String getSentence() {
+        return sentence;
+    }
+
+    /**
+     * set the sentence
+     * 
+     * @param sentence
+     *            the sentence
+     */
+    public void setSentence(String sentence) {
+        this.sentence = sentence;
+    }
+
+    /**
+     * Tokenize a sentence.
+     */
+    public List<Word> tokenize() throws TokenizerException {
+        ArrayList<Word> ret = null;
+
+        if (hasTransducer()) {
+            ret = new ArrayList<Word>(MAXSENTLEN);
+            int i = 0;
+            String sw = "";
+            Word word = new Word();
+            while (i < sentence.length()) {
+                // we try to read as far as we can
+                while (i < sentence.length() && t.read(sentence.charAt(i))) {
+                    ++i;
+                }
+                // we are in start state, there's input left and we couldn't
+                // read:
+                // unknown input symbol! Fast forward to next whitespace.
+                if (t.getStartState().equals(t.getState())
+                        && i < sentence.length()) {
+                    int auxind = i;
+                    while (auxind < sentence.length() && !Character
+                            .isWhitespace(sentence.charAt(auxind))) {
+                        ++auxind;
+                    }
+                    // append to last word if possible
+                    if (ret.size() > 0) {
+                        sw = ret.get(ret.size() - 1).getWord();
+                        ret.remove(ret.size() - 1);
+                    }
+                    // set flag in Word to indicate unknown character
+                    sw += sentence.substring(i, auxind);
+                    i = auxind;
+                    word.setStrangeToken(true);
+                    // go back to the last final state (or start state if there
+                    // is
+                    // no final state on the path)
+                } else {
+                    while (!t.isFinalState(t.getState()) && t.unread()) {
+                        --i;
+                    }
+                    sw = t.getStringOutput();
+                }
+                if (!sw.equals("")) {
+                    // save the output
+                    word.setWord(sw);
+                    word.setStart(ret.size());
+                    word.setEnd(ret.size() + 1);
+                    ret.add(word);
+                    word = new Word();
+                    sw = "";
+                }
+                // new word: reset automaton to start state and empty output
+                t.reset();
+            }
+            // if there is only one word, try to split again by whitespace
+            if (ret.size() == 1) {
+                String[] result = sentence.split("\\s+");
+                ret = (ArrayList<Word>) strings2words(result);
+            }
+        } else { // if (hasTranducer())
+            // no transducer -> whitespace
+            String[] result = sentence.split("\\s+");
+            ret = (ArrayList<Word>) strings2words(result);
+        }
+
+        if (isErasePunctuation()) {
+            Collection<String> punctuation = punctuation();
+            ArrayList<Word> newret = new ArrayList<Word>();
+            int cnt = 0;
+            Iterator<Word> it = ret.iterator();
+            while (it.hasNext()) {
+                Word w = it.next();
+                if (!punctuation.contains(w.getWord())) {
+                    w.setStart(cnt);
+                    w.setEnd(cnt + 1);
+                    newret.add(w);
+                    ++cnt;
+                }
+            }
+            ret = newret;
+        }
+
+        return ret;
+    }
+
+    /**
+     * @return toString() of the underlying transducer
+     */
+    public String toString() {
+        return t.toString();
+    }
 
 }
