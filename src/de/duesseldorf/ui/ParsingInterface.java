@@ -242,7 +242,7 @@ public class ParsingInterface {
                 rcggrammar = new RCG();
                 for (int sI = 0; sI < subgrammars.size(); sI++) {
                     List<Tuple> ltuples = subgrammars.get(sI);
-                    System.err.println("Converting sub-grammar " + sI + "...");
+                    //System.err.println("Converting sub-grammar " + sI + "...");
                     GrammarConvertor gc = new GrammarConvertor(ltuples, verbose,
                             toksentence, grammarDict, !needsAnchoring, k_limit,
                             limit);

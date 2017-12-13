@@ -914,6 +914,12 @@ public class TagTree implements Tree {
         frames.add(frame);
     }
 
+    public void initFrames() {
+        if (this.frames == null) {
+            frames = new LinkedList<Fs>();
+        }
+    }
+
     public List<Fs> getFrames() {
         return frames;
     }
