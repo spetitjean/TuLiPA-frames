@@ -548,7 +548,6 @@ public class TreeSelector {
                 if (tlist != null) {
                     if (tlist.get(0) != null) {
 			// Looking for the interface of the frame
-			System.out.println("[Looking for frame interface - 1]: "+tlist.get(0).getHead().getIface());
 			frameInterface=tlist.get(0).getHead().getIface();
                         frames.addAll(tlist.get(0).getHead().getFrames());
                     }
@@ -557,7 +556,6 @@ public class TreeSelector {
                 if (tlist != null) {
                     if (tlist.get(0) != null) {
 			// Looking for the interface of the frame
-			System.out.println("[Looking for frame interface - 2]: "+tlist.get(0).getHead().getIface());
 			frameInterface=tlist.get(0).getHead().getIface();
                         tt.setFrames(tlist.get(0).getHead().getFrames());
                     }
@@ -565,8 +563,6 @@ public class TreeSelector {
             }
 	    for(Fs getFrame: tt.getFrames()){
 		try{
-		    System.out.println("Unify "+getFrame+" and "+tt.getIface() );
-		    //Fs.unify(getFrame, tt.getIface(), env, situation.getTypeHierarchy());
 		    Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
 		}
 		catch (UnifyException e) {
