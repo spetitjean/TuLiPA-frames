@@ -541,22 +541,46 @@ public class TreeSelector {
                     .get(lemmaSem.get(0).getSemclass());
             // as lemmaSem.size = 1, we dont need a loop
 
+	    Fs frameInterface=new Fs(0);
+	    
             if (tt.getFrames() != null) {
                 List<Fs> frames = tt.getFrames();
                 if (tlist != null) {
                     if (tlist.get(0) != null) {
+			// Looking for the interface of the frame
+			System.out.println("[Looking for frame interface - 1]: "+tlist.get(0).getHead().getIface());
+			frameInterface=tlist.get(0).getHead().getIface();
                         frames.addAll(tlist.get(0).getHead().getFrames());
                     }
                 }
             } else {
                 if (tlist != null) {
                     if (tlist.get(0) != null) {
+			// Looking for the interface of the frame
+			System.out.println("[Looking for frame interface - 2]: "+tlist.get(0).getHead().getIface());
+			frameInterface=tlist.get(0).getHead().getIface();
                         tt.setFrames(tlist.get(0).getHead().getFrames());
                     }
                 }
             }
+	    for(Fs getFrame: tt.getFrames()){
+		try{
+		    System.out.println("Unify "+getFrame+" and "+tt.getIface() );
+		    //Fs.unify(getFrame, tt.getIface(), env, situation.getTypeHierarchy());
+		    Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
+		}
+		catch (UnifyException e) {
+		    System.err.println(
+				       "Semantic features unification failed on tree ");
+		    System.err.println(e);
+		    throw new AnchoringException(); // we withdraw the
+		    // current anchoring
+		}
+	    }
         }
 
+
+	
         List<String> treeTrace = tt.getTrace();
         List<SemLit> treeSem = tt.getSem();
 
