@@ -49,6 +49,7 @@ import java.util.Set;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
+//import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
@@ -453,7 +454,7 @@ public class ParsingInterface {
 
             // parse
             long parseTime = System.nanoTime();
-            // TAGParser parser = new TAGParser(grammarDict);
+            //TAGParser parser = new TAGParser(grammarDict);
             SlimTAGParser parser = new SlimTAGParser(grammarDict);
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,

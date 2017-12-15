@@ -314,8 +314,20 @@ public class SlimTAGParser {
         }
 
         for (TagNode n : to_remove) {
+            // System.err.println("Removing "+n.getCategory());
             all_nodes.remove(n);
         }
+
+        // System.err.println("Remaining nodes: ");
+        // for (TagNode n : all_nodes) {
+        // if(n.getCategory()!=null){
+        // System.err.println(n.getCategory());
+        // }
+        // else{
+        // System.err.println("Got null category: "+n.getType()+"
+        // "+n.getName());
+        // }
+        // }
     }
 
     private boolean substitution_possible(TagNode node, TagTree tag_tree) {
@@ -401,6 +413,7 @@ public class SlimTAGParser {
         // System.err.println(rule_idx_set.size() + " rules");
 
         if (cur_node.getType() == TagNode.LEX) {
+            // System.err.println("Lexical node: "+cur_node.getCategory());
             return;
         }
 
@@ -1205,9 +1218,12 @@ public class SlimTAGParser {
                         // true word match
 
                         for (int i = 0; i < nTokens; i++) {
-                            if (tokens.get(i).getWord() == word) {
+                            // System.err.println("Trying true word match [0]:
+                            // "+tokens.get(i).getWord());
+                            if (tokens.get(i).getWord().equals(word)) {
                                 // closed_map.get(cur_node)[i][i+1][0] = 0.0;
                                 // System.err.println("word match for pos" + i);
+                                // System.err.println("Got word match [0]");
 
                                 closed_map.get(cur_node).put(i,
                                         new HashMap<Integer, double[]>());
@@ -2552,7 +2568,9 @@ public class SlimTAGParser {
             Word lex_word = null;
 
             if (tag_tree.hasLex()) {
-
+                // System.err.println("Get lexical anchor: "+((TagNode)
+                // tag_tree.getLexAnc()).getAddress()+", "+((TagNode)
+                // tag_tree.getLexAnc()).getWord());
                 lex_gorn = ((TagNode) tag_tree.getLexAnc()).getAddress();
                 lex_word = ((TagNode) tag_tree.getLexAnc()).getWord();
             }
@@ -2566,6 +2584,10 @@ public class SlimTAGParser {
                     // if the lex. node is not an anchor, getWord() will return
                     // null. That's not what we want
                     // Word word = cur_node.getWord();
+
+                    // System.err.println("Word: "+cur_node.getWord());
+                    // System.err.println("Category: "+cur_node.getCategory());
+
                     String word = cur_node.getCategory();
 
                     // a lexical node can never be above a foot node
@@ -2659,10 +2681,22 @@ public class SlimTAGParser {
                         }
                     } else {
                         // true word match
+
+                        // closed_map.get(cur_node)[i][i+1][0] = 0.0;
+                        // System.err.println("word match for pos" + i);
+                        // System.err.println("Matching word [1]: "+word+" of
+                        // type "+word.getClass());
+
                         for (int i = 0; i < nTokens; i++) {
+                            // System.err.println("Trying true word match [1]:
+                            // "+tokens.get(i).getWord()+" of type
+                            // "+word.getClass());
                             if (tokens.get(i).getWord().equals(word)) {
-                                // closed_map.get(cur_node)[i][i+1][0] = 0.0;
+                                // System.err.println("Got word match [1]");
+                                // closed_map.get(cur_node).get(i).get(i+1)[0] =
+                                // 0.0;
                                 // System.err.println("word match for pos" + i);
+
                                 closed_map.get(cur_node).put(i,
                                         new HashMap<Integer, double[]>());
                                 closed_map.get(cur_node).get(i).put(i + 1,
