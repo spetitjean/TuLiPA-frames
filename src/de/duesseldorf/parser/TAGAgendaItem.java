@@ -28,13 +28,9 @@
  *
  */
 package de.duesseldorf.parser;
-import java.util.*;
+
 //import de.tuebingen.tree.Grammar;
-import de.tuebingen.tag.*;
-import de.tuebingen.tokenizer.*;
-import de.tuebingen.forest.*;
-import de.tuebingen.tree.*;
-import de.tuebingen.rcg.PredComplexLabel;
+import de.tuebingen.tag.TagNode;
 
 /**
  * @author tosch
@@ -50,14 +46,23 @@ class TAGAgendaItem {
     public int j2;
     public int pos;
 
-    public TAGAgendaItem(TagNode n, int _i1, int _i2, int _j1, int _j2, int _pos) {
-
-	node = n;
-	i1 = _i1;
-	i2 = _i2;
-	j1 = _j1;
-	j2  =_j2;
-	pos = _pos;
+    public TAGAgendaItem(TagNode n, int _i1, int _i2, int _j1, int _j2,
+            int pos) {
+        node = n;
+        i1 = _i1;
+        i2 = _i2;
+        j1 = _j1;
+        j2 = _j2;
+        this.pos = pos;
     }
 
-};
+    /**
+     * Format:
+     * [node, i1, i2, j1, j2]
+     */
+    @Override
+    public String toString() {
+        return "[" + node.toString("") + ", " + i1 + ", " + i2 + ", " + j1
+                + ", " + j2 + "]";
+    }
+}

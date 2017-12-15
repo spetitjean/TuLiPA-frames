@@ -97,7 +97,6 @@ public class SlimTAGParser {
             TagTree cur_tree = dict.get(cur_key);
 
             List<TagNode> nodes = new LinkedList<TagNode>();
-
             // this time we need the anchestors before the children
             ((TagNode) cur_tree.getRoot()).getAllNodesParentFirst(nodes);
 
@@ -2660,12 +2659,10 @@ public class SlimTAGParser {
                         }
                     } else {
                         // true word match
-
                         for (int i = 0; i < nTokens; i++) {
-                            if (tokens.get(i).getWord() == word) {
+                            if (tokens.get(i).getWord().equals(word)) {
                                 // closed_map.get(cur_node)[i][i+1][0] = 0.0;
                                 // System.err.println("word match for pos" + i);
-
                                 closed_map.get(cur_node).put(i,
                                         new HashMap<Integer, double[]>());
                                 closed_map.get(cur_node).get(i).put(i + 1,
@@ -2860,9 +2857,7 @@ public class SlimTAGParser {
                 break;
 
             TAGAgendaItem cur_item = agenda.get(active_list).poll();
-
             TagNode cur_node = cur_item.node;
-
             List<Node> cur_children = cur_node.getChildren();
             int nChildren = (cur_children == null) ? 0 : cur_children.size();
 

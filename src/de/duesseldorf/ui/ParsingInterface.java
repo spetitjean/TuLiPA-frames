@@ -242,7 +242,8 @@ public class ParsingInterface {
                 rcggrammar = new RCG();
                 for (int sI = 0; sI < subgrammars.size(); sI++) {
                     List<Tuple> ltuples = subgrammars.get(sI);
-                    //System.err.println("Converting sub-grammar " + sI + "...");
+                    // System.err.println("Converting sub-grammar " + sI +
+                    // "...");
                     GrammarConvertor gc = new GrammarConvertor(ltuples, verbose,
                             toksentence, grammarDict, !needsAnchoring, k_limit,
                             limit);
@@ -420,7 +421,6 @@ public class ParsingInterface {
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
                 for (TagNode n : nodes) {
-
                     if (n.getType() == TagNode.LEX
                             && !words.contains(n.getCategory())) {
 
@@ -545,7 +545,8 @@ public class ParsingInterface {
         // total = loading + anchoring + conversion + parsing + forest + XML
         // /
         // derivation trees
-        System.err.println("\nTotal parsing time for sentence \"" + sentence);
+        System.err.println("\nTotal parsing time for sentence \"" + sentence
+                + ": " + totalTime / (Math.pow(10, 9)) + " sec.");
 
         return res;
     }
