@@ -459,6 +459,7 @@ public class ParsingInterface {
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
                     axiom);
+	    System.err.println("Parsed");
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
                     + (parsingTime) / (Math.pow(10, 9)) + " sec.");
