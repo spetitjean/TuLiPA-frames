@@ -107,8 +107,8 @@ public class CommandLineProcesses {
         op.add(CommandLineOptions.Prefix.DASH, "e",
                 CommandLineOptions.Separator.BLANK, true);
         // we declare the OPTIONAL f option (export XML forest)
-        // op.add(CommandLineOptions.Prefix.DASH, "f",
-        // CommandLineOptions.Separator.BLANK, true);
+        op.add(CommandLineOptions.Prefix.DASH, "f",
+                CommandLineOptions.Separator.BLANK, true);
         // we declare the OPTIONAL u option (utool deactivation)
         op.add(CommandLineOptions.Prefix.DASH, "n",
                 CommandLineOptions.Separator.BLANK, false);
