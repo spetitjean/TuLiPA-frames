@@ -1,5 +1,0 @@
-% This graph has only one solved form because it entails dom(y2 x1).
-% An early version of Utool/J erroneously considered both top fragments free.
-
-[label(x1 f(x2 x3)) label(y1 g(y2)) label(z a) label(w b) dom(x2 z) dom(y2 z)
-dom(x3 w) dom(y2 w)]
