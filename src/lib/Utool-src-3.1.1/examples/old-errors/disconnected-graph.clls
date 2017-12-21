@@ -1,5 +1,0 @@
-% A graph with two different wccs. The graph has one solved form
-% (in fact, it is in solved form itself), but Chart#countSolvedForms
-% used to report it as having two solved forms. This was ticket #36.
-
-[label('X11' ax_1) label('X1' ie(X11 X12)) label('X12' '[S -o h]') label('X2' ax_2)]

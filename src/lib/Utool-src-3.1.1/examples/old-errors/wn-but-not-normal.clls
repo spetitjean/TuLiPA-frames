@@ -1,4 +1,0 @@
-% This graph has a redundant dominance edge out of the root of the
-% upper fragment. This used to confuse Utool/J.
-
-[label(x f(y)) dom(x z) dom(y z) label(z a)]
