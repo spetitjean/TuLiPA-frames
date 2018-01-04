@@ -400,7 +400,7 @@ public class ParsingInterface {
                 // totalTime += estTime + estfTime;
                 res = parseres;
             }
-        } else {
+        } else if (op.check("cyktag")) {
             // to be sure that we are as efficient as possible, we do a separate
             // filtering stage here
             Set<String> words = new HashSet<String>();
@@ -454,12 +454,12 @@ public class ParsingInterface {
 
             // parse
             long parseTime = System.nanoTime();
-            //TAGParser parser = new TAGParser(grammarDict);
+            // TAGParser parser = new TAGParser(grammarDict);
             SlimTAGParser parser = new SlimTAGParser(grammarDict);
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
                     axiom);
-	    System.err.println("Parsed");
+            System.err.println("Parsed");
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
                     + (parsingTime) / (Math.pow(10, 9)) + " sec.");
@@ -485,6 +485,8 @@ public class ParsingInterface {
                 // "tulipa-forest3.dtd,xml", true);
                 // }
             }
+        } else {
+            System.err.println("Select a parsing mode");
         }
         if (res) {
             if (op.check("x")) { // XML output of the derivations!

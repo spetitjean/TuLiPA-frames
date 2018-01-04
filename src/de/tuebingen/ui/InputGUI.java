@@ -132,6 +132,7 @@ public class InputGUI implements ActionListener {
     private static final String CFG = "cfg";
     private static final String LCFRS = "lcfrs";
     private static final String TAG2RCG = "tag2rcg";
+    private static final String CYKTAG = "cyktag";
 
     private static final String splashLocation = "images/splash.gif";
     private static final String logoLocation = "images/tulipa-logo.gif";
@@ -169,7 +170,7 @@ public class InputGUI implements ActionListener {
 
     private JButton fileSel = null;
     private JRadioButton rcgb = null;
-    private JRadioButton tagb = null;
+    private JRadioButton cyktagb = null;
     private JRadioButton ttmctagb = null;
     private JRadioButton cfgb = null;
     private JRadioButton lcfrsb = null;
@@ -312,9 +313,9 @@ public class InputGUI implements ActionListener {
         // add all the options
 
         ButtonGroup grammarButtonGroup = new ButtonGroup();
-        tagb = new JRadioButton();
-        tagb.setText("TAG");
-        tagb.setSelected(true);
+        cyktagb = new JRadioButton();
+        cyktagb.setText("CYKTAG");
+        cyktagb.setSelected(true);
         rcgb = new JRadioButton();
         rcgb.setText("RCG");
         rcgb.setSelected(false);
@@ -333,8 +334,8 @@ public class InputGUI implements ActionListener {
 
         grammarButtonGroup.add(rcgb);
         rcgb.addKeyListener(new GrammarKeyListener(this));
-        grammarButtonGroup.add(tagb);
-        tagb.addKeyListener(new GrammarKeyListener(this));
+        grammarButtonGroup.add(cyktagb);
+        cyktagb.addKeyListener(new GrammarKeyListener(this));
         grammarButtonGroup.add(ttmctagb);
         ttmctagb.addKeyListener(new GrammarKeyListener(this));
         grammarButtonGroup.add(cfgb);
@@ -349,7 +350,7 @@ public class InputGUI implements ActionListener {
         grammarOpts.add(cfgb);
         grammarOpts.add(lcfrsb);
         grammarOpts.add(rcgb);
-        grammarOpts.add(tagb);
+        grammarOpts.add(cyktagb);
         grammarOpts.add(ttmctagb);
         grammarOpts.add(tag2rcgb);
         grammarOpts.setBorder(new TitledBorder("Mode"));
@@ -886,9 +887,10 @@ public class InputGUI implements ActionListener {
     }
 
     private void setGram(String gram) {
-        if (gram.equals(TAG)) {
-            tagb.setSelected(true);
-            tagb.requestFocus();
+        if (gram.equals(TAG) || gram.equals(CYKTAG)) {
+            // ops.setOurVal("cyktag", "");
+            cyktagb.setSelected(true);
+            cyktagb.requestFocus();
         } else if (gram.equals(RCG)) {
             rcgb.setSelected(true);
             xmlBox.setSelected(true);
@@ -910,8 +912,8 @@ public class InputGUI implements ActionListener {
 
     private String getGram() {
         String ret = "";
-        if (tagb.isSelected()) {
-            ret = TAG;
+        if (cyktagb.isSelected()) {
+            ret = CYKTAG;
         } else if (rcgb.isSelected()) {
             xmlBox.setSelected(true);
             ret = RCG;
@@ -954,13 +956,15 @@ public class InputGUI implements ActionListener {
         morphF.setText(morph);
     }
 
+    // method version that doesn't use strange assignments as the original
+    // method.
     private void toggleGramSelection() {
         if (rcgb.isSelected()) {
             xmlBox.setSelected(true);
             setGram(CFG);
-        } else if (tagb.isSelected()) {
+        } else if (cyktagb.isSelected()) {
             xmlBox.setSelected(true);
-            setGram(LCFRS);
+            setGram(CYKTAG);
         } else if (cfgb.isSelected()) {
             xmlBox.setSelected(false);
             setGram(TAG);
@@ -979,6 +983,9 @@ public class InputGUI implements ActionListener {
         }
     }
 
+    /**
+     * @param current
+     */
     public void addSentenceToHistory(String current) {
         boolean hasItem = false;
         for (int i = 0; i < toParse.getItemCount() && !hasItem; ++i) {
@@ -1043,8 +1050,11 @@ public class InputGUI implements ActionListener {
             setGram(TAG2RCG);
         } else if (ops.check("lcfrs")) {
             setGram("lcfrs");
+        } else if (ops.check("cyktag")) {
+            System.out.println("CYKTAG in setOps!");
+            setGram("cyktag");
         } else {
-            setGram("tag");
+            setGram("cyktag");
         }
         if (ops.check("a")) {
             aF.setText(ops.getVal("a"));
@@ -1076,14 +1086,18 @@ public class InputGUI implements ActionListener {
         ops.removeVal("r");
         ops.removeVal("lcfrs");
         ops.removeVal("c");
+        ops.removeVal(CYKTAG);
+        ops.removeVal(TAG2RCG);
         if (RCG.equals(getGram())) {
             ops.setOurVal("r", "");
         } else if (CFG.equals(getGram())) {
             ops.setOurVal("c", "");
-        } else if (LCFRS.equals(getGram())) {
-            ops.setOurVal("lcfrs", "");
+            // } else if (LCFRS.equals(getGram())) {
+            // ops.setOurVal("lcfrs", "");
         } else if (TAG2RCG.equals(getGram())) {
             ops.setOurVal(TAG2RCG, "");
+        } else if (CYKTAG.equals(getGram())) {
+            ops.setVal(CYKTAG, "");
         }
         if (verboseBox.isSelected()) {
             ops.setOurVal("v", "");

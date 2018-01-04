@@ -46,6 +46,10 @@ public class CommandLineProcesses {
     public static CommandLineOptions processCommandLine(String[] cmdline) {
         // Command line processing
         CommandLineOptions op = new CommandLineOptions();
+        // we declare the optional cyktag option to use the SlimTAG parser
+        // (which is the default parser for TAG)
+        op.add(CommandLineOptions.Prefix.DASH, "cyktag",
+                CommandLineOptions.Separator.BLANK, false);
         // we declare the optional tag2rcg option to parse TAGs with rcg
         // conversion
         op.add(CommandLineOptions.Prefix.DASH, "tag2rcg",
@@ -218,6 +222,7 @@ public class CommandLineProcesses {
 
         res += "where OPTIONS are:\n\t";
         res += "for functionalities:\n\t";
+        res += "-cyktag      use CYK parser for TAG, default parsing algorithm";
         res += "-tag2rcg     (use TAG to RCG conversion)\n\t";
         res += "-r      (rcg parser, default is TAG/TT-MCTAG)\n\t";
         res += "-k N    (limits the size of the list of pending arguments to N)\n\t";
