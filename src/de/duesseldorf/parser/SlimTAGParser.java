@@ -39,6 +39,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Vector;
 
+import de.duesseldorf.frames.Situation;
+import de.tuebingen.lexicon.Lemma;
+import de.tuebingen.lexicon.MorphEntry;
+
+
 import de.tuebingen.forest.Rule;
 import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.forest.TreeOp;
@@ -83,12 +88,15 @@ public class SlimTAGParser {
 
     private int nTokens;
 
-    public SlimTAGParser(Map<String, TagTree> dict) {
+    public SlimTAGParser(Map<String, TagTree> dict, Situation sit) {
         grammarDict = new HashMap<String, TagTree>();
         revGrammarDict = new HashMap<TagTree, String>();
 
         adr_map = new HashMap<TagNode, String>();
 
+	Map<String, List<MorphEntry>> lm = sit.getGrammar().getMorphEntries();
+	Map<String, List<Lemma>> ll = sit.getGrammar().getLemmas();
+	
         Iterator<String> its = dict.keySet().iterator();
 
         while (its.hasNext()) {
@@ -393,10 +401,10 @@ public class SlimTAGParser {
     }
 
     public List<Tidentifier> parse(List<Word> tokens,
-            Map<Tidentifier, List<Rule>> rules, String axiom) {
+				   Map<Tidentifier, List<Rule>> rules, String axiom, Situation sit) {
 
         // boolean success = build_chart(tokens);
-        boolean success = build_chart_via_agenda(tokens);
+        boolean success = build_chart_via_agenda(tokens, sit);
 	
         if (!success)
             return new LinkedList<Tidentifier>();
@@ -1261,7 +1269,7 @@ public class SlimTAGParser {
     }
 
     /****************************************************************/
-    public boolean build_chart_via_agenda(List<Word> tokens) {
+    public boolean build_chart_via_agenda(List<Word> tokens, Situation sit) {
 
         /***
          * This is a bottom-up parsing routine based on the deduction rules from
@@ -1271,6 +1279,9 @@ public class SlimTAGParser {
          * items are never visited.
          ***/
 
+	Map<String, List<MorphEntry>> lm = sit.getGrammar().getMorphEntries();
+	Map<String, List<Lemma>> ll = sit.getGrammar().getLemmas();
+	
         nTokens = tokens.size();
 
         long chartStartTime = System.nanoTime();
@@ -1507,8 +1518,9 @@ public class SlimTAGParser {
                 lex_word = ((TagNode) tag_tree.getLexAnc()).getWord();
             }
 
-            for (TagNode cur_node : tree_nodes) {
-
+            //for (TagNode cur_node : tree_nodes) {
+            for (int tag_index=0; tag_index<tree_nodes.size(); tag_index++) {
+		TagNode cur_node = tree_nodes.get(tag_index);
                 if (cur_node.getType() == TagNode.LEX) {
 
                     // Lexcical base case
@@ -1517,10 +1529,43 @@ public class SlimTAGParser {
                     // null. That's not what we want
                     // Word word = cur_node.getWord();
 
+                    System.err.println("Node: "+cur_node);
                     // System.err.println("Word: "+cur_node.getWord());
                     // System.err.println("Category: "+cur_node.getCategory());
 
                     String word = cur_node.getCategory();
+		    
+		    // These are the features, they should be null in
+		    // the cases of co-anchor or lex node
+		    // System.out.println("Current label: "+cur_node.getLabel());
+
+		    // Borrowed this from TreeSelector
+		    // we try to do a bit more than before for co-anchors/lex nodes
+		    // we look into the lexicon to find a real inflected form
+		    // and get its features
+		    // if not found, we just cary on like before (only a cat)
+
+		    // only if the node was not anchored in a normal
+		    // way (co-anchor or lex node)
+		    if(cur_node.getLabel()==null){
+			//System.out.println("Current FS: "+cur_node);
+			if (lm.containsKey(word)) {
+			    List<MorphEntry> lme = lm.get(word);
+			    for (int j = 0; j < lme.size(); j++) {
+				// ToDo
+				// Here we brutally hope there will be one entry, and only one lemmaref for this entry
+				System.out.println(lme.get(j));
+				cur_node.setLabel(lme.get(j).getLemmarefs().get(0).getFeatures());
+				System.out.println("FS set to : "+lme.get(j).getLemmarefs().get(0).getFeatures());
+				
+			    }
+			}
+		    }
+
+
+		    System.err.println("New node: "+cur_node);
+		    // This does not work, how can we update it?
+		    tree_nodes.set(tag_index,cur_node);
 
                     // a lexical node can never be above a foot node
                     assert (closed_map.get(cur_node) != null);
