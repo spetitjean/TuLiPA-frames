@@ -457,10 +457,10 @@ public class ParsingInterface {
             // parse
             long parseTime = System.nanoTime();
             // TAGParser parser = new TAGParser(grammarDict);
-            SlimTAGParser parser = new SlimTAGParser(grammarDict);
+            SlimTAGParser parser = new SlimTAGParser(grammarDict,sit);
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
-                    axiom);
+							  axiom, sit);
             System.err.println("Parsed");
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
