@@ -37,6 +37,7 @@ package de.duesseldorf.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -62,6 +63,7 @@ import de.tuebingen.forest.ProduceDOM;
 import de.tuebingen.forest.Rule;
 import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.gui.DerivedTreeViewer;
+import de.tuebingen.gui.ParseTreeCollection;
 import de.tuebingen.parser.ForestExtractor;
 import de.tuebingen.parser.ForestExtractorFactory;
 import de.tuebingen.parser.RCGParser;
@@ -491,13 +493,22 @@ public class ParsingInterface {
         if (res) {
             if (op.check("x")) { // XML output of the derivations!
                 long xmlTime = System.nanoTime();
-                Document dparses = DOMderivationBuilder.buildDOMderivation(
-                        DerivedTreeViewer.getViewTreesFromDOM(fdoc, sit,
-                                grammarDict, false, false, false,
-                                needsAnchoring, slabels, noUtool),
+                ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
+                        .getViewTreesFromDOM(fdoc, sit, grammarDict, false,
+                                false, false, needsAnchoring, slabels, noUtool);
+                DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
                         sentence);
-                XMLUtilities.writeXML(dparses, outputfile,
+                Document dparses = standardDerivationBuilder
+                        .buildDOMderivation(viewTreesFromDOM);
+                // XMLUtilities.writeXML(dparses, outputfile,
+                // "tulipa-parses.dtd,xml", true);
+                DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
+                        sentence);
+                Document dwebguiparses = webguiDerivationBuilder
+                        .buildDOMderivationGrammar(viewTreesFromDOM);
+                XMLUtilities.writeXML(dwebguiparses, outputfile,
                         "tulipa-parses.dtd,xml", true);
+
                 long estXMLTime = System.nanoTime();
                 System.err.println(
                         "Parses available (in XML) in " + outputfile + ".");
