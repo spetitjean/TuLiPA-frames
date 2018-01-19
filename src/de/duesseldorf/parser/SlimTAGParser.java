@@ -1504,6 +1504,8 @@ public class SlimTAGParser {
 
             TagNode tree_root = (TagNode) tag_tree.getRoot();
 
+	    //System.out.println("Tag tree: "+tree_root);
+	    
             List<TagNode> tree_nodes = new LinkedList<TagNode>();
             tree_root.getAllNodesChildrenFirst(tree_nodes);
 
@@ -1518,18 +1520,19 @@ public class SlimTAGParser {
                 lex_word = ((TagNode) tag_tree.getLexAnc()).getWord();
             }
 
-            //for (TagNode cur_node : tree_nodes) {
-            for (int tag_index=0; tag_index<tree_nodes.size(); tag_index++) {
-		TagNode cur_node = tree_nodes.get(tag_index);
+            for (TagNode cur_node : tree_nodes) {
+            //for (int tag_index=0; tag_index<tree_nodes.size(); tag_index++) {
+	    //TagNode cur_node = tree_nodes.get(tag_index);
                 if (cur_node.getType() == TagNode.LEX) {
 
                     // Lexcical base case
-
+		    
                     // if the lex. node is not an anchor, getWord() will return
                     // null. That's not what we want
                     // Word word = cur_node.getWord();
 
-                    System.err.println("Node: "+cur_node);
+                    //System.err.println("Node: "+cur_node);
+                    //System.err.println("Gorn Address: "+lex_gorn);
                     // System.err.println("Word: "+cur_node.getWord());
                     // System.err.println("Category: "+cur_node.getCategory());
 
@@ -1547,25 +1550,31 @@ public class SlimTAGParser {
 
 		    // only if the node was not anchored in a normal
 		    // way (co-anchor or lex node)
-		    if(cur_node.getLabel()==null){
-			//System.out.println("Current FS: "+cur_node);
-			if (lm.containsKey(word)) {
-			    List<MorphEntry> lme = lm.get(word);
-			    for (int j = 0; j < lme.size(); j++) {
-				// ToDo
-				// Here we brutally hope there will be one entry, and only one lemmaref for this entry
-				System.out.println(lme.get(j));
-				cur_node.setLabel(lme.get(j).getLemmarefs().get(0).getFeatures());
-				System.out.println("FS set to : "+lme.get(j).getLemmarefs().get(0).getFeatures());
+		    // if(cur_node.getLabel()==null){
+		    // 	//System.out.println("Current FS: "+cur_node);
+		    // 	if (lm.containsKey(word)) {
+		    // 	    List<MorphEntry> lme = lm.get(word);
+		    // 	    for (int j = 0; j < lme.size(); j++) {
+		    // 		// ToDo
+		    // 		// Here we brutally hope there will be one entry, and only one lemmaref for this entry
+		    // 		//System.out.println(lme.get(j));
+		    // 		cur_node.setLabel(lme.get(j).getLemmarefs().get(0).getFeatures());
+		    // 		//cur_node.setLabel(null);
+		    // 		//System.out.println("FS set to : "+lme.get(j).getLemmarefs().get(0).getFeatures());
 				
-			    }
-			}
-		    }
+		    // 	    }
+		    // 	}
+		    // }
 
 
-		    System.err.println("New node: "+cur_node);
+		    //System.err.println("New node: "+cur_node);
 		    // This does not work, how can we update it?
-		    tree_nodes.set(tag_index,cur_node);
+		    // tree_nodes.set(tag_index,cur_node);
+		    // tag_tree.updateNode(cur_node,lex_gorn);
+		    // grammarDict.put(cur_key,tag_tree);
+		    // revGrammarDict.put(tag_tree,cur_key);
+		    // System.out.println(tag_tree.getRoot());
+
 
                     // a lexical node can never be above a foot node
                     assert (closed_map.get(cur_node) != null);

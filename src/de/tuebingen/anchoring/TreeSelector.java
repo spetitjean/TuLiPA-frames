@@ -64,6 +64,7 @@ import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
 import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tag.Value;
+import de.tuebingen.tree.Node;
 import de.tuebingen.tokenizer.Word;
 
 public class TreeSelector {
@@ -685,6 +686,38 @@ public class TreeSelector {
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
+	Map<String, List<MorphEntry>> lm = situation.getGrammar().getMorphEntries();
+	for (Node CoAnchor:tt.getCoAnchors()){
+	    //System.out.println(CoAnchor);
+	    TagNode CoAnc=(TagNode)CoAnchor;
+	    TagNode LexItem=(TagNode)CoAnc.getChildren().get(0);
+	    if (lm.containsKey(LexItem.getCategory())) {
+		List<MorphEntry> lme = lm.get(LexItem.getCategory());
+		for (int j = 0; j < lme.size(); j++) {
+		    	try{
+			    Environment E=new Environment(5);
+			    Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
+			    // we also unify this Fs with top
+			    if(CoAnc.getLabel().hasFeat("top")){
+				Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
+				Fs New=new Fs(0);
+				New.setFeat("top",new Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
+				Unify=Fs.unify(Unify,New,E);
+			    }
+			    CoAnc.setLabel(Unify);
+			    //System.out.println("Coanchor updated: "+Unify);
+			}
+			catch (UnifyException e) {
+			    System.err.println(
+					       "Features unification failed on tree ");
+			    System.err.println(e);
+			    throw new AnchoringException(); // we withdraw the
+			    // current coanchoring
+			}
+			
+		}
+	    }
+	}
         treeHash.put(tt.getId(), tt);
         // and the tuple:
         xTrees.add(tt.getId());
