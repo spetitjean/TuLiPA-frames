@@ -510,7 +510,7 @@ public class SlimTAGParser {
                                 // + closed_map.get(child1).get(i)
 				// .get(split_point)[0];
 			    System.err.println("Strange thing[3]");
-			    //return;
+			    return;
 			}
 			// System.err.println("hyp: "+ hyp);   
                         if (hyp < 1e300) {
