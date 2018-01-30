@@ -40,9 +40,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.duesseldorf.frames.Situation;
-import de.tuebingen.lexicon.Lemma;
-import de.tuebingen.lexicon.MorphEntry;
-
 
 import de.tuebingen.forest.Rule;
 import de.tuebingen.forest.Tidentifier;
@@ -88,14 +85,11 @@ public class SlimTAGParser {
 
     private int nTokens;
 
-    public SlimTAGParser(Map<String, TagTree> dict, Situation sit) {
+    public SlimTAGParser(Map<String, TagTree> dict) {
         grammarDict = new HashMap<String, TagTree>();
         revGrammarDict = new HashMap<TagTree, String>();
 
         adr_map = new HashMap<TagNode, String>();
-
-	Map<String, List<MorphEntry>> lm = sit.getGrammar().getMorphEntries();
-	Map<String, List<Lemma>> ll = sit.getGrammar().getLemmas();
 	
         Iterator<String> its = dict.keySet().iterator();
 
@@ -157,7 +151,7 @@ public class SlimTAGParser {
 
                 for (TagNode org_node : nodes) {
 
-                    // System.err.println("at node " + org_node);
+                    System.err.println("at node " + org_node);
 
                     TagNode map_node = node_map.get(org_node);
 
@@ -401,10 +395,10 @@ public class SlimTAGParser {
     }
 
     public List<Tidentifier> parse(List<Word> tokens,
-				   Map<Tidentifier, List<Rule>> rules, String axiom, Situation sit) {
+				   Map<Tidentifier, List<Rule>> rules, String axiom) {
 
         // boolean success = build_chart(tokens);
-        boolean success = build_chart_via_agenda(tokens, sit);
+        boolean success = build_chart_via_agenda(tokens);
 	
         if (!success)
             return new LinkedList<Tidentifier>();
@@ -416,7 +410,7 @@ public class SlimTAGParser {
             Tidentifier cur_id, Map<Tidentifier, List<Rule>> rules,
             Set<Integer> rule_idx_set) {
 
-        // System.err.println("trace_all_no_gap("+i+","+j+","+pos + ") for "
+	//System.err.println("trace_all_no_gap("+i+","+j+","+pos + ") for "
         // +cur_node.toString());
         // System.err.println(rule_idx_set.size() + " rules");
 
@@ -478,8 +472,10 @@ public class SlimTAGParser {
 		    // System.err.println("In trace all no gaps [2 children, got the children]");
 
 		    // Added for debugging
-		    if(closed_map.get(child1).get(i)==null)
+		    if(closed_map.get(child1).get(i)==null){
+			System.err.println("Strange thing[2]");
 			return;
+		    }
 			
                     Iterator<Integer> it = closed_map.get(child1).get(i)
                             .keySet().iterator();
@@ -513,7 +509,8 @@ public class SlimTAGParser {
                                 // .get(split_point)[0]
                                 // + closed_map.get(child1).get(i)
 				// .get(split_point)[0];
-				return;
+			    System.err.println("Strange thing[3]");
+			    //return;
 			}
 			// System.err.println("hyp: "+ hyp);   
                         if (hyp < 1e300) {
@@ -558,6 +555,7 @@ public class SlimTAGParser {
             // adjunction included here
 
             // a) null-adjoin
+	    System.err.println("Null-adjoin[1]");
             // CROSS-CHECK: is this the correct check for mandatory adjunction?
             if (cur_node.getAdjStatus() != TagNode.MADJ) {
                 // adjunction is not obligatory
@@ -569,6 +567,7 @@ public class SlimTAGParser {
 		// Added for debugging
 		if(closed_map.get(cur_node).get(i)==null){
 		    //hyp_na = closed_map.get(cur_node).get(i).get(j)[1];
+		    System.err.println("Strange thing[1]");
 		    return;
 		}
 		else{
@@ -585,7 +584,7 @@ public class SlimTAGParser {
             if (nChildren == 0) {
 
                 // b) substitution
-		// System.err.println("Substitution");
+		System.err.println("Substitution");
 
                 for (TagTree subst_tag_tree : initial_trees.get(category)) {
 
@@ -655,11 +654,11 @@ public class SlimTAGParser {
                 }
             } else if (!cur_node.isNoadj()) {
                 // c) adjoining
-		// System.err.println("Adjunction ");
+		System.err.println("Adjunction[1] ");
 					
 		
                 for (TagTree subst_tag_tree : auxiliary_trees.get(category)) {
-		    // System.err.println("[00]");
+		    System.err.println("[00]");
                     // this is currently superfluous, we already ensured
                     // matching categories
                     // if (!adjunction_possible(cur_node, subst_tag_tree))
@@ -673,7 +672,7 @@ public class SlimTAGParser {
                             .iterator();
 
                     while (it_i.hasNext()) {
-			// System.err.println("[0]");
+			System.err.println("[0]");
 			
                         int i_inner = it_i.next().intValue();
 
@@ -689,7 +688,7 @@ public class SlimTAGParser {
                                 .keySet().iterator();
 
                         while (it_j.hasNext()) {
-			    // System.err.println("[1]");
+			    System.err.println("[1]");
 
                             int j_inner = it_j.next().intValue();
 
@@ -707,9 +706,10 @@ public class SlimTAGParser {
 			    // System.err.println("second thing"+gap_map.get(subst_root).get(i).get(i_inner).get(j_inner));
 			    // Added for debugging:
 			    if (gap_map.get(subst_root).get(i)
-				.get(i_inner).get(j_inner)== null)
-                                continue;
-			    // System.err.println("11");
+				.get(i_inner).get(j_inner)== null){
+				System.err.println("Strange thing[4]");
+				continue;
+			    }
                             if (gap_map.get(subst_root).get(i).get(i_inner)
                                     .get(j_inner) == null
                                     || gap_map.get(subst_root).get(i)
@@ -727,7 +727,7 @@ public class SlimTAGParser {
                             // is less complicated.
                             // In the end we have to add the weight of the
                             // initial tree
-			    // System.err.println("[2]");
+			    System.err.println("[2]");
 			    // System.err.println("[2 gap_map]:"+gap_map.get(subst_root).get(i)
                             //        .get(i_inner).get(j_inner).get(j)[0]);
 			    // System.err.println("[2 closed_map]:"+closed_map.get(cur_node).get(i_inner)
@@ -738,7 +738,7 @@ public class SlimTAGParser {
                                             .get(j_inner)[1]
                                     + 1.0; // this is the tree weight
 
-			    // System.err.println("[22]");
+			    System.err.println("[22]");
                             if (hyp < 1e300) {
 				// System.err.println("[222]");
                                 Set<Integer> cur_rule_set = rule_idx_set;
@@ -992,6 +992,7 @@ public class SlimTAGParser {
             // adjunction included here
 
             // a) null-adjoin
+	    System.err.println("Null-adjoin[2]");
             // CROSS-CHECK: is this the correct check for mandatory adjunction?
             if (cur_node.getAdjStatus() != TagNode.MADJ) {
                 // adjunction is not obligatory
@@ -1007,6 +1008,7 @@ public class SlimTAGParser {
             }
 
             // b) true adjoining
+	    System.err.println("True adjoining");
             // CROSS-CHECK: is this the correct check for forbidden adjunction?
             if (nChildren > 0 && !cur_node.isNoadj()) {
 
@@ -1269,7 +1271,7 @@ public class SlimTAGParser {
     }
 
     /****************************************************************/
-    public boolean build_chart_via_agenda(List<Word> tokens, Situation sit) {
+    public boolean build_chart_via_agenda(List<Word> tokens) {
 
         /***
          * This is a bottom-up parsing routine based on the deduction rules from
@@ -1279,8 +1281,6 @@ public class SlimTAGParser {
          * items are never visited.
          ***/
 
-	Map<String, List<MorphEntry>> lm = sit.getGrammar().getMorphEntries();
-	Map<String, List<Lemma>> ll = sit.getGrammar().getLemmas();
 	
         nTokens = tokens.size();
 
@@ -2086,6 +2086,8 @@ public class SlimTAGParser {
                                     // already been dequeued (all others will
                                     // trigger a separate execution later)
 
+				    System.err.println("Sibling above a foot node[1]");
+				    
                                     int limit = Math.min(nTokens,
                                             j + active_list);
 
@@ -2248,6 +2250,8 @@ public class SlimTAGParser {
                                 } else {
                                     // sibling is above a foot node
 
+				    System.err.println("Sibling above a foot node, parent: "+parent+", sibling: "+sibling);
+				    
                                     Map<Integer, Map<Integer, Map<Integer, Map<Integer, double[]>>>> par_map = gap_map
                                             .get(parent);
                                     Map<Integer, Map<Integer, Map<Integer, Map<Integer, double[]>>>> sib_map = gap_map
@@ -2273,21 +2277,28 @@ public class SlimTAGParser {
                                                 .iterator();
 
                                         while (it_i.hasNext()) {
-
+					    System.err.println("Getting next i: "+it_i);
                                             int i_inner = it_i.next()
                                                     .intValue();
 
                                             if (i_inner > i)
                                                 break;
 
-                                            Iterator<Integer> it_j = sib_map
+					    // Simon: changed this for
+					    // debugging: the keySet
+					    // must be copied because
+					    // it might be modified
+					    // (ConcurrentModificationException)
+                                            Iterator<Integer> it_j = new HashSet<Integer>( sib_map
                                                     .get(i_outer).get(i_inner)
-                                                    .keySet().iterator();
+											   .keySet()).iterator();
+
 
                                             while (it_j.hasNext()) {
-
+						System.err.println("Getting next j: "+it_j);
                                                 int j_inner = it_j.next()
                                                         .intValue();
+						System.err.println("Got next");
 
                                                 if (j_inner > i)
                                                     break;
@@ -2342,7 +2353,7 @@ public class SlimTAGParser {
                                                         .get(i_inner)
                                                         .get(j_inner)
                                                         .get(j)[1]) {
-
+						    System.err.println("Here[1]");
                                                     par_map.get(i_outer)
                                                             .get(i_inner)
                                                             .get(j_inner)

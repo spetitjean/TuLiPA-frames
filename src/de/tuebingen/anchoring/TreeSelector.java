@@ -687,14 +687,25 @@ public class TreeSelector {
         // we update the tree dictionary
         // -------------------------------
 	Map<String, List<MorphEntry>> lm = situation.getGrammar().getMorphEntries();
-	for (Node CoAnchor:tt.getCoAnchors()){
+
+	List<TagTree> ttlist = new ArrayList<TagTree>();
+	//for (Node CoAnchor:tt.getCoAnchors()){
+	for (int CoAnchorIndex=0; CoAnchorIndex<tt.getCoAnchors().size(); CoAnchorIndex++){
 	    //System.out.println(CoAnchor);
+	    Node CoAnchor=tt.getCoAnchors().get(CoAnchorIndex);
 	    TagNode CoAnc=(TagNode)CoAnchor;
 	    TagNode LexItem=(TagNode)CoAnc.getChildren().get(0);
+	    // If we can find the item in the lexicon, we add as many
+	    // trees as we can find items (if more than one)
 	    if (lm.containsKey(LexItem.getCategory())) {
 		List<MorphEntry> lme = lm.get(LexItem.getCategory());
 		for (int j = 0; j < lme.size(); j++) {
 		    	try{
+			    //TagTree ttt=new TagTree(tt.getRoot());
+			    //ttt.setId(nf.getUniqueName());
+			    //System.out.println("created new TagTree with ID: "+ttt.getId());
+
+			    
 			    Environment E=new Environment(5);
 			    Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
 			    // we also unify this Fs with top
@@ -705,7 +716,7 @@ public class TreeSelector {
 				Unify=Fs.unify(Unify,New,E);
 			    }
 			    CoAnc.setLabel(Unify);
-			    //System.out.println("Coanchor updated: "+Unify);
+			    //ttlist.add(ttt);
 			}
 			catch (UnifyException e) {
 			    System.err.println(
@@ -718,9 +729,18 @@ public class TreeSelector {
 		}
 	    }
 	}
-        treeHash.put(tt.getId(), tt);
-        // and the tuple:
-        xTrees.add(tt.getId());
+	if(ttlist.size()==0){
+	    ttlist.add(tt);
+	}
+	//System.out.println("Adding elements: "+ttlist.size());
+	for(TagTree one_tt: ttlist){
+	    //System.out.println("Current id: "+one_tt.getId());
+	    treeHash.put(one_tt.getId(), one_tt);
+	    // and the tuple:
+	    xTrees.add(one_tt.getId());
+	}
+	//System.out.println("Added elements");
+	
         // System.err.println("Added " + tt.getOriginalId());
         // System.err.println(tt.getRoot().toString());
         if (tl != null) {
