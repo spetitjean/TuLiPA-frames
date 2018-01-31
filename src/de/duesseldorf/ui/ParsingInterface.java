@@ -150,7 +150,7 @@ public class ParsingInterface {
 
         // 5. Lexical selection and Anchoring
 	List<Word> cleantokens = tokens;
-	if (op.check("nofiltering")) {
+	if (op.check("nofiltering")||op.check("cyktag")) {
 	    cleantokens = clean_tokens(tokens);
 	}
         TreeSelector ts = new TreeSelector(cleantokens, verbose);
@@ -182,7 +182,7 @@ public class ParsingInterface {
             if (verbose)
                 System.err.println("Anchoring results:\n" + ts.toString());
             totalTime += anchoredTime;
-            if (!op.check("nofiltering")) {
+            if (!(op.check("nofiltering")||op.check("cyktag"))) {
                 // --------------------------------------------------------
                 // before RCG conversion, we apply lexical disambiguation:
                 // --------------------------------------------------------
