@@ -409,6 +409,33 @@ public class TagTree implements Tree {
     }
 
     /**
+     * Method used to modify a node according to its Gorn address
+     */
+
+    public void updateNode(Node n, String address){
+	System.out.println("Starting update");
+	updateNodeRec(root, n, address);
+	System.out.println("Finished update");
+    }
+    
+    public void updateNodeRec(Node current, Node n, String address) {
+	TagNode tagCurrent = (TagNode) current;
+        if (tagCurrent.getAddress().equals(address)) {
+	    System.out.println("Adresses: "+tagCurrent.getAddress()+" and "+address);
+	    System.out.println("Updating node: "+tagCurrent);
+            tagCurrent=(TagNode) n;
+	    System.out.println("Node updated: "+tagCurrent);
+        } else {
+            if (current.getChildren() != null) {
+                LinkedList<Node> l = (LinkedList<Node>) current.getChildren();
+                for (int i = 0; i < l.size(); i++) {
+                    updateNodeRec(l.get(i), n, address);
+                }
+            }
+        }
+    }
+
+    /**
      * Method used to compute the mapping between a lex node and its (Gorn
      * address, cat)
      * (used at dependencies building)

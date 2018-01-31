@@ -151,7 +151,11 @@ public class ParsingInterface {
         /* ******************************************/
 
         // 5. Lexical selection and Anchoring
-        TreeSelector ts = new TreeSelector(tokens, verbose);
+	List<Word> cleantokens = tokens;
+	if (op.check("nofiltering")||op.check("cyktag")) {
+	    cleantokens = clean_tokens(tokens);
+	}
+        TreeSelector ts = new TreeSelector(cleantokens, verbose);
         List<List<Tuple>> subgrammars = null;
 
         if (needsAnchoring) {
@@ -180,7 +184,7 @@ public class ParsingInterface {
             if (verbose)
                 System.err.println("Anchoring results:\n" + ts.toString());
             totalTime += anchoredTime;
-            if (!op.check("nofiltering")) {
+            if (!(op.check("nofiltering")||op.check("cyktag"))) {
                 // --------------------------------------------------------
                 // before RCG conversion, we apply lexical disambiguation:
                 // --------------------------------------------------------
@@ -190,11 +194,15 @@ public class ParsingInterface {
                         System.err.println(ptk.toString());
                     }
                 }
+		System.err.println("########Starting Polarity Automaton ");
                 PolarityAutomaton pa = new PolarityAutomaton(toksentence, lptk,
                         axiom, verbose, ts.getLexNodes(), ts.getCoancNodes());
+		System.err.println("########Done Polarity Automaton ");
                 List<List<String>> tupleSets = pa.getPossibleTupleSets();
+		System.err.println("########Got possible tuple sets ");
                 subgrammars = ComputeSubGrammar.computeSubGrammar(verbose,
                         tupleSets, ts.getTupleHash(), ts.getTreeHash());
+		System.err.println("########Computed sub grammar ");
 
                 System.err.println(
                         "\t@@##Tree combinations before classical polarity filtering   : "
@@ -419,7 +427,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-
+		System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -457,10 +465,10 @@ public class ParsingInterface {
             // parse
             long parseTime = System.nanoTime();
             // TAGParser parser = new TAGParser(grammarDict);
-            SlimTAGParser parser = new SlimTAGParser(grammarDict,sit);
+            SlimTAGParser parser = new SlimTAGParser(grammarDict);
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
-							  axiom, sit);
+							  axiom);
             System.err.println("Parsed");
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
@@ -566,6 +574,19 @@ public class ParsingInterface {
         return res;
     }
     // END_BY_TS
+
+    public static List<Word> clean_tokens(List<Word> tokens){
+	List clean = new LinkedList<Word>();
+	Set mem = new HashSet<String>();
+	for (Word word: tokens){
+	    if(!mem.contains(word.getWord())){
+		clean.add(word);
+		mem.add(word.getWord());
+	    }
+	}
+	return clean;
+    }
+	
 
     public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
             String sentence) throws TokenizerException, IOException {

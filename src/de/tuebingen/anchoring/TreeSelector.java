@@ -64,6 +64,7 @@ import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
 import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tag.Value;
+import de.tuebingen.tree.Node;
 import de.tuebingen.tokenizer.Word;
 
 public class TreeSelector {
@@ -685,9 +686,61 @@ public class TreeSelector {
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
-        treeHash.put(tt.getId(), tt);
-        // and the tuple:
-        xTrees.add(tt.getId());
+	Map<String, List<MorphEntry>> lm = situation.getGrammar().getMorphEntries();
+
+	List<TagTree> ttlist = new ArrayList<TagTree>();
+	//for (Node CoAnchor:tt.getCoAnchors()){
+	for (int CoAnchorIndex=0; CoAnchorIndex<tt.getCoAnchors().size(); CoAnchorIndex++){
+	    //System.out.println(CoAnchor);
+	    Node CoAnchor=tt.getCoAnchors().get(CoAnchorIndex);
+	    TagNode CoAnc=(TagNode)CoAnchor;
+	    TagNode LexItem=(TagNode)CoAnc.getChildren().get(0);
+	    // If we can find the item in the lexicon, we add as many
+	    // trees as we can find items (if more than one)
+	    if (lm.containsKey(LexItem.getCategory())) {
+		List<MorphEntry> lme = lm.get(LexItem.getCategory());
+		for (int j = 0; j < lme.size(); j++) {
+		    	try{
+			    //TagTree ttt=new TagTree(tt.getRoot());
+			    //ttt.setId(nf.getUniqueName());
+			    //System.out.println("created new TagTree with ID: "+ttt.getId());
+
+			    
+			    Environment E=new Environment(5);
+			    Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
+			    // we also unify this Fs with top
+			    if(CoAnc.getLabel().hasFeat("top")){
+				Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
+				Fs New=new Fs(0);
+				New.setFeat("top",new Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
+				Unify=Fs.unify(Unify,New,E);
+			    }
+			    CoAnc.setLabel(Unify);
+			    //ttlist.add(ttt);
+			}
+			catch (UnifyException e) {
+			    System.err.println(
+					       "Features unification failed on tree ");
+			    System.err.println(e);
+			    throw new AnchoringException(); // we withdraw the
+			    // current coanchoring
+			}
+			
+		}
+	    }
+	}
+	if(ttlist.size()==0){
+	    ttlist.add(tt);
+	}
+	//System.out.println("Adding elements: "+ttlist.size());
+	for(TagTree one_tt: ttlist){
+	    //System.out.println("Current id: "+one_tt.getId());
+	    treeHash.put(one_tt.getId(), one_tt);
+	    // and the tuple:
+	    xTrees.add(one_tt.getId());
+	}
+	//System.out.println("Added elements");
+	
         // System.err.println("Added " + tt.getOriginalId());
         // System.err.println(tt.getRoot().toString());
         if (tl != null) {
