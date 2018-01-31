@@ -149,7 +149,8 @@ public class ParsingInterface {
         /* ******************************************/
 
         // 5. Lexical selection and Anchoring
-        TreeSelector ts = new TreeSelector(tokens, verbose);
+	List<Word> cleantokens = clean_tokens(tokens);
+        TreeSelector ts = new TreeSelector(new LinkedList(cleantokens), verbose);
         List<List<Tuple>> subgrammars = null;
 
         if (needsAnchoring) {
@@ -559,6 +560,19 @@ public class ParsingInterface {
         return res;
     }
     // END_BY_TS
+
+    public static List<Word> clean_tokens(List<Word> tokens){
+	List clean = new LinkedList<Word>();
+	Set mem = new HashSet<String>();
+	for (Word word: tokens){
+	    if(!mem.contains(word.getWord())){
+		clean.add(word);
+		mem.add(word.getWord());
+	    }
+	}
+	return clean;
+    }
+	
 
     public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
             String sentence) throws TokenizerException, IOException {
