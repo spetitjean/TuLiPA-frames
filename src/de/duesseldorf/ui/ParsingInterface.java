@@ -150,7 +150,7 @@ public class ParsingInterface {
 
         // 5. Lexical selection and Anchoring
 	List<Word> cleantokens = clean_tokens(tokens);
-        TreeSelector ts = new TreeSelector(new LinkedList(cleantokens), verbose);
+        TreeSelector ts = new TreeSelector(cleantokens, verbose);
         List<List<Tuple>> subgrammars = null;
 
         if (needsAnchoring) {
