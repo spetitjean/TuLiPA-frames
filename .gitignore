@@ -13,3 +13,6 @@ resources/**
 # put your test scripts in run and keep some of them private
 run/ 
 !run/test.sh
+
+# ignore class files 
+bin/**/*.class
