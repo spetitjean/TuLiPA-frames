@@ -15,4 +15,5 @@ run/
 !run/test.sh
 
 # ignore class files 
-bin/**/*.class
+bin/**
+!TuLiPA-frames.jar
