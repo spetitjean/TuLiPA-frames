@@ -470,8 +470,8 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
             chooser.showSaveDialog(this);
             File xmlFile = chooser.getSelectedFile();
 
-            Document dparses = DOMderivationBuilder.buildDOMderivation(trees,
-                    sentence);
+            Document dparses = new DOMderivationBuilder(sentence)
+                    .buildDOMderivation(trees);
             XMLUtilities.writeXML(dparses, xmlFile.getAbsolutePath(),
                     "tulipa-parses.dtd,xml", true);
         } else if (s.equals("Close")) {

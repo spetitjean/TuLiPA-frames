@@ -118,29 +118,40 @@ public class DOMderivationBuilder {
 
     public void buildOneGrammarFormat(Element mother, Node derivation,
             Node derived, List<SemLit> semantics, String[] specifiedSemantics) {
-        Element parse = derivDoc.createElement("entry");
-        parse.setAttribute("name", sentence + "_" + parsecounter);
+        Element parseDerivedEntry = derivDoc.createElement("entry"); // the entry with the derived tree
+        //Element parseDerivationEntry = derivDoc.createElement("entry"); // the entry with the derivation tree
+        
+        parseDerivedEntry.setAttribute("name", sentence + "_" + parsecounter+"_derivedTree");
+        //parseDerivationEntry.setAttribute("name", sentence + "_" + parsecounter+"_derivationTree");
+        
         parsecounter++;
-        // Element derivationTree = derivDoc.createElement("tree"); //you need
+        Element derivationTree = derivDoc.createElement("tree"); //you need
         // seperate entries in the doocument for every tree
         Element derivedTree = derivDoc.createElement("tree");
         Element semElem = derivDoc.createElement("semantics");
         Element specSemElem = derivDoc.createElement("specified_semantics");
+        Element family = derivDoc.createElement("family");
 
-        // leave this out for once
-        // buildDerivationTree(derivationTree, derivation);
-        // parse.appendChild(derivationTree);
+        buildDerivationTree(derivationTree, derivation);
+       // parseDerivationEntry.appendChild(derivationTree);
+
+        buildFamily(family);
+        parseDerivedEntry.appendChild(family);
+       // parseDerivationEntry.appendChild(family);
 
         buildDerivedTree(derivedTree, derived);
-        parse.appendChild(derivedTree);
+        parseDerivedEntry.appendChild(derivedTree);
 
         buildSemantics(semElem, semantics);
-        parse.appendChild(semElem);
+        parseDerivedEntry.appendChild(semElem);
+      // parseDerivationEntry.appendChild(semElem);
 
         buildSpecifiedSemantics(specSemElem, specifiedSemantics);
-        parse.appendChild(specSemElem);
+        parseDerivedEntry.appendChild(specSemElem);
+     //   parseDerivationEntry.appendChild(specSemElem);
 
-        mother.appendChild(parse);
+        mother.appendChild(parseDerivedEntry);
+       // mother.appendChild(parseDerivationEntry);
     }
 
     public static void buildOne(Element mother, Node derivation, Node derived,
@@ -164,6 +175,10 @@ public class DOMderivationBuilder {
         p.appendChild(s2);
 
         mother.appendChild(p);
+    }
+    
+    public static void buildFamily(Element family){
+    
     }
 
     public static void buildDerivationTree(Element mother, Node derivation) {
@@ -193,12 +208,8 @@ public class DOMderivationBuilder {
 
     public static void buildDerivedTree(Element mother, Node derived) {
         Element t = derivDoc.createElement("node");
-
         Element narg = derivDoc.createElement("narg");
-        t.appendChild(narg);
-
         Element fs = derivDoc.createElement("fs");
-        narg.appendChild(fs);
 
         NamedNodeMap atts = derived.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) {
@@ -221,9 +232,26 @@ public class DOMderivationBuilder {
             // lex node
             t.setAttribute("type", "lex");
             t.setAttribute("value", derived.getNodeName());
+                        
+            // for display in the XMG webgui
+            Element f = derivDoc.createElement("f");
+            f.setAttribute("name", "cat");
+            Element sym = derivDoc.createElement("sym");
+            sym.setAttribute("value", derived.getNodeName());
+            f.appendChild(sym);
+            fs.appendChild(f);
         } else {
             t.setAttribute("type", "std");
         }
+            
+            
+/*goal: 
+ * <node type="lex">
+ *     <narg><fs>
+ *        <f name="cat">
+ *            <sym value="John"/>*/
+        narg.appendChild(fs);
+        t.appendChild(narg);
         mother.appendChild(t);
     }
 
