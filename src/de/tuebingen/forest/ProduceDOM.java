@@ -213,6 +213,8 @@ public class ProduceDOM {
 		e.setAttribute("id", name_factory.getName(top.getId().toString()));
 		//e.setAttribute("id", ""+name_factory.getName(""+top.getId().getClauseId()));
 		e.setAttribute("node", top.getId().getNodeId());
+		//System.out.println("top.getId(): "+top.getId());
+		//System.out.println("top.getId().getNodeId(): "+top.getId().getNodeId());
 		mother.appendChild(e);
 	}
 

@@ -299,8 +299,7 @@ public class ElementaryTree {
         // first store the nodes to operate on (addresses will be misled by
         // adjunctions)
         for (Object[] op : operations) {
-            // System.err.print("Looking for node at address: " + op[3] + " -->
-            // ");
+            // System.err.print("Looking for node at address: " + op[3] + " --> ");
             op[3] = getNodeByAddress((String) op[3]);
             // System.err.println(op[3]);
         }
@@ -309,8 +308,7 @@ public class ElementaryTree {
                 dTree.numTerminals++;
             }
             if (((String) op[1]).equals("adj")) {
-                if (adjoin((ElementaryTree) op[2], (Node) op[3], dTree)) {
-
+                if (adjoin((ElementaryTree) op[2], (Node) op[3], dTree)) {		    
                     dTree.topFeatures.put(root,
                             Fs.unify(dTree.topFeatures.get(root),
                                     dTree.topFeatures.get(dTree.root),
@@ -391,7 +389,6 @@ public class ElementaryTree {
             dTree.bottomFeatures.put(rootNode,
                     adjoinedTree.bottomFeatures.get(rootNode));
         }
-
         Node footNode = adjoinedTree.getNodeByAddress(adjoinedTree.foot);
         int childrenToRepend = adjoinNode.getChildNodes().getLength();
         for (int i = 0; i < childrenToRepend; i++) {

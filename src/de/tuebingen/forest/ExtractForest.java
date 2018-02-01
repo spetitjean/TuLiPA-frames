@@ -200,6 +200,7 @@ public class ExtractForest extends ForestExtractor {
 			top = new TreeOp(top); //if there already was a branching clause for this DNode (but maybe using another node) 
 		if (opInfo != null) { //if the caller is a branching clause
 			top.setType((Integer) opInfo.getKey());
+			//System.out.println("Setting Node ID in ExtractForest: "+(String) opInfo.getValue());
 			top.getId().setNodeId((String) opInfo.getValue());
 		}
 		if (dn.isAmbiguous()) {

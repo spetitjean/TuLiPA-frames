@@ -235,6 +235,7 @@ public class ExtractTreeForest extends ForestExtractor
 		if (opInfo != null)
 		{ // if the caller is a branching clause
 			op.setType((Integer) opInfo.getKey());
+			//System.out.println("Setting Node ID in ExtractTreeForest: "+(String) opInfo.getValue());
 			op.getId().setNodeId((String) opInfo.getValue());
 		}
 
@@ -310,6 +311,7 @@ public class ExtractTreeForest extends ForestExtractor
 		}
 		//BUGFIX: hand on correct operation information
 		op.setType(type);
+		//System.out.println("Setting Node ID in ExtractTreeForest: "+node);
 		op.getId().setNodeId(node);
 		return op;
 	}

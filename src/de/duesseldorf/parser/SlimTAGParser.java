@@ -637,6 +637,7 @@ public class SlimTAGParser {
                         Tidentifier tid = new Tidentifier(rules.size(),
                                 revGrammarDict.get(subst_tag_tree),
                                 subst_tag_tree.getId());
+			//System.out.println("Setting Node ID in SlimTAGParser [0]: "+adr_map.get(cur_node));
                         tid.setNodeId(adr_map.get(cur_node));
                         rules.put(tid, new LinkedList<Rule>());
                         rules.get(tid).add(new Rule(tid));
@@ -767,7 +768,14 @@ public class SlimTAGParser {
                                 Tidentifier tid = new Tidentifier(rules.size(),
                                         revGrammarDict.get(subst_tag_tree),
                                         subst_tag_tree.getId());
-                                tid.setNodeId(adr_map.get(cur_node));
+				// System.out.println("Setting Node ID in SlimTAGParser [2]: "+adr_map.get(cur_node));
+				// Simon: if the node has no address (should not happen) we give it 0
+				if(adr_map.get(cur_node)!=null){ 
+				    tid.setNodeId(adr_map.get(cur_node));
+				}
+				else{
+				    tid.setNodeId("0");
+				}
                                 rules.put(tid, new LinkedList<Rule>());
                                 rules.get(tid).add(new Rule(tid));
 				// System.err.println("[4]");
@@ -1102,6 +1110,7 @@ public class SlimTAGParser {
                                             rules.size(),
                                             revGrammarDict.get(subst_tag_tree),
                                             subst_tag_tree.getId());
+				    //System.out.println("Setting Node ID in SlimTAGParser [3]: "+adr_map.get(cur_node));
                                     tid.setNodeId(adr_map.get(cur_node));
                                     rules.put(tid, new LinkedList<Rule>());
                                     rules.get(tid).add(new Rule(tid));

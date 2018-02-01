@@ -220,7 +220,7 @@ public class TreeDeriver {
                 Object[] operation = new Object[5];
                 operation[0] = getOpId(op);
                 operation[1] = "adj";
-
+		
                 for (int j = 0; j < op.getChildNodes().getLength(); j++) {
 
                     Node child = op.getChildNodes().item(j);
@@ -240,7 +240,7 @@ public class TreeDeriver {
                                                         .getOriginalId());
                         }
                         String address = op.getAttributes().getNamedItem("node")
-                                .getNodeValue();
+			    .getNodeValue();
                         ElementaryTree adjoinedTree = getTreeInstance(
                                 adjoinedTreeId, treeDict, D, eTrees,
                                 needsAnchoring);
@@ -256,7 +256,7 @@ public class TreeDeriver {
                         }
                     }
 
-                }
+                }	
                 operations.add(operation);
             } else if (op.getNodeName().equals("subst")) {
                 Object[] operation = new Object[5];
