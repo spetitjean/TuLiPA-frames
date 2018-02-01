@@ -111,4 +111,5 @@ public class ParseTreeCollection {
     public String[] getSpecifiedSemantics() {
         return specifiedSemantics;
     }
+
 }
