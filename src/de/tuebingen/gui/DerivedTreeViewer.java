@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -79,8 +80,23 @@ public class DerivedTreeViewer {
                     .extractDerivationTrees(d);
             // XMLTreeViewer.displayTree(derivationTrees.getDocumentElement());
             NodeList startNodes = derivationTrees.getElementsByTagName("start");
+	    // Simon: added this for debugging
+	    // This should be done earlier, but I don't know where
+	    HashSet<Integer> toRemove = new HashSet<Integer>();
+	    for (int i = 0; i < startNodes.getLength(); i++) {
+		for (int j = i+1; j < startNodes.getLength(); j++) {
+		    if(startNodes.item(i).isEqualNode(startNodes.item(j))){
+			//System.out.println("Found duplicate: "+i+"-"+j);
+			toRemove.add(j);	
+		    }
+		}
+	    }
+	  
             ArrayList<ParseTreeCollection> viewTrees = new ArrayList<ParseTreeCollection>();
             for (int i = 0; i < startNodes.getLength(); i++) {
+		if(toRemove.contains(i)){
+		    continue;
+		}
                 Node startNode = startNodes.item(i);
                 XMLViewTree viewTree = ViewTreeBuilder
                         .makeViewableDerivationTree(startNode, treeDict);
@@ -174,9 +190,14 @@ public class DerivedTreeViewer {
             boolean elementaryTreeOutput, boolean derivationStepOutput,
             boolean debugMode, boolean needsAnchoring, List<String> semlabels,
             boolean noUtool) {
-        final ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
+        ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
                 situation, treeDict, elementaryTreeOutput, derivationStepOutput,
                 debugMode, needsAnchoring, semlabels, noUtool);
+	// final ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
+        //         situation, treeDict, elementaryTreeOutput, derivationStepOutput,
+        //         debugMode, needsAnchoring, semlabels, noUtool);
+	HashSet<ParseTreeCollection> viewSet=new HashSet<ParseTreeCollection>(viewTrees);
+	viewTrees=new ArrayList<ParseTreeCollection>(viewSet);
         if (viewTrees.size() > 0) {
             XMLTreeDisplay display = new XMLTreeDisplay(s, viewTrees);
             // display.setSize(1000, 750);

@@ -61,6 +61,8 @@ import de.tuebingen.disambiguate.PolarizedToken;
 import de.tuebingen.expander.DOMderivationBuilder;
 import de.tuebingen.forest.ProduceDOM;
 import de.tuebingen.forest.Rule;
+import de.tuebingen.forest.Combination;
+import de.tuebingen.forest.TreeOp;
 import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.gui.DerivedTreeViewer;
 import de.tuebingen.gui.ParseTreeCollection;
@@ -470,6 +472,50 @@ public class ParsingInterface {
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
 							  axiom);
             System.err.println("Parsed");
+
+	    // Debug by Simon: some derivations are identical (when
+	    // several adjunctions happen for instance), we take care
+	    // of it here waiting for a better fix
+
+	    // Map<Tidentifier, List<Rule>> new_forest_rules = new HashMap<Tidentifier, List<Rule>>();
+	    // List<Tidentifier> new_forest_roots = new LinkedList<Tidentifier>();
+	    // List<String> new_forest_strings = new LinkedList<String>();
+	    // Tidentifier defaultTI = forest_roots.get(0);
+	    // for(Tidentifier ti: forest_roots){
+	    // 	//System.out.println("Tidenfifier: "+ti);
+	    // 	//System.out.println("Rules:");
+	    // 	//List<Rule> new_tree_rules= new LinkedList<Rule>();
+	    // 	String new_tree_string = "";
+	    // 	for(Rule ru: forest_rules.get(ti)){
+	    // 	    //System.out.println(ru.getRhs());
+	    // 	    // we build the same rule removing all identifiers
+	    // 	    // so that we can compare it
+
+	    // 	    // first build the RHS
+	    // 	    Combination comb = new Combination();
+	    // 	    for(TreeOp to: ru.getRhs()){
+	    // 		Tidentifier ito = new Tidentifier(to.getId());
+	    // 		ito.setClauseId(0);
+	    // 		comb.addOp(new TreeOp(ito,to.getType()));
+	    // 	    }
+			
+	    // 	    Rule r = new Rule(defaultTI);
+	    // 	    r.setRhs(comb);
+		    
+	    // 	    //new_tree_rules.add(r);
+	    // 	    new_tree_string=new_tree_string+r.toString();
+	    // 	}
+	    // 	//new_forest_rules.add(new_tree_rules);
+	    // 	if(new_forest_strings.contains(new_tree_string)){
+	    // 	    System.out.println("Found duplicate!: "+new_tree_string);
+	    // 	}
+	    // 	else{
+	    // 	    new_forest_strings.add(new_tree_string);
+	    // 	    new_forest_rules.put(ti,forest_rules.get(ti));
+	    // 	    new_forest_roots.add(ti);
+	    // 	}
+	    // }
+
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
                     + (parsingTime) / (Math.pow(10, 9)) + " sec.");

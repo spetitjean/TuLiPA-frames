@@ -151,7 +151,7 @@ public class SlimTAGParser {
 
                 for (TagNode org_node : nodes) {
 
-                    System.err.println("at node " + org_node);
+                    //System.err.println("at node " + org_node);
 
                     TagNode map_node = node_map.get(org_node);
 
