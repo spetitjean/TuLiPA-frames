@@ -935,8 +935,11 @@ public class SlimTAGParser {
                         // the foot node is in the subtree of child2
                         assert (gap_map.get(child2) != null);
 
-                        if (closed_map.get(child1).get(i1) == null)
+                        if (closed_map.get(child1).get(i1) == null){
                             System.err.println("Very STRANGE");
+			    // Simon: added for debugging
+			    return;
+			}
 
                         Iterator<Integer> it = closed_map.get(child1).get(i1)
                                 .keySet().iterator();
