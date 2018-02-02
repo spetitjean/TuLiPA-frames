@@ -115,8 +115,10 @@ public class SlimTAGParser {
             if (is_binary) {
                 grammarDict.put(cur_key, cur_tree);
 
-                for (TagNode n : nodes)
+                for (TagNode n : nodes){
+		    //System.out.println("adr_map.put with address[0]: "+n.getAddress());
                     adr_map.put(n, n.getAddress());
+		}
 
                 revGrammarDict.put(cur_tree, cur_key);
             } else {
@@ -183,6 +185,7 @@ public class SlimTAGParser {
                                     new_node.setAddress(map_gorn + "."
                                             + String.valueOf(k + 1));
 
+				//System.out.println("adr_map.put with address [1]: "+cur_child.getAddress());
                                 adr_map.put(new_node, cur_child.getAddress());
 
                                 map_node.add2children(new_node);
@@ -222,6 +225,7 @@ public class SlimTAGParser {
                                     new_node.setAddress(
                                             inter_gorn + "." + adr_suffix);
 
+				//System.out.println("adr_map.put with address [2]: "+cur_child.getAddress());
                                 adr_map.put(new_node, cur_child.getAddress());
 
                                 inter_parent.add2children(new_node);
@@ -773,9 +777,9 @@ public class SlimTAGParser {
 				if(adr_map.get(cur_node)!=null){ 
 				    tid.setNodeId(adr_map.get(cur_node));
 				}
-				else{
-				    tid.setNodeId("0");
-				}
+				// else{
+				//     tid.setNodeId("0");
+				// }
                                 rules.put(tid, new LinkedList<Rule>());
                                 rules.get(tid).add(new Rule(tid));
 				// System.err.println("[4]");
@@ -2977,8 +2981,10 @@ public class SlimTAGParser {
 
                     Set<Integer> rule_idx_set = new HashSet<Integer>();
                     rule_idx_set.add(new Integer(0));
-		    
-                    this.trace_all_no_gap((TagNode) tag_tree.getRoot(), 0,
+
+		    TagNode rootNode = (TagNode) tag_tree.getRoot();
+		    adr_map.put(rootNode,rootNode.getAddress());
+                    this.trace_all_no_gap(rootNode, 0,
                             nTokens, 0, tree_id, rules, rule_idx_set);
 		    // System.err.println("Done trace all no gaps [1]");
                 }
