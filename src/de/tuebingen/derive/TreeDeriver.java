@@ -80,16 +80,13 @@ public class TreeDeriver {
                 }
                 // XMLTreeViewer.displayTree(derivedTree.root);
                 // System.err.println(" === NEW DERIVATION TREE === ");
-                ArrayList<String> etree_used = new ArrayList<String>();
                 ArrayList<Object[]> operations = prepareOperations(
-                        initialTreeNode, treeDict, D, eTrees, needsAnchoring,
-                        etree_used);
+                        initialTreeNode, treeDict, D, eTrees, needsAnchoring);
                 iniTree.applyOperations(operations, derivedTree, steps);
                 for (Object[] operation : operations) {
                     recursivelyDeriveTree((Node) operation[4],
                             (ElementaryTree) operation[2], treeDict, D,
-                            derivedTree, eTrees, steps, needsAnchoring,
-                            etree_used);
+                            derivedTree, eTrees, steps, needsAnchoring);
                 }
                 // XMLTreeViewer.displayTree(derivedTree.root);
             } else {
@@ -134,11 +131,6 @@ public class TreeDeriver {
             System.err.println("Unify Exception (derived tree building): "
                     + e.getMessage());
             failed = true;
-        } catch (DuplicateException e) {
-            System.err.println(
-                    "Duplicate Exception (derivation tree discarded): \n"
-                            + e.getMessage() + "\n");
-            failed = true;
         } catch (Exception e) {
             System.err.println("Error while deriving tree:");
             System.err.println(e.getMessage());
@@ -161,18 +153,17 @@ public class TreeDeriver {
     public static void recursivelyDeriveTree(Node treeNode,
             ElementaryTree elementaryTree, Map<String, TagTree> treeDict,
             Document D, DerivedTree t, ArrayList<ElementaryTree> eTrees,
-            ArrayList<ElementaryTree> steps, boolean needsAnchoring,
-            ArrayList<String> etree_used)
-            throws DuplicateException, UnifyException {
+            ArrayList<ElementaryTree> steps, boolean needsAnchoring)
+            throws UnifyException {
         // System.out.println(
         // "Test output: recursivelyDeriveTree in TreeDeriver was used");
         ArrayList<Object[]> operations = prepareOperations(treeNode, treeDict,
-                D, eTrees, needsAnchoring, etree_used);
+                D, eTrees, needsAnchoring);
         elementaryTree.applyOperations(operations, t, steps);
         for (Object[] operation : operations) {
             recursivelyDeriveTree((Node) operation[4],
                     (ElementaryTree) operation[2], treeDict, D, t, eTrees,
-                    steps, needsAnchoring, etree_used);
+                    steps, needsAnchoring);
         }
     }
 
@@ -210,8 +201,7 @@ public class TreeDeriver {
 
     public static ArrayList<Object[]> prepareOperations(Node treeNode,
             Map<String, TagTree> treeDict, Document D,
-            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring,
-            ArrayList<String> etree_used) throws DuplicateException {
+							ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
         // System.out.println(treeNode);
         ArrayList<Object[]> operations = new ArrayList<Object[]>();
         for (int i = 0; i < treeNode.getChildNodes().getLength(); i++) {
@@ -230,15 +220,6 @@ public class TreeDeriver {
                         String adjoinedTreeId = child.getAttributes()
                                 .getNamedItem("id").getNodeValue();
                         // System.err.println(adjoinedTreeId);
-                        if (needsAnchoring) {
-                            if (!etree_used.contains(adjoinedTreeId))
-                                etree_used.add(adjoinedTreeId);
-                            else
-                                throw new DuplicateException(
-                                        "Duplicate elementary trees "
-                                                + treeDict.get(adjoinedTreeId)
-                                                        .getOriginalId());
-                        }
                         String address = op.getAttributes().getNamedItem("node")
 			    .getNodeValue();
                         ElementaryTree adjoinedTree = getTreeInstance(
@@ -268,15 +249,6 @@ public class TreeDeriver {
                         String substTreeId = child.getAttributes()
                                 .getNamedItem("id").getNodeValue();
                         // System.err.println(substTreeId);
-                        if (needsAnchoring) {
-                            if (!etree_used.contains(substTreeId))
-                                etree_used.add(substTreeId);
-                            else
-                                throw new DuplicateException(
-                                        "Duplicate elementary trees "
-                                                + treeDict.get(substTreeId)
-                                                        .getOriginalId());
-                        }
                         String address = op.getAttributes().getNamedItem("node")
                                 .getNodeValue();
                         ElementaryTree substTree = getTreeInstance(substTreeId,
