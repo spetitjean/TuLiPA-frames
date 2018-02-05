@@ -238,7 +238,7 @@ public class CommandLineProcesses {
 
         res += "for inputs:\n\t";
         res += "-g <path to the XML grammar>\n\t";
-        res += "-f <path to the XML frame file>\n\t";
+        res += "-f <path to the XML frame file, if the frames are given separately from the trees>\n\t";
         res += "-th <path to the XML type hierarchy>\n\t";
         res += "-l <path to the XML lemmas>\n\t";
         res += "-m <path to the XML morphs>\n\t";
