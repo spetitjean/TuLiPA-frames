@@ -216,6 +216,7 @@ public class InputGUI implements ActionListener {
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setJMenuBar(getMenuBar());
         guiFrame.setContentPane(getContainer());
+        guiFrame.setMinimumSize(new Dimension(800, 700));
         guiFrame.pack();
         guiFrame.setLocationRelativeTo(null);
 
