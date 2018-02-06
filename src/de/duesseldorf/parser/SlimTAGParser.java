@@ -115,8 +115,10 @@ public class SlimTAGParser {
             if (is_binary) {
                 grammarDict.put(cur_key, cur_tree);
 
-                for (TagNode n : nodes)
+                for (TagNode n : nodes){
+		    //System.out.println("adr_map.put with address[0]: "+n.getAddress());
                     adr_map.put(n, n.getAddress());
+		}
 
                 revGrammarDict.put(cur_tree, cur_key);
             } else {
@@ -183,6 +185,7 @@ public class SlimTAGParser {
                                     new_node.setAddress(map_gorn + "."
                                             + String.valueOf(k + 1));
 
+				//System.out.println("adr_map.put with address [1]: "+cur_child.getAddress());
                                 adr_map.put(new_node, cur_child.getAddress());
 
                                 map_node.add2children(new_node);
@@ -222,6 +225,7 @@ public class SlimTAGParser {
                                     new_node.setAddress(
                                             inter_gorn + "." + adr_suffix);
 
+				//System.out.println("adr_map.put with address [2]: "+cur_child.getAddress());
                                 adr_map.put(new_node, cur_child.getAddress());
 
                                 inter_parent.add2children(new_node);
@@ -415,7 +419,7 @@ public class SlimTAGParser {
         // System.err.println(rule_idx_set.size() + " rules");
 
         if (cur_node.getType() == TagNode.LEX) {
-            // System.err.println("Lexical node: "+cur_node.getCategory());
+            //System.err.println("Lexical node: "+cur_node.getCategory());
             return;
         }
 
@@ -670,8 +674,10 @@ public class SlimTAGParser {
                     // continue;
 
                     TagNode subst_root = (TagNode) subst_tag_tree.getRoot();
-                    if (gap_map.get(subst_root).get(i) == null)
-                        continue;
+                    if (gap_map.get(subst_root).get(i) == null){
+			//System.err.println("Strange thing[11]");
+			continue;
+		    }
 
                     Iterator<Integer> it_i = closed_map.get(cur_node).keySet()
                             .iterator();
@@ -686,8 +692,10 @@ public class SlimTAGParser {
                         if (i_inner > j)
                             break;
 
-                        if (gap_map.get(subst_root).get(i).get(i_inner) == null)
+                        if (gap_map.get(subst_root).get(i).get(i_inner) == null){
+			    //System.err.println("Strange thing[12]");
                             continue;
+			}
 
                         Iterator<Integer> it_j = closed_map.get(cur_node).get(i)
                                 .keySet().iterator();
@@ -770,12 +778,14 @@ public class SlimTAGParser {
                                         subst_tag_tree.getId());
 				// System.out.println("Setting Node ID in SlimTAGParser [2]: "+adr_map.get(cur_node));
 				// Simon: if the node has no address (should not happen) we give it 0
-				if(adr_map.get(cur_node)!=null){ 
+				if(adr_map.get(cur_node)!=null){
+				    //System.err.println("Strange thing[no address]");
 				    tid.setNodeId(adr_map.get(cur_node));
+				    //System.err.println("New address: "+adr_map.get(cur_node));
 				}
-				else{
-				    tid.setNodeId("0");
-				}
+				// else{
+				//     tid.setNodeId("0");
+				// }
                                 rules.put(tid, new LinkedList<Rule>());
                                 rules.get(tid).add(new Rule(tid));
 				// System.err.println("[4]");
@@ -931,8 +941,11 @@ public class SlimTAGParser {
                         // the foot node is in the subtree of child2
                         assert (gap_map.get(child2) != null);
 
-                        if (closed_map.get(child1).get(i1) == null)
+                        if (closed_map.get(child1).get(i1) == null){
                             System.err.println("Very STRANGE");
+			    // Simon: added for debugging
+			    return;
+			}
 
                         Iterator<Integer> it = closed_map.get(child1).get(i1)
                                 .keySet().iterator();
@@ -1001,13 +1014,13 @@ public class SlimTAGParser {
             // adjunction included here
 
             // a) null-adjoin
-	    //System.err.println("Null-adjoin[2]");
+	    // System.err.println("Null-adjoin[2]");
             // CROSS-CHECK: is this the correct check for mandatory adjunction?
             if (cur_node.getAdjStatus() != TagNode.MADJ) {
                 // adjunction is not obligatory
-                double hyp_na = 0;
-		//double hyp_na = gap_map.get(cur_node).get(i1).get(i2).get(j1)
-		//      .get(j2)[1];
+                //double hyp_na = 0;
+		double hyp_na = gap_map.get(cur_node).get(i1).get(i2).get(j1)
+		      .get(j2)[1];
                 if (hyp_na < 1e300) {
 
                     trace_all_with_gap(cur_node, i1, i2, j1, j2, 1, cur_id,
@@ -1031,24 +1044,32 @@ public class SlimTAGParser {
 
                         TagNode subst_root = (TagNode) subst_tag_tree.getRoot();
 
-                        if (gap_map.get(subst_root).get(i1) == null)
-                            continue;
 
-                        Iterator<Integer> it_i = gap_map.get(subst_root).get(i1)
+			Iterator<Integer> it_i; 
+                        if (gap_map.get(subst_root).get(i1) == null){
+			    //System.err.println("Strange thing[6]");
+                            //continue;
+			    it_i= new LinkedList<Integer>().iterator();
+			}
+			else{
+			    it_i = gap_map.get(subst_root).get(i1)
                                 .keySet().iterator();
-
+			}
                         while (it_i.hasNext()) {
 
                             int i_inter = it_i.next().intValue();
-                            if (i_inter > i2)
+                            if (i_inter > i2){
                                 break;
+			    }
 
                             if (gap_map.get(cur_node).get(i_inter) == null
                                     || gap_map.get(cur_node).get(i_inter)
                                             .get(i2) == null
                                     || gap_map.get(cur_node).get(i_inter)
-                                            .get(i2).get(j1) == null)
-                                continue;
+				.get(i2).get(j1) == null){
+				//System.err.println("Strange thing[7]");
+				continue;
+			    }
 
                             Iterator<Integer> it_j = gap_map.get(subst_root)
                                     .get(i1).get(i_inter).keySet().iterator();
@@ -1057,13 +1078,16 @@ public class SlimTAGParser {
 
                                 int j_inter = it_j.next().intValue();
 
-                                if (j_inter > j2)
+                                if (j_inter > j2){
+				    //System.err.println("Strange thing[10]");
                                     break;
+				}
 
                                 if (gap_map.get(subst_root).get(i1).get(i_inter)
-                                        .get(j_inter).get(j2) == null)
+				    .get(j_inter).get(j2) == null){
+				    //System.err.println("Strange thing[8]");
                                     continue;
-
+				}
                                 // NOTE: every time we integrate a tree into
                                 // another tree, we add the weight
                                 // of the tree. This way the system with the
@@ -2977,8 +3001,10 @@ public class SlimTAGParser {
 
                     Set<Integer> rule_idx_set = new HashSet<Integer>();
                     rule_idx_set.add(new Integer(0));
-		    
-                    this.trace_all_no_gap((TagNode) tag_tree.getRoot(), 0,
+
+		    TagNode rootNode = (TagNode) tag_tree.getRoot();
+		    adr_map.put(rootNode,rootNode.getAddress());
+                    this.trace_all_no_gap(rootNode, 0,
                             nTokens, 0, tree_id, rules, rule_idx_set);
 		    // System.err.println("Done trace all no gaps [1]");
                 }

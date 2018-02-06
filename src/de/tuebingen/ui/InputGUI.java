@@ -216,8 +216,8 @@ public class InputGUI implements ActionListener {
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setJMenuBar(getMenuBar());
         guiFrame.setContentPane(getContainer());
+        guiFrame.setMinimumSize(new Dimension(800, 700));
         guiFrame.pack();
-        guiFrame.setResizable(false);
         guiFrame.setLocationRelativeTo(null);
 
         shellFrame = new JFrame();
@@ -429,7 +429,7 @@ public class InputGUI implements ActionListener {
         tPanel.setBorder(eb);
         fgText = new JLabel();
         fgText.setPreferredSize(new Dimension(LABSIZE, STHEIGHT));
-        fgText.setText("Frame Grammar: ");
+        fgText.setText("Frames: ");
         fgramF = new JTextField();
         fgramF.setText("");
         fgramF.setPreferredSize(new Dimension(FSIZE, STHEIGHT));
