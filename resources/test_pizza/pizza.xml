@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<grammar>
+  <entry name="adverb_0">
+    <family>adverb</family>
+    <trace>
+      <class>adverb</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+        </ctype>
+        <f name="intensity">
+          <sym value="strong"/>
+        </f>
+      </fs>
+    </frame>
+    <tree id="adverb_0">
+      <node type="std" name="XMG_VAR_1">
+        <narg>
+          <fs coref="@AVM2">
+            <f name="cat">
+              <sym value="vp"/>
+            </f>
+            <f name="e">
+              <fs coref="@Frame1"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="std" name="XMG_VAR_6">
+          <narg>
+            <fs coref="@AVM3">
+              <f name="cat">
+                <sym value="adv"/>
+              </f>
+            </fs>
+          </narg>
+          <node type="anchor" name="XMG_VAR_10">
+            <narg>
+              <fs coref="@AVM4">
+                <f name="cat">
+                  <sym value="adv"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+        </node>
+        <node type="foot" name="XMG_VAR_15">
+          <narg>
+            <fs coref="@AVM5">
+              <f name="cat">
+                <sym value="vp"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+      </node>
+    </tree>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="commonnoun_1">
+    <family>commonnoun</family>
+    <trace>
+      <class>commonnoun</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+          <type val="entity"/>
+        </ctype>
+      </fs>
+    </frame>
+    <tree id="commonnoun_1">
+      <node type="std" name="NP">
+        <narg>
+          <fs coref="@AVM2">
+            <f name="cat">
+              <sym value="np"/>
+            </f>
+            <f name="i">
+              <fs coref="@Frame1"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="anchor" name="N">
+          <narg>
+            <fs coref="@AVM3">
+              <f name="cat">
+                <sym value="n"/>
+              </f>
+              <f name="i">
+                <sym varname="@V4"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+      </node>
+    </tree>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="propernoun_2">
+    <family>propernoun</family>
+    <trace>
+      <class>propernoun</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+          <type val="entity"/>
+          <type val="person"/>
+        </ctype>
+        <f name="name">
+          <sym varname="@V2"/>
+        </f>
+      </fs>
+    </frame>
+    <tree id="propernoun_2">
+      <node type="std" name="NP">
+        <narg>
+          <fs coref="@AVM3">
+            <f name="cat">
+              <sym value="np"/>
+            </f>
+            <f name="i">
+              <fs coref="@Frame1"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="anchor" name="N">
+          <narg>
+            <fs coref="@AVM4">
+              <f name="cat">
+                <sym value="n"/>
+              </f>
+              <f name="i">
+                <sym varname="@V2"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+      </node>
+    </tree>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="n0Vn1_3">
+    <family>n0Vn1</family>
+    <trace>
+      <class>Object</class>
+      <class>VerbProjection</class>
+      <class>Subject</class>
+      <class>alphanx0Vnx1_mark</class>
+      <class>alphanx0Vnx1</class>
+      <class>n0Vn1</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+        </ctype>
+        <f name="actor">
+          <sym varname="@V2"/>
+        </f>
+        <f name="target">
+          <sym varname="@V3"/>
+        </f>
+      </fs>
+    </frame>
+    <tree id="n0Vn1_3">
+      <node type="std" name="S">
+        <narg>
+          <fs coref="@AVM4">
+            <f name="cat">
+              <sym value="s"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="subst" name="SubjNP">
+          <narg>
+            <fs coref="@AVM5">
+              <f name="cat">
+                <sym value="np"/>
+              </f>
+              <f name="i">
+                <sym varname="@V2"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+        <node type="std" name="VPVPVP">
+          <narg>
+            <fs coref="@AVM6">
+              <f name="cat">
+                <sym value="vp"/>
+              </f>
+              <f name="e">
+                <fs coref="@Frame1"/>
+              </f>
+            </fs>
+          </narg>
+          <node type="anchor" name="VV">
+            <narg>
+              <fs coref="@AVM7">
+                <f name="cat">
+                  <sym value="v"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+          <node type="subst" name="ObjNP">
+            <narg>
+              <fs coref="@AVM8">
+                <f name="cat">
+                  <sym value="np"/>
+                </f>
+                <f name="i">
+                  <sym varname="@V3"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+        </node>
+      </node>
+    </tree>
+    <interface>
+      <fs>
+        <f name="arg0">
+          <sym varname="@V2"/>
+        </f>
+        <f name="arg1">
+          <sym varname="@V3"/>
+        </f>
+        <f name="cat">
+          <sym value="v"/>
+        </f>
+        <f name="e">
+          <fs coref="@Frame1"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="n0V_4">
+    <family>n0V</family>
+    <trace>
+      <class>VerbProjection</class>
+      <class>Subject</class>
+      <class>alphanx0V</class>
+      <class>n0V</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+        </ctype>
+        <f name="actor">
+          <sym varname="@V2"/>
+        </f>
+      </fs>
+    </frame>
+    <tree id="n0V_4">
+      <node type="std" name="S">
+        <narg>
+          <fs coref="@AVM3">
+            <f name="cat">
+              <sym value="s"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="subst" name="SubjNP">
+          <narg>
+            <fs coref="@AVM4">
+              <f name="cat">
+                <sym value="np"/>
+              </f>
+              <f name="i">
+                <sym varname="@V2"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+        <node type="std" name="VPVP">
+          <narg>
+            <fs coref="@AVM5">
+              <f name="cat">
+                <sym value="vp"/>
+              </f>
+              <f name="e">
+                <sym varname="@V6"/>
+              </f>
+            </fs>
+          </narg>
+          <node type="anchor" name="V">
+            <narg>
+              <fs coref="@AVM7">
+                <f name="cat">
+                  <sym value="v"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+        </node>
+      </node>
+    </tree>
+    <interface>
+      <fs>
+        <f name="arg0">
+          <sym varname="@V2"/>
+        </f>
+        <f name="cat">
+          <sym value="v"/>
+        </f>
+        <f name="e">
+          <sym varname="@V6"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+</grammar>

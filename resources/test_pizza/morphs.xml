@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<mcgrammar>
+<morphs>
+  <morph lex="John">
+    <lemmaref cat="n" name="john">
+      <fs>
+      </fs>
+    </lemmaref>
+  </morph>
+  <morph lex="pizza">
+    <lemmaref cat="n" name="pizza">
+      <fs>
+      </fs>
+    </lemmaref>
+  </morph>
+  <morph lex="eats">
+    <lemmaref cat="v" name="eat">
+      <fs>
+        <f name="num">
+          <sym value="sg"/>
+        </f>
+        <f name="pers">
+          <sym value="3"/>
+        </f>
+        <f name="mode">
+          <sym value="ind"/>
+        </f>
+      </fs>
+    </lemmaref>
+  </morph>
+</morphs>
+</mcgrammar>
