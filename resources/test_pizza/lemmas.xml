@@ -23,6 +23,9 @@
         <fs>
         </fs>
       </filter>
+      <sem>
+        <semclass name="FrameEat"/>
+      </sem>
     </anchor>
   </lemma>
 </lemmas>

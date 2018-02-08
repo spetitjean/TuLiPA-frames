@@ -9,6 +9,9 @@ type FAM = {
    commonnoun,
    adverb
 }
+type SEM = {
+   FrameEat
+}
 
 feature entry: string
 feature gloss: string
@@ -22,6 +25,7 @@ class LemmaEat
 {
   <lemma> {
     entry <- "eat";
+    sem   <- FrameEat; 
     cat   <- v;
     fam   <- n0Vn1
    }

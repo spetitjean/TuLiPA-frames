@@ -78,7 +78,7 @@ declare ?F ?X
 {
   ?SubjMark=subst;
     <iface>{[cat=v, arg0=?X]};	
-    <frame>{?F[sleep,  	     		
+    <frame>{?F[activity,  	     		
              actor:?X]}
 }
 
@@ -93,7 +93,7 @@ declare ?X ?Y ?F
 	?SubjMark=subst;
 	?ObjMark=subst;
   <iface>{[cat=v, e=?F, arg0=?X, arg1=?Y]};	
-  <frame>{?F[love,
+  <frame>{?F[activity,
              actor:?X,
 	     target:?Y]}
 }

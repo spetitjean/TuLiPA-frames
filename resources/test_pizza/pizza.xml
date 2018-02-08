@@ -163,6 +163,8 @@
     <frame >
       <fs coref="@Frame1">
         <ctype>
+          <type val="activity"/>
+          <type val="event"/>
         </ctype>
         <f name="actor">
           <sym varname="@V2"/>
@@ -256,6 +258,8 @@
     <frame >
       <fs coref="@Frame1">
         <ctype>
+          <type val="activity"/>
+          <type val="event"/>
         </ctype>
         <f name="actor">
           <sym varname="@V2"/>
