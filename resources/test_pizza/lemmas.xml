@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<mcgrammar>
+<lemmas>
+  <lemma name="pizza" cat="n">
+    <anchor tree_id="family[@name=commonnoun]">
+      <filter>
+        <fs>
+        </fs>
+      </filter>
+      <sem>
+        <semclass name="FramePizza"/>
+      </sem>
+    </anchor>
+  </lemma>
+  <lemma name="john" cat="n">
+    <anchor tree_id="family[@name=propernoun]">
+      <filter>
+        <fs>
+        </fs>
+      </filter>
+      <sem>
+        <semclass name="FrameJohn"/>
+      </sem>
+    </anchor>
+  </lemma>
+  <lemma name="eat" cat="v">
+    <anchor tree_id="family[@name=n0Vn1]">
+      <filter>
+        <fs>
+        </fs>
+      </filter>
+      <sem>
+        <semclass name="FrameEat"/>
+      </sem>
+    </anchor>
+  </lemma>
+</lemmas>
+</mcgrammar>

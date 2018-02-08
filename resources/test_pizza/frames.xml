@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<grammar>
+  <entry name="FrameEat_0">
+    <family>FrameEat</family>
+    <trace>
+      <class>FrameEat</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+          <type val="activity"/>
+          <type val="eat"/>
+          <type val="event"/>
+        </ctype>
+        <f name="target">
+          <fs coref="@Frame2">
+            <ctype>
+            </ctype>
+          </fs>
+        </f>
+      </fs>
+    </frame>
+    <tree />
+    <interface>
+      <fs>
+        <f name="e">
+          <fs coref="@Frame1"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="FrameJohn_1">
+    <family>FrameJohn</family>
+    <trace>
+      <class>FrameJohn</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+          <type val="entity"/>
+          <type val="person"/>
+        </ctype>
+        <f name="name">
+          <sym value="John"/>
+        </f>
+      </fs>
+    </frame>
+    <tree />
+    <interface>
+      <fs>
+        <f name="i">
+          <fs coref="@Frame1"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="FramePizza_2">
+    <family>FramePizza</family>
+    <trace>
+      <class>FramePizza</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+          <type val="dish"/>
+          <type val="entity"/>
+          <type val="pizza"/>
+        </ctype>
+      </fs>
+    </frame>
+    <tree />
+    <interface>
+      <fs>
+        <f name="i">
+          <fs coref="@Frame1"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+</grammar>
