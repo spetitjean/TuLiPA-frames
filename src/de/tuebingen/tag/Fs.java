@@ -621,7 +621,7 @@ public class Fs {
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
-        Hashtable<Value, Fs> corefs = new Hashtable<Value, Fs>();
+        Hashtable<String, Fs> corefs = new Hashtable<String, Fs>();
         for (Fs fs : frames) {
             if (fs.getType() != null) {
                 cleanFrames.add(fs);
@@ -637,9 +637,9 @@ public class Fs {
         return newFrames;
     }
 
-    public void collect_corefs(Hashtable<Value, Fs> corefs,
+    public void collect_corefs(Hashtable<String, Fs> corefs,
             Situation situation) {
-        Value coref = this.coref;
+        String coref = this.coref.getVarVal();
         Fs New = this;
         if (corefs.keySet().contains(coref)) {
             // in this case we have to unify the feature structures, but we need
@@ -665,10 +665,11 @@ public class Fs {
         }
     }
 
-    public Fs update_corefs(Hashtable<Value, Fs> corefs) {
+    public Fs update_corefs(Hashtable<String, Fs> corefs) {
         Fs result = this;
-        if (corefs.keySet().contains(this.coref)) {
-            result = corefs.get(this.coref);
+	String coref=this.coref.getVarVal();
+        if (corefs.keySet().contains(coref)) {
+            result = corefs.get(coref);
         }
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
@@ -679,8 +680,8 @@ public class Fs {
             }
 
             if (v.is(Value.VAR)) {
-                if (corefs.keySet().contains(v)) {
-                    result.AVlist.put(f, new Value(corefs.get(v)));
+                if (corefs.keySet().contains(v.getVarVal())) {
+                    result.AVlist.put(f, new Value(corefs.get(v.getVarVal())));
                 }
             }
         }

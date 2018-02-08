@@ -66,21 +66,16 @@
       <class>commonnoun</class>
     </trace>
     <frame >
-      <fs coref="@Frame1">
-        <ctype>
-          <type val="entity"/>
-        </ctype>
-      </fs>
     </frame>
     <tree id="commonnoun_1">
       <node type="std" name="NP">
         <narg>
-          <fs coref="@AVM2">
+          <fs coref="@AVM1">
             <f name="cat">
               <sym value="np"/>
             </f>
             <f name="i">
-              <fs coref="@Frame1"/>
+              <sym varname="@V2"/>
             </f>
           </fs>
         </narg>
@@ -100,6 +95,9 @@
     </tree>
     <interface>
       <fs>
+        <f name="i">
+          <sym varname="@V2"/>
+        </f>
       </fs>
     </interface>
   </entry>
@@ -109,36 +107,27 @@
       <class>propernoun</class>
     </trace>
     <frame >
-      <fs coref="@Frame1">
-        <ctype>
-          <type val="entity"/>
-          <type val="person"/>
-        </ctype>
-        <f name="name">
-          <sym varname="@V2"/>
-        </f>
-      </fs>
     </frame>
     <tree id="propernoun_2">
       <node type="std" name="NP">
         <narg>
-          <fs coref="@AVM3">
+          <fs coref="@AVM1">
             <f name="cat">
               <sym value="np"/>
             </f>
             <f name="i">
-              <fs coref="@Frame1"/>
+              <sym varname="@V2"/>
             </f>
           </fs>
         </narg>
         <node type="anchor" name="N">
           <narg>
-            <fs coref="@AVM4">
+            <fs coref="@AVM3">
               <f name="cat">
                 <sym value="n"/>
               </f>
               <f name="i">
-                <sym varname="@V2"/>
+                <sym varname="@V4"/>
               </f>
             </fs>
           </narg>
@@ -147,6 +136,9 @@
     </tree>
     <interface>
       <fs>
+        <f name="i">
+          <sym varname="@V2"/>
+        </f>
       </fs>
     </interface>
   </entry>

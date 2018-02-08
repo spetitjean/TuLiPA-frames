@@ -48,6 +48,9 @@
     <tree />
     <interface>
       <fs>
+        <f name="i">
+          <fs coref="@Frame1"/>
+        </f>
       </fs>
     </interface>
   </entry>
@@ -68,6 +71,9 @@
     <tree />
     <interface>
       <fs>
+        <f name="i">
+          <fs coref="@Frame1"/>
+        </f>
       </fs>
     </interface>
   </entry>

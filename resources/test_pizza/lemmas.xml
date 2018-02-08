@@ -7,6 +7,9 @@
         <fs>
         </fs>
       </filter>
+      <sem>
+        <semclass name="FramePizza"/>
+      </sem>
     </anchor>
   </lemma>
   <lemma name="john" cat="n">
@@ -15,6 +18,9 @@
         <fs>
         </fs>
       </filter>
+      <sem>
+        <semclass name="FrameJohn"/>
+      </sem>
     </anchor>
   </lemma>
   <lemma name="eat" cat="v">

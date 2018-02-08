@@ -10,7 +10,9 @@ type FAM = {
    adverb
 }
 type SEM = {
-   FrameEat
+   FrameEat,
+   FrameJohn,
+   FramePizza
 }
 
 feature entry: string
@@ -35,6 +37,7 @@ class LemmaJohn
 {
   <lemma> {
     entry <- "john";
+    sem   <- FrameJohn;
     cat   <- n;
     fam   <- propernoun
   }
@@ -44,6 +47,7 @@ class LemmaPizza
 {
   <lemma> {
     entry <- "pizza";
+    sem   <- FramePizza;
     cat   <- n;
     fam   <- commonnoun
    }

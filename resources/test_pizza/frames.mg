@@ -30,18 +30,26 @@ frame-constraints = {
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 class FramePizza
+declare ?X0
 {
   <frame>{
-    [pizza]
+    ?X0[pizza]
+  };
+  <iface>{
+    [i=?X0]
   }
 }
 
 
 class FrameJohn
+declare ?X0
 {
   <frame>{
-    [person,
+    ?X0[person,
       name: John]
+  };
+  <iface>{
+    [i=?X0]
   }
 }
 

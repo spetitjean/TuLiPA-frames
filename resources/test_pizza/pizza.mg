@@ -108,8 +108,9 @@ declare ?NP ?N ?X0 ?X1
     node ?N (mark=anchor) [cat=n, i=?X1];
     ?NP -> ?N
   };
-    <frame>{?X0[person,
-	name: ?X1]}
+  <iface>{
+    [i=?X0]
+  }
 }
 
 class commonnoun
@@ -120,7 +121,7 @@ declare ?NP ?N ?X0 ?X1
     node ?N (mark=anchor) [cat=n, i=?X1];
     ?NP -> ?N
   };
-    <frame>{?X0[entity]}
+    <iface>{[i=?X0]}  
 }
 
 class adverb
