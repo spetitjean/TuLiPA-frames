@@ -98,6 +98,7 @@ public class DerivedTreeViewer {
                     continue;
                 }
                 Node startNode = startNodes.item(i);
+
                 XMLViewTree viewTree = ViewTreeBuilder
                         .makeViewableDerivationTree(startNode, treeDict);
                 ArrayList<ElementaryTree> eTrees = null;

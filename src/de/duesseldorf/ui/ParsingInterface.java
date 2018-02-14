@@ -525,7 +525,6 @@ public class ParsingInterface {
                 fdoc = ProduceDOM.buildDOMForest(forest_rules, forest_roots,
                         tok.getSentence(), op.getVal("g"), new NameFactory(),
                         null);
-
                 // DEBUG(by TS)
                 // XMLUtilities.writeXML(fdoc,"fdoc.xml","tulipa-forest3.dtd,xml",
                 // true);
@@ -547,6 +546,7 @@ public class ParsingInterface {
         if (res) {
             if (op.check("x")) { // XML output of the derivations!
                 long xmlTime = System.nanoTime();
+
                 ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
                         .getViewTreesFromDOM(fdoc, sit, grammarDict, false,
                                 false, false, needsAnchoring, slabels, noUtool);
