@@ -43,6 +43,7 @@ import java.io.IOException;
 import javax.swing.SwingUtilities;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.ui.CommandLineProcesses;
 import de.duesseldorf.ui.ParsingInterface;
 import de.duesseldorf.ui.WorkbenchLoader;
@@ -164,6 +165,8 @@ public class Interface {
                             // ParsingInterface.parseSentence(op, g, sentence);}
                             if (g instanceof TTMCTAG) {
                                 ParsingInterface.parseTAG(op, sit, sentence);
+                            } else if (g instanceof RRG) {
+                                ParsingInterface.parseRRG(op, sit, sentence);
                             } else {
                                 // RCG/CFG/simple RCG parse
                                 ParsingInterface.parseNonTAG(op, g, sentence);

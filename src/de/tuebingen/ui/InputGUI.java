@@ -83,6 +83,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.ui.CommandLineProcesses;
 import de.duesseldorf.ui.ParsingInterface;
 import de.duesseldorf.ui.WorkbenchLoader;
@@ -133,6 +134,7 @@ public class InputGUI implements ActionListener {
     private static final String LCFRS = "lcfrs";
     private static final String TAG2RCG = "tag2rcg";
     private static final String CYKTAG = "cyktag";
+    private static final String RRG = "rrg";
 
     private static final String splashLocation = "images/splash.gif";
     private static final String logoLocation = "images/tulipa-logo.gif";
@@ -175,6 +177,7 @@ public class InputGUI implements ActionListener {
     private JRadioButton cfgb = null;
     private JRadioButton lcfrsb = null;
     private JRadioButton tag2rcgb = null;
+    private JRadioButton rrgb = null;
 
     private JLabel sText = null;
     private JComboBox<Object> toParse = null;
@@ -331,6 +334,9 @@ public class InputGUI implements ActionListener {
         tag2rcgb = new JRadioButton();
         tag2rcgb.setText("TAG to RCG");
         tag2rcgb.setSelected(false);
+        rrgb = new JRadioButton();
+        rrgb.setText("RRG");
+        rrgb.setSelected(false);
 
         grammarButtonGroup.add(rcgb);
         rcgb.addKeyListener(new GrammarKeyListener(this));
@@ -344,6 +350,8 @@ public class InputGUI implements ActionListener {
         lcfrsb.addKeyListener(new GrammarKeyListener(this));
         grammarButtonGroup.add(tag2rcgb);
         tag2rcgb.addKeyListener(new GrammarKeyListener(this));
+        grammarButtonGroup.add(rrgb);
+        rrgb.addKeyListener(new GrammarKeyListener(this));
 
         JPanel grammarOpts = new JPanel();
         grammarOpts.setLayout(new GridLayout(2, 3));
@@ -353,6 +361,7 @@ public class InputGUI implements ActionListener {
         grammarOpts.add(cyktagb);
         grammarOpts.add(ttmctagb);
         grammarOpts.add(tag2rcgb);
+        grammarOpts.add(rrgb);
         grammarOpts.setBorder(new TitledBorder("Mode"));
 
         JPanel tagOpts = new JPanel();
@@ -864,6 +873,8 @@ public class InputGUI implements ActionListener {
                 // } else if (g instanceof TTMCTAG) {
                 if (g instanceof TTMCTAG) {
                     parseres = ParsingInterface.parseTAG(ops, sit, sentence);
+                } else if (g instanceof RRG) {
+                    parseres = ParsingInterface.parseRRG(ops, sit, sentence);
                 } else {
                     parseres = ParsingInterface.parseNonTAG(ops, g, sentence);
                 }
@@ -907,6 +918,9 @@ public class InputGUI implements ActionListener {
         } else if (gram.equals(TAG2RCG)) {
             tag2rcgb.setSelected(true);
             tag2rcgb.requestFocus();
+        } else if (gram.equals(RRG)) {
+            rrgb.setSelected(true);
+            rrgb.requestFocus();
         }
     }
 
@@ -925,6 +939,8 @@ public class InputGUI implements ActionListener {
             ret = LCFRS;
         } else if (tag2rcgb.isSelected()) {
             ret = TAG2RCG;
+        } else if (rrgb.isSelected()) {
+            ret = RRG;
         }
         return ret;
     }
@@ -977,6 +993,9 @@ public class InputGUI implements ActionListener {
         } else if (tag2rcgb.isSelected()) {
             xmlBox.setSelected(true);
             setGram(TAG2RCG);
+        } else if (rrgb.isSelected()) {
+            xmlBox.setSelected(true);
+            setGram(RRG);
         } else {
             xmlBox.setSelected(true);
             setGram(RCG);
@@ -1053,6 +1072,8 @@ public class InputGUI implements ActionListener {
         } else if (ops.check("cyktag")) {
             System.out.println("CYKTAG in setOps!");
             setGram("cyktag");
+        } else if (ops.check("rrg")) {
+            setGram("rrg");
         } else {
             setGram("cyktag");
         }
