@@ -1109,8 +1109,11 @@ public class InputGUI implements ActionListener {
         ops.removeVal("c");
         ops.removeVal(CYKTAG);
         ops.removeVal(TAG2RCG);
+        ops.removeVal(RRG);
         if (RCG.equals(getGram())) {
             ops.setOurVal("r", "");
+        } else if (RRG.equals(getGram())) {
+            ops.setOurVal(RRG, "");
         } else if (CFG.equals(getGram())) {
             ops.setOurVal("c", "");
             // } else if (LCFRS.equals(getGram())) {
