@@ -576,6 +576,8 @@ public class ParsingInterface {
                 DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc, sit,
                         grammarDict, true, op.check("w"), op.check("w"),
                         needsAnchoring, slabels, noUtool);
+                XMLUtilities.writeXML(fdoc, "stdout", "tulipa-forest3.dtd,xml",
+                        true);
                 long dDTime = System.nanoTime() - estDTime;
                 System.err.println("Derivation trees extraction time: "
                         + (dDTime) / (Math.pow(10, 9)) + " sec.");

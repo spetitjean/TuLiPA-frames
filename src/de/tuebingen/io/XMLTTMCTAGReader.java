@@ -265,6 +265,10 @@ public class XMLTTMCTAGReader extends FileReader {
             Element el = (Element) l.item(i);
             trace.add(el.getTextContent());
         }
+        for (String string : trace) {
+            System.out.print(string);
+        }
+        System.out.println("...trace");
         res.setTrace((List<String>) trace);
         // 3. Processing of the interface
         l = e.getElementsByTagName("interface");
@@ -280,17 +284,16 @@ public class XMLTTMCTAGReader extends FileReader {
         // System.err.println("Frame part ");
 
         l = e.getElementsByTagName("frame");
-	List<Fs> framereprs = new ArrayList<Fs>();
-	
-	if(l.getLength()>0){
-	    Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
-	    framereprs.add(framerepr);
-	    res.concatFrames(framerepr);
-	}
-	else{
-	    res.initFrames();
-	}
-	
+        List<Fs> framereprs = new ArrayList<Fs>();
+
+        if (l.getLength() > 0) {
+            Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
+            framereprs.add(framerepr);
+            res.concatFrames(framerepr);
+        } else {
+            res.initFrames();
+        }
+
         // System.out.println("Frame from XMLTTMCTAGReader: " + framerepr);
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
@@ -590,34 +593,33 @@ public class XMLTTMCTAGReader extends FileReader {
         String coref = e.getAttribute("coref");
         Value corefval = new Value(Value.VAR, nf.getName(coref));
 
-	NodeList etypes=null;
-	NodeList l = e.getChildNodes();
+        NodeList etypes = null;
+        NodeList l = e.getChildNodes();
 
-	
-	//NodeList etypes = e.getElementsByTagName("type");
-	for (int i = 0; i < l.getLength(); i++) {
+        // NodeList etypes = e.getElementsByTagName("type");
+        for (int i = 0; i < l.getLength(); i++) {
             Node n = l.item(i);
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
-		    etypes = el.getElementsByTagName("type");
-		}
-	    }
-	}
-	
+                    etypes = el.getElementsByTagName("type");
+                }
+            }
+        }
+
         Set<String> types = new HashSet<String>();
-	if(etypes!=null){
-	    for (int i = 0; i < etypes.getLength(); i++) {
-		Node n = etypes.item(i);
-		Element el = (Element) n;
-		// System.out.println("Type " + el.getAttribute("val"));
-		types.add(el.getAttribute("val"));
-	    }
-	}
-	Type frame_type = new Type(types);
+        if (etypes != null) {
+            for (int i = 0; i < etypes.getLength(); i++) {
+                Node n = etypes.item(i);
+                Element el = (Element) n;
+                // System.out.println("Type " + el.getAttribute("val"));
+                types.add(el.getAttribute("val"));
+            }
+        }
+        Type frame_type = new Type(types);
         // System.out.println("Found a type: "+frame_type);
 
-	res = new Fs(l.getLength(), frame_type, corefval);	
+        res = new Fs(l.getLength(), frame_type, corefval);
 
         for (int i = 0; i < l.getLength(); i++) {
             Node n = l.item(i);
