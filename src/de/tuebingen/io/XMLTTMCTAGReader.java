@@ -265,10 +265,11 @@ public class XMLTTMCTAGReader extends FileReader {
             Element el = (Element) l.item(i);
             trace.add(el.getTextContent());
         }
-        for (String string : trace) {
-            System.out.print(string);
-        }
-        System.out.println("...trace");
+        // Debug
+        // for (String string : trace) {
+        // System.out.print(string);
+        // }
+        // System.out.println("...trace");
         res.setTrace((List<String>) trace);
         // 3. Processing of the interface
         l = e.getElementsByTagName("interface");

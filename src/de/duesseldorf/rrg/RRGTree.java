@@ -10,4 +10,9 @@ public class RRGTree {
     public RRGTree(Node root) {
         this.root = root;
     }
+
+    @Override
+    public String toString() {
+        return RRGTreeTools.recursivelyPrintNode(root);
+    }
 }
