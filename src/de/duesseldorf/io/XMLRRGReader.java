@@ -6,6 +6,8 @@ import java.io.FileReader;
 
 import org.w3c.dom.Document;
 
+import de.duesseldorf.rrg.RRGTree;
+import de.tuebingen.tree.Node;
 import de.tuebingen.util.XMLUtilities;
 
 public class XMLRRGReader extends FileReader {
@@ -18,4 +20,13 @@ public class XMLRRGReader extends FileReader {
         rrgGramDoc = XMLUtilities.parseXMLFile(rrgGrammar, false);
     }
 
+    public RRGTree retrieveTree() {
+        Node treeroot = retrieveNode();
+
+        return new RRGTree(treeroot);
+    }
+
+    private Node retrieveNode() {
+        return null;
+    }
 }
