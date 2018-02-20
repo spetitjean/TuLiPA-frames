@@ -307,8 +307,12 @@ public class TagTree implements Tree {
         List<Node> ln = n.getChildren();
         if (ln == null) {
             if (((TagNode) n).getType() == TagNode.COANCHOR) {
+		//System.out.println("Processing coanchor: "+n);
+		//System.out.println("Name: "+n.getName());
+		//System.out.println("Other: "+ca.getNode_id());
                 if (n.getName() != null) { // it has a name
                     if (n.getName().equals(ca.getNode_id())) {
+			//System.out.println("Adding the lex node");
                         TagNode tn = (TagNode) n;
                         List<Node> ch = new LinkedList<Node>();
                         TagNode coanc = new TagNode();
@@ -413,18 +417,18 @@ public class TagTree implements Tree {
      */
 
     public void updateNode(Node n, String address){
-	System.out.println("Starting update");
+	//System.out.println("Starting update");
 	updateNodeRec(root, n, address);
-	System.out.println("Finished update");
+	//System.out.println("Finished update");
     }
     
     public void updateNodeRec(Node current, Node n, String address) {
 	TagNode tagCurrent = (TagNode) current;
         if (tagCurrent.getAddress().equals(address)) {
-	    System.out.println("Adresses: "+tagCurrent.getAddress()+" and "+address);
-	    System.out.println("Updating node: "+tagCurrent);
+	    //System.out.println("Adresses: "+tagCurrent.getAddress()+" and "+address);
+	    //System.out.println("Updating node: "+tagCurrent);
             tagCurrent=(TagNode) n;
-	    System.out.println("Node updated: "+tagCurrent);
+	    //System.out.println("Node updated: "+tagCurrent);
         } else {
             if (current.getChildren() != null) {
                 LinkedList<Node> l = (LinkedList<Node>) current.getChildren();

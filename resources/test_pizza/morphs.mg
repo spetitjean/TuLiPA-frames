@@ -1,5 +1,6 @@
 %% To be compiled with the mph compiler
-%% xmg compile mph morphs.mg
+%% xmg compile mph morphs.mg --force
+%% Or online: http://xmg.phil.hhu.de/index.php/upload/workbench
 
 type CAT = {v, sv, sn, sp, p, adj}
 type GEN = {m, f}

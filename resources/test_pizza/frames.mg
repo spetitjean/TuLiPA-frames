@@ -1,3 +1,7 @@
+%% To be compiled with the synframe compiler
+%% xmg compile synframe frames.mg --force
+%% Or online: http://xmg.phil.hhu.de/index.php/upload/workbench
+
 type MARK = {subst, subst, nadj, foot, anchor, coanchor, flex}
 type CAT = {np,n,v,vp,s,adv,pp,p,by,strong}
 type PHON = {e}
@@ -14,15 +18,15 @@ feature arg1 : LABEL
 feature i : LABEL
 feature e : LABEL
 
-frame-types = {event, activity, eat, entity, person, dish, pizza}
+frame-types = {event, activity, eat, entity, person, food, pizza}
 frame-constraints = { 
 	activity -> event,
 	entity event -> -,
 	eat -> activity,
 	person -> entity,
-	dish -> entity,
-	dish person -> -,
-	pizza -> dish
+	food -> entity,
+	food person -> -,
+	pizza -> food
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
