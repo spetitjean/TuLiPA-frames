@@ -30,16 +30,16 @@
     </entry>
     <entry>
       <ctype>
-        <type val="dish"/>
         <type val="entity"/>
+        <type val="food"/>
       </ctype>
       <constraints>
       </constraints>
     </entry>
     <entry>
       <ctype>
-        <type val="dish"/>
         <type val="entity"/>
+        <type val="food"/>
         <type val="pizza"/>
       </ctype>
       <constraints>
@@ -69,12 +69,12 @@
         <type val="pizza"/>
       </ctype1>
       <ctype2>
-        <type val="dish"/>
+        <type val="food"/>
       </ctype2>
     </type_constraint>
     <type_constraint type="implies">
       <ctype1>
-        <type val="dish"/>
+        <type val="food"/>
         <type val="person"/>
       </ctype1>
       <ctype2>
@@ -83,7 +83,7 @@
     </type_constraint>
     <type_constraint type="implies">
       <ctype1>
-        <type val="dish"/>
+        <type val="food"/>
       </ctype1>
       <ctype2>
         <type val="entity"/>

@@ -1,5 +1,6 @@
 %% To be compiled with the lex compiler
-%% xmg compile lex lemmas.mg
+%% xmg compile lex lemmas.mg --force
+%% Or online: http://xmg.phil.hhu.de/index.php/upload/workbench
 
 type CAT = {s, v, vp, np, n, adj}
 type FAM = {

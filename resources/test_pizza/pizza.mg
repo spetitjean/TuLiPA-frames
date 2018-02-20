@@ -1,3 +1,7 @@
+%% To be compiled with the synframe compiler
+%% xmg compile synframe pizza.mg --force
+%% Or online: http://xmg.phil.hhu.de/index.php/upload/workbench
+
 type MARK = {subst, subst, nadj, foot, anchor, coanchor, flex}
 type CAT = {np,n,v,vp,s,adv,pp,p,by,strong}
 type PHON = {e}

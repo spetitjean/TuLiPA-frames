@@ -514,6 +514,7 @@ public class TreeSelector {
                 // try to co-anchor the arguments
                 if (tl != null) {
                     while (k < tl.size() && !coaOk) {
+			//System.out.println("Looking for coanchor "+lca.get(j)+" in "+tt.getRoot());
                         coaOk = tl.get(k).coanchor(tl.get(k).getRoot(),
                                 lca.get(j));
                         k++;
@@ -693,7 +694,19 @@ public class TreeSelector {
 	for (int CoAnchorIndex=0; CoAnchorIndex<tt.getCoAnchors().size(); CoAnchorIndex++){
 	    //System.out.println(CoAnchor);
 	    Node CoAnchor=tt.getCoAnchors().get(CoAnchorIndex);
+	    //System.out.println(CoAnchor);
 	    TagNode CoAnc=(TagNode)CoAnchor;
+	    // Somehow the LexItem does not always get created before
+	    if(CoAnc.getChildren()==null){
+		List<Node> ch = new LinkedList<Node>();
+		TagNode lex = new TagNode();
+		lex.setType(TagNode.LEX); // lex node
+		lex.setCategory(CoAnc.getCategory()); // the word
+		lex.setAddress(CoAnc.getAddress() + ".1"); // Gorn
+		                                            // address
+		ch.add(lex);
+                CoAnc.setChildren(ch);
+	    }
 	    TagNode LexItem=(TagNode)CoAnc.getChildren().get(0);
 	    // If we can find the item in the lexicon, we add as many
 	    // trees as we can find items (if more than one)

@@ -15,6 +15,8 @@
         <f name="target">
           <fs coref="@Frame2">
             <ctype>
+              <type val="entity"/>
+              <type val="food"/>
             </ctype>
           </fs>
         </f>
@@ -62,8 +64,8 @@
     <frame >
       <fs coref="@Frame1">
         <ctype>
-          <type val="dish"/>
           <type val="entity"/>
+          <type val="food"/>
           <type val="pizza"/>
         </ctype>
       </fs>
