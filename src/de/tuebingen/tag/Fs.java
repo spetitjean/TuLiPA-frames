@@ -490,9 +490,17 @@ public class Fs {
             // // } else if (fs1.isTyped() && fs2.isTyped()) {
             // // resType =
             // }
+	    //System.out.println("Unification of "+fs1.getType()+" and "+fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
-                resType = tyHi.leastSpecificSubtype(fs1.getType(),
-                        fs2.getType());
+		try{
+		    //System.out.println("Unify types: "+fs1.getType()+" and "+fs2.getType());
+		    resType = tyHi.leastSpecificSubtype(fs1.getType(),
+							fs2.getType());
+		}
+		catch (UnifyException e) {
+                    throw new UnifyException(
+					     "" + e.getMessage());}
+		//System.out.println("Unification of "+fs1.getType()+" and "+fs2.getType()+" -> "+resType);
             } else if (fs1.isTyped()) {
                 resType = fs1.getType();
             } else if (fs2.isTyped()) {
@@ -507,12 +515,18 @@ public class Fs {
                 resType = fs2.getType();
             }
         }
-
+	//System.out.println("Computed type: "+resType);
         // 5. set the coref of the resulting FS
         Value resCoref;
         if (fs1.isTyped()) {
-            resCoref = fs1.getCoref();
-            fs2.setCoref(fs1.getCoref());
+	    if(fs2.isTyped()){
+		//System.out.println("Unifying coreferences: "+fs1.getCoref()+" and "+fs2.getCoref());
+		resCoref=Value.unify(fs1.getCoref(),fs2.getCoref(),env);
+	    }
+	    else{
+		resCoref = fs1.getCoref();
+		fs2.setCoref(fs1.getCoref());
+	    }
         } else {
             resCoref = fs2.getCoref();
         }
@@ -529,7 +543,6 @@ public class Fs {
             throws UnifyException {
         // System.err.println("updating [" + fs.toString() + "] env: " +
         // env.toString());
-        // System.out.println("Starting UpdateFS");
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
@@ -591,7 +604,6 @@ public class Fs {
                 res.setFeat(k, fval);
             }
         }
-        // System.out.println("Finished UpdateFS");
         return res;
     }
 
@@ -618,70 +630,144 @@ public class Fs {
         return res;
     }
 
-    public static List<Fs> mergeFS(List<Fs> frames, Situation situation) {
+    public static List<Fs> mergeFS(List<Fs> frames, Situation situation, Environment env) {
+	//System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
         Hashtable<String, Fs> corefs = new Hashtable<String, Fs>();
         for (Fs fs : frames) {
             if (fs.getType() != null) {
+		//System.out.println("Cleaning "+fs);
                 cleanFrames.add(fs);
             }
         }
         for (Fs fs : cleanFrames) {
-            fs.collect_corefs(corefs, situation);
-        }
+	    //System.out.println("Collecting corefs in: "+fs);
+	    //System.out.println("with environment "+env);
+	    if(fs.collect_corefs(corefs, situation, env)==false)
+		{
+		    return null;
+		}
+	    try{
+		updateFS(fs,env,true);
+	    }
+	    catch (Exception e) {
+		e.printStackTrace();
+	    }
+	}
+
+	
         for (Fs fs : cleanFrames) {
-            fs = fs.update_corefs(corefs);
+            fs = fs.update_corefs(corefs, situation, env);
             newFrames.add(fs);
         }
+
+
+	// System.out.println("Corefs after round 1: ");
+	// for(String c: corefs.keySet()){
+	//    System.out.println(c+"-"+corefs.get(c));
+	// }
+	// System.out.println("Environment after round 1: "+env);
+		
+	
+	// Added a second round for test
+	// for (Fs fs : cleanFrames) {
+	//     //System.out.println("Collecting corefs in: "+fs);
+	//     //System.out.println("with environment "+env);
+	    
+        //     fs.collect_corefs(corefs, situation, env);
+	//     try{
+	// 	updateFS(fs,env,true);
+	//     }
+	//     catch (Exception e) {
+	// 	e.printStackTrace();
+	//     }
+	// }
+        // for (Fs fs : cleanFrames) {
+        //     fs = fs.update_corefs(corefs, situation, env);
+        //     newFrames.add(fs);
+        // }
+
+	
         return newFrames;
     }
 
-    public void collect_corefs(Hashtable<String, Fs> corefs,
-            Situation situation) {
+    public boolean collect_corefs(Hashtable<String, Fs> corefs,
+			       Situation situation, Environment env) {
         String coref = this.coref.getVarVal();
-        Fs New = this;
+	//System.out.println("Collecting corefs for "+this);
+
+	Fs New = this;
+	if(env.deref(this.coref)!=this.coref){
+	    try {
+                //System.out.println("Unifying " + corefs.get(env.deref(this.coref).getVarVal()) + " and " + New);
+		New = unify(corefs.get(env.deref(this.coref).getVarVal()), New, env,
+			    situation.getTypeHierarchy());
+		//System.out.println("Unified: " + New);
+
+	    } catch (Exception e) {
+		//System.out.println("[0]");
+                e.printStackTrace();
+		return false;
+            }
+	}
         if (corefs.keySet().contains(coref)) {
-            // in this case we have to unify the feature structures, but we need
-            // an environment
+	    //System.out.println("Seen it already ");
             try {
                 // System.out.println("Start unify with
                 // "+this+corefs.get(coref));
-                New = unify(this, corefs.get(coref), new Environment(0),
+		Fs Other= corefs.get(coref);
+                New = unify(New,Other, env,
                         situation.getTypeHierarchy());
                 corefs.remove(coref);
+                corefs.put(Other.coref.getVarVal(),New);
             } catch (Exception e) {
+		//System.out.println("[1]");
                 e.printStackTrace();
+		return false;
             }
         }
+	//System.out.println("[2]: "+this);
+
+	//System.out.println("Already in environment: "+env.deref(this.coref));
+	//env.bind(coref,new Value(New));
         corefs.put(coref, New);
+	//System.out.println("Put in corefs: "+New);
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs(corefs, situation);
+                v.getAvmVal().collect_corefs(corefs, situation,env);
             }
         }
+	return true;
     }
 
-    public Fs update_corefs(Hashtable<String, Fs> corefs) {
+    public Fs update_corefs(Hashtable<String, Fs> corefs, Situation situation, Environment env) {
         Fs result = this;
 	String coref=this.coref.getVarVal();
+	
         if (corefs.keySet().contains(coref)) {
-            result = corefs.get(coref);
+	    try {
+		result = unify(this, corefs.get(coref), env,
+			   situation.getTypeHierarchy());
+		
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = this.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().update_corefs(corefs);
+                v.getAvmVal().update_corefs(corefs, situation, env);
             }
 
             if (v.is(Value.VAR)) {
                 if (corefs.keySet().contains(v.getVarVal())) {
-                    result.AVlist.put(f, new Value(corefs.get(v.getVarVal())));
+		    result.AVlist.put(f, new Value(corefs.get(v.getVarVal())));
                 }
             }
         }
