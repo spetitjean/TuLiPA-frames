@@ -109,7 +109,7 @@ public class DerivedTreeViewer {
                 if (derivationStepOutput)
                     steps = new ArrayList<ElementaryTree>();
                 DerivedTree dTree = TreeDeriver.deriveTree(startNode, treeDict,
-                        eTrees, steps, debugMode, semlabels, needsAnchoring);
+							   eTrees, steps, debugMode, semlabels, needsAnchoring, situation);
                 if (dTree != null) {
                     if (!dTree.success) {
                         viewTree.description = "*" + viewTree.description;
@@ -122,21 +122,22 @@ public class DerivedTreeViewer {
                     }
                     if (dTree.frames != null) {
 			// All of this should be done in TreeDeriver
-			Environment env= new Environment(0);
-                        List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
-							   situation,env);
-			if(mergedFrames==null){
-			    continue;
-			}
-                        // clean up the list here
-                        List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-			dTree.updateFeatures(dTree.root, env,
-						   false);
-			// This is only because it's not done in TreeDeriver:
-			derivedTree = ViewTreeBuilder
-                            .makeViewableDerivedTree(dTree);
+			// Environment env= new Environment(0);
+                        // List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
+			// 				   situation,env);
+			// if(mergedFrames==null){
+			//     continue;
+			// }
+                        // // clean up the list here
+                        // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+			// dTree.updateFeatures(dTree.root, env,
+			// 			   false);
+			// // This is only because it's not done in TreeDeriver:
+			// derivedTree = ViewTreeBuilder
+                        //     .makeViewableDerivedTree(dTree);
 			// That is the only thing which should be here:
-                        for (Fs fs : cleanFrames) {
+                        //for (Fs fs : cleanFrames) {
+                        for (Fs fs : dTree.frames) {
                             semanticsString += FsTools.printFS(fs);
                         }
                     } else {
