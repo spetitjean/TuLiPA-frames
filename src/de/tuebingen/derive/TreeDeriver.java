@@ -138,12 +138,12 @@ public class TreeDeriver {
 		System.err.println("Frame unification failed, tree discarded!\n");
 		failed = true;
 	    }
-	    List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-	    derivedTree.frames = cleanFrames;
-	    
+	    else{
+		List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+		derivedTree.frames = cleanFrames;
+	    }
         } catch (UnifyException e) {
-            System.err.println("Unify Exception (derived tree building): "
-                    + e.getMessage());
+            System.err.println("Unify Exception (derived tree building): "+ e.getMessage());
             failed = true;
         } catch (Exception e) {
             System.err.println("Error while deriving tree:");

@@ -644,7 +644,6 @@ public class Fs {
         for (Fs fs : cleanFrames) {
 	    //System.out.println("Collecting corefs in: "+fs);
 	    //System.out.println("with environment "+env);
-	    int[] depth=new int[1];
 	    if(fs.collect_corefs(corefs, situation, env)==false)
 		{
 		    return null;
