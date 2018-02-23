@@ -416,8 +416,22 @@ public class Value implements SemLit {
                 Value bb = env.deref(b);
                 // if b is unbound, we bind it to a
                 if (bb.equals(b)) {
-                    env.bind(b.getVarVal(), a);
-                    res = a;
+		    // Simon: I added this
+		    // This might lead to problems when 2 bound variables refer to two different FS
+		    // One solution would be to store the FS somewhere in the environment, like
+		    // b <-> a.coref
+		    // @b <-> a
+		    if(a.getAvmVal().getCoref()!=null){
+			//System.out.println("Extra binding for coref: "+b.getVarVal()+" and "+a.getAvmVal().getCoref());
+			if(b.getVarVal()!= a.getAvmVal().getCoref().getVarVal())
+			    env.bind(b.getVarVal(),a.getAvmVal().getCoref());
+			//env.bind(a.getAvmVal().getCoref().getVarVal(),a);
+		    }
+		    else{
+		    //End
+		    env.bind(b.getVarVal(), a);
+		    }
+		    res = a;
                 } else { // b is already bound, the values must match !
                     if (bb.is(AVM)) { // let us see if they do:
                         res = new Value(
