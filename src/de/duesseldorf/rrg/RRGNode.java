@@ -33,8 +33,8 @@ public class RRGNode implements Node {
         this.children = children;
     }
 
-    public void addRightmostChild(Node child) {
-        this.children.add(child);
+    public void addRightmostChild(Node node) {
+        this.children.add(node);
     }
 
     // not yet implemented

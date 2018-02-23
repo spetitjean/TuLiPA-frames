@@ -44,8 +44,8 @@ import java.util.Map;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.duesseldorf.io.XMLRRGReader;
 import de.duesseldorf.io.XMLTypeHierarchyReader;
-import de.duesseldorf.rrg.RRG;
 import de.tuebingen.anchoring.InstantiatedTagTree;
 import de.tuebingen.anchoring.LexicalSelection;
 import de.tuebingen.io.RCGReader;
@@ -165,7 +165,10 @@ public class WorkbenchLoader {
                     + (loadedTime) / (Math.pow(10, 9)) + " sec.");
         } else if (op.check("rrg")) { // RRG-parsing
             // TODO load everything for RRG
-            g = new RRG();
+            XMLRRGReader rrgreader = new XMLRRGReader(grammar);
+            g = rrgreader.retrieveRRG();
+            rrgreader.close();
+            // g = new RRG();
 
         } else { // TAG/TT-MCTAG parsing
             // if the tag option is enabled (SAX-based loading with extended
