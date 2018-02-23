@@ -655,12 +655,19 @@ public class Fs {
 		e.printStackTrace();
 	    }
 	}
+	// We do as many update rounds as there are FS in our solution
+	// that should be the upper bound
+	int i=cleanFrames.size();
+	while(i>0){
+	    newFrames = new LinkedList<Fs>();
+	    for (Fs fs : cleanFrames) {
+		Fs new_fs = fs.update_corefs(corefs, situation, env);
+		newFrames.add(new_fs);
+	    }
+	    cleanFrames=newFrames;
+	    i--;
+	}
 
-	
-        for (Fs fs : cleanFrames) {
-            fs = fs.update_corefs(corefs, situation, env);
-            newFrames.add(fs);
-        }
 
 
 	// System.out.println("Corefs after round 1: ");
@@ -693,7 +700,7 @@ public class Fs {
     }
 
     public boolean collect_corefs(Hashtable<String, Fs> corefs,
-			       Situation situation, Environment env) {
+				  Situation situation, Environment env) {
         String coref = this.coref.getVarVal();
 	//System.out.println("Collecting corefs for "+this);
 
@@ -738,13 +745,14 @@ public class Fs {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs(corefs, situation,env);
+                v.getAvmVal().collect_corefs(corefs, situation, env);
             }
         }
 	return true;
     }
 
     public Fs update_corefs(Hashtable<String, Fs> corefs, Situation situation, Environment env) {
+        //System.out.println("Updating corefs in "+ this);
         Fs result = this;
 	String coref=this.coref.getVarVal();
 	
@@ -761,16 +769,23 @@ public class Fs {
         while (i.hasNext()) {
             String f = i.next();
             Value v = this.AVlist.get(f);
+	    //System.out.println("Value "+ v);
             if (v.is(Value.AVM)) {
+		//System.out.println("AVM");
                 v.getAvmVal().update_corefs(corefs, situation, env);
+		result.AVlist.put(f, new Value(v.getAvmVal().update_corefs(corefs, situation, env)));
+
             }
 
             if (v.is(Value.VAR)) {
+		//System.out.println("Var");
                 if (corefs.keySet().contains(v.getVarVal())) {
+		    //System.out.println("Update");
 		    result.AVlist.put(f, new Value(corefs.get(v.getVarVal())));
                 }
             }
         }
+	//System.out.println("Result: "+result);
         return result;
     }
 }

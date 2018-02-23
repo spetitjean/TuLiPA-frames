@@ -46,12 +46,16 @@ import org.w3c.dom.Node;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.UnifyException;
+import de.tuebingen.tag.Fs;
+
+import de.duesseldorf.frames.Situation;
+import de.duesseldorf.frames.FsTools;
 
 public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
-            List<String> semlabels, boolean needsAnchoring) {
+					 List<String> semlabels, boolean needsAnchoring, Situation situation) {
 
         // System.out.println(derivationTree);
         DerivedTree derivedTree = null;
@@ -127,9 +131,19 @@ public class TreeDeriver {
             // System.out.println("Another round");
             derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
                     derivedTree.env, true);
+
+	    List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames,
+							   situation,derivedTree.env);
+	    if(mergedFrames==null){
+		System.err.println("Frame unification failed, tree discarded!\n");
+		failed = true;
+	    }
+	    else{
+		List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+		derivedTree.frames = cleanFrames;
+	    }
         } catch (UnifyException e) {
-            System.err.println("Unify Exception (derived tree building): "
-                    + e.getMessage());
+            System.err.println("Unify Exception (derived tree building): "+ e.getMessage());
             failed = true;
         } catch (Exception e) {
             System.err.println("Error while deriving tree:");
