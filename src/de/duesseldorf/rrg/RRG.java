@@ -47,9 +47,13 @@ public class RRG implements Grammar {
         trees = new HashSet<RRGTree>();
     }
 
-    public void addTree(RRGTree tree) {
-        trees.add(tree);
+    public RRG(Set<RRGTree> trees) {
+        this.trees = trees;
     }
+
+    // public void addTree(RRGTree tree) {
+    // trees.add(tree);
+    // }
 
     //////// interface methods that are not used:
     public boolean needsAnchoring() {

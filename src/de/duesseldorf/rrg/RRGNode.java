@@ -3,6 +3,7 @@ package de.duesseldorf.rrg;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
 public class RRGNode implements Node {
@@ -19,11 +20,14 @@ public class RRGNode implements Node {
     private List<Node> children; // all children of the Node, in order
     private RRGNodeType type; // the type of this node
     private String name; // the name of the node
+    private String category; // the cat of a node, or its terminal label
+    private GornAddress gornaddress; // the gorn address
 
-    public RRGNode(RRGNodeType type, String name) {
+    public RRGNode(RRGNodeType type, String name, String category) {
         children = new LinkedList<Node>();
         this.type = type;
         this.name = name;
+        this.setCategory(category);
     }
 
     public List<Node> getChildren() {
@@ -38,6 +42,18 @@ public class RRGNode implements Node {
         this.children.add(node);
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public RRGNodeType getType() {
+        return this.type;
+    }
+
     // not yet implemented
     public String getName() {
         return null;
@@ -47,11 +63,21 @@ public class RRGNode implements Node {
     public void setName(String name) {
     }
 
+    public GornAddress getGornaddress() {
+        return gornaddress;
+    }
+
+    public void setGornAddress(GornAddress gornaddress) {
+        this.gornaddress = gornaddress;
+    }
+
     /**
      * @return a String representation of this node, without children
      */
     @Override
     public String toString() {
-        return this.name + " (" + this.type.name() + ")";
+        return this.gornaddress.toString() + " " + this.category + " "
+                + this.name + " (" + this.type.name() + ")";
     }
+
 }

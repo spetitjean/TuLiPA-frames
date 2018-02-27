@@ -23,9 +23,11 @@ public enum XMLRRGTag {
     // attributes
     NAME("name"), // of an entry or node
     ID("id"), // of a tree
-    TYPE("type"), // of a node
+    TYPE("type"), // of a node, e.g. substitution nodes or anchors (see below)
     COREF("coref"), // coreference of a FS
-    VALUE("value"),
+    VALUE("value"), // in a FS
+    CAT("cat"), // of a node, either a terminal sequence or the 'label' of the
+                // node, e.g. RP, S, NP,...
 
     // node types
     XMLSTDNode("std"), // standard node

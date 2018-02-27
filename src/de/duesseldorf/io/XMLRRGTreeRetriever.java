@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.tuebingen.tree.Node;
 
 public class XMLRRGTreeRetriever {
@@ -26,6 +27,9 @@ public class XMLRRGTreeRetriever {
         // System.out.println(RRGTreeTools.recursivelyPrintNode(treeRoot));
 
         // TODO: give the tree an id etc.
+
+        // give the tree its gorn address:
+        RRGTreeTools.initGornAddresses((RRGNode) treeRoot);
         return new RRGTree(treeRoot);
     }
 
@@ -59,10 +63,41 @@ public class XMLRRGTreeRetriever {
     private static Node retrieveNode(Element root) {
         RRGNodeType type = findRRGNodeType(root);
 
+        String category = retrieveCat(root);
+
         // do we need this name?
         String name = root.getAttribute(XMLRRGTag.NAME.StringVal());
-        Node treeRoot = new RRGNode(type, name);
+
+        Node treeRoot = new RRGNode(type, name, category);
         return treeRoot;
+    }
+
+    /**
+     * This method processes (in parts) the narg of a node. Might be of use
+     * later!
+     * 
+     * @param root
+     * @return the syntactic category or the terminal label of a node
+     */
+    private static String retrieveCat(Element root) {
+        Element narg = (Element) root
+                .getElementsByTagName(XMLRRGTag.NARG.StringVal()).item(0);
+        Element fs = (Element) narg
+                .getElementsByTagName(XMLRRGTag.FEATURESTRUCTURE.StringVal())
+                .item(0);
+        Element f = (Element) fs
+                .getElementsByTagName(XMLRRGTag.FEATURE.StringVal()).item(0);
+        if (f.getAttribute(XMLRRGTag.NAME.StringVal())
+                .equals(XMLRRGTag.CAT.StringVal())) {
+            String cat = ((Element) f
+                    .getElementsByTagName(XMLRRGTag.SYM.StringVal()).item(0))
+                            .getAttribute(XMLRRGTag.VALUE.StringVal());
+            return cat;
+        } else {
+            System.err.println("Error while retrieving the category of node "
+                    + root.getAttribute(XMLRRGTag.NAME.StringVal()));
+            return null;
+        }
     }
 
     /**

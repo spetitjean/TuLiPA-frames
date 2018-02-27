@@ -125,7 +125,7 @@ public class ParsingInterface {
 
         List<String> slabels = new LinkedList<String>();
 
-        // 4. Load the tokenizer
+        // Tokenizing
         Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
         List<Word> tokens = null;
         tok.setSentence(sentence);
@@ -133,9 +133,8 @@ public class ParsingInterface {
         if (verbose) {
             System.err.println("Tokenized sentence: " + tokens.toString());
         }
-        List<String> toksentence = Tokenizer.tok2string(tokens);
-        // System.err.println("\t@@ Length " + toksentence.size());
 
+        List<String> toksentence = Tokenizer.tok2string(tokens);
         /* ******** external POS tagging ************/
         ExternalTagger tagger = new ExternalTagger();
         File taggerExec = op.check("t") ? new File(op.getVal("t")) : null;
@@ -694,8 +693,34 @@ public class ParsingInterface {
     }
 
     public static boolean parseRRG(CommandLineOptions op, Situation sit,
-            String sentence) {
+            String sentence) throws Exception {
         System.out.println("yay, go RRG!");
+
+        boolean verbose = op.check("v");
+
+        // Tokenizing
+        List<String> toksentence = tokenize(op, sentence, verbose);
+
         return false;
+    }
+
+    /**
+     * @param op
+     * @param sentence
+     * @param verbose
+     * @throws TokenizerException
+     * @throws IOException
+     */
+    private static List<String> tokenize(CommandLineOptions op, String sentence,
+            boolean verbose) throws TokenizerException, IOException {
+        Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
+        List<Word> tokens = null;
+        tok.setSentence(sentence);
+        tokens = tok.tokenize();
+        if (verbose) {
+            System.err.println("Tokenized sentence: " + tokens.toString());
+        }
+        List<String> toksentence = Tokenizer.tok2string(tokens);
+        return toksentence;
     }
 }

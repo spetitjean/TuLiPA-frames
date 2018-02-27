@@ -3,12 +3,15 @@ package de.duesseldorf.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGTree;
 import de.tuebingen.util.XMLUtilities;
 
 /**
@@ -43,20 +46,26 @@ public class XMLRRGReader extends FileReader {
     }
 
     public RRG retrieveRRG() {
+        Set<RRGTree> trees = new HashSet<RRGTree>();
+
         Element rrgGramDocRoot = rrgGramDoc.getDocumentElement();
         NodeList grammarEntries = rrgGramDocRoot
                 .getElementsByTagName(XMLRRGTag.ENTRY.StringVal());
         // iterate over all grammar entries
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < grammarEntries.getLength(); i++) {
             Element ithEntrie = (Element) grammarEntries.item(i);
             Element tree = (Element) ithEntrie
                     .getElementsByTagName(XMLRRGTag.TREE.StringVal()).item(0);
 
             // process semantics, family etc. here
 
-            XMLRRGTreeRetriever.retrieveTree(tree);
+            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree);
+
+            // debug
+            System.out.println(syntaxTree.toString() + "\n\n\n");
+            trees.add(syntaxTree);
         }
-        return new RRG();
+        return new RRG(trees);
     }
 
 }
