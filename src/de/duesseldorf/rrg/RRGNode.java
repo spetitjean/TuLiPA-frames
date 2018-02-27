@@ -16,13 +16,14 @@ public class RRGNode implements Node {
         DDAUGHTER // d-daughter for wrapping substitution, marks the d-edge
     }
 
-    // all children of the Node, in order
-    private List<Node> children;
-    private RRGNodeType type;
+    private List<Node> children; // all children of the Node, in order
+    private RRGNodeType type; // the type of this node
+    private String name; // the name of the node
 
-    public RRGNode(RRGNodeType type) {
+    public RRGNode(RRGNodeType type, String name) {
         children = new LinkedList<Node>();
         this.type = type;
+        this.name = name;
     }
 
     public List<Node> getChildren() {
@@ -51,6 +52,6 @@ public class RRGNode implements Node {
      */
     @Override
     public String toString() {
-        return this.type.name();
+        return this.name + " (" + this.type.name() + ")";
     }
 }

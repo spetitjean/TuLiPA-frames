@@ -12,6 +12,7 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
+import de.tuebingen.tag.Fs;
 import de.tuebingen.tree.Node;
 import de.tuebingen.util.XMLUtilities;
 
@@ -38,7 +39,7 @@ import de.tuebingen.util.XMLUtilities;
  */
 public class XMLRRGReader extends FileReader {
 
-    // A representation of our grammar
+    // Our grammar
     private Document rrgGramDoc;
 
     public XMLRRGReader(File rrgGrammar) throws FileNotFoundException {
@@ -50,12 +51,12 @@ public class XMLRRGReader extends FileReader {
         Element rrgGramDocRoot = rrgGramDoc.getDocumentElement();
         NodeList grammarEntries = rrgGramDocRoot
                 .getElementsByTagName(XMLRRGTag.ENTRY.StringVal());
-
         // iterate over all grammar entries
-        for (int i = 0; i < grammarEntries.getLength(); i++) {
+        for (int i = 0; i < 3; i++) {
             Element ithEntrie = (Element) grammarEntries.item(i);
             Element tree = (Element) ithEntrie
                     .getElementsByTagName(XMLRRGTag.TREE.StringVal()).item(0);
+
             // process semantics, family etc. here, maybe via
 
             retrieveTree(tree);
@@ -75,7 +76,9 @@ public class XMLRRGReader extends FileReader {
                 .getElementsByTagName(XMLRRGTag.NODE.StringVal()).item(0);
         Node treeRoot = recursivelyRetrieveTree(syntacticTreeMother);
         // debug:
+        // System.out.println(treeRoot.getChildren().size());
         // System.out.println(RRGTreeTools.recursivelyPrintNode(treeRoot));
+
         // TODO: give the tree an id etc.
         return new RRGTree(treeRoot);
     }
@@ -87,15 +90,39 @@ public class XMLRRGReader extends FileReader {
      * @return a (RRG) Node representation of the subtree
      */
     private Node recursivelyRetrieveTree(Element root) {
-        RRGNodeType type = findRRGNodeType(root);
-        Node treeRoot = new RRGNode(type);
-        NodeList daughters = root
-                .getElementsByTagName(XMLRRGTag.NODE.StringVal());
+        // base case: process the root node of the subtree
+        Node treeRoot = retrieveNode(root);
+        // process all daughters of the XML-Element root, i.e. process the tree
+        // from left to right, depth-first
+        NodeList daughters = root.getChildNodes();
         for (int i = 0; i < daughters.getLength(); i++) {
-            ((RRGNode) treeRoot).addRightmostChild(
-                    recursivelyRetrieveTree((Element) daughters.item(i)));
+            org.w3c.dom.Node ithchild = daughters.item(i);
+            // first check
+            // 1) whether the daughter is an element - all nodes are elements
+            // 2) whether the daughter is a node - and not e.g. an narg
+            if (ithchild.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE
+                    && ithchild.getNodeName()
+                            .equals(XMLRRGTag.NODE.StringVal())) {
+                ((RRGNode) treeRoot).addRightmostChild(
+                        recursivelyRetrieveTree((Element) daughters.item(i)));
+            }
         }
         return treeRoot;
+    }
+
+    private Node retrieveNode(Element root) {
+        RRGNodeType type = findRRGNodeType(root);
+
+        // do we need this name?
+        String name = root.getAttribute(XMLRRGTag.NAME.StringVal());
+        Fs narg = retrievenarg(root);
+
+        Node treeRoot = new RRGNode(type, name);
+        return treeRoot;
+    }
+
+    private Fs retrievenarg(Element root) {
+        return null;
     }
 
     /**
@@ -129,7 +156,4 @@ public class XMLRRGReader extends FileReader {
 
     }
 
-    private Node retrieveNode() {
-        return null;
-    }
 }
