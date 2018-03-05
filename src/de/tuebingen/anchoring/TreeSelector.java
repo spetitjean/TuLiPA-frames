@@ -280,11 +280,38 @@ public class TreeSelector {
                         try {
                             // System.out.println("[1-] ");
 
-                            InstantiatedTuple x = this.anchor(plm, it, l,
-                                    slabels);
-                            // System.out.println("[2-] ");
+			    // In case we have several entries for
+			    // frames associated to the lemma, we need
+			    // several instantiated tuples
 
-                            anctuples.add(x);
+			    
+			    List<LexSem> lemmaSem = it.getAnchor().getSemantics();
+			    List<Tuple> tlist= new LinkedList<Tuple>();
+
+			    if (lemmaSem.size() > 1) {
+				System.out.println("TODO: create a loop in TreeSelector.546!");
+			    }
+				    
+			    if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
+				tlist = situation.getFrameGrammar().getGrammar()
+				    .get(lemmaSem.get(0).getSemclass());
+				System.out.println("Size of the frame list for this entry: "+tlist.size());
+				    
+			    }
+			    // If we have more that one possible frame, try them all
+			    if(tlist.size()>1){
+				for(int iframe=0; iframe<tlist.size(); iframe++){
+				    InstantiatedTuple x = this.anchor(plm, it, l, slabels, iframe);
+				    anctuples.add(x);
+				}
+			    }
+			    // If we have 0 or 1, just go once
+			    else{
+				InstantiatedTuple x = this.anchor(plm, it, l, slabels, 0);
+				anctuples.add(x);
+			    }
+
+			    
                         } catch (AnchoringException e) {
 
                             System.err.println(
@@ -342,11 +369,12 @@ public class TreeSelector {
     }
 
     public InstantiatedTuple anchor(PolarizedLemma plm, InstantiatedTuple t,
-            int i, List<String> slabels) throws AnchoringException {
+				    int i, List<String> slabels, int frameid) throws AnchoringException {
         /**
          * Method processing each instantiated tuples of the selector
          * in order to anchor it (unification between FS and lexical anchoring
          * of the head)
+	 * frameid is the number of the frame we are considering
          */
 
         if (verbose)
@@ -538,28 +566,29 @@ public class TreeSelector {
         if (lemmaSem.size() > 1) {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
+	
         if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
-            // as lemmaSem.size = 1, we dont need a loop
-
+	    System.out.println("Size of the frame list for this entry: "+tlist.size());
+	    
 	    Fs frameInterface=new Fs(0);
 	    
             if (tt.getFrames() != null) {
                 List<Fs> frames = tt.getFrames();
                 if (tlist != null) {
-                    if (tlist.get(0) != null) {
+                    if (tlist.get(frameid) != null) {
 			// Looking for the interface of the frame
-			frameInterface=tlist.get(0).getHead().getIface();
-                        frames.addAll(tlist.get(0).getHead().getFrames());
+			frameInterface=tlist.get(frameid).getHead().getIface();
+                        frames.addAll(tlist.get(frameid).getHead().getFrames());
                     }
                 }
             } else {
                 if (tlist != null) {
-                    if (tlist.get(0) != null) {
+                    if (tlist.get(frameid) != null) {
 			// Looking for the interface of the frame
-			frameInterface=tlist.get(0).getHead().getIface();
-                        tt.setFrames(tlist.get(0).getHead().getFrames());
+			frameInterface=tlist.get(frameid).getHead().getIface();
+                        tt.setFrames(tlist.get(frameid).getHead().getFrames());
                     }
                 }
             }
