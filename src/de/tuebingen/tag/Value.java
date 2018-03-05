@@ -422,14 +422,33 @@ public class Value implements SemLit {
 		    // b <-> a.coref
 		    // @b <-> a
 		    if(a.getAvmVal().getCoref()!=null){
-			//System.out.println("Extra binding for coref: "+b.getVarVal()+" and "+a.getAvmVal().getCoref());
-			if(b.getVarVal()!= a.getAvmVal().getCoref().getVarVal())
-			    env.bind(b.getVarVal(),a.getAvmVal().getCoref());
+			System.out.println("Extra binding for coref: "+bb.getVarVal()+" and "+a.getAvmVal().getCoref());
+			System.out.println("AVM for "+a.getAvmVal().getCoref()+" is "+a.getAvmVal());
+			System.out.println("Deref "+a.getAvmVal().getCoref()+" is "+env.deref(a.getAvmVal().getCoref()));
+			if(bb.getVarVal()!= env.deref(a.getAvmVal().getCoref()).getVarVal()){
+			    env.bind(bb.getVarVal(),env.deref(a.getAvmVal().getCoref()));
+			}
+			else{
+			    System.out.println("Not binding");
+			    System.out.println("@"+bb.getVarVal());
+			    System.out.println(env.deref(new Value(5,"@"+bb.getVarVal())));
+			    System.out.println("Type of this: "+env.deref(new Value(5,"@"+bb.getVarVal())).getType());
+			    //env.bind("@"+bb.getVarVal(),new Value(a.getAvmVal()));
+			    if(env.deref(new Value(5,"@"+bb.getVarVal())).getType()==AVM){
+				System.out.println("Unifying AVM with bound AVM");
+				env.bind("@"+bb.getVarVal(),new Value(Fs.unify(a.getAvmVal(), env.deref(new Value(5,"@"+bb.getVarVal())).getAvmVal(), env)));
+			    }
+			    else{
+				System.out.println("Binding a new AVM");
+				env.bind("@"+bb.getVarVal(),new Value(a.getAvmVal()));
+			    }
+			    System.out.println("Environment: "+env);
+			}
 			//env.bind(a.getAvmVal().getCoref().getVarVal(),a);
 		    }
 		    else{
 		    //End
-		    env.bind(b.getVarVal(), a);
+		    env.bind(bb.getVarVal(), a);
 		    }
 		    res = a;
                 } else { // b is already bound, the values must match !
@@ -574,11 +593,16 @@ public class Value implements SemLit {
             // env.toString());
             break;
         case VAR: // a is a variable
+	    System.out.println("VAR and VAR");
+	    System.out.println("Deref "+a);
             Value aa = env.deref(a);
+	    System.out.println("is "+aa);
             switch (b.getType()) {
             case VAR: // if a and b are both variables
-                Value bb = env.deref(b);
-                if (aa.is(Value.VAR) && bb.is(Value.VAR)) {
+		System.out.println("Deref "+b);
+		Value bb = env.deref(b);
+		System.out.println("is "+bb);
+		if (aa.is(Value.VAR) && bb.is(Value.VAR)) {
                     if (aa.equals(a) && bb.equals(b)) {
                         // if both variables are unbound
                         env.bind(a.getVarVal(), b);

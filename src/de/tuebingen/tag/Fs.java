@@ -520,8 +520,9 @@ public class Fs {
         Value resCoref;
         if (fs1.isTyped()) {
 	    if(fs2.isTyped()){
-		//System.out.println("Unifying coreferences: "+fs1.getCoref()+" and "+fs2.getCoref());
+		System.out.println("Unifying coreferences: "+fs1.getCoref()+" and "+fs2.getCoref());
 		resCoref=Value.unify(fs1.getCoref(),fs2.getCoref(),env);
+		System.out.println("Done unify");
 	    }
 	    else{
 		resCoref = fs1.getCoref();
@@ -631,7 +632,7 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation, Environment env) {
-	//System.out.println("Starting merging frames");
+	System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
         Hashtable<String, Fs> corefs = new Hashtable<String, Fs>();
@@ -642,8 +643,8 @@ public class Fs {
             }
         }
         for (Fs fs : cleanFrames) {
-	    //System.out.println("Collecting corefs in: "+fs);
-	    //System.out.println("with environment "+env);
+	    System.out.println("Collecting corefs in: "+fs);
+	    System.out.println("with environment "+env);
 	    if(fs.collect_corefs(corefs, situation, env)==false)
 		{
 		    return null;
@@ -659,6 +660,7 @@ public class Fs {
 	// that should be the upper bound
 	int i=cleanFrames.size();
 	while(i>0){
+	    System.out.println("Rounds of update corefs left : "+i);
 	    newFrames = new LinkedList<Fs>();
 	    for (Fs fs : cleanFrames) {
 		Fs new_fs = fs.update_corefs(corefs, situation, env);
@@ -666,6 +668,17 @@ public class Fs {
 	    }
 	    cleanFrames=newFrames;
 	    i--;
+	    
+	}
+
+	for(Fs cleanFrame: cleanFrames){
+	    	try{
+		    updateFS(cleanFrame,env,true);
+		    System.out.println("Updated : "+cleanFrame);
+		}
+		catch (Exception e) {
+		    e.printStackTrace();
+		}
 	}
 
 
@@ -752,19 +765,34 @@ public class Fs {
     }
 
     public Fs update_corefs(Hashtable<String, Fs> corefs, Situation situation, Environment env) {
-        //System.out.println("Updating corefs in "+ this);
+        System.out.println("Updating corefs in "+ this);
         Fs result = this;
 	String coref=this.coref.getVarVal();
 	
         if (corefs.keySet().contains(coref)) {
+	    System.out.println("Trying to unify: "+coref);
 	    try {
 		result = unify(this, corefs.get(coref), env,
 			   situation.getTypeHierarchy());
+		System.out.println("Done unify");
 		
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+	if (env.deref(new Value(5,"@"+coref)).getType()==Value.AVM) {
+	    System.out.println("Trying to unify: "+coref);
+	    try {
+		result = unify(this, env.deref(new Value(5,"@"+coref)).getAvmVal(), env,
+			   situation.getTypeHierarchy());
+		System.out.println("Done unify");
+		
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+	
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();

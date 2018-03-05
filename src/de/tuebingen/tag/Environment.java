@@ -78,6 +78,7 @@ public class Environment {
         if (table.containsKey(name)) {
             // var is bound to something
             Value v = table.get(name);
+	    //System.out.println("Got deref "+v);
             if (v.is(Value.VAR)) {
                 // // var is bound to a variable, we go on dereferencing
                 // // I created a loop here somehow, this must be fixed better
