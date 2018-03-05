@@ -295,7 +295,7 @@ public class TreeSelector {
 			    if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
 				tlist = situation.getFrameGrammar().getGrammar()
 				    .get(lemmaSem.get(0).getSemclass());
-				System.out.println("Size of the frame list for this entry: "+tlist.size());
+				//System.out.println("Size of the frame list for this entry: "+tlist.size());
 				    
 			    }
 			    // If we have more that one possible frame, try them all
@@ -570,7 +570,6 @@ public class TreeSelector {
         if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
-	    System.out.println("Size of the frame list for this entry: "+tlist.size());
 	    
 	    Fs frameInterface=new Fs(0);
 	    

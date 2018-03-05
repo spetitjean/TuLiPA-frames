@@ -440,7 +440,7 @@ public class Fs {
                 try {
                     // exception caught and re-thrown to extend the error
                     // message
-                    nval = Value.unify(avm1.get(k), avm2.get(k), env);
+                    nval = Value.unify(avm1.get(k), avm2.get(k), env, tyHi);
                 } catch (UnifyException e) {
                     throw new UnifyException(
                             "feature " + k + ": " + e.getMessage());
@@ -520,9 +520,9 @@ public class Fs {
         Value resCoref;
         if (fs1.isTyped()) {
 	    if(fs2.isTyped()){
-		System.out.println("Unifying coreferences: "+fs1.getCoref()+" and "+fs2.getCoref());
+		//System.out.println("Unifying coreferences: "+fs1.getCoref()+" and "+fs2.getCoref());
 		resCoref=Value.unify(fs1.getCoref(),fs2.getCoref(),env);
-		System.out.println("Done unify");
+		//System.out.println("Done unify");
 	    }
 	    else{
 		resCoref = fs1.getCoref();
@@ -632,7 +632,7 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation, Environment env) {
-	System.out.println("Starting merging frames");
+	//System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
         Hashtable<String, Fs> corefs = new Hashtable<String, Fs>();
@@ -643,8 +643,8 @@ public class Fs {
             }
         }
         for (Fs fs : cleanFrames) {
-	    System.out.println("Collecting corefs in: "+fs);
-	    System.out.println("with environment "+env);
+	    //System.out.println("Collecting corefs in: "+fs);
+	    //System.out.println("with environment "+env);
 	    if(fs.collect_corefs(corefs, situation, env)==false)
 		{
 		    return null;
@@ -660,7 +660,7 @@ public class Fs {
 	// that should be the upper bound
 	int i=cleanFrames.size();
 	while(i>0){
-	    System.out.println("Rounds of update corefs left : "+i);
+	    //System.out.println("Rounds of update corefs left : "+i);
 	    newFrames = new LinkedList<Fs>();
 	    for (Fs fs : cleanFrames) {
 		Fs new_fs = fs.update_corefs(corefs, situation, env);
@@ -674,7 +674,7 @@ public class Fs {
 	for(Fs cleanFrame: cleanFrames){
 	    	try{
 		    updateFS(cleanFrame,env,true);
-		    System.out.println("Updated : "+cleanFrame);
+		    //System.out.println("Updated : "+cleanFrame);
 		}
 		catch (Exception e) {
 		    e.printStackTrace();
@@ -683,30 +683,12 @@ public class Fs {
 
 
 
-	// System.out.println("Corefs after round 1: ");
-	// for(String c: corefs.keySet()){
-	//    System.out.println(c+"-"+corefs.get(c));
-	// }
-	// System.out.println("Environment after round 1: "+env);
+	System.out.println("Corefs in the end: ");
+	for(String c: corefs.keySet()){
+	   System.out.println(c+"-"+corefs.get(c));
+	}
+	System.out.println("Environment in the end: "+env);
 		
-	
-	// Added a second round for test
-	// for (Fs fs : cleanFrames) {
-	//     //System.out.println("Collecting corefs in: "+fs);
-	//     //System.out.println("with environment "+env);
-	    
-        //     fs.collect_corefs(corefs, situation, env);
-	//     try{
-	// 	updateFS(fs,env,true);
-	//     }
-	//     catch (Exception e) {
-	// 	e.printStackTrace();
-	//     }
-	// }
-        // for (Fs fs : cleanFrames) {
-        //     fs = fs.update_corefs(corefs, situation, env);
-        //     newFrames.add(fs);
-        // }
 
 	
         return newFrames;
@@ -765,16 +747,16 @@ public class Fs {
     }
 
     public Fs update_corefs(Hashtable<String, Fs> corefs, Situation situation, Environment env) {
-        System.out.println("Updating corefs in "+ this);
+        //System.out.println("Updating corefs in "+ this);
         Fs result = this;
 	String coref=this.coref.getVarVal();
 	
         if (corefs.keySet().contains(coref)) {
-	    System.out.println("Trying to unify: "+coref);
+	    //System.out.println("Trying to unify: "+coref);
 	    try {
 		result = unify(this, corefs.get(coref), env,
 			   situation.getTypeHierarchy());
-		System.out.println("Done unify");
+		//System.out.println("Done unify");
 		
             } catch (Exception e) {
                 e.printStackTrace();
@@ -782,11 +764,11 @@ public class Fs {
         }
 
 	if (env.deref(new Value(5,"@"+coref)).getType()==Value.AVM) {
-	    System.out.println("Trying to unify: "+coref);
+	    //System.out.println("Trying to unify: "+coref);
 	    try {
 		result = unify(this, env.deref(new Value(5,"@"+coref)).getAvmVal(), env,
 			   situation.getTypeHierarchy());
-		System.out.println("Done unify");
+		//System.out.println("Done unify");
 		
             } catch (Exception e) {
                 e.printStackTrace();
