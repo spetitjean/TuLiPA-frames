@@ -129,11 +129,13 @@ public class TreeDeriver {
                     derivedTree.env, true);
             // System.out.println("Updated frames: " + derivedTree.frames);
             // System.out.println("Another round");
-            derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
-                    derivedTree.env, true);
+            //derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
+            //        derivedTree.env, true);
 
 	    List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames,
 							   situation,derivedTree.env);
+	    derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+
 	    if(mergedFrames==null){
 		System.err.println("Frame unification failed, tree discarded!\n");
 		failed = true;

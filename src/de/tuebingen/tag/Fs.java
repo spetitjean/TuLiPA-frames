@@ -635,7 +635,6 @@ public class Fs {
 	//System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
-        Hashtable<String, Fs> corefs = new Hashtable<String, Fs>();
         for (Fs fs : frames) {
             if (fs.getType() != null) {
 		//System.out.println("Cleaning "+fs);
@@ -645,7 +644,7 @@ public class Fs {
         for (Fs fs : cleanFrames) {
 	    //System.out.println("Collecting corefs in: "+fs);
 	    //System.out.println("with environment "+env);
-	    if(fs.collect_corefs(corefs, situation, env)==false)
+	    if(fs.collect_corefs(situation, env)==false)
 		{
 		    return null;
 		}
@@ -663,7 +662,7 @@ public class Fs {
 	    //System.out.println("Rounds of update corefs left : "+i);
 	    newFrames = new LinkedList<Fs>();
 	    for (Fs fs : cleanFrames) {
-		Fs new_fs = fs.update_corefs(corefs, situation, env);
+		Fs new_fs = fs.update_corefs(situation, env);
 		newFrames.add(new_fs);
 	    }
 	    cleanFrames=newFrames;
@@ -681,93 +680,58 @@ public class Fs {
 		}
 	}
 
-
-
-	System.out.println("Corefs in the end: ");
-	for(String c: corefs.keySet()){
-	   System.out.println(c+"-"+corefs.get(c));
-	}
-	System.out.println("Environment in the end: "+env);
+	//System.out.println("Environment in the end: "+env);
 		
 
 	
         return newFrames;
     }
 
-    public boolean collect_corefs(Hashtable<String, Fs> corefs,
-				  Situation situation, Environment env) {
-        String coref = this.coref.getVarVal();
-	//System.out.println("Collecting corefs for "+this);
+    public boolean collect_corefs(Situation situation, Environment env) {
+	// Go through all the frames
+	// for each coref X found, we put it in the environment
 
+	String atCoref = "@"+env.deref(this.coref);
+	Value valCoref = new Value(5,atCoref);
+	
 	Fs New = this;
-	if(env.deref(this.coref)!=this.coref){
+	//System.out.println("coref: "+atCoref);
+	//System.out.println("@: "+env.deref(valCoref));
+	
+	if(env.deref(valCoref)!=valCoref){
 	    try {
-                //System.out.println("Unifying " + corefs.get(env.deref(this.coref).getVarVal()) + " and " + New);
-		New = unify(corefs.get(env.deref(this.coref).getVarVal()), New, env,
-			    situation.getTypeHierarchy());
-		//System.out.println("Unified: " + New);
-
+		New = unify(env.deref(valCoref).getAvmVal(), New, env, situation.getTypeHierarchy());
 	    } catch (Exception e) {
-		//System.out.println("[0]");
                 e.printStackTrace();
 		return false;
             }
 	}
-        if (corefs.keySet().contains(coref)) {
-	    //System.out.println("Seen it already ");
-            try {
-                // System.out.println("Start unify with
-                // "+this+corefs.get(coref));
-		Fs Other= corefs.get(coref);
-                New = unify(New,Other, env,
-                        situation.getTypeHierarchy());
-                corefs.remove(coref);
-                corefs.put(Other.coref.getVarVal(),New);
-            } catch (Exception e) {
-		//System.out.println("[1]");
-                e.printStackTrace();
-		return false;
-            }
-        }
-	//System.out.println("[2]: "+this);
-
-	//System.out.println("Already in environment: "+env.deref(this.coref));
-	//env.bind(coref,new Value(New));
-        corefs.put(coref, New);
-	//System.out.println("Put in corefs: "+New);
+ 
+	env.bind(atCoref,new Value(New));
+	
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs(corefs, situation, env);
+                v.getAvmVal().collect_corefs(situation, env);
             }
         }
 	return true;
     }
 
-    public Fs update_corefs(Hashtable<String, Fs> corefs, Situation situation, Environment env) {
+    public Fs update_corefs(Situation situation, Environment env) {
         //System.out.println("Updating corefs in "+ this);
         Fs result = this;
-	String coref=this.coref.getVarVal();
+	String atCoref = "@"+env.deref(this.coref);
+	Value valCoref = new Value(5,atCoref);
 	
-        if (corefs.keySet().contains(coref)) {
+	if (env.deref(valCoref).getType()==Value.AVM) {
 	    //System.out.println("Trying to unify: "+coref);
 	    try {
-		result = unify(this, corefs.get(coref), env,
+		result = unify(this, env.deref(valCoref).getAvmVal(), env,
 			   situation.getTypeHierarchy());
-		//System.out.println("Done unify");
-		
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-	if (env.deref(new Value(5,"@"+coref)).getType()==Value.AVM) {
-	    //System.out.println("Trying to unify: "+coref);
-	    try {
-		result = unify(this, env.deref(new Value(5,"@"+coref)).getAvmVal(), env,
-			   situation.getTypeHierarchy());
+		env.bind("@"+env.deref(this.coref), new Value(result));
 		//System.out.println("Done unify");
 		
             } catch (Exception e) {
@@ -779,23 +743,29 @@ public class Fs {
         while (i.hasNext()) {
             String f = i.next();
             Value v = this.AVlist.get(f);
-	    //System.out.println("Value "+ v);
             if (v.is(Value.AVM)) {
 		//System.out.println("AVM");
-                v.getAvmVal().update_corefs(corefs, situation, env);
-		result.AVlist.put(f, new Value(v.getAvmVal().update_corefs(corefs, situation, env)));
+                v.getAvmVal().update_corefs(situation, env);
+		result.AVlist.put(f, new Value(v.getAvmVal().update_corefs(situation, env)));
 
             }
 
             if (v.is(Value.VAR)) {
-		//System.out.println("Var");
-                if (corefs.keySet().contains(v.getVarVal())) {
-		    //System.out.println("Update");
-		    result.AVlist.put(f, new Value(corefs.get(v.getVarVal())));
-                }
-            }
+		String atVar = "@"+env.deref(v);
+		Value valVar = new Value(5,atVar);
+		//System.out.println("Var: "+v);
+		// var is a coreference, get the FS
+		if(env.deref(valVar).getType()==Value.AVM){
+		    result.AVlist.put(f, new Value(env.deref(valVar).getAvmVal()));
+		}
+		// var is not a coreference
+		else{
+		    result.AVlist.put(f, new Value(env.deref(v)));
+		}
+	    }
         }
 	//System.out.println("Result: "+result);
         return result;
     }
 }
+
