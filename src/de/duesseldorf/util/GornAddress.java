@@ -28,7 +28,7 @@ public class GornAddress {
 
     /**
      * 
-     * @return A new {@codeGornAddress} that is the i-th daughter of this
+     * @return A new {@code GornAddress} that is the i-th daughter of this
      *         GornAddress. Start counting at 1!
      */
     public GornAddress ithDaughter(int i) {

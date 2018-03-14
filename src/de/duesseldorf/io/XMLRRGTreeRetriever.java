@@ -80,31 +80,41 @@ public class XMLRRGTreeRetriever {
      * @return the syntactic category or the terminal label of a node
      */
     private static String retrieveCat(Element root) {
+        // the narg element
         Element narg = (Element) root
                 .getElementsByTagName(XMLRRGTag.NARG.StringVal()).item(0);
+        // the fs element
         Element fs = (Element) narg
                 .getElementsByTagName(XMLRRGTag.FEATURESTRUCTURE.StringVal())
                 .item(0);
-        Element f = (Element) fs
-                .getElementsByTagName(XMLRRGTag.FEATURE.StringVal()).item(0);
-        if (f.getAttribute(XMLRRGTag.NAME.StringVal())
-                .equals(XMLRRGTag.CAT.StringVal())) {
-            String cat = ((Element) f
-                    .getElementsByTagName(XMLRRGTag.SYM.StringVal()).item(0))
-                            .getAttribute(XMLRRGTag.VALUE.StringVal());
-            return cat;
-        } else {
-            System.err.println("Error while retrieving the category of node "
-                    + root.getAttribute(XMLRRGTag.NAME.StringVal()));
-            return null;
+
+        // walk through all the features of the fs and find the category
+        NodeList features = fs
+                .getElementsByTagName(XMLRRGTag.FEATURE.StringVal());
+        for (int i = 0; i < features.getLength(); i++) {
+            Element f = ((Element) features.item(i));
+            if (f.getAttribute(XMLRRGTag.NAME.StringVal())
+                    .equals(XMLRRGTag.CAT.StringVal())) {
+                String cat = ((Element) f
+                        .getElementsByTagName(XMLRRGTag.SYM.StringVal())
+                        .item(0)).getAttribute(XMLRRGTag.VALUE.StringVal());
+                return cat;
+            }
         }
+
+        // if no feature 'cat' was found:
+        System.err.println("Error while retrieving the category of node "
+                + root.getAttribute(XMLRRGTag.NAME.StringVal()));
+        return null;
+
     }
 
     /**
+     * @param node
+     *            an Element representing a node in a syntactic tree
      * 
-     * 
-     * @return The {@code RRGNodeType} of the {@code node} parameter, which must
-     *         be an Element representing a node in a syntactic tree
+     * @return The {@code RRGNodeType} of the {@code node} parameter. This is
+     *         the "internal" - non XML - node type that the parser works with
      */
     private static RRGNodeType findRRGNodeType(Element node) {
         String xmlNodeType = node.getAttribute(XMLRRGTag.TYPE.StringVal());
