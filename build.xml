@@ -53,4 +53,16 @@
 		    </manifest>
 		  </jar>
 	</target>
+    <target name="create_run_jar">
+        <jar destfile="${build.dir}/TuLiPAJar.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="de.tuebingen.ui.Interface"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+	    <fileset dir="${build.dir}"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/DTool.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/postagger-2006-05-21.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${lib.dir}/Utool-src-3.1.1.jar"/>
+        </jar>
+    </target>
 </project>
