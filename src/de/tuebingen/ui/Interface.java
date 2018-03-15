@@ -100,8 +100,10 @@ public class Interface {
         }
         // initialization
         String gram = op.check("g") ? op.getVal("g") : "";
+        String fram = op.check("f") ? op.getVal("f") : "";
         String lem = op.check("l") ? op.getVal("l") : "";
         String mo = op.check("m") ? op.getVal("m") : "";
+        String th = op.check("th") ? op.getVal("th") : "";
         Grammar g = null;
         Grammar frameG = null;
 
@@ -122,15 +124,16 @@ public class Interface {
                                                           // reloading if option
                                                           // tag is used
             try {
-                sit = WorkbenchLoader.loadSituation(op, gram, lem, mo);
+                sit = WorkbenchLoader.loadSituation(op, gram, fram, lem, mo,
+                        th);
                 g = sit.getGrammar();
                 frameG = sit.getFrameGrammar();
 
             } catch (Exception e) {
+                e.printStackTrace();
                 CommandLineProcesses.error(
                         "Error while loading grammar: check your grammar file",
                         op);
-                e.printStackTrace();
             }
             // System.err.println(g.toString());
         }

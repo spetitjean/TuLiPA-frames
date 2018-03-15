@@ -121,7 +121,7 @@ public class TreeDeriver {
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     true);
-            // Environment.rename(derivedTree.env);
+            //Environment.rename(derivedTree.env);
 
             // System.out.println("Environment: "+derivedTree.env);
             // System.out.println("Update frames in TreeDeriver");
@@ -131,6 +131,7 @@ public class TreeDeriver {
             // System.out.println("Another round");
             //derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
             //        derivedTree.env, true);
+	    //Environment.rename(derivedTree.env);
 
 	    List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames,
 							   situation,derivedTree.env);
@@ -179,7 +180,7 @@ public class TreeDeriver {
         for (Object[] operation : operations) {
             recursivelyDeriveTree((Node) operation[4],
                     (ElementaryTree) operation[2], treeDict, D, t, eTrees,
-                    steps, needsAnchoring);
+				  steps, needsAnchoring);
         }
     }
 
