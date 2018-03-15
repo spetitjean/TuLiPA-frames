@@ -52,6 +52,7 @@ import org.w3c.dom.Document;
 import de.duesseldorf.frames.Situation;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
+import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
 import de.tuebingen.converter.GrammarConvertor;
@@ -700,6 +701,9 @@ public class ParsingInterface {
 
         // Tokenizing
         List<String> toksentence = tokenize(op, sentence, verbose);
+
+        RRGParser rrgparser = new RRGParser(sit);
+        rrgparser.parseSentence(toksentence);
 
         return false;
     }
