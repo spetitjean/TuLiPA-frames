@@ -54,7 +54,7 @@
 		  </jar>
 	</target>
     <target name="create_run_jar">
-        <jar destfile="${build.dir}/TuLiPAJar.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="${build.dir}/TuLiPA-frames.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="de.tuebingen.ui.Interface"/>
                 <attribute name="Class-Path" value="."/>
