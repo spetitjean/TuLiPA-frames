@@ -12,6 +12,7 @@
 	<property name="lib.dir" value="${basedir}/lib"/>
 	<property name="build.dir" value="${basedir}/bin"/>
 	<property name="src.dir" value="${basedir}/src"/>
+    <property name="run.dir" value="${basedir}/run"/>
     <path id="TuLiPA.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/DTool.jar"/>
@@ -38,7 +39,7 @@
         </javac>
     </target>
 	<target depends="init" name="jar">
-		  <jar destfile="${build.dir}/TuLiPA.jar" >
+		  <jar destfile="${run.dir}/TuLiPA.jar" >
 		    <fileset dir="${build.dir}"
 			     includes="**/*.class"/>
 		    <fileset dir="${src.dir}"
