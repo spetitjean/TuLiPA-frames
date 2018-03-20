@@ -743,31 +743,31 @@ public class TreeSelector {
 	    if (lm.containsKey(LexItem.getCategory())) {
 		List<MorphEntry> lme = lm.get(LexItem.getCategory());
 		for (int j = 0; j < lme.size(); j++) {
-		    	try{
-			    //TagTree ttt=new TagTree(tt.getRoot());
-			    //ttt.setId(nf.getUniqueName());
-			    //System.out.println("created new TagTree with ID: "+ttt.getId());
-
-			    
-			    Environment E=new Environment(5);
-			    Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
-			    // we also unify this Fs with top
-			    if(CoAnc.getLabel().hasFeat("top")){
-				Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
-				Fs New=new Fs(0);
-				New.setFeat("top",new Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
-				Unify=Fs.unify(Unify,New,E);
-			    }
-			    CoAnc.setLabel(Unify);
-			    //ttlist.add(ttt);
-			}
-			catch (UnifyException e) {
-			    System.err.println(
-					       "Features unification failed on tree ");
-			    System.err.println(e);
-			    throw new AnchoringException(); // we withdraw the
-			    // current coanchoring
-			}
+		    	// try{
+			//     //TagTree ttt=new TagTree(tt.getRoot());
+			//     //ttt.setId(nf.getUniqueName());
+			//     //System.out.println("created new TagTree with ID: "+ttt.getId());
+			//     System.out.println(LexItem);
+			//     System.out.println("Unifying "+lme.get(j).getLemmarefs().get(0).getFeatures()+" and "+CoAnc.getLabel());
+			//     Environment E=new Environment(5);
+			//     Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
+			//     // we also unify this Fs with top
+			//     if(CoAnc.getLabel().hasFeat("top")){
+			// 	Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
+			// 	Fs New=new Fs(0);
+			// 	New.setFeat("top",new Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
+			// 	Unify=Fs.unify(Unify,New,E);
+			//     }
+			//     CoAnc.setLabel(Unify);
+			//     //ttlist.add(ttt);
+			// }
+			// catch (UnifyException e) {
+			//     System.err.println(
+			// 		       "Features unification failed on tree ");
+			//     System.err.println(e);
+			//     throw new AnchoringException(); // we withdraw the
+			//     // current coanchoring
+			// }
 			
 		}
 	    }
