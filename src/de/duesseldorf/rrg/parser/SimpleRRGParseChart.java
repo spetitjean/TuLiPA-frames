@@ -29,15 +29,17 @@ package de.duesseldorf.rrg.parser;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import de.duesseldorf.rrg.RRGTree;
+
 public class SimpleRRGParseChart implements ParseChart {
 
     /**
      * map tree -> node -> i -> j -> ws? -> List of Gaps
      */
-    private HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
+    private HashMap<RRGTree, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
 
     public SimpleRRGParseChart() {
-        chart = new HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
+        chart = new HashMap<RRGTree, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
     }
 
     public boolean containsItem(ParseItem item) {

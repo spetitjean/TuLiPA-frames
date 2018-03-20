@@ -42,6 +42,10 @@ public class RRGNode implements Node {
         this.children.add(node);
     }
 
+    /**
+     * 
+     * @return the syntactic category of a node or its terminal label
+     */
     public String getCategory() {
         return category;
     }

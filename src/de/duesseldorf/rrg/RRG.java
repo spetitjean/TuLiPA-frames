@@ -55,6 +55,10 @@ public class RRG implements Grammar {
     // trees.add(tree);
     // }
 
+    public Set<RRGTree> getTrees() {
+        return this.trees;
+    }
+
     //////// interface methods that are not used:
     public boolean needsAnchoring() {
         return false;
