@@ -94,7 +94,7 @@ public class SlimTAGParser {
         Iterator<String> its = dict.keySet().iterator();
 
         while (its.hasNext()) {
-
+	    
             String cur_key = its.next();
             TagTree cur_tree = dict.get(cur_key);
 
@@ -1714,20 +1714,24 @@ public class SlimTAGParser {
                             // "+word.getClass());
                             if (tokens.get(i).getWord().equals(word)) {
                                 // System.err.println("Got word match [1]");
-                                // closed_map.get(cur_node).get(i).get(i+1)[0] =
-                                // 0.0;
-                                // System.err.println("word match for pos" + i);
-
-                                closed_map.get(cur_node).put(i,
-                                        new HashMap<Integer, double[]>());
-                                closed_map.get(cur_node).get(i).put(i + 1,
-                                        new double[2]);
-                                closed_map.get(cur_node).get(i)
+                                // System.err.println("word match for pos " + i + ", "+tokens.get(i).getWord()+", "+cur_node.getAddress());
+                                // System.err.println("Node is: "+cur_key+", "+tag_tree.getId()+", "+tag_tree.getPosition()+", "+cur_node.isAncLex());
+				// Simon: Before adding an initial item, we check if the tree
+				// is supposed to be anchored here (in case of identical lexical items in the input)
+				// this is for avoiding duplicates
+				// This does not apply for co-anchors (hence the  || !cur_node.isAncLex())
+				if(tag_tree.getPosition()==i+1 || !cur_node.isAncLex()){
+				    closed_map.get(cur_node).put(i,
+								 new HashMap<Integer, double[]>());
+				    closed_map.get(cur_node).get(i).put(i + 1,
+									new double[2]);
+				    closed_map.get(cur_node).get(i)
                                         .get(i + 1)[0] = 0.0;
-                                closed_map.get(cur_node).get(i)
+				    closed_map.get(cur_node).get(i)
                                         .get(i + 1)[1] = 1e300;
-
-                                add_if_not_in_queue(cur_node, i, i + 1, 0);
+				    
+				    add_if_not_in_queue(cur_node, i, i + 1, 0);
+				}
                             }
                         }
                     }

@@ -103,7 +103,8 @@ public class TagTree implements Tree {
     private List<Node> lexNodes;
     // co-anchors (for lexical disambiguation)
     private List<Node> coAnchors;
-
+    private int position;
+    
     /**
      * 
      * @param i
@@ -1002,6 +1003,14 @@ public class TagTree implements Tree {
             coac.add(nCat);
         }
         return coac;
+    }
+
+    public int getPosition(){
+	return position;
+    }
+
+    public void setPosition(int p){
+	position=p;
     }
 
     public String toString(String space) {
