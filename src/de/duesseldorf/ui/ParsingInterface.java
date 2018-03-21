@@ -152,9 +152,6 @@ public class ParsingInterface {
 
         // 5. Lexical selection and Anchoring
         List<Word> cleantokens = tokens;
-        if (op.check("nofiltering") || op.check("cyktag")) {
-            cleantokens = clean_tokens(tokens);
-        }
         TreeSelector ts = new TreeSelector(cleantokens, verbose);
         List<List<Tuple>> subgrammars = null;
 
@@ -515,6 +512,85 @@ public class ParsingInterface {
             // new_forest_roots.add(ti);
             // }
             // }
+            // Debug by Simon: some derivations are identical (when
+            // several adjunctions happen for instance)
+            // We just need to check which trees were used:
+            // When a same tree is used twice in a derivation, it's wrong
+            // When the same set of trees are used in two derivations, it's
+            // wrong
+
+            // TODO: It's through forest rules than one needs to loop, not
+            // forest roots!
+
+            // Map<Tidentifier, List<Rule>> new_forest_rules = new
+            // HashMap<Tidentifier, List<Rule>>();
+            // List<Tidentifier> new_forest_roots = new
+            // LinkedList<Tidentifier>();
+            // //List<String> new_forest_strings = new LinkedList<String>();
+            // //Tidentifier defaultTI = forest_roots.get(0);
+            // Set<Set<String>> setUsedTrees = new HashSet<Set<String>>();
+            // for(Tidentifier ti: forest_roots){
+            // System.out.println("Tidenfifier: "+ti);
+            // System.out.println("Rules:");
+            // for(Rule ru: forest_rules.get(ti)){
+            // System.out.println("One rule: "+ru);
+            // }
+            // List<Rule> new_tree_rules= new LinkedList<Rule>();
+            // String new_tree_string = "";
+            // // for(Rule ru: forest_rules.get(ti)){
+            // // Set<String> usedTrees = new HashSet<String>();
+            // // System.out.println(ru.getRhs());
+            // // // we build the same rule removing all identifiers
+            // // // so that we can compare it
+
+            // // // first build the RHS
+            // // // Combination comb = new Combination();
+            // // for(TreeOp to: ru.getRhs()){
+            // // Tidentifier ito = new Tidentifier(to.getId());
+            // // String treeId= ito.getTreeId();
+            // // System.out.println("Tree identifier: "+treeId);
+            // // //ito.setClauseId(0);
+            // // //comb.addOp(new TreeOp(ito,to.getType()));
+            // // if(!usedTrees.contains(treeId)){
+            // // usedTrees.add(treeId);
+            // // }
+            // // else{
+            // // System.out.println("Tree found twice in derivation: "+treeId);
+            // // }
+            // // }
+            // // if(!setUsedTrees.contains(usedTrees)){
+            // // setUsedTrees.add(usedTrees);
+            // // new_tree_rules.add(ru);
+            // // }
+            // // else{
+            // // new_tree_rules.add(ru);
+            // // System.out.println("Same derivation found twice: "+usedTrees);
+            // // }
+            // // //Rule r = new Rule(defaultTI);
+            // // //r.setRhs(comb);
+
+            // // //new_tree_rules.add(r);
+            // // //new_tree_string=new_tree_string+r.toString();
+            // // }
+            // //new_forest_rules.add(new_tree_rules);
+            // // if(new_forest_strings.contains(new_tree_string)){
+            // // System.out.println("Found duplicate!: "+new_tree_string);
+            // // }
+            // if(false){}
+            // else{
+            // //new_forest_strings.add(new_tree_string);
+            // new_forest_rules.put(ti,forest_rules.get(ti));
+            // new_forest_roots.add(ti);
+            // }
+            // System.out.println("New forest rules:");
+            // for(Rule ru: new_forest_rules.get(ti)){
+            // System.out.println("One rule: "+ru);
+            // }
+            // }
+            // //forest_roots=new_forest_roots;
+
+            // forest_rules=new_forest_rules;
+            // System.out.println("Done with duplicates ");
 
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
