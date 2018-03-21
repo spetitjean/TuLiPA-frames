@@ -52,6 +52,16 @@ public class SimpleRRGParseChart implements ParseChart {
     public void addItem(ParseItem item) {
     }
 
+    @Override
+    public String toString() {
+        sb.append("TODO chart printer not complete yet!!!");
+        StringBuffer sb = new StringBuffer("Printing chart");
+        for (RRGTree tree : chart.keySet()) {
+            sb.append("tree: \n" + tree.toString() + "\n\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * represents the gaps in wrapping substitution (see deductino rules)
      * 

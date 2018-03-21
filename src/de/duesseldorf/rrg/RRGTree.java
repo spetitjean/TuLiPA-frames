@@ -40,6 +40,9 @@ public class RRGTree {
         return lexNodes;
     }
 
+    /**
+     * prints the syntax tree from the root downwards
+     */
     @Override
     public String toString() {
         return RRGTreeTools.recursivelyPrintNode(root);
