@@ -1713,9 +1713,9 @@ public class SlimTAGParser {
                             // "+tokens.get(i).getWord()+" of type
                             // "+word.getClass());
                             if (tokens.get(i).getWord().equals(word)) {
-                                System.out.println("Got word match [1]");
-                                System.out.println("word match for pos " + i + ", "+tokens.get(i).getWord()+", "+cur_node.getAddress());
-                                System.out.println("Node is: "+cur_key+", "+tag_tree.getOriginalId()+", "+tag_tree.getPosition()+", "+cur_node.isAncLex());
+                                // System.out.println("Got word match [1]");
+                                // System.out.println("word match for pos " + i + ", "+tokens.get(i).getWord()+", "+cur_node.getAddress());
+                                // System.out.println("Node is: "+cur_key+", "+tag_tree.getOriginalId()+", "+tag_tree.getPosition()+", "+cur_node.isAncLex());
 				// Simon: Before adding an initial item, we check if the tree
 				// is supposed to be anchored here (in case of identical lexical items in the input)
 				// this is for avoiding duplicates
