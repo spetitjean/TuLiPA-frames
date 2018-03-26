@@ -445,11 +445,11 @@ public class Value implements SemLit {
 			    //env.bind("@"+bb.getVarVal(),new Value(a.getAvmVal()));
 			    if(env.deref(new Value(5,"@"+bb.getVarVal())).getType()==AVM){
 				//System.out.println("Unifying AVM with bound AVM");
-				env.bind("@"+bb.getVarVal(),new Value(Fs.unify(a.getAvmVal(), env.deref(new Value(5,"@"+bb.getVarVal())).getAvmVal(), env,tyHi)));
+				env.bind("$"+bb.getVarVal(),new Value(Fs.unify(a.getAvmVal(), env.deref(new Value(5,"$"+bb.getVarVal())).getAvmVal(), env,tyHi)));
 			    }
 			    else{
 				//System.out.println("Binding a new AVM");
-				env.bind("@"+bb.getVarVal(),new Value(a.getAvmVal()));
+				env.bind("$"+bb.getVarVal(),new Value(a.getAvmVal()));
 			    }
 			    //System.out.println("Environment: "+env);
 			}

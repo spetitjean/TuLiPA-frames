@@ -688,15 +688,23 @@ public class Fs {
     }
 
     public boolean collect_corefs(Situation situation, Environment env) {
+	// If the current coref is not a pretty name, we update it
+	if(env.deref(this.coref).getVarVal().charAt(0)!='@'){
+	    String oldVar=env.deref(this.coref).getVarVal();
+	    String newVar=env.getPnf().getNextName();
+	    env.deref(this.coref).setVarVal(newVar);
+	    env.bind(oldVar,new Value(5,newVar));
+	}
+	
 	// Go through all the frames
 	// for each coref X found, we put it in the environment
 
-	String atCoref = "@"+env.deref(this.coref);
+	String atCoref = "$"+env.deref(this.coref);
 	Value valCoref = new Value(5,atCoref);
 	
 	Fs New = this;
 	//System.out.println("coref: "+atCoref);
-	//System.out.println("@: "+env.deref(valCoref));
+	//System.out.println("$: "+env.deref(valCoref));
 	
 	if(env.deref(valCoref)!=valCoref){
 	    try {
@@ -723,7 +731,7 @@ public class Fs {
     public Fs update_corefs(Situation situation, Environment env) {
         //System.out.println("Updating corefs in "+ this);
         Fs result = this;
-	String atCoref = "@"+env.deref(this.coref);
+	String atCoref = "$"+env.deref(this.coref);
 	Value valCoref = new Value(5,atCoref);
 	
 	if (env.deref(valCoref).getType()==Value.AVM) {
@@ -731,7 +739,7 @@ public class Fs {
 	    try {
 		result = unify(this, env.deref(valCoref).getAvmVal(), env,
 			   situation.getTypeHierarchy());
-		env.bind("@"+env.deref(this.coref), new Value(result));
+		env.bind("$"+env.deref(this.coref), new Value(result));
 		//System.out.println("Done unify");
 		
             } catch (Exception e) {
@@ -751,7 +759,7 @@ public class Fs {
             }
 
             if (v.is(Value.VAR)) {
-		String atVar = "@"+env.deref(v);
+		String atVar = "$"+env.deref(v);
 		Value valVar = new Value(5,atVar);
 		//System.out.println("Var: "+v);
 		// var is a coreference, get the FS
