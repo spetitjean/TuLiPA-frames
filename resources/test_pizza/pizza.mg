@@ -2,31 +2,10 @@
 %% xmg compile synframe pizza.mg --force
 %% Or online: http://xmg.phil.hhu.de/index.php/upload/workbench
 
-type MARK = {subst, subst, nadj, foot, anchor, coanchor, flex}
-type CAT = {np,n,v,vp,s,adv,pp,p,by,strong}
-type PHON = {e}
+%% To also generate the type hierarchy (in file more.mac)
+%% xmg compile synframe frames.mg --force --more
 
-type LABEL!
-
-property mark : MARK
-
-feature cat : CAT
-feature phon : PHON
-feature arg0 : LABEL
-feature arg1 : LABEL
-feature i : LABEL
-feature e : LABEL
-
-frame-types = {event, activity, eat, entity, person, dish, pizza}
-frame-constraints = { 
-	activity -> event,
-	entity event -> -,
-	eat -> activity,
-	person -> entity,
-	dish -> entity,
-	dish person -> -,
-	pizza -> dish
-}
+include types.mg
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TREE FRAGMENTS:
