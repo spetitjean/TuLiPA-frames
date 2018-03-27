@@ -19,12 +19,21 @@ public class Deducer {
 
         SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem,
                 mothernode, SimpleRRGParseItem.NodePos.BOT, null, null, null,
-                newwsflag, backpointers);
+                newwsflag);
 
         // Debug
-        System.out.println(motheraddress + " is the mother of "
-                + currentItem.getNode().getGornaddress());
+        // System.out.println(motheraddress + " is the mother of "
+        // + currentItem.getNode().getGornaddress());
         return newItem;
+    }
+
+    public SimpleRRGParseItem applyNoLeftSister(
+            SimpleRRGParseItem currentItem) {
+        Set<ParseItem> backpointers = new HashSet<ParseItem>();
+        backpointers.add(currentItem);
+        return new SimpleRRGParseItem(currentItem, null,
+                SimpleRRGParseItem.NodePos.TOP, null, null, null, null);
+
     }
 
 }

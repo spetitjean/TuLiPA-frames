@@ -1,10 +1,8 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
@@ -43,16 +41,18 @@ public class RRGParser {
         this.chart = new SimpleRRGParseChart(toksentence.size());
         scan(toksentence);
         // Debug:
-        System.out.println("Done scanning: ");
+        System.out.println("Done scanning. ");
         // System.out.println(chart.toString());
-        // System.out.println("Agenda size: " + agenda.size());
+        System.out.println("Agenda size: " + agenda.size());
         while (!agenda.isEmpty()) {
             SimpleRRGParseItem currentItem = agenda.pollFirst();
-            System.out.println("cI: " + currentItem);
+            // System.out.println("cI: " + currentItem);
             noleftsister(currentItem);
             moveup(currentItem);
+            // System.out.println("Agenda size: " + agenda.size());
+
         }
-        System.out.println(chart.toString());
+        System.out.println("Done parsing. \n" + chart.toString());
         System.out.println("Agenda size: " + agenda.size());
         return false;
     }
@@ -68,16 +68,15 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("cons: " + consequent + "\n\n");
+        // System.out.println("cons: " + consequent + "\n\n");
     }
 
     private void moveup(SimpleRRGParseItem currentItem) {
 
-        System.out.println("currentnode: " + currentItem.getNode());
+        // System.out.println("currentnode: " + currentItem.getNode());
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
             SimpleRRGParseItem newItem = deducer.applyMoveUp(currentItem);
-
             addToChartAndAgenda(newItem, currentItem);
         }
     }
@@ -92,11 +91,9 @@ public class RRGParser {
 
         boolean nlsrequirements = requirementFinder.nlsReq(currentItem);
         if (nlsrequirements) {
-            Set<ParseItem> backpointers = new HashSet<ParseItem>();
-            backpointers.add(currentItem);
-            SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem,
-                    null, SimpleRRGParseItem.NodePos.TOP, null, null, null,
-                    null, backpointers);
+
+            SimpleRRGParseItem newItem = deducer.applyNoLeftSister(currentItem);
+
             addToChartAndAgenda(newItem, currentItem);
         }
     }
@@ -120,8 +117,7 @@ public class RRGParser {
                         if (lexLeaf.getValue().equals(word)) {
                             SimpleRRGParseItem scannedItem = new SimpleRRGParseItem(
                                     tree, lexLeaf.getKey(), NodePos.BOT, start,
-                                    start + 1, new LinkedList<Gap>(), false,
-                                    new HashSet<ParseItem>());
+                                    start + 1, new LinkedList<Gap>(), false);
                             addToChartAndAgenda(scannedItem);
                         }
                     }
