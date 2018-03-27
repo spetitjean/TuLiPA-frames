@@ -28,18 +28,27 @@ package de.duesseldorf.rrg.parser;
 
 import java.util.HashMap;
 import java.util.HashSet;
-
-import de.duesseldorf.rrg.RRGTree;
+import java.util.Map;
+import java.util.Set;
 
 public class SimpleRRGParseChart implements ParseChart {
 
     /**
+     * probably to much:
      * map tree -> node -> i -> j -> ws? -> List of Gaps
      */
-    private HashMap<RRGTree, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
+    // private HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
+    // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
 
-    public SimpleRRGParseChart() {
-        chart = new HashMap<RRGTree, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
+    private Map<Integer, Set<ParseItem>> chart;
+
+    public SimpleRRGParseChart(int size) {
+        // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
+        // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
+        chart = new HashMap<Integer, Set<ParseItem>>(size);
+        for (int i = 0; i < size; i++) {
+            chart.put(i, new HashSet<ParseItem>());
+        }
     }
 
     public boolean containsItem(ParseItem item) {
@@ -48,29 +57,26 @@ public class SimpleRRGParseChart implements ParseChart {
 
     /**
      * adds an item to the chart if it is not already in there.
+     * 
+     * @return true if the ParseItem was not already in the chart
      */
-    public void addItem(ParseItem item) {
+    public boolean addItem(ParseItem item, ParseItem... antecedents) {
+        int startpos = item.startPos();
+        return chart.get(startpos).add(item);
     }
 
     @Override
     public String toString() {
-        sb.append("TODO chart printer not complete yet!!!");
-        StringBuffer sb = new StringBuffer("Printing chart");
-        for (RRGTree tree : chart.keySet()) {
-            sb.append("tree: \n" + tree.toString() + "\n\n");
+        StringBuffer sb = new StringBuffer("Printing chart\n");
+        for (Integer i = 0; i < chart.size(); i++) {
+            if (i < chart.size()) {
+                sb.append("\nstart index " + i + "\n");
+            }
+            for (ParseItem item : chart.get(i)) {
+                sb.append(item);
+                sb.append("\n");
+            }
         }
         return sb.toString();
-    }
-
-    /**
-     * represents the gaps in wrapping substitution (see deductino rules)
-     * 
-     * @author david
-     *
-     */
-    private class Gap {
-        int start;
-        int end;
-        String nonterminal;
     }
 }

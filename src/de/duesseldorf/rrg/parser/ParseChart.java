@@ -30,6 +30,6 @@ public interface ParseChart {
 
     public boolean containsItem(ParseItem item);
 
-    public void addItem(ParseItem item);
+    public boolean addItem(ParseItem item, ParseItem... antecedents);
 
 }

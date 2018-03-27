@@ -1,9 +1,11 @@
 package de.duesseldorf.rrg;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
 public class RRGTree {
@@ -17,8 +19,11 @@ public class RRGTree {
         retrieveLexNodes();
     }
 
-    private void retrieveLexNodes() {
+    public Node getRoot() {
+        return root;
+    }
 
+    private void retrieveLexNodes() {
         this.lexNodes = new HashMap<RRGNode, String>();
         retrieveLexNodes((RRGNode) root);
     }
@@ -29,6 +34,32 @@ public class RRGTree {
         }
         for (Node daughter : root.getChildren()) {
             retrieveLexNodes((RRGNode) daughter);
+        }
+    }
+
+    /**
+     * Look for a gorn address in a tree.
+     * 
+     * @param address
+     * @return The RRGNode that you have been looking for, or {@code null} if it
+     *         is not in the tree.
+     */
+    public RRGNode findNode(GornAddress address) {
+
+        try {
+            // System.out.println("addi: " + address);
+            Iterator<Integer> it = address.addressIterator();
+            RRGNode nextNode = (RRGNode) root;
+            while (it.hasNext()) {
+                int nexti = it.next();
+                nextNode = (RRGNode) nextNode.getChildren().get(nexti);
+            }
+            return nextNode;
+        } catch (Exception e) {
+            // debug
+            // System.out.println("no node " + address + " found for mother "
+            // + nextNode.getGornaddress() + " in\n" + toString());
+            return null;
         }
     }
 

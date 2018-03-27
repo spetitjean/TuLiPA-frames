@@ -4,6 +4,12 @@ public interface ParseItem {
 
     /**
      * 
+     * @return the index of the first input part covered by the item
+     */
+    public int startPos();
+
+    /**
+     * 
      */
     @Override
     public int hashCode();
@@ -13,7 +19,7 @@ public interface ParseItem {
      * 
      * @return
      */
-    public boolean equals();
+    public boolean equals(Object o);
 
     /**
      * 
