@@ -38,8 +38,26 @@ public class GornAddress {
 
     /**
      * 
+     * @return a new GornAddress that is the address of the left sister of this
+     *         one. Return {@code null} if this one is a root or a leftmost
+     *         sister.
+     */
+    public GornAddress leftSister() {
+        List<Integer> newGAlist = new LinkedList<Integer>(address);
+        GornAddress newGA = null;
+        if (!newGAlist.isEmpty() && hasLeftSister()) {
+            int newGAlistLastIndex = newGAlist.size() - 1;
+            newGAlist.set(newGAlistLastIndex,
+                    newGAlist.get(newGAlistLastIndex) - 1);
+            newGA = new GornAddress(newGAlist);
+        }
+        return newGA;
+    }
+
+    /**
+     * 
      * @return a new GornAddress that is the address of the right sister of this
-     *         one. Return{@code null} if this one is a root.
+     *         one. Return {@code null} if this one is a root.
      */
     public GornAddress rightSister() {
         List<Integer> newGAlist = new LinkedList<Integer>(address);

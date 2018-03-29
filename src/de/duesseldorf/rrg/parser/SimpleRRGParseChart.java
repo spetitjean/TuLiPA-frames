@@ -45,11 +45,12 @@ public class SimpleRRGParseChart implements ParseChart {
     // map start index to Parse Items to their backpointers
     private Map<Integer, Map<ParseItem, Set<Set<ParseItem>>>> chart;
 
-    public SimpleRRGParseChart(int size) {
+    public SimpleRRGParseChart(int sentencelength) {
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
-        chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>(size);
-        for (int i = 0; i < size; i++) {
+        chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>(
+                sentencelength + 1);
+        for (int i = 0; i <= sentencelength; i++) {
             chart.put(i, new HashMap<ParseItem, Set<Set<ParseItem>>>());
         }
     }
@@ -65,31 +66,46 @@ public class SimpleRRGParseChart implements ParseChart {
      * 
      * @param model
      *            find items in the chart that match the template given by
-     *            model. To construct the template, equip thee item with
+     *            model. To construct the template, equip the item with
      *            concrete models or to leave values unspecified <br>
      *            - give null for {@code tree}, {@code node}, {@code nodePos},
      *            {@code gaps}, {@code wsflag} <br>
-     *            - give -1 for {@code start}, {@code end}
+     *            - give -2 for {@code start}, {@code end}
      * 
      * @return
      */
     public Set<SimpleRRGParseItem> findUnderspecifiedItem(
             SimpleRRGParseItem model) {
         Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
-        for (ParseItem s : chart.get(model.startPos()).keySet()) {
-            boolean treeCheck = model.getTree() == null || model.getTree()
-                    .equals(((SimpleRRGParseItem) s).getTree());
-            if (treeCheck) {
-                boolean nodeCheck = model.getNode() == null || model.getNode()
-                        .equals(((SimpleRRGParseItem) s).getNode());
-                if (nodeCheck) {
-                    boolean posCheck = model.getNodePos() == null
-                            || model.getNodePos().equals(
-                                    ((SimpleRRGParseItem) s).getNodePos());
-                    if (posCheck) {
-                        boolean endCheck = model.getEnd() == -1 || model
-                                .getEnd() == ((SimpleRRGParseItem) s).getEnd();
-                        if (endCheck) {
+
+        // note 29.03.2018
+        // something is null, and the start and end indices are not correct or
+        // something in the map is missing or.... Fix this!
+
+        Set<ParseItem> toCheck = new HashSet<ParseItem>();
+        int startboundary = model.startPos() == -2 ? 0 : model.startPos();
+        System.out.println("start at " + startboundary);
+        int endboundary = model.getEnd() == -2 ? chart.size() : model.getEnd();
+        for (int i = startboundary; i <= endboundary; i++) {
+            toCheck.addAll(chart.get(i).keySet());
+        }
+
+        for (ParseItem s : toCheck) {
+            boolean endCheck = model.getEnd() == -2
+                    || model.getEnd() == ((SimpleRRGParseItem) s).getEnd();
+            if (endCheck) {
+                boolean treeCheck = model.getTree() == null || model.getTree()
+                        .equals(((SimpleRRGParseItem) s).getTree());
+                if (treeCheck) {
+                    boolean nodeCheck = model.getNode() == null
+                            || model.getNode()
+                                    .equals(((SimpleRRGParseItem) s).getNode());
+                    if (nodeCheck) {
+                        boolean posCheck = model.getNodePos() == null
+                                || model.getNodePos().equals(
+                                        ((SimpleRRGParseItem) s).getNodePos());
+                        if (posCheck) {
+
                             boolean gapCheck = model.getGaps() == null
                                     || model.getGaps().equals(
                                             ((SimpleRRGParseItem) s).getGaps());

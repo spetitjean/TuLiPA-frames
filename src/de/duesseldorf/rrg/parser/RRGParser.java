@@ -2,7 +2,6 @@ package de.duesseldorf.rrg.parser;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -14,11 +13,8 @@ import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 
 /**
  * TODO
- * extract a ItemBuilder class
  * addToChartAndAgenda method also checks for goal items, or check for goal
  * items in the chart class
- * extract methods/class for testing the requirements
- * extract Deducer class that holds the inference rules
  * 
  * @author david
  *
@@ -53,11 +49,35 @@ public class RRGParser {
             noleftsister(currentItem);
             moveup(currentItem);
             combinesisters(currentItem);
+            substitute(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
         System.out.println("Done parsing. \n" + chart.toString());
         System.out.println("Agenda size: " + agenda.size());
         return false;
+    }
+
+    private void substitute(SimpleRRGParseItem currentItem) {
+        if (requirementFinder.substituteReq(currentItem)) {
+            System.out.println("\n\ngot here: " + currentItem);
+            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+                Set<RRGNode> substNodes = tree.getSubstNodes()
+                        .get(currentItem.getNode().getCategory());
+                if (substNodes != null) {
+                    for (RRGNode substNode : substNodes) {
+                        // System.out.println("got to for: " + substNode);
+                        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
+                                currentItem, tree, substNode,
+                                SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
+                                false);
+                        System.out.println("cons: " + consequent);
+                        addToChartAndAgenda(consequent, currentItem);
+                    }
+
+                }
+            }
+        }
+
     }
 
     /**
@@ -88,13 +108,13 @@ public class RRGParser {
         Set<SimpleRRGParseItem> combinesisCandidates = requirementFinder
                 .combinesisReq(currentItem, chart);
         if (!combinesisCandidates.isEmpty()) {
-            System.out.println("currentItem: " + currentItem);
+            // System.out.println("currentItem: " + currentItem);
             for (SimpleRRGParseItem simpleRRGParseItem : combinesisCandidates) {
-                System.out.println(
-                        "mate with: " + simpleRRGParseItem + "results in");
+                // System.out.println(
+                // "mate with: " + simpleRRGParseItem + "results in");
                 SimpleRRGParseItem rightSisTopItem = deducer
                         .applyCombineSisters(currentItem, simpleRRGParseItem);
-                System.out.println(rightSisTopItem);
+                // System.out.println(rightSisTopItem);
                 addToChartAndAgenda(rightSisTopItem, currentItem,
                         simpleRRGParseItem);
             }
@@ -129,17 +149,15 @@ public class RRGParser {
                 String word = sentence.get(start);
 
                 // See if the word is a lex Node of the tree
-                if (tree.getLexNodes().containsValue(word)) {
-                    for (Entry<RRGNode, String> lexLeaf : tree.getLexNodes()
-                            .entrySet()) {
+                Set<RRGNode> candidates = tree.getLexNodes().get(word);
+                if (candidates != null) {
+                    for (RRGNode lexLeaf : candidates) {
                         // If so, create a new item and add it to the chart and
                         // agenda
-                        if (lexLeaf.getValue().equals(word)) {
-                            SimpleRRGParseItem scannedItem = new SimpleRRGParseItem(
-                                    tree, lexLeaf.getKey(), NodePos.BOT, start,
-                                    start + 1, new LinkedList<Gap>(), false);
-                            addToChartAndAgenda(scannedItem);
-                        }
+                        SimpleRRGParseItem scannedItem = new SimpleRRGParseItem(
+                                tree, lexLeaf, NodePos.BOT, start, start + 1,
+                                new LinkedList<Gap>(), false);
+                        addToChartAndAgenda(scannedItem);
                     }
                 }
             }

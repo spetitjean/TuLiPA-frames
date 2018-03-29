@@ -16,8 +16,8 @@ public class Deducer {
         List<Gap> gaps = new LinkedList<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
         SimpleRRGParseItem result = new SimpleRRGParseItem(rightItem, null,
-                SimpleRRGParseItem.NodePos.TOP, leftItem.startPos(), -1, gaps,
-                false);
+                null, SimpleRRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
+                gaps, false);
         return result;
     }
 
@@ -29,7 +29,7 @@ public class Deducer {
         Set<ParseItem> backpointers = new HashSet<ParseItem>();
         backpointers.add(currentItem);
 
-        SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem,
+        SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem, null,
                 mothernode, SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
                 newwsflag);
 
@@ -43,7 +43,7 @@ public class Deducer {
             SimpleRRGParseItem currentItem) {
         Set<ParseItem> backpointers = new HashSet<ParseItem>();
         backpointers.add(currentItem);
-        return new SimpleRRGParseItem(currentItem, null,
+        return new SimpleRRGParseItem(currentItem, null, null,
                 SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null);
 
     }

@@ -1,8 +1,10 @@
 package de.duesseldorf.rrg;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
@@ -12,28 +14,66 @@ public class RRGTree {
 
     // representation of the syntactic tree
     private Node root;
-    private Map<RRGNode, String> lexNodes; // all lexical nodes
+    private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
+    private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
+    private RRGNode ddaughter; // only one ddaughter is allowed!
 
     public RRGTree(Node root) {
         this.root = root;
-        retrieveLexNodes();
+        retrieveSpecialNodes();
     }
 
-    public Node getRoot() {
-        return root;
+    /**
+     * When creating a {@code RRGTree }object, store pointers to lex and subst
+     * nodes and the ddaughter in order to access them later
+     */
+    private void retrieveSpecialNodes() {
+        // inits
+        this.lexNodes = new HashMap<String, Set<RRGNode>>();
+        this.substNodes = new HashMap<String, Set<RRGNode>>();
+
+        retrieveSpecialNodes((RRGNode) root);
+
     }
 
-    private void retrieveLexNodes() {
-        this.lexNodes = new HashMap<RRGNode, String>();
-        retrieveLexNodes((RRGNode) root);
-    }
-
-    private void retrieveLexNodes(RRGNode root) {
+    /**
+     * recursive retrieval, use {@code retrieveSpecialNodes()} without
+     * parameters to trigger retrieval
+     * 
+     * @param root
+     */
+    private void retrieveSpecialNodes(RRGNode root) {
+        // add lexical nodes
         if (root.getType().equals(RRGNodeType.LEX)) {
-            lexNodes.put(root, root.getCategory());
+            if (lexNodes.get(root) == null) {
+                Set<RRGNode> lexNodeswithCat = new HashSet<RRGNode>();
+                lexNodeswithCat.add(root);
+                lexNodes.put(root.getCategory(), lexNodeswithCat);
+            } else {
+                lexNodes.get(root.getCategory()).add(root);
+            }
+        } else if (root.getType().equals(RRGNodeType.SUBST)) { // add
+                                                               // substitution
+                                                               // nodes
+            if (substNodes.get(root) == null) {
+                Set<RRGNode> substNodeswithCat = new HashSet<RRGNode>();
+                substNodeswithCat.add(root);
+                substNodes.put(root.getCategory(), substNodeswithCat);
+            } else {
+                substNodes.get(root.getCategory()).add(root);
+            }
+        } else if (root.getType().equals(RRGNodeType.DDAUGHTER)) {
+            if (this.ddaughter == null) {
+                this.ddaughter = root;
+            } else {
+                System.err.println(
+                        "Problem while processing tree: more than one d-daughter in"
+                                + toString());
+            }
         }
+
         for (Node daughter : root.getChildren()) {
-            retrieveLexNodes((RRGNode) daughter);
+            retrieveSpecialNodes((RRGNode) daughter);
         }
     }
 
@@ -67,8 +107,29 @@ public class RRGTree {
      * 
      * @return a map with all the lexical nodes and their lexical elements
      */
-    public Map<RRGNode, String> getLexNodes() {
+    public Map<String, Set<RRGNode>> getLexNodes() {
         return lexNodes;
+    }
+
+    /**
+     * 
+     * @return a map with all the lexical nodes and their categories
+     */
+    public Map<String, Set<RRGNode>> getSubstNodes() {
+        return substNodes;
+    }
+
+    /**
+     * 
+     * @return the ddaughter if there is one, or {@code null} if there is
+     *         none.
+     */
+    public RRGNode getDdaughter() {
+        return ddaughter;
+    }
+
+    public Node getRoot() {
+        return root;
     }
 
     /**

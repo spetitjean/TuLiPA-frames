@@ -45,25 +45,30 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
     }
 
     /**
-     * playing around with some Optional values (you need not give them). Maybe
-     * its sweeter
+     * 
      * 
      * @param item
-     *            The item to take values from when no Optional is given, and to
-     *            take the tree
+     *            The item to take values from when the value given as parameter
+     *            is
      * @param node
+     *            {@code null}
      * @param nodepos
+     *            {@code null}
      * @param start
+     *            {@code -1}
      * @param end
+     *            {@code -1}
      * @param gaps
+     *            {@code null}
      * @param ws
+     *            {@code null}
      */
-    public SimpleRRGParseItem(SimpleRRGParseItem item, RRGNode node,
-            NodePos nodepos, int start, int end, List<Gap> gaps, Boolean ws) {
-        // the ones that are always given
-        this.tree = item.getTree();
+    public SimpleRRGParseItem(SimpleRRGParseItem item, RRGTree tree,
+            RRGNode node, NodePos nodepos, int start, int end, List<Gap> gaps,
+            Boolean ws) {
 
         // the optional ones
+        this.tree = !(tree == null) ? tree : item.getTree();
         this.node = !(node == null) ? node : item.getNode();
         this.nodepos = !(nodepos == null) ? nodepos : item.getNodePos();
         this.start = !(start == -1) ? start : item.startPos();

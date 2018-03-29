@@ -59,25 +59,63 @@ public class RequirementFinder {
             SimpleRRGParseChart chart) {
         Set<SimpleRRGParseItem> candidates = new HashSet<SimpleRRGParseItem>();
 
+        // case 1: currentItem is the left node of the combination
         // find the right sister, which already ensures we are in the same tree
         RRGNode rightSis = currentItem.getTree()
                 .findNode(currentItem.getNode().getGornaddress().rightSister());
 
-        boolean req = rightSis != null // there is a right sister
+        boolean leftReq = rightSis != null // there is a right sister
                 && !currentItem.getwsflag() // no WS
                 && currentItem.getNodePos() // the left item is in TOP position
                         .equals(SimpleRRGParseItem.NodePos.TOP);
-        if (req) {
-            SimpleRRGParseItem model = new SimpleRRGParseItem(
+        if (leftReq) {
+            // System.out.println("starter: " + currentItem);
+            SimpleRRGParseItem model = new SimpleRRGParseItem(currentItem,
                     currentItem.getTree(), rightSis,
-                    SimpleRRGParseItem.NodePos.BOT, currentItem.getEnd(), -1,
+                    SimpleRRGParseItem.NodePos.BOT, currentItem.getEnd(), -2,
                     null, false);
+            // System.out.println("model: " + model);
             candidates = chart.findUnderspecifiedItem(model);
+        } else {
+            // case 2: current item is the right node of the combination
+            RRGNode leftSis = currentItem.getTree().findNode(
+                    currentItem.getNode().getGornaddress().leftSister());
+
+            boolean rightReq = leftSis != null // there is a left sister
+                    && currentItem.getNode().getGornaddress().hasLeftSister()
+                    && !currentItem.getwsflag() // no WS
+                    && currentItem.getNodePos() // the right item is in BOT
+                                                // position
+                            .equals(SimpleRRGParseItem.NodePos.BOT);
+            if (rightReq) {
+                SimpleRRGParseItem model = new SimpleRRGParseItem(currentItem,
+                        null, leftSis, SimpleRRGParseItem.NodePos.TOP, -2,
+                        currentItem.startPos(), null, false);
+                System.out.println("right req met for: " + currentItem);
+                System.out.println("model: " + model);
+                candidates = chart.findUnderspecifiedItem(model);
+            }
         }
         // System.out.println("currI" + currentItem + "\nmate with: ");
         // for (SimpleRRGParseItem simpleRRGParseItem : candidates) {
         // System.out.println(simpleRRGParseItem);
         // }
         return candidates;
+    }
+
+    /**
+     * needed:
+     * 1. TOP position in a
+     * 2. root node
+     * 
+     * @param currentItem
+     * @return
+     */
+    public boolean substituteReq(SimpleRRGParseItem currentItem) {
+        boolean res = currentItem.getNodePos()
+                .equals(SimpleRRGParseItem.NodePos.TOP) // 1.
+                // the current node has no mother, i.e. it is a root
+                && currentItem.getNode().getGornaddress().mother() == null;
+        return res;
     }
 }
