@@ -59,16 +59,15 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
      * @param ws
      */
     public SimpleRRGParseItem(SimpleRRGParseItem item, RRGNode node,
-            NodePos nodepos, Integer start, Integer end, List<Gap> gaps,
-            Boolean ws) {
+            NodePos nodepos, int start, int end, List<Gap> gaps, Boolean ws) {
         // the ones that are always given
         this.tree = item.getTree();
 
         // the optional ones
         this.node = !(node == null) ? node : item.getNode();
         this.nodepos = !(nodepos == null) ? nodepos : item.getNodePos();
-        this.start = !(start == null) ? start : item.startPos();
-        this.end = !(end == null) ? end : item.getEnd();
+        this.start = !(start == -1) ? start : item.startPos();
+        this.end = !(end == -1) ? end : item.getEnd();
         this.gaps = !(gaps == null) ? gaps : item.getGaps();
         this.ws = !(ws == null) ? ws : item.getwsflag();
     }

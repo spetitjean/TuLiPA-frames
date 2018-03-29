@@ -62,6 +62,57 @@ public class SimpleRRGParseChart implements ParseChart {
     }
 
     /**
+     * 
+     * @param model
+     *            find items in the chart that match the template given by
+     *            model. To construct the template, equip thee item with
+     *            concrete models or to leave values unspecified <br>
+     *            - give null for {@code tree}, {@code node}, {@code nodePos},
+     *            {@code gaps}, {@code wsflag} <br>
+     *            - give -1 for {@code start}, {@code end}
+     * 
+     * @return
+     */
+    public Set<SimpleRRGParseItem> findUnderspecifiedItem(
+            SimpleRRGParseItem model) {
+        Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
+        for (ParseItem s : chart.get(model.startPos()).keySet()) {
+            boolean treeCheck = model.getTree() == null || model.getTree()
+                    .equals(((SimpleRRGParseItem) s).getTree());
+            if (treeCheck) {
+                boolean nodeCheck = model.getNode() == null || model.getNode()
+                        .equals(((SimpleRRGParseItem) s).getNode());
+                if (nodeCheck) {
+                    boolean posCheck = model.getNodePos() == null
+                            || model.getNodePos().equals(
+                                    ((SimpleRRGParseItem) s).getNodePos());
+                    if (posCheck) {
+                        boolean endCheck = model.getEnd() == -1 || model
+                                .getEnd() == ((SimpleRRGParseItem) s).getEnd();
+                        if (endCheck) {
+                            boolean gapCheck = model.getGaps() == null
+                                    || model.getGaps().equals(
+                                            ((SimpleRRGParseItem) s).getGaps());
+                            if (gapCheck) {
+                                boolean wsCheck = (Boolean) model
+                                        .getwsflag() == null
+                                        || ((Boolean) model.getwsflag())
+                                                .equals(((SimpleRRGParseItem) s)
+                                                        .getwsflag());
+                                if (wsCheck) {
+                                    result.add((SimpleRRGParseItem) s);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return result;
+    }
+
+    /**
      * adds an item to the chart if it is not already in there.
      * 
      * @param consequent
@@ -76,7 +127,6 @@ public class SimpleRRGParseChart implements ParseChart {
             antes = new HashSet<ParseItem>(Arrays.asList(antecedents));
         } else {
             antes = new HashSet<ParseItem>();
-
         }
         int startpos = consequent.startPos();
 

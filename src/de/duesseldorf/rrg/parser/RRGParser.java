@@ -3,6 +3,7 @@ package de.duesseldorf.rrg.parser;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
@@ -41,6 +42,8 @@ public class RRGParser {
         this.chart = new SimpleRRGParseChart(toksentence.size());
         scan(toksentence);
         // Debug:
+        this.requirementFinder = new RequirementFinder();
+
         System.out.println("Done scanning. ");
         // System.out.println(chart.toString());
         System.out.println("Agenda size: " + agenda.size());
@@ -49,8 +52,8 @@ public class RRGParser {
             // System.out.println("cI: " + currentItem);
             noleftsister(currentItem);
             moveup(currentItem);
+            combinesisters(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
-
         }
         System.out.println("Done parsing. \n" + chart.toString());
         System.out.println("Agenda size: " + agenda.size());
@@ -72,12 +75,29 @@ public class RRGParser {
     }
 
     private void moveup(SimpleRRGParseItem currentItem) {
-
         // System.out.println("currentnode: " + currentItem.getNode());
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
             SimpleRRGParseItem newItem = deducer.applyMoveUp(currentItem);
             addToChartAndAgenda(newItem, currentItem);
+        }
+    }
+
+    private void combinesisters(SimpleRRGParseItem currentItem) {
+
+        Set<SimpleRRGParseItem> combinesisCandidates = requirementFinder
+                .combinesisReq(currentItem, chart);
+        if (!combinesisCandidates.isEmpty()) {
+            System.out.println("currentItem: " + currentItem);
+            for (SimpleRRGParseItem simpleRRGParseItem : combinesisCandidates) {
+                System.out.println(
+                        "mate with: " + simpleRRGParseItem + "results in");
+                SimpleRRGParseItem rightSisTopItem = deducer
+                        .applyCombineSisters(currentItem, simpleRRGParseItem);
+                System.out.println(rightSisTopItem);
+                addToChartAndAgenda(rightSisTopItem, currentItem,
+                        simpleRRGParseItem);
+            }
         }
     }
 
