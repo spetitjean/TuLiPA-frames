@@ -41,11 +41,21 @@ public class Deducer {
 
     public SimpleRRGParseItem applyNoLeftSister(
             SimpleRRGParseItem currentItem) {
-        Set<ParseItem> backpointers = new HashSet<ParseItem>();
-        backpointers.add(currentItem);
+
         return new SimpleRRGParseItem(currentItem, null, null,
                 SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null);
 
+    }
+
+    public SimpleRRGParseItem applyLeftAdjoin(SimpleRRGParseItem targetSister,
+            SimpleRRGParseItem auxTreeRoot) {
+
+        LinkedList<Gap> gaps = new LinkedList<Gap>(auxTreeRoot.getGaps());
+        gaps.addAll(targetSister.getGaps());
+
+        SimpleRRGParseItem result = new SimpleRRGParseItem(targetSister, null,
+                null, null, auxTreeRoot.startPos(), -1, gaps, false);
+        return result;
     }
 
 }

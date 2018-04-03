@@ -48,8 +48,7 @@ public class SimpleRRGParseChart implements ParseChart {
     public SimpleRRGParseChart(int sentencelength) {
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
-        chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>(
-                sentencelength + 1);
+        chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>();
         for (int i = 0; i <= sentencelength; i++) {
             chart.put(i, new HashMap<ParseItem, Set<Set<ParseItem>>>());
         }
@@ -78,18 +77,22 @@ public class SimpleRRGParseChart implements ParseChart {
             SimpleRRGParseItem model) {
         Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
 
-        // note 29.03.2018
-        // something is null, and the start and end indices are not correct or
-        // something in the map is missing or.... Fix this!
-
+        // collect all the items that might fit the model
+        // first find out in which area of the chart to look
         Set<ParseItem> toCheck = new HashSet<ParseItem>();
         int startboundary = model.startPos() == -2 ? 0 : model.startPos();
-        System.out.println("start at " + startboundary);
-        int endboundary = model.getEnd() == -2 ? chart.size() : model.getEnd();
+        int endboundary = model.startPos() == -2 ? chart.size() - 1
+                : startboundary;
+        // old:
+        // int endboundary = model.getEnd() == -2 ? chart.size() - 1 :
+        // model.getEnd();
+
+        // then, look up in the chart
         for (int i = startboundary; i <= endboundary; i++) {
             toCheck.addAll(chart.get(i).keySet());
         }
 
+        // this needs to be refactored!
         for (ParseItem s : toCheck) {
             boolean endCheck = model.getEnd() == -2
                     || model.getEnd() == ((SimpleRRGParseItem) s).getEnd();

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
 
 public class RequirementFinder {
@@ -14,6 +15,7 @@ public class RequirementFinder {
      * 2. and not in root position
      * 3. and no right sister exists
      * 4. and ws?=no
+     * 
      * 
      * @param currentItem
      */
@@ -91,8 +93,8 @@ public class RequirementFinder {
                 SimpleRRGParseItem model = new SimpleRRGParseItem(currentItem,
                         null, leftSis, SimpleRRGParseItem.NodePos.TOP, -2,
                         currentItem.startPos(), null, false);
-                System.out.println("right req met for: " + currentItem);
-                System.out.println("model: " + model);
+                // System.out.println("right req met for: " + currentItem);
+                // System.out.println("model: " + model);
                 candidates = chart.findUnderspecifiedItem(model);
             }
         }
@@ -117,5 +119,63 @@ public class RequirementFinder {
                 // the current node has no mother, i.e. it is a root
                 && currentItem.getNode().getGornaddress().mother() == null;
         return res;
+    }
+
+    /**
+     * needed:
+     * 1. in root node with star mark
+     * 2. in TOP position
+     * 3. no ws
+     * 
+     * @param currentItem
+     * @return
+     */
+    public boolean sisadjRoot(SimpleRRGParseItem currentItem) {
+        boolean result = currentItem.getNode().getGornaddress().mother() == null
+                && // 1a
+                currentItem.getNode().getType().equals(RRGNodeType.STAR) && // 1b
+                currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP)
+                && // 2.
+                !currentItem.getwsflag(); // 3
+        return result;
+    }
+
+    /**
+     * 
+     * @param currentItem
+     *            is the root of a sister adjunction tree
+     * @param chart
+     * @return
+     */
+    public Set<SimpleRRGParseItem> leftAdjoinAntecedents(
+            SimpleRRGParseItem currentItem, SimpleRRGParseChart chart) {
+        // create a template for the items that might perform leftAdjoin with
+        // currentItem
+        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+                SimpleRRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
+                false);
+        // find all items matching the template in the chart
+        Set<SimpleRRGParseItem> candidates = chart
+                .findUnderspecifiedItem(model);
+        Set<SimpleRRGParseItem> filteredCandidates = new HashSet<SimpleRRGParseItem>();
+        // System.out.println("sisadj currentItem: " + currentItem);
+        // System.out.println("model: " + model);
+
+        // filter all that have matching labels
+        String currentItemLabel = currentItem.getNode().getCategory();
+        for (SimpleRRGParseItem candidate : candidates) {
+            if (!candidate.getNode().getGornaddress().hasLeftSister()) {
+                RRGNode candidateMother = candidate.getTree().findNode(
+                        candidate.getNode().getGornaddress().mother());
+                if (candidateMother != null) {
+                    String candidateMotherLabel = candidateMother.getCategory();
+                    if (currentItemLabel.equals(candidateMotherLabel)) {
+                        filteredCandidates.add(candidate);
+                    }
+                }
+            }
+        }
+
+        return filteredCandidates;
     }
 }

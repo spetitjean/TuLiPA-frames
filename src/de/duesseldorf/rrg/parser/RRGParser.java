@@ -42,42 +42,20 @@ public class RRGParser {
 
         System.out.println("Done scanning. ");
         // System.out.println(chart.toString());
-        System.out.println("Agenda size: " + agenda.size());
         while (!agenda.isEmpty()) {
+            // TODO: optimize this based on the ws flag?
             SimpleRRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("cI: " + currentItem);
             noleftsister(currentItem);
             moveup(currentItem);
             combinesisters(currentItem);
             substitute(currentItem);
+            sisteradjoin(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
         System.out.println("Done parsing. \n" + chart.toString());
         System.out.println("Agenda size: " + agenda.size());
         return false;
-    }
-
-    private void substitute(SimpleRRGParseItem currentItem) {
-        if (requirementFinder.substituteReq(currentItem)) {
-            System.out.println("\n\ngot here: " + currentItem);
-            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
-                Set<RRGNode> substNodes = tree.getSubstNodes()
-                        .get(currentItem.getNode().getCategory());
-                if (substNodes != null) {
-                    for (RRGNode substNode : substNodes) {
-                        // System.out.println("got to for: " + substNode);
-                        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
-                                currentItem, tree, substNode,
-                                SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
-                                false);
-                        System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(consequent, currentItem);
-                    }
-
-                }
-            }
-        }
-
     }
 
     /**
@@ -92,6 +70,52 @@ public class RRGParser {
         }
         // Debug
         // System.out.println("cons: " + consequent + "\n\n");
+    }
+
+    private void sisteradjoin(SimpleRRGParseItem currentItem) {
+        // the currentItem is either
+        // - a root item, for which we need to find a target tree
+        // - or a node such that we want to find a root item (this might be
+        // expensive. Can we leave it out?
+        boolean sisadjroot = requirementFinder.sisadjRoot(currentItem);
+        // System.out.print(root);
+        // System.out.println(" " + currentItem.toString());
+        if (sisadjroot) {
+            Set<SimpleRRGParseItem> leftAdjoinAntecedents = requirementFinder
+                    .leftAdjoinAntecedents(currentItem, chart);
+            for (SimpleRRGParseItem simpleRRGParseItem : leftAdjoinAntecedents) {
+                // System.out.println("THERE: " + simpleRRGParseItem);
+                SimpleRRGParseItem consequent = deducer
+                        .applyLeftAdjoin(simpleRRGParseItem, currentItem);
+                addToChartAndAgenda(consequent, currentItem,
+                        simpleRRGParseItem);
+            }
+        }
+
+        // Note April 3:
+        // next do rightadjoin and the adjunctions with other antecedents,
+        // refactor parseItems, ws, think about recognizer -> parser
+
+    }
+
+    private void substitute(SimpleRRGParseItem currentItem) {
+        if (requirementFinder.substituteReq(currentItem)) {
+            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+                Set<RRGNode> substNodes = tree.getSubstNodes()
+                        .get(currentItem.getNode().getCategory());
+                if (substNodes != null) {
+                    for (RRGNode substNode : substNodes) {
+                        // System.out.println("got to for: " + substNode);
+                        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
+                                currentItem, tree, substNode,
+                                SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
+                                false);
+                        // System.out.println("cons: " + consequent);
+                        addToChartAndAgenda(consequent, currentItem);
+                    }
+                }
+            }
+        }
     }
 
     private void moveup(SimpleRRGParseItem currentItem) {
