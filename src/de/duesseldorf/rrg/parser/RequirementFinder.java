@@ -157,25 +157,51 @@ public class RequirementFinder {
         // find all items matching the template in the chart
         Set<SimpleRRGParseItem> candidates = chart
                 .findUnderspecifiedItem(model);
-        Set<SimpleRRGParseItem> filteredCandidates = new HashSet<SimpleRRGParseItem>();
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
 
+        return filterByMotherLabel(currentItem, candidates);
+    }
+
+    public Set<SimpleRRGParseItem> rightAdjoinAntecedents(
+            SimpleRRGParseItem sisadjroot, SimpleRRGParseChart chart) {
+        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+                SimpleRRGParseItem.NodePos.TOP, -2, sisadjroot.startPos(), null,
+                false);
+        Set<SimpleRRGParseItem> candidates = chart
+                .findUnderspecifiedItem(model);
+        // System.out.println("BLA" + candidates.size());
+
         // filter all that have matching labels
-        String currentItemLabel = currentItem.getNode().getCategory();
-        for (SimpleRRGParseItem candidate : candidates) {
+
+        return filterByMotherLabel(sisadjroot, candidates);
+    }
+
+    /**
+     * 
+     * @param sisadjroot
+     * @param targetCandidates
+     * @return A set of items X such that every item in X is in targetCandidates
+     *         and the mother of the node has the same label as the mother of
+     *         the (sister adjunction) root item sisadjroot.
+     */
+    private Set<SimpleRRGParseItem> filterByMotherLabel(
+            SimpleRRGParseItem sisadjroot,
+            Set<SimpleRRGParseItem> targetCandidates) {
+        Set<SimpleRRGParseItem> filteredCandidates = new HashSet<SimpleRRGParseItem>();
+        String rootItemLabel = sisadjroot.getNode().getCategory();
+        for (SimpleRRGParseItem candidate : targetCandidates) {
             if (!candidate.getNode().getGornaddress().hasLeftSister()) {
                 RRGNode candidateMother = candidate.getTree().findNode(
                         candidate.getNode().getGornaddress().mother());
                 if (candidateMother != null) {
                     String candidateMotherLabel = candidateMother.getCategory();
-                    if (currentItemLabel.equals(candidateMotherLabel)) {
+                    if (rootItemLabel.equals(candidateMotherLabel)) {
                         filteredCandidates.add(candidate);
                     }
                 }
             }
         }
-
         return filteredCandidates;
     }
 }

@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+
 public class SimpleRRGParseChart implements ParseChart {
 
     /**
@@ -44,8 +46,10 @@ public class SimpleRRGParseChart implements ParseChart {
 
     // map start index to Parse Items to their backpointers
     private Map<Integer, Map<ParseItem, Set<Set<ParseItem>>>> chart;
+    private int sentencelength;
 
     public SimpleRRGParseChart(int sentencelength) {
+        this.sentencelength = sentencelength;
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
         chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>();
@@ -59,6 +63,45 @@ public class SimpleRRGParseChart implements ParseChart {
         System.out.println(
                 "Simple...chart.containsItem() is not tested yet and might be wrong in some cases");
         return chart.get(startpos).containsKey(item);
+    }
+
+    /**
+     * 
+     * @return The Set of all goal items in the chart if the conditions are
+     *         met:<br>
+     *         - start = 0, end = sentencelength<br>
+     *         - ws is false<br>
+     *         - in TOP position in a STD root node
+     */
+    public Set<SimpleRRGParseItem> retrieveGoalItems() {
+        Set<SimpleRRGParseItem> goals = new HashSet<SimpleRRGParseItem>();
+        for (ParseItem item : chart.get(0).keySet()) {
+            SimpleRRGParseItem rrgitem = (SimpleRRGParseItem) item;
+            boolean goalReq = rrgitem.getEnd() == sentencelength && // end=n
+            // no more ws
+                    rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
+                    // TOP position
+                    && rrgitem.getNodePos()
+                            .equals(SimpleRRGParseItem.NodePos.TOP)
+                    // in a root
+                    && rrgitem.getNode().getGornaddress().mother() == null
+                    // in a STD node
+                    && rrgitem.getNode().getType().equals(RRGNodeType.STD);
+            if (goalReq) {
+                goals.add(rrgitem);
+            }
+        }
+        return goals;
+    }
+
+    /**
+     * 
+     * @param item
+     * @return A Set of the backpointers of item, i.e. a Set of all sets of
+     *         items that created the item.
+     */
+    public Set<Set<ParseItem>> getBackPointers(SimpleRRGParseItem item) {
+        return chart.get(item.startPos()).get(item);
     }
 
     /**
@@ -150,7 +193,7 @@ public class SimpleRRGParseChart implements ParseChart {
         int startpos = consequent.startPos();
 
         // was the item in the chart before?
-        boolean alreadythere = (chart.get(startpos)).containsKey(consequent);
+        boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
             chart.get(startpos).get(consequent).add(antes);

@@ -55,6 +55,8 @@ public class RRGParser {
         }
         System.out.println("Done parsing. \n" + chart.toString());
         System.out.println("Agenda size: " + agenda.size());
+        ParseForestExtractor extractor = new ParseForestExtractor(chart,
+                toksentence);
         return false;
     }
 
@@ -81,6 +83,7 @@ public class RRGParser {
         // System.out.print(root);
         // System.out.println(" " + currentItem.toString());
         if (sisadjroot) {
+            // left-adjoin
             Set<SimpleRRGParseItem> leftAdjoinAntecedents = requirementFinder
                     .leftAdjoinAntecedents(currentItem, chart);
             for (SimpleRRGParseItem simpleRRGParseItem : leftAdjoinAntecedents) {
@@ -90,10 +93,14 @@ public class RRGParser {
                 addToChartAndAgenda(consequent, currentItem,
                         simpleRRGParseItem);
             }
+
+            // right-adjoin
+            Set<SimpleRRGParseItem> rightAdjoinAntecedents = requirementFinder
+                    .rightAdjoinAntecedents(currentItem, chart);
         }
 
         // Note April 3:
-        // next do rightadjoin and the adjunctions with other antecedents,
+        // next do the adjunctions with other antecedents,
         // refactor parseItems, ws, think about recognizer -> parser
 
     }
