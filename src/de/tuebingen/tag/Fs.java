@@ -646,6 +646,9 @@ public class Fs {
 	    //System.out.println("with environment "+env);
 	    if(fs.collect_corefs(situation, env)==false)
 		{
+		    // If collect_corefs returns false, it means that
+		    // unification failed somewhere, so we discard the
+		    // solution
 		    return null;
 		}
 	    try{
@@ -663,6 +666,12 @@ public class Fs {
 	    newFrames = new LinkedList<Fs>();
 	    for (Fs fs : cleanFrames) {
 		Fs new_fs = fs.update_corefs(situation, env);
+		if(new_fs==null){
+		    // If the result of update_corefs is null, it is
+		    // because unification failed somewhere, so we
+		    // need to discard the solution
+		    return null;
+		}
 		newFrames.add(new_fs);
 	    }
 	    cleanFrames=newFrames;
@@ -744,6 +753,7 @@ public class Fs {
 		
             } catch (Exception e) {
                 e.printStackTrace();
+		return null;
             }
         }
 	
