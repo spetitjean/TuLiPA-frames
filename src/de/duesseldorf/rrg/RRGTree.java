@@ -45,7 +45,7 @@ public class RRGTree {
     private void retrieveSpecialNodes(RRGNode root) {
         // add lexical nodes
         if (root.getType().equals(RRGNodeType.LEX)) {
-            if (lexNodes.get(root) == null) {
+            if (lexNodes.get(root.getCategory()) == null) {
                 Set<RRGNode> lexNodeswithCat = new HashSet<RRGNode>();
                 lexNodeswithCat.add(root);
                 lexNodes.put(root.getCategory(), lexNodeswithCat);
@@ -55,7 +55,7 @@ public class RRGTree {
         } else if (root.getType().equals(RRGNodeType.SUBST)) { // add
                                                                // substitution
                                                                // nodes
-            if (substNodes.get(root) == null) {
+            if (substNodes.get(root.getCategory()) == null) {
                 Set<RRGNode> substNodeswithCat = new HashSet<RRGNode>();
                 substNodeswithCat.add(root);
                 substNodes.put(root.getCategory(), substNodeswithCat);
@@ -113,7 +113,7 @@ public class RRGTree {
 
     /**
      * 
-     * @return a map with all the lexical nodes and their categories
+     * @return a map with all the substitution nodes and their categories
      */
     public Map<String, Set<RRGNode>> getSubstNodes() {
         return substNodes;
@@ -128,8 +128,23 @@ public class RRGTree {
         return ddaughter;
     }
 
+    /**
+     * 
+     * @return the root node of the tree
+     */
     public Node getRoot() {
         return root;
+    }
+
+    /**
+     * 
+     * @return <code>true</code> if the root node of this tree is a
+     *         <code>STAR</code> node
+     *         made for sister
+     *         adjunction, <code>false</code> otherwise
+     */
+    public boolean isSisAdjTree() {
+        return ((RRGNode) root).getType().equals(RRGNodeType.STAR);
     }
 
     /**

@@ -1007,7 +1007,7 @@ public class InputGUI implements ActionListener {
             xmlBoxTuLiPA2Style.setSelected(true);
             setGram(TAG2RCG);
         } else if (rrgb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxXMGStyle.setSelected(true);
             setGram(RRG);
         } else {
             xmlBoxTuLiPA2Style.setSelected(true);

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 
@@ -33,7 +34,7 @@ public class RRGParser {
         this.deducer = new Deducer();
     }
 
-    public boolean parseSentence(List<String> toksentence) {
+    public Set<RRGParseTree> parseSentence(List<String> toksentence) {
         this.agenda = new ConcurrentSkipListSet<SimpleRRGParseItem>();
         this.chart = new SimpleRRGParseChart(toksentence.size());
         scan(toksentence);
@@ -57,7 +58,12 @@ public class RRGParser {
         System.out.println("Agenda size: " + agenda.size());
         ParseForestExtractor extractor = new ParseForestExtractor(chart,
                 toksentence);
-        return false;
+        Set<RRGParseTree> result = extractor.extractParseTrees();
+        System.out.println("result: ");
+        for (RRGParseTree rrgParseTree : result) {
+            System.out.println(rrgParseTree);
+        }
+        return result;
     }
 
     /**
@@ -71,7 +77,7 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        // System.out.println("cons: " + consequent + "\n\n");
+        System.out.println("cons: " + consequent);
     }
 
     private void sisteradjoin(SimpleRRGParseItem currentItem) {
