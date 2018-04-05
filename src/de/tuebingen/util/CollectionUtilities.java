@@ -37,112 +37,137 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 import de.tuebingen.anchoring.InstantiatedTagTree;
 
 /**
- * @author wmaier
+ * @author wmaier, david
  *
  */
 public class CollectionUtilities {
 
-	public static Object deepCopy(Object original) throws Exception {
-		Object ret = null;
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutputStream out = new ObjectOutputStream(bos);
-		out.writeObject(original);
-		out.flush();
-		out.close();
-		ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
-		ret = in.readObject();
-		return ret;
-	}
-	
-	public static void addToValueSet(Map<Object,Set<Object>> m, Object key, Object o) {
-		Set<Object> c = null;
-		if (m.containsKey(key)) {
-			c = m.get(key);
-		} else {
-			c = new HashSet<Object>();
-			m.put(key, c);
-		}
-		c.add(o);
-	}
-	
-	public static Object getFirstCollectionMember(Set<Object> s) {
-		if (s == null || s.size() == 0) {
-			return null;
-		} 
-		return s.iterator().next();
-	}
+    /**
+     * @author david
+     * @param <T>
+     * @param setOfSets
+     *            a set of sets of things
+     * @return true iff no set in the setOfSets contains any elements
+     */
+    public static <T> boolean emtySetofSets(Set<Set<T>> setOfSets) {
+        boolean result = true;
+        for (Set<T> set : setOfSets) {
+            if (!set.isEmpty()) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public static boolean arrayContains(Object o, Object[] a) {
-		for (int i = 0; i < a.length; ++i) {
-			if (a[i].equals(o)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public static Object deepCopy(Object original) throws Exception {
+        Object ret = null;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(original);
+        out.flush();
+        out.close();
+        ObjectInputStream in = new ObjectInputStream(
+                new ByteArrayInputStream(bos.toByteArray()));
+        ret = in.readObject();
+        return ret;
+    }
 
-	public static long computeCartesianCard(Map<String, List<InstantiatedTagTree>> sets, List<String> tokens) {
-		// computes the product of lexical entries per token of the sentence to parse
-		long res = 1;
-		for(String t : tokens) {
-			List<InstantiatedTagTree> ls = sets.get(t);
-			if (ls != null)
-				res *= ls.size();
-		}
-		return res;
-	}
-	
-	public static long computeCartesianCard(List<List<List<String>>> sets, List<String> tokens) {
-		long res = 0;
-		for(List<List<String>> llo : sets) {
-			long tmp = 1;
-			for (List<String> lo : llo) {
-				tmp *= lo.size();
-			}
-			res += tmp;
-		}
-		return res;
-	}
+    public static void addToValueSet(Map<Object, Set<Object>> m, Object key,
+            Object o) {
+        Set<Object> c = null;
+        if (m.containsKey(key)) {
+            c = m.get(key);
+        } else {
+            c = new HashSet<Object>();
+            m.put(key, c);
+        }
+        c.add(o);
+    }
 
-	public static List<String> computeSubGrammar(List<List<List<String>>> sets) {
-		List<String> grammar = new LinkedList<String>(); 
-		for(List<List<String>> llo : sets) {
-			for (List<String> lo : llo) {
-				for (String s : lo) {
-					if (!grammar.contains(s))
-						grammar.add(s);
-				}
-			}
-		}		
-		return grammar;
-	}
-	
-	public static long computeAmbig(List<List<String>> subg, List<String> tokens) {
-		long res = 1;
-		Map<Integer, List<String>> lset = new HashMap<Integer, List<String>>();
-		for (List<String> asub : subg) {
-			for (int i = 0 ; i < asub.size() ; i++) {
-				List<String> tokset = lset.get(i);
-				if (tokset == null) {
-					tokset = new LinkedList<String>();
-					lset.put(i, tokset);
-				}
-				String tid = asub.get(i);
-				if (!tokset.contains(tid))
-					tokset.add(tid);
-			}
-		}
-		for (int i = 0 ; i < tokens.size() ; i++) {
-			List<String> tids = lset.get(i);
-			if (tids != null)	
-				res *= tids.size();
-		}
-		return res;
-	}
+    public static Object getFirstCollectionMember(Set<Object> s) {
+        if (s == null || s.size() == 0) {
+            return null;
+        }
+        return s.iterator().next();
+    }
+
+    public static boolean arrayContains(Object o, Object[] a) {
+        for (int i = 0; i < a.length; ++i) {
+            if (a[i].equals(o)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static long computeCartesianCard(
+            Map<String, List<InstantiatedTagTree>> sets, List<String> tokens) {
+        // computes the product of lexical entries per token of the sentence to
+        // parse
+        long res = 1;
+        for (String t : tokens) {
+            List<InstantiatedTagTree> ls = sets.get(t);
+            if (ls != null)
+                res *= ls.size();
+        }
+        return res;
+    }
+
+    public static long computeCartesianCard(List<List<List<String>>> sets,
+            List<String> tokens) {
+        long res = 0;
+        for (List<List<String>> llo : sets) {
+            long tmp = 1;
+            for (List<String> lo : llo) {
+                tmp *= lo.size();
+            }
+            res += tmp;
+        }
+        return res;
+    }
+
+    public static List<String> computeSubGrammar(
+            List<List<List<String>>> sets) {
+        List<String> grammar = new LinkedList<String>();
+        for (List<List<String>> llo : sets) {
+            for (List<String> lo : llo) {
+                for (String s : lo) {
+                    if (!grammar.contains(s))
+                        grammar.add(s);
+                }
+            }
+        }
+        return grammar;
+    }
+
+    public static long computeAmbig(List<List<String>> subg,
+            List<String> tokens) {
+        long res = 1;
+        Map<Integer, List<String>> lset = new HashMap<Integer, List<String>>();
+        for (List<String> asub : subg) {
+            for (int i = 0; i < asub.size(); i++) {
+                List<String> tokset = lset.get(i);
+                if (tokset == null) {
+                    tokset = new LinkedList<String>();
+                    lset.put(i, tokset);
+                }
+                String tid = asub.get(i);
+                if (!tokset.contains(tid))
+                    tokset.add(tid);
+            }
+        }
+        for (int i = 0; i < tokens.size(); i++) {
+            List<String> tids = lset.get(i);
+            if (tids != null)
+                res *= tids.size();
+        }
+        return res;
+    }
 }

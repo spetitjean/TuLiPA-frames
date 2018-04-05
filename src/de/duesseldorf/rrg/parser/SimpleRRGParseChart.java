@@ -73,8 +73,8 @@ public class SimpleRRGParseChart implements ParseChart {
      *         - ws is false<br>
      *         - in TOP position in a STD root node
      */
-    public Set<SimpleRRGParseItem> retrieveGoalItems() {
-        Set<SimpleRRGParseItem> goals = new HashSet<SimpleRRGParseItem>();
+    public Set<ParseItem> retrieveGoalItems() {
+        Set<ParseItem> goals = new HashSet<ParseItem>();
         for (ParseItem item : chart.get(0).keySet()) {
             SimpleRRGParseItem rrgitem = (SimpleRRGParseItem) item;
             boolean goalReq = rrgitem.getEnd() == sentencelength && // end=n
