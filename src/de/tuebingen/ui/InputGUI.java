@@ -183,8 +183,10 @@ public class InputGUI implements ActionListener {
 
     private Border eb = null;
 
+    private JRadioButton xmlBoxTuLiPA2Style = null;
+    private JRadioButton xmlBoxXMGStyle = null;
+    private JRadioButton outputinGUI = null;
     private JCheckBox verboseBox = null;
-    private JCheckBox xmlBox = null;
     private JCheckBox derivBox = null;
     private JCheckBox dependencyBox = null;
     private String depOutputLocation = ".";
@@ -346,7 +348,7 @@ public class InputGUI implements ActionListener {
         tag2rcgb.addKeyListener(new GrammarKeyListener(this));
 
         JPanel grammarOpts = new JPanel();
-        grammarOpts.setLayout(new GridLayout(2, 3));
+        grammarOpts.setLayout(new GridLayout(0, 3));
         grammarOpts.add(cfgb);
         grammarOpts.add(lcfrsb);
         grammarOpts.add(rcgb);
@@ -355,22 +357,33 @@ public class InputGUI implements ActionListener {
         grammarOpts.add(tag2rcgb);
         grammarOpts.setBorder(new TitledBorder("Mode"));
 
-        JPanel tagOpts = new JPanel();
-        tagOpts.setLayout(new BoxLayout(tagOpts, BoxLayout.PAGE_AXIS));
-        derivBox = new JCheckBox("Show derivation steps in GUI");
-        tagOpts.add(derivBox);
-        dependencyBox = new JCheckBox("Dependency output");
-        dependencyBox.setToolTipText("Output directory: " + depOutputLocation);
-        tagOpts.add(dependencyBox);
-        tagOpts.setBorder(new TitledBorder("TT-MCTAG/TAG"));
+        JPanel outputOpts = new JPanel();
+        ButtonGroup outputButtonGroup = new ButtonGroup();
+        outputOpts.setLayout(new BoxLayout(outputOpts, BoxLayout.PAGE_AXIS));
+        xmlBoxTuLiPA2Style = new JRadioButton("XML output in TuLiPA 2 format");
+        outputOpts.add(xmlBoxTuLiPA2Style);
+        outputButtonGroup.add(xmlBoxTuLiPA2Style);
+        xmlBoxXMGStyle = new JRadioButton("XML output in XMG grammar format");
+        outputButtonGroup.add(xmlBoxXMGStyle);
+        outputOpts.add(xmlBoxXMGStyle);
+        outputinGUI = new JRadioButton("Graphical Output");
+        outputButtonGroup.add(outputinGUI);
+        outputOpts.add(outputinGUI);
+        outputinGUI.setSelected(true); // default is GUI. Seems to work properly
+                                       // when selecting different output modes
+        outputOpts.setBorder(new TitledBorder("Output Mode"));
 
         JPanel miscOpts = new JPanel();
         miscOpts.setLayout(new BoxLayout(miscOpts, BoxLayout.PAGE_AXIS));
         miscOpts.setBorder(new TitledBorder("Misc"));
         verboseBox = new JCheckBox("Verbose mode");
         miscOpts.add(verboseBox);
-        xmlBox = new JCheckBox("XML output, no GUI");
-        miscOpts.add(xmlBox);
+
+        derivBox = new JCheckBox("Show derivation steps in GUI");
+        miscOpts.add(derivBox);
+        dependencyBox = new JCheckBox("Dependency output");
+        dependencyBox.setToolTipText("Output directory: " + depOutputLocation);
+        miscOpts.add(dependencyBox);
 
         JPanel addOptionsContainer = new JPanel();
         addOptionsContainer.setLayout(
@@ -384,7 +397,7 @@ public class InputGUI implements ActionListener {
         addOptionsContainer.add(fieldPanel);
 
         mainOptionsContainer.add(grammarOpts);
-        mainOptionsContainer.add(tagOpts);
+        mainOptionsContainer.add(outputOpts);
         mainOptionsContainer.add(miscOpts);
 
         JPanel etchedContainer = new JPanel();
@@ -893,7 +906,7 @@ public class InputGUI implements ActionListener {
             cyktagb.requestFocus();
         } else if (gram.equals(RCG)) {
             rcgb.setSelected(true);
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             rcgb.requestFocus();
         } else if (gram.equals(TTMCTAG)) {
             ttmctagb.setSelected(true);
@@ -915,7 +928,7 @@ public class InputGUI implements ActionListener {
         if (cyktagb.isSelected()) {
             ret = CYKTAG;
         } else if (rcgb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             ret = RCG;
         } else if (ttmctagb.isSelected()) {
             ret = TTMCTAG;
@@ -960,25 +973,25 @@ public class InputGUI implements ActionListener {
     // method.
     private void toggleGramSelection() {
         if (rcgb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             setGram(CFG);
         } else if (cyktagb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             setGram(CYKTAG);
         } else if (cfgb.isSelected()) {
-            xmlBox.setSelected(false);
+            xmlBoxTuLiPA2Style.setSelected(false);
             setGram(TAG);
         } else if (lcfrsb.isSelected()) {
-            xmlBox.setSelected(false);
+            xmlBoxTuLiPA2Style.setSelected(false);
             setGram(TTMCTAG);
         } else if (ttmctagb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             setGram(RCG);
         } else if (tag2rcgb.isSelected()) {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             setGram(TAG2RCG);
         } else {
-            xmlBox.setSelected(true);
+            xmlBoxTuLiPA2Style.setSelected(true);
             setGram(RCG);
         }
     }
@@ -1079,10 +1092,12 @@ public class InputGUI implements ActionListener {
         }
         verboseBox.setSelected(ops.check("v"));
         derivBox.setSelected(ops.check("w"));
-        xmlBox.setSelected(ops.check("x"));
+        xmlBoxTuLiPA2Style.setSelected(ops.check("x"));
+        xmlBoxXMGStyle.setSelected(ops.check("xg"));
     }
 
     public void updateOps() {
+
         ops.removeVal("r");
         ops.removeVal("lcfrs");
         ops.removeVal("c");
@@ -1114,10 +1129,15 @@ public class InputGUI implements ActionListener {
         } else {
             ops.removeVal("w");
         }
-        if (xmlBox.isSelected()) {
+        if (xmlBoxTuLiPA2Style.isSelected()) {
             ops.setOurVal("x", "");
         } else {
             ops.removeVal("x");
+        }
+        if (xmlBoxXMGStyle.isSelected()) {
+            ops.setOurVal("xg", "");
+        } else {
+            ops.removeVal("xg");
         }
         String outftext = outF.getText().trim();
         if (outftext.length() > 0) {

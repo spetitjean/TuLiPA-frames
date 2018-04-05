@@ -61,8 +61,6 @@ import de.tuebingen.disambiguate.PolarizedToken;
 import de.tuebingen.expander.DOMderivationBuilder;
 import de.tuebingen.forest.ProduceDOM;
 import de.tuebingen.forest.Rule;
-import de.tuebingen.forest.Combination;
-import de.tuebingen.forest.TreeOp;
 import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.gui.DerivedTreeViewer;
 import de.tuebingen.gui.ParseTreeCollection;
@@ -153,10 +151,10 @@ public class ParsingInterface {
         /* ******************************************/
 
         // 5. Lexical selection and Anchoring
-	List<Word> cleantokens = tokens;
-	// if (op.check("nofiltering")||op.check("cyktag")) {
-	//   cleantokens = clean_tokens(tokens);
-	// }
+        List<Word> cleantokens = tokens;
+        // if (op.check("nofiltering")||op.check("cyktag")) {
+        // cleantokens = clean_tokens(tokens);
+        // }
         TreeSelector ts = new TreeSelector(cleantokens, verbose);
         List<List<Tuple>> subgrammars = null;
 
@@ -186,7 +184,7 @@ public class ParsingInterface {
             if (verbose)
                 System.err.println("Anchoring results:\n" + ts.toString());
             totalTime += anchoredTime;
-            if (!(op.check("nofiltering")||op.check("cyktag"))) {
+            if (!(op.check("nofiltering") || op.check("cyktag"))) {
                 // --------------------------------------------------------
                 // before RCG conversion, we apply lexical disambiguation:
                 // --------------------------------------------------------
@@ -196,15 +194,15 @@ public class ParsingInterface {
                         System.err.println(ptk.toString());
                     }
                 }
-		System.err.println("########Starting Polarity Automaton ");
+                System.err.println("########Starting Polarity Automaton ");
                 PolarityAutomaton pa = new PolarityAutomaton(toksentence, lptk,
                         axiom, verbose, ts.getLexNodes(), ts.getCoancNodes());
-		System.err.println("########Done Polarity Automaton ");
+                System.err.println("########Done Polarity Automaton ");
                 List<List<String>> tupleSets = pa.getPossibleTupleSets();
-		System.err.println("########Got possible tuple sets ");
+                System.err.println("########Got possible tuple sets ");
                 subgrammars = ComputeSubGrammar.computeSubGrammar(verbose,
                         tupleSets, ts.getTupleHash(), ts.getTreeHash());
-		System.err.println("########Computed sub grammar ");
+                System.err.println("########Computed sub grammar ");
 
                 System.err.println(
                         "\t@@##Tree combinations before classical polarity filtering   : "
@@ -429,7 +427,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-		System.err.println("########Starting removing words ");
+                System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -470,85 +468,88 @@ public class ParsingInterface {
             SlimTAGParser parser = new SlimTAGParser(grammarDict);
             Map<Tidentifier, List<Rule>> forest_rules = new HashMap<Tidentifier, List<Rule>>();
             List<Tidentifier> forest_roots = parser.parse(tokens, forest_rules,
-							  axiom);
+                    axiom);
             System.err.println("Parsed");
 
-	    // Debug by Simon: some derivations are identical (when
-	    // several adjunctions happen for instance)
-	    // We just need to check which trees were used:
-	    // When a same tree is used twice in a derivation, it's wrong
-	    // When the same set of trees are used in two derivations, it's wrong
+            // Debug by Simon: some derivations are identical (when
+            // several adjunctions happen for instance)
+            // We just need to check which trees were used:
+            // When a same tree is used twice in a derivation, it's wrong
+            // When the same set of trees are used in two derivations, it's
+            // wrong
 
-	    // TODO: It's through forest rules than one needs to loop, not forest roots!
-	    
-	    // Map<Tidentifier, List<Rule>> new_forest_rules = new HashMap<Tidentifier, List<Rule>>();
-	    // List<Tidentifier> new_forest_roots = new LinkedList<Tidentifier>();
-	    // //List<String> new_forest_strings = new LinkedList<String>();
-	    // //Tidentifier defaultTI = forest_roots.get(0);
-	    // Set<Set<String>> setUsedTrees = new HashSet<Set<String>>();
-	    // for(Tidentifier ti: forest_roots){
-	    // 	System.out.println("Tidenfifier: "+ti);
-	    // 	System.out.println("Rules:");
-	    // 	for(Rule ru: forest_rules.get(ti)){
-	    // 	    System.out.println("One rule: "+ru);
-	    // 	}
-	    // 	List<Rule> new_tree_rules= new LinkedList<Rule>();
-	    // 	String new_tree_string = "";
-	    // 	// for(Rule ru: forest_rules.get(ti)){
-	    // 	//     Set<String> usedTrees = new HashSet<String>();
-	    // 	//     System.out.println(ru.getRhs());
-	    // 	//     // we build the same rule removing all identifiers
-	    // 	//     // so that we can compare it
+            // TODO: It's through forest rules than one needs to loop, not
+            // forest roots!
 
-	    // 	//     // first build the RHS
-	    // 	//     // Combination comb = new Combination();
-	    // 	//     for(TreeOp to: ru.getRhs()){
-	    // 	// 	Tidentifier ito = new Tidentifier(to.getId());
-	    // 	// 	String treeId= ito.getTreeId();
-	    // 	// 	System.out.println("Tree identifier: "+treeId);
-	    // 	// 	//ito.setClauseId(0);
-	    // 	// 	//comb.addOp(new TreeOp(ito,to.getType()));
-	    // 	// 	if(!usedTrees.contains(treeId)){
-	    // 	// 	    usedTrees.add(treeId);
-	    // 	// 	}
-	    // 	// 	else{
-	    // 	// 	    System.out.println("Tree found twice in derivation: "+treeId);
-	    // 	// 	}
-	    // 	//     }
-	    // 	//     if(!setUsedTrees.contains(usedTrees)){
-	    // 	// 	setUsedTrees.add(usedTrees);
-	    // 	// 	new_tree_rules.add(ru);
-	    // 	//     }
-	    // 	//     else{
-	    // 	// 	new_tree_rules.add(ru);
-	    // 	// 	System.out.println("Same derivation found twice: "+usedTrees);
-	    // 	//     }
-	    // 	//     //Rule r = new Rule(defaultTI);
-	    // 	//     //r.setRhs(comb);
-		    
-	    // 	//     //new_tree_rules.add(r);
-	    // 	//     //new_tree_string=new_tree_string+r.toString();
-	    // 	// }
-	    // 	//new_forest_rules.add(new_tree_rules);
-	    // 	// if(new_forest_strings.contains(new_tree_string)){
-	    // 	//     System.out.println("Found duplicate!: "+new_tree_string);
-	    // 	// }
-	    // 	if(false){}
-	    // 	else{
-	    // 	    //new_forest_strings.add(new_tree_string);
-	    // 	    new_forest_rules.put(ti,forest_rules.get(ti));
-	    // 	    new_forest_roots.add(ti);
-	    // 	}
-	    // 	System.out.println("New forest rules:");
-	    // 	for(Rule ru: new_forest_rules.get(ti)){
-	    // 	    System.out.println("One rule: "+ru);
-	    // 	}
-	    // }
-	    // //forest_roots=new_forest_roots;
+            // Map<Tidentifier, List<Rule>> new_forest_rules = new
+            // HashMap<Tidentifier, List<Rule>>();
+            // List<Tidentifier> new_forest_roots = new
+            // LinkedList<Tidentifier>();
+            // //List<String> new_forest_strings = new LinkedList<String>();
+            // //Tidentifier defaultTI = forest_roots.get(0);
+            // Set<Set<String>> setUsedTrees = new HashSet<Set<String>>();
+            // for(Tidentifier ti: forest_roots){
+            // System.out.println("Tidenfifier: "+ti);
+            // System.out.println("Rules:");
+            // for(Rule ru: forest_rules.get(ti)){
+            // System.out.println("One rule: "+ru);
+            // }
+            // List<Rule> new_tree_rules= new LinkedList<Rule>();
+            // String new_tree_string = "";
+            // // for(Rule ru: forest_rules.get(ti)){
+            // // Set<String> usedTrees = new HashSet<String>();
+            // // System.out.println(ru.getRhs());
+            // // // we build the same rule removing all identifiers
+            // // // so that we can compare it
 
-	    // forest_rules=new_forest_rules;
-	    // System.out.println("Done with duplicates ");
-	     
+            // // // first build the RHS
+            // // // Combination comb = new Combination();
+            // // for(TreeOp to: ru.getRhs()){
+            // // Tidentifier ito = new Tidentifier(to.getId());
+            // // String treeId= ito.getTreeId();
+            // // System.out.println("Tree identifier: "+treeId);
+            // // //ito.setClauseId(0);
+            // // //comb.addOp(new TreeOp(ito,to.getType()));
+            // // if(!usedTrees.contains(treeId)){
+            // // usedTrees.add(treeId);
+            // // }
+            // // else{
+            // // System.out.println("Tree found twice in derivation: "+treeId);
+            // // }
+            // // }
+            // // if(!setUsedTrees.contains(usedTrees)){
+            // // setUsedTrees.add(usedTrees);
+            // // new_tree_rules.add(ru);
+            // // }
+            // // else{
+            // // new_tree_rules.add(ru);
+            // // System.out.println("Same derivation found twice: "+usedTrees);
+            // // }
+            // // //Rule r = new Rule(defaultTI);
+            // // //r.setRhs(comb);
+
+            // // //new_tree_rules.add(r);
+            // // //new_tree_string=new_tree_string+r.toString();
+            // // }
+            // //new_forest_rules.add(new_tree_rules);
+            // // if(new_forest_strings.contains(new_tree_string)){
+            // // System.out.println("Found duplicate!: "+new_tree_string);
+            // // }
+            // if(false){}
+            // else{
+            // //new_forest_strings.add(new_tree_string);
+            // new_forest_rules.put(ti,forest_rules.get(ti));
+            // new_forest_roots.add(ti);
+            // }
+            // System.out.println("New forest rules:");
+            // for(Rule ru: new_forest_rules.get(ti)){
+            // System.out.println("One rule: "+ru);
+            // }
+            // }
+            // //forest_roots=new_forest_roots;
+
+            // forest_rules=new_forest_rules;
+            // System.out.println("Done with duplicates ");
 
             long parsingTime = System.nanoTime() - parseTime;
             System.err.println("Total time for parsing and tree extraction: "
@@ -579,24 +580,28 @@ public class ParsingInterface {
             System.err.println("Select a parsing mode");
         }
         if (res) {
-            if (op.check("x")) { // XML output of the derivations!
+            if (op.check("x") || op.check("xg")) { // XML output of the
+                                                   // derivations!
                 long xmlTime = System.nanoTime();
                 ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
                         .getViewTreesFromDOM(fdoc, sit, grammarDict, false,
                                 false, false, needsAnchoring, slabels, noUtool);
-                DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
-                        sentence);
-                Document dparses = standardDerivationBuilder
-                        .buildDOMderivation(viewTreesFromDOM);
-                // XMLUtilities.writeXML(dparses, outputfile,
-                // "tulipa-parses.dtd,xml", true);
-                DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
-                        sentence);
-                Document dwebguiparses = webguiDerivationBuilder
-                        .buildDOMderivationGrammar(viewTreesFromDOM);
-                XMLUtilities.writeXML(dwebguiparses, outputfile,
-                        "tulipa-parses.dtd,xml", true);
-
+                if (op.check("x")) {
+                    DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
+                            sentence);
+                    Document dparses = standardDerivationBuilder
+                            .buildDOMderivation(viewTreesFromDOM);
+                    XMLUtilities.writeXML(dparses, outputfile,
+                            "tulipa-parses.dtd,xml", true);
+                } else if (op.check("xg")) {
+                    DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
+                            sentence);
+                    System.out.println("bahhhh\n\n");
+                    Document dwebguiparses = webguiDerivationBuilder
+                            .buildDOMderivationGrammar(viewTreesFromDOM);
+                    XMLUtilities.writeXML(dwebguiparses, outputfile,
+                            "tulipa-parses.dtd,xml", true);
+                }
                 long estXMLTime = System.nanoTime();
                 System.err.println(
                         "Parses available (in XML) in " + outputfile + ".");
@@ -655,18 +660,17 @@ public class ParsingInterface {
     }
     // END_BY_TS
 
-    public static List<Word> clean_tokens(List<Word> tokens){
-	List clean = new LinkedList<Word>();
-	Set mem = new HashSet<String>();
-	for (Word word: tokens){
-	    if(!mem.contains(word.getWord())){
-		clean.add(word);
-		mem.add(word.getWord());
-	    }
-	}
-	return clean;
+    public static List<Word> clean_tokens(List<Word> tokens) {
+        List clean = new LinkedList<Word>();
+        Set mem = new HashSet<String>();
+        for (Word word : tokens) {
+            if (!mem.contains(word.getWord())) {
+                clean.add(word);
+                mem.add(word.getWord());
+            }
+        }
+        return clean;
     }
-	
 
     public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
             String sentence) throws TokenizerException, IOException {
