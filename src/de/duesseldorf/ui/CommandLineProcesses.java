@@ -101,8 +101,11 @@ public class CommandLineProcesses {
         // we declare the OPTIONAL i option (interactive mode)
         op.add(CommandLineOptions.Prefix.DASH, "i",
                 CommandLineOptions.Separator.BLANK, false);
-        // we declare the OPTIONAL x option (XML output)
+        // we declare the OPTIONAL x option (XML output in TuLiPA 2 format)
         op.add(CommandLineOptions.Prefix.DASH, "x",
+                CommandLineOptions.Separator.BLANK, false);
+        // we declare the OPTIONAL xg option (XML output in XMG Grammar format)
+        op.add(CommandLineOptions.Prefix.DASH, "xg",
                 CommandLineOptions.Separator.BLANK, false);
         // we declare the OPTIONAL z option (restricted tree to RCG conversion)
         op.add(CommandLineOptions.Prefix.DASH, "z",
@@ -235,7 +238,9 @@ public class CommandLineProcesses {
         res += "-v      (verbose mode, for debugging purposes, information dumped in stderr)\n\t";
         res += "-w      (when used with the graphical interface, displays \n\t";
         res += "         the derivation steps and uncomplete derivations";
-        res += "-x      (output the parses in XML format either in stdout or \n\t";
+        res += "-x      (output the parses in XML TuLiPA 2 format either in stdout or \n\t";
+        res += "         in a file if the -o option has been used)\n\t";
+        res += "-xg     (output the parses in XML format of XMG grammars either in stdout or \n\t";
         res += "         in a file if the -o option has been used)\n\t";
         res += "-d      (activate the computation of dependency structures in pdf format, \n\t";
         res += "         these Pdf files are named structure-xx.pdf and stored in the working directory)\n\t";

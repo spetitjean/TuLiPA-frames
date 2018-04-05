@@ -152,6 +152,10 @@ public class ParsingInterface {
 
         // 5. Lexical selection and Anchoring
         List<Word> cleantokens = tokens;
+
+        // if (op.check("nofiltering")||op.check("cyktag")) {
+        // cleantokens = clean_tokens(tokens);
+        // }
         TreeSelector ts = new TreeSelector(cleantokens, verbose);
         List<List<Tuple>> subgrammars = null;
 
@@ -620,25 +624,29 @@ public class ParsingInterface {
             System.err.println("Select a parsing mode");
         }
         if (res) {
-            if (op.check("x")) { // XML output of the derivations!
+            if (op.check("x") || op.check("xg")) { // XML output of the
+                                                   // derivations!
                 long xmlTime = System.nanoTime();
 
                 ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
                         .getViewTreesFromDOM(fdoc, sit, grammarDict, false,
                                 false, false, needsAnchoring, slabels, noUtool);
-                DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
-                        sentence);
-                Document dparses = standardDerivationBuilder
-                        .buildDOMderivation(viewTreesFromDOM);
-                // XMLUtilities.writeXML(dparses, outputfile,
-                // "tulipa-parses.dtd,xml", true);
-                DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
-                        sentence);
-                Document dwebguiparses = webguiDerivationBuilder
-                        .buildDOMderivationGrammar(viewTreesFromDOM);
-                XMLUtilities.writeXML(dwebguiparses, outputfile,
-                        "tulipa-parses.dtd,xml", true);
-
+                if (op.check("x")) {
+                    DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
+                            sentence);
+                    Document dparses = standardDerivationBuilder
+                            .buildDOMderivation(viewTreesFromDOM);
+                    XMLUtilities.writeXML(dparses, outputfile,
+                            "tulipa-parses.dtd,xml", true);
+                } else if (op.check("xg")) {
+                    DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
+                            sentence);
+                    System.out.println("bahhhh\n\n");
+                    Document dwebguiparses = webguiDerivationBuilder
+                            .buildDOMderivationGrammar(viewTreesFromDOM);
+                    XMLUtilities.writeXML(dwebguiparses, outputfile,
+                            "tulipa-parses.dtd,xml", true);
+                }
                 long estXMLTime = System.nanoTime();
                 System.err.println(
                         "Parses available (in XML) in " + outputfile + ".");
