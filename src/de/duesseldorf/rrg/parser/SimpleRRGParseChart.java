@@ -45,16 +45,16 @@ public class SimpleRRGParseChart implements ParseChart {
     // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
 
     // map start index to Parse Items to their backpointers
-    private Map<Integer, Map<ParseItem, Set<Set<ParseItem>>>> chart;
+    private Map<Integer, Map<ParseItem, Backpointer>> chart;
     private int sentencelength;
 
     public SimpleRRGParseChart(int sentencelength) {
         this.sentencelength = sentencelength;
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
-        chart = new HashMap<Integer, Map<ParseItem, Set<Set<ParseItem>>>>();
+        chart = new HashMap<Integer, Map<ParseItem, Backpointer>>();
         for (int i = 0; i <= sentencelength; i++) {
-            chart.put(i, new HashMap<ParseItem, Set<Set<ParseItem>>>());
+            chart.put(i, new HashMap<ParseItem, Backpointer>());
         }
     }
 
@@ -100,7 +100,7 @@ public class SimpleRRGParseChart implements ParseChart {
      * @return A Set of the backpointers of item, i.e. a Set of all sets of
      *         items that created the item.
      */
-    public Set<Set<ParseItem>> getBackPointers(SimpleRRGParseItem item) {
+    public Backpointer getBackPointers(SimpleRRGParseItem item) {
         return chart.get(item.startPos()).get(item);
     }
 
@@ -180,7 +180,8 @@ public class SimpleRRGParseChart implements ParseChart {
      *            the antecedents from which this item was created.
      * @return true if the ParseItem was not already in the chart
      */
-    public boolean addItem(ParseItem consequent, ParseItem... antecedents) {
+    public boolean addItem(ParseItem consequent, Operation operation,
+            ParseItem... antecedents) {
         Set<ParseItem> antes;
         if (antecedents.length > 0) {
             antes = new HashSet<ParseItem>(Arrays.asList(antecedents));
@@ -193,12 +194,13 @@ public class SimpleRRGParseChart implements ParseChart {
         boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
-            chart.get(startpos).get(consequent).add(antes);
+            chart.get(startpos).get(consequent).addToBackpointer(operation,
+                    antes);
         } else {
             // add the consequent and a fresh set of backpointers
-            Set<Set<ParseItem>> backpointers = new HashSet<Set<ParseItem>>();
-            backpointers.add(antes);
-            chart.get(startpos).put(consequent, backpointers);
+            Backpointer backpointer = new Backpointer();
+            backpointer.addToBackpointer(operation, antes);
+            chart.get(startpos).put(consequent, backpointer);
         }
         return !alreadythere;
     }
@@ -211,22 +213,15 @@ public class SimpleRRGParseChart implements ParseChart {
                 sb.append("\nstart index " + i + "\n");
             }
             // print the items
-            for (Entry<ParseItem, Set<Set<ParseItem>>> chartEntry : chart.get(i)
+            for (Entry<ParseItem, Backpointer> chartEntry : chart.get(i)
                     .entrySet()) {
                 sb.append(chartEntry.getKey().toString());
 
                 // and their backpointers
-                sb.append(" : {");
-                for (Set<ParseItem> bpset : chartEntry.getValue()) {
-                    if (bpset.size() > 0) {
-                        sb.append("{");
-                        for (ParseItem parseItem : bpset) {
-                            sb.append(parseItem);
-                        }
-                        sb.append("}, ");
-                    }
-                }
-                sb.append("}\n");
+                sb.append("\n\t");
+                sb.append(chartEntry.getValue().toString());
+                sb.append("\n");
+
             }
         }
         return sb.toString();

@@ -11,6 +11,14 @@ import de.duesseldorf.util.GornAddress;
 
 public class Deducer {
 
+    /**
+     * Assuming that both parameters are fitting antecedents, apply the
+     * combineSisters deduction rule
+     * 
+     * @param leftItem
+     * @param rightItem
+     * @return
+     */
     public SimpleRRGParseItem applyCombineSisters(SimpleRRGParseItem leftItem,
             SimpleRRGParseItem rightItem) {
         List<Gap> gaps = new LinkedList<Gap>(leftItem.getGaps());
@@ -21,6 +29,13 @@ public class Deducer {
         return result;
     }
 
+    /**
+     * Assuming that the {@code currentItem} is a fitting antecedent, apply the
+     * moveUp deduction rule
+     * 
+     * @param currentItem
+     * @return
+     */
     public SimpleRRGParseItem applyMoveUp(SimpleRRGParseItem currentItem) {
         GornAddress motheraddress = currentItem.getNode().getGornaddress()
                 .mother();
@@ -39,18 +54,33 @@ public class Deducer {
         return newItem;
     }
 
+    /**
+     * Assuming that {@code CurrentItem} is a fitting antecedent, apply the
+     * noLeftSister deduction rule.
+     * 
+     * @param currentItem
+     * @return
+     */
     public SimpleRRGParseItem applyNoLeftSister(
             SimpleRRGParseItem currentItem) {
-
         return new SimpleRRGParseItem(currentItem, null, null,
                 SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null);
 
     }
 
+    /**
+     * Creates a new item by applying the left-adjoin deduction rule. The tree
+     * in {@code auxTreeRoot} is sis-adjoined to the left of the
+     * {@code targetSister} node.
+     * 
+     * @param targetSister
+     * @param auxTreeRoot
+     * @return
+     */
     public SimpleRRGParseItem applyLeftAdjoin(SimpleRRGParseItem targetSister,
             SimpleRRGParseItem auxTreeRoot) {
-
-        LinkedList<Gap> gaps = new LinkedList<Gap>(auxTreeRoot.getGaps());
+        // create the list of gaps of the consequent
+        List<Gap> gaps = new LinkedList<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
 
         SimpleRRGParseItem result = new SimpleRRGParseItem(targetSister, null,
@@ -58,12 +88,23 @@ public class Deducer {
         return result;
     }
 
+    /**
+     * Creates a new item by applying the right-adjoin deduction rule. The tree
+     * in {@code auxTreeRoot} is sis-adjoined to the right of the
+     * {@code targetSister} node.
+     * 
+     * @param target
+     * @param auxTreeRoot
+     * @return
+     */
     public SimpleRRGParseItem applyRightAdjoin(SimpleRRGParseItem target,
-            SimpleRRGParseItem auxtreeRoot) {
-        LinkedList<Gap> gaps = new LinkedList<Gap>(target.getGaps());
-        gaps.addAll(auxtreeRoot.getGaps());
+            SimpleRRGParseItem auxTreeRoot) {
+        // create the list of gaps of the consequent
+        List<Gap> gaps = new LinkedList<Gap>(target.getGaps());
+        gaps.addAll(auxTreeRoot.getGaps());
+
         SimpleRRGParseItem result = new SimpleRRGParseItem(target, null, null,
-                null, -1, auxtreeRoot.getEnd(), gaps, null);
+                null, -1, auxTreeRoot.getEnd(), gaps, null);
         return result;
     }
 

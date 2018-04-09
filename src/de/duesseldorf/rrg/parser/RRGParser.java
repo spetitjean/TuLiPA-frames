@@ -56,7 +56,6 @@ public class RRGParser {
             // System.out.println("Agenda size: " + agenda.size());
         }
         System.out.println("Done parsing. \n" + chart.toString());
-        System.out.println("Agenda size: " + agenda.size());
         ParseForestExtractor extractor = new ParseForestExtractor(chart,
                 toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
@@ -73,57 +72,80 @@ public class RRGParser {
      * @param antecedents
      */
     private void addToChartAndAgenda(SimpleRRGParseItem consequent,
-            SimpleRRGParseItem... antecedents) {
-        if (chart.addItem(consequent, antecedents)) {
+            Operation operation, SimpleRRGParseItem... antecedents) {
+        if (chart.addItem(consequent, operation, antecedents)) {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("cons: " + consequent);
+        // System.out.println("cons: " + consequent);
     }
 
     private void sisteradjoin(SimpleRRGParseItem currentItem) {
         // the currentItem is either
         // - a root item, for which we need to find a target tree
         // - or a node such that we want to find a root item (this might be
-        // expensive. But we probably cant
-        boolean sisadjroot = requirementFinder.sisadjRoot(currentItem);
+        // expensive. But we probably cant survive without it)
+        boolean sisadjroot = requirementFinder.isSisadjRoot(currentItem);
         // System.out.print(root);
         // System.out.println(" " + currentItem.toString());
         if (sisadjroot) {
             // left-adjoin
             Set<SimpleRRGParseItem> leftAdjoinAntecedents = requirementFinder
-                    .leftAdjoinAntecedents(currentItem, chart);
+                    .findLeftAdjoinTargets(currentItem, chart);
             for (SimpleRRGParseItem simpleRRGParseItem : leftAdjoinAntecedents) {
                 // System.out.println("THERE: " + simpleRRGParseItem);
                 SimpleRRGParseItem consequent = deducer
                         .applyLeftAdjoin(simpleRRGParseItem, currentItem);
-                addToChartAndAgenda(consequent, currentItem,
-                        simpleRRGParseItem);
+                addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
+                        currentItem, simpleRRGParseItem);
             }
 
             // right-adjoin
             Set<SimpleRRGParseItem> rightAdjoinAntecedents = requirementFinder
-                    .rightAdjoinAntecedents(currentItem, chart);
+                    .findRightAdjoinTargets(currentItem, chart);
             for (SimpleRRGParseItem target : rightAdjoinAntecedents) {
                 SimpleRRGParseItem consequent = deducer.applyRightAdjoin(target,
                         currentItem);
-                addToChartAndAgenda(consequent, currentItem, target);
+                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
+                        currentItem, target);
                 System.out.println("blabalablkdkdm");
             }
             // System.out.println("rightadjoin: " + currentItem);
             // System.out.println(rightAdjoinAntecedents);
         } else {
 
+            // Note 09.04.2018: The findSisAdjRoots method is overgenerating
+
             Map<String, Set<SimpleRRGParseItem>> sisadjroots = requirementFinder
                     .findSisAdjRoots(currentItem, chart);
-            System.out.println("sisadj with " + currentItem);
-            System.out.println("sisl" + sisadjroots.get("l"));
-            System.out.println("sisr" + sisadjroots.get("r"));
+            // System.out.println("sisadj with " + currentItem);
+            // System.out.println("sisl" + sisadjroots.get("l"));
+            // System.out.println("sisr" + sisadjroots.get("r"));
 
-            // Note April 3:
-            // next do the adjunctions with other antecedents,
-            // refactor parseItems, ws, think about recognizer -> parser
+            for (SimpleRRGParseItem auxRootItem : sisadjroots.get("l")) {
+                SimpleRRGParseItem consequent = deducer
+                        .applyLeftAdjoin(currentItem, auxRootItem);
+                addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
+                        auxRootItem, currentItem);
+            }
+
+            for (SimpleRRGParseItem auxRootItem : sisadjroots.get("r")) {
+                SimpleRRGParseItem consequent = deducer
+                        .applyRightAdjoin(currentItem, auxRootItem);
+                if (!auxRootItem.equals(consequent)) {
+                    addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
+                            auxRootItem, currentItem);
+                    System.out.println(auxRootItem + " and " + currentItem
+                            + "\n\t lead to " + consequent);
+                } else {
+                    System.out
+                            .println("yay" + auxRootItem + " vs " + consequent);
+                }
+                // System.out.println("RA " + currentItem + auxRootItem);
+                // System.out.println(sisadjroots.get("r"));
+            }
         }
+
     }
 
     private void substitute(SimpleRRGParseItem currentItem) {
@@ -139,7 +161,8 @@ public class RRGParser {
                                 SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
                                 false);
                         // System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(consequent, currentItem);
+                        addToChartAndAgenda(consequent, Operation.SUBSTITUTE,
+                                currentItem);
                     }
                 }
             }
@@ -151,7 +174,7 @@ public class RRGParser {
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
             SimpleRRGParseItem newItem = deducer.applyMoveUp(currentItem);
-            addToChartAndAgenda(newItem, currentItem);
+            addToChartAndAgenda(newItem, Operation.MOVEUP, currentItem);
         }
     }
 
@@ -167,8 +190,8 @@ public class RRGParser {
                 SimpleRRGParseItem rightSisTopItem = deducer
                         .applyCombineSisters(currentItem, simpleRRGParseItem);
                 // System.out.println(rightSisTopItem);
-                addToChartAndAgenda(rightSisTopItem, currentItem,
-                        simpleRRGParseItem);
+                addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
+                        currentItem, simpleRRGParseItem);
             }
         }
     }
@@ -186,7 +209,7 @@ public class RRGParser {
 
             SimpleRRGParseItem newItem = deducer.applyNoLeftSister(currentItem);
 
-            addToChartAndAgenda(newItem, currentItem);
+            addToChartAndAgenda(newItem, Operation.NLS, currentItem);
         }
     }
 
@@ -209,7 +232,7 @@ public class RRGParser {
                         SimpleRRGParseItem scannedItem = new SimpleRRGParseItem(
                                 tree, lexLeaf, NodePos.BOT, start, start + 1,
                                 new LinkedList<Gap>(), false);
-                        addToChartAndAgenda(scannedItem);
+                        addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
                 }
             }

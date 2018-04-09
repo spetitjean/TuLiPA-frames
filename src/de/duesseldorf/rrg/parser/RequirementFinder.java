@@ -129,32 +129,32 @@ public class RequirementFinder {
      * 2. in TOP position
      * 3. no ws
      * 
-     * @param currentItem
-     * @return
+     * @param item
+     * @return {@code true} iff {@code item} is in the root of a sister
+     *         adjunction tree
      */
-    public boolean sisadjRoot(SimpleRRGParseItem currentItem) {
-        boolean result = currentItem.getNode().getGornaddress().mother() == null
-                && // 1a
-                currentItem.getNode().getType().equals(RRGNodeType.STAR) && // 1b
-                currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP)
-                && // 2.
-                !currentItem.getwsflag(); // 3
+    public boolean isSisadjRoot(SimpleRRGParseItem item) {
+        boolean result = item.getNode().getGornaddress().mother() == null && // 1a
+                item.getNode().getType().equals(RRGNodeType.STAR) && // 1b
+                item.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP) && // 2.
+                !item.getwsflag(); // 3
         return result;
     }
 
     /**
      * 
-     * @param currentItem
+     * @param sisAdjRoot
      *            is the root of a sister adjunction tree
      * @param chart
-     * @return
+     * @return All items in the chart that the {@code sisAdjRoot} node might
+     *         left-sister-adjoin to.
      */
-    public Set<SimpleRRGParseItem> leftAdjoinAntecedents(
-            SimpleRRGParseItem currentItem, SimpleRRGParseChart chart) {
+    public Set<SimpleRRGParseItem> findLeftAdjoinTargets(
+            SimpleRRGParseItem sisAdjRoot, SimpleRRGParseChart chart) {
         // create a template for the items that might perform leftAdjoin with
         // currentItem
         SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
-                SimpleRRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
+                SimpleRRGParseItem.NodePos.TOP, sisAdjRoot.getEnd(), -2, null,
                 false);
         // find all items matching the template in the chart
         Set<SimpleRRGParseItem> candidates = chart
@@ -162,10 +162,18 @@ public class RequirementFinder {
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
 
-        return filterByMotherLabel(currentItem, candidates);
+        return filterByMotherLabel(sisAdjRoot, candidates);
     }
 
-    public Set<SimpleRRGParseItem> rightAdjoinAntecedents(
+    /**
+     * 
+     * @param sisAdjRoot
+     *            is the root of a sister adjunction tree
+     * @param chart
+     * @return All items in the chart that the {@code sisAdjRoot} node might
+     *         right-sister-adjoin to.
+     */
+    public Set<SimpleRRGParseItem> findRightAdjoinTargets(
             SimpleRRGParseItem sisadjroot, SimpleRRGParseChart chart) {
         SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
                 SimpleRRGParseItem.NodePos.TOP, -2, sisadjroot.startPos(), null,
@@ -204,6 +212,14 @@ public class RequirementFinder {
         return filteredCandidates;
     }
 
+    /**
+     * 
+     * @param currentItem
+     * @param chart
+     * @return A map with two entries. The entrie "l" maps to a set with all
+     *         items suited for left-adjunction, the "r" entrie contains right
+     *         adjoin root items.
+     */
     public Map<String, Set<SimpleRRGParseItem>> findSisAdjRoots(
             SimpleRRGParseItem currentItem, SimpleRRGParseChart chart) {
         Map<String, Set<SimpleRRGParseItem>> result = new HashMap<String, Set<SimpleRRGParseItem>>();
@@ -218,10 +234,7 @@ public class RequirementFinder {
                 .findUnderspecifiedItem(leftAdjModel);
 
         for (SimpleRRGParseItem item : leftAdj) {
-            // if the item is really a sisadjrot (specification for the
-            // chart method can't be this detailled
-            if (item.getNode().getType().equals(RRGNodeType.STAR)
-                    && item.getNode().getGornaddress().mother() == null) {
+            if (isSisadjRoot(item)) {
                 result.get("l").add(item);
             }
         }
@@ -233,9 +246,9 @@ public class RequirementFinder {
         for (SimpleRRGParseItem item : rightAdj) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
-            if (item.getNode().getType().equals(RRGNodeType.STAR)
-                    && item.getNode().getGornaddress().mother() == null) {
+            if (isSisadjRoot(item)) {
                 result.get("r").add(item);
+                // System.out.println("item added: " + item);
             }
         }
         return result;
