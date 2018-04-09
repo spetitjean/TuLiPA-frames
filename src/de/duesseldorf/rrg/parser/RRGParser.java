@@ -2,6 +2,7 @@ package de.duesseldorf.rrg.parser;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -84,7 +85,7 @@ public class RRGParser {
         // the currentItem is either
         // - a root item, for which we need to find a target tree
         // - or a node such that we want to find a root item (this might be
-        // expensive. Can we leave it out?
+        // expensive. But we probably cant
         boolean sisadjroot = requirementFinder.sisadjRoot(currentItem);
         // System.out.print(root);
         // System.out.println(" " + currentItem.toString());
@@ -103,12 +104,26 @@ public class RRGParser {
             // right-adjoin
             Set<SimpleRRGParseItem> rightAdjoinAntecedents = requirementFinder
                     .rightAdjoinAntecedents(currentItem, chart);
+            for (SimpleRRGParseItem target : rightAdjoinAntecedents) {
+                SimpleRRGParseItem consequent = deducer.applyRightAdjoin(target,
+                        currentItem);
+                addToChartAndAgenda(consequent, currentItem, target);
+                System.out.println("blabalablkdkdm");
+            }
+            // System.out.println("rightadjoin: " + currentItem);
+            // System.out.println(rightAdjoinAntecedents);
+        } else {
+
+            Map<String, Set<SimpleRRGParseItem>> sisadjroots = requirementFinder
+                    .findSisAdjRoots(currentItem, chart);
+            System.out.println("sisadj with " + currentItem);
+            System.out.println("sisl" + sisadjroots.get("l"));
+            System.out.println("sisr" + sisadjroots.get("r"));
+
+            // Note April 3:
+            // next do the adjunctions with other antecedents,
+            // refactor parseItems, ws, think about recognizer -> parser
         }
-
-        // Note April 3:
-        // next do the adjunctions with other antecedents,
-        // refactor parseItems, ws, think about recognizer -> parser
-
     }
 
     private void substitute(SimpleRRGParseItem currentItem) {

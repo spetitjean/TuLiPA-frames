@@ -38,7 +38,6 @@ public class ParseForestExtractor {
                         ((SimpleRRGParseItem) goal).getTree().getRoot());
                 System.out.println(res.toString());
                 parseTrees.add(res);
-
             }
             extract(goals, parseTrees);
         }

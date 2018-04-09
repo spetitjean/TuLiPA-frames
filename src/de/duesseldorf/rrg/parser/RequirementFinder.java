@@ -1,6 +1,8 @@
 package de.duesseldorf.rrg.parser;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
@@ -170,10 +172,7 @@ public class RequirementFinder {
                 false);
         Set<SimpleRRGParseItem> candidates = chart
                 .findUnderspecifiedItem(model);
-        // System.out.println("BLA" + candidates.size());
-
         // filter all that have matching labels
-
         return filterByMotherLabel(sisadjroot, candidates);
     }
 
@@ -203,5 +202,42 @@ public class RequirementFinder {
             }
         }
         return filteredCandidates;
+    }
+
+    public Map<String, Set<SimpleRRGParseItem>> findSisAdjRoots(
+            SimpleRRGParseItem currentItem, SimpleRRGParseChart chart) {
+        Map<String, Set<SimpleRRGParseItem>> result = new HashMap<String, Set<SimpleRRGParseItem>>();
+        result.put("l", new HashSet<SimpleRRGParseItem>());
+        result.put("r", new HashSet<SimpleRRGParseItem>());
+
+        // left adjunction
+        SimpleRRGParseItem leftAdjModel = new SimpleRRGParseItem(null, null,
+                SimpleRRGParseItem.NodePos.TOP, -2, currentItem.startPos(),
+                null, false);
+        Set<SimpleRRGParseItem> leftAdj = chart
+                .findUnderspecifiedItem(leftAdjModel);
+
+        for (SimpleRRGParseItem item : leftAdj) {
+            // if the item is really a sisadjrot (specification for the
+            // chart method can't be this detailled
+            if (item.getNode().getType().equals(RRGNodeType.STAR)
+                    && item.getNode().getGornaddress().mother() == null) {
+                result.get("l").add(item);
+            }
+        }
+        SimpleRRGParseItem rightAdjModel = new SimpleRRGParseItem(null, null,
+                SimpleRRGParseItem.NodePos.TOP, currentItem.startPos(), -2,
+                null, false);
+        Set<SimpleRRGParseItem> rightAdj = chart
+                .findUnderspecifiedItem(rightAdjModel);
+        for (SimpleRRGParseItem item : rightAdj) {
+            // if the item is really a sisadjrot (specification for the
+            // chart method can't be this detailled
+            if (item.getNode().getType().equals(RRGNodeType.STAR)
+                    && item.getNode().getGornaddress().mother() == null) {
+                result.get("r").add(item);
+            }
+        }
+        return result;
     }
 }

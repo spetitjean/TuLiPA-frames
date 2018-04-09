@@ -58,4 +58,13 @@ public class Deducer {
         return result;
     }
 
+    public SimpleRRGParseItem applyRightAdjoin(SimpleRRGParseItem target,
+            SimpleRRGParseItem auxtreeRoot) {
+        LinkedList<Gap> gaps = new LinkedList<Gap>(target.getGaps());
+        gaps.addAll(auxtreeRoot.getGaps());
+        SimpleRRGParseItem result = new SimpleRRGParseItem(target, null, null,
+                null, -1, auxtreeRoot.getEnd(), gaps, null);
+        return result;
+    }
+
 }

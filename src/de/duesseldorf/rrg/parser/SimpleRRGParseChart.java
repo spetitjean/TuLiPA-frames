@@ -126,9 +126,6 @@ public class SimpleRRGParseChart implements ParseChart {
         int startboundary = model.startPos() == -2 ? 0 : model.startPos();
         int endboundary = model.startPos() == -2 ? chart.size() - 1
                 : startboundary;
-        // old:
-        // int endboundary = model.getEnd() == -2 ? chart.size() - 1 :
-        // model.getEnd();
 
         // then, look up in the chart
         for (int i = startboundary; i <= endboundary; i++) {
