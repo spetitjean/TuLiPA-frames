@@ -131,7 +131,8 @@ public class SlimTAGParser {
                 // should be copied.
                 TagTree bin_tree = new TagTree(cur_tree.getId());
                 bin_tree.setOriginalId(cur_tree.getOriginalId());
-
+                bin_tree.setPosition(cur_tree.getPosition());
+		
                 grammarDict.put(cur_key, bin_tree);
                 revGrammarDict.put(bin_tree, cur_key);
 
@@ -1721,6 +1722,7 @@ public class SlimTAGParser {
 				// this is for avoiding duplicates
 				// This does not apply for co-anchors (hence the  || !cur_node.isAncLex())
 				if(tag_tree.getPosition()==i+1 || !cur_node.isAncLex()){
+				    
 				    closed_map.get(cur_node).put(i,
 								 new HashMap<Integer, double[]>());
 				    closed_map.get(cur_node).get(i).put(i + 1,

@@ -401,7 +401,6 @@ public class TreeSelector {
         String newTupleId = tt.getTupleId() + "--"
                 + (t.getLemma().getLexItem().getLex())
                 + (t.getLemma().getLexItem().getInToken().getEnd()) + "--" + i;
-	tt.setPosition(t.getLemma().getLexItem().getInToken().getEnd());
         tt.setId(nf.getName(newTreeId));
 
 	tt.setPosition(t.getLemma().getLexItem().getInToken().getEnd());
