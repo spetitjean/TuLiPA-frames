@@ -103,6 +103,7 @@ public class TagTree implements Tree {
     private List<Node> lexNodes;
     // co-anchors (for lexical disambiguation)
     private List<Node> coAnchors;
+    // the position in the sentence where this tree should be anchored (to avoid duplicates)
     private int position;
     
     /**
@@ -123,6 +124,7 @@ public class TagTree implements Tree {
         id = new String(t.getId());
         originalId = t.getOriginalId();
         isHead = t.getIsHead();
+	position = t.getPosition();
         trace = new LinkedList<String>();
         for (int i = 0; i < t.getTrace().size(); i++) {
             trace.add(t.getTrace().get(i));
