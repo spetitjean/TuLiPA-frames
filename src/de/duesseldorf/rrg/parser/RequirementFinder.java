@@ -161,8 +161,17 @@ public class RequirementFinder {
                 .findUnderspecifiedItem(model);
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
+        // filter all that have matching labels
+        Set<SimpleRRGParseItem> sameMotherLabel = filterByMotherLabel(
+                sisAdjRoot, candidates);
+        Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
+        for (SimpleRRGParseItem item : sameMotherLabel) {
+            if (!item.getNode().getGornaddress().hasLeftSister()) {
+                result.add(item);
+            }
+        }
+        return result;
 
-        return filterByMotherLabel(sisAdjRoot, candidates);
     }
 
     /**
@@ -180,7 +189,7 @@ public class RequirementFinder {
                 false);
         Set<SimpleRRGParseItem> candidates = chart
                 .findUnderspecifiedItem(model);
-        // filter all that have matching labels
+
         return filterByMotherLabel(sisadjroot, candidates);
     }
 
@@ -196,20 +205,36 @@ public class RequirementFinder {
             SimpleRRGParseItem sisadjroot,
             Set<SimpleRRGParseItem> targetCandidates) {
         Set<SimpleRRGParseItem> filteredCandidates = new HashSet<SimpleRRGParseItem>();
-        String rootItemLabel = sisadjroot.getNode().getCategory();
         for (SimpleRRGParseItem candidate : targetCandidates) {
-            if (!candidate.getNode().getGornaddress().hasLeftSister()) {
-                RRGNode candidateMother = candidate.getTree().findNode(
-                        candidate.getNode().getGornaddress().mother());
-                if (candidateMother != null) {
-                    String candidateMotherLabel = candidateMother.getCategory();
-                    if (rootItemLabel.equals(candidateMotherLabel)) {
-                        filteredCandidates.add(candidate);
-                    }
-                }
+            if (sameMotherLabel(sisadjroot, candidate))
+                filteredCandidates.add(candidate);
+        }
+        // System.out.println("fbML called with parameters \n\troot: " +
+        // sisadjroot
+        // + "\n\tcandidates: " + targetCandidates + "\n\tresult: "
+        // + filteredCandidates);
+        return filteredCandidates;
+    }
+
+    /**
+     * 
+     * @param root
+     * @param target
+     * @return true iff the node in root has the same label as the mother of the
+     *         node in target
+     */
+    private boolean sameMotherLabel(SimpleRRGParseItem root,
+            SimpleRRGParseItem target) {
+        RRGNode targetMother = target.getTree()
+                .findNode(target.getNode().getGornaddress().mother());
+        if (targetMother != null) {
+            String candidateMotherLabel = targetMother.getCategory();
+            if (root.getNode().getCategory().equals(candidateMotherLabel)) {
+                return true;
             }
         }
-        return filteredCandidates;
+
+        return false;
     }
 
     /**
@@ -247,11 +272,28 @@ public class RequirementFinder {
         for (SimpleRRGParseItem item : rightAdj) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
-            if (isSisadjRoot(item)) {
+            if (isSisadjRoot(item) && sameMotherLabel(item, currentItem)) {
                 result.get("r").add(item);
-                System.out.println("item added: " + item);
+                // System.out.println("item added: " + item);
             }
         }
+        return result;
+    }
+
+    /**
+     * needed:<br>
+     * 1. ws flag = no<br>
+     * 2. TOP position<br>
+     * 3. not a root node
+     * 
+     * @param currentItem
+     * @return
+     */
+    public boolean isSisadjTarget(SimpleRRGParseItem currentItem) {
+        boolean result = !currentItem.getwsflag() // 1
+                && currentItem.getNodePos()
+                        .equals(SimpleRRGParseItem.NodePos.TOP) // 2
+                && currentItem.getNode().getGornaddress().mother() != null; // 3
         return result;
     }
 }

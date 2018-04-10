@@ -81,7 +81,8 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        // System.out.println("cons: " + consequent);
+        // System.out.println("cons: " + consequent + "\n\t " + operation
+        // + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     /**
@@ -92,18 +93,19 @@ public class RRGParser {
      */
     private void sisteradjoin(SimpleRRGParseItem currentItem) {
         boolean sisadjroot = requirementFinder.isSisadjRoot(currentItem);
+        boolean sisAdjTarget = requirementFinder.isSisadjTarget(currentItem);
         // System.out.print(root);
         // System.out.println(" " + currentItem.toString());
         if (sisadjroot) {
             // left-adjoin
-            Set<SimpleRRGParseItem> leftAdjoinAntecedents = requirementFinder
+            Set<SimpleRRGParseItem> leftAdjoinTargets = requirementFinder
                     .findLeftAdjoinTargets(currentItem, chart);
-            for (SimpleRRGParseItem simpleRRGParseItem : leftAdjoinAntecedents) {
+            for (SimpleRRGParseItem target : leftAdjoinTargets) {
                 // System.out.println("THERE: " + simpleRRGParseItem);
-                SimpleRRGParseItem consequent = deducer
-                        .applyLeftAdjoin(simpleRRGParseItem, currentItem);
+                SimpleRRGParseItem consequent = deducer.applyLeftAdjoin(target,
+                        currentItem);
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
-                        currentItem, simpleRRGParseItem);
+                        currentItem, target);
             }
 
             // right-adjoin
@@ -114,14 +116,12 @@ public class RRGParser {
                         currentItem);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
                         currentItem, target);
-                System.out.println("blabalablkdkdm");
+                System.out.println(
+                        "you triggered some special case for sister adjunction which I haven't tested yet. D");
             }
             // System.out.println("rightadjoin: " + currentItem);
             // System.out.println(rightAdjoinAntecedents);
-        } else {
-
-            // Note 09.04.2018: The findSisAdjRoots method is overgenerating
-
+        } else if (sisAdjTarget) {
             Map<String, Set<SimpleRRGParseItem>> sisadjroots = requirementFinder
                     .findSisAdjRoots(currentItem, chart);
             // System.out.println("sisadj with " + currentItem);
@@ -134,25 +134,14 @@ public class RRGParser {
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         auxRootItem, currentItem);
             }
-            if (!sisadjroots.get("r").isEmpty()) {
-                // System.out.println("target: " + currentItem);
-                // System.out.println("roots: " + sisadjroots.get("r"));
-                // System.out.println("cons: " + deducer.applyRightAdjoin(
-                // currentItem, sisadjroots.get("r").iterator().next()));
-                // System.out.println();
-            }
             for (SimpleRRGParseItem auxRootItem : sisadjroots.get("r")) {
                 SimpleRRGParseItem consequent = deducer
                         .applyRightAdjoin(currentItem, auxRootItem);
-                if (!auxRootItem.equals(consequent)) {
-                    addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
-                            auxRootItem, currentItem);
-                    // System.out.println(auxRootItem + " and " + currentItem
-                    // + "\n\t lead to " + consequent);
-                } else {
-                    System.out
-                            .println("yay" + auxRootItem + " vs " + consequent);
-                }
+                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
+                        auxRootItem, currentItem);
+                System.out.println(auxRootItem + " and " + currentItem
+                        + "\n\t lead to " + consequent);
+
                 // System.out.println("RA " + currentItem + auxRootItem);
                 // System.out.println(sisadjroots.get("r"));
             }
