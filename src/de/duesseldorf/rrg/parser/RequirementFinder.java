@@ -238,9 +238,10 @@ public class RequirementFinder {
                 result.get("l").add(item);
             }
         }
+        // right adjunction
         SimpleRRGParseItem rightAdjModel = new SimpleRRGParseItem(null, null,
-                SimpleRRGParseItem.NodePos.TOP, currentItem.startPos(), -2,
-                null, false);
+                SimpleRRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
+                false);
         Set<SimpleRRGParseItem> rightAdj = chart
                 .findUnderspecifiedItem(rightAdjModel);
         for (SimpleRRGParseItem item : rightAdj) {
@@ -248,7 +249,7 @@ public class RequirementFinder {
             // chart method can't be this detailled
             if (isSisadjRoot(item)) {
                 result.get("r").add(item);
-                // System.out.println("item added: " + item);
+                System.out.println("item added: " + item);
             }
         }
         return result;

@@ -30,7 +30,7 @@ public class ParseForestExtractor {
             System.out.println("Goal items: " + chart.retrieveGoalItems());
             System.out.println("With backpointers: ");
             for (ParseItem goal : goals) {
-                // printBackpointersRec(chart, (SimpleRRGParseItem) goal, "");
+                printBackpointersRec(chart, (SimpleRRGParseItem) goal, "");
                 System.out.println();
                 RRGParseTree resultingTree = new RRGParseTree(
                         ((SimpleRRGParseItem) goal).getTree().getRoot());
@@ -91,16 +91,16 @@ public class ParseForestExtractor {
      * @param goal
      * @param recDepth
      */
-    // private void printBackpointersRec(SimpleRRGParseChart chart,
-    // SimpleRRGParseItem goal, String recDepth) {
-    // System.out.println(recDepth + goal);
-    // Set<Set<ParseItem>> backpointers = chart.getBackPointers(goal);
-    // for (Set<ParseItem> set : backpointers) {
-    // for (ParseItem parseItem : set) {
-    // printBackpointersRec(chart, (SimpleRRGParseItem) parseItem,
-    // " " + recDepth);
-    // }
-    // }
-    // }
+    private void printBackpointersRec(SimpleRRGParseChart chart,
+            SimpleRRGParseItem goal, String recDepth) {
+        System.out.println(recDepth + goal);
+        Backpointer backpointers = chart.getBackPointers(goal);
+        // for (Set<ParseItem> set : backpointers) {
+        // for (ParseItem parseItem : set) {
+        // printBackpointersRec(chart, (SimpleRRGParseItem) parseItem,
+        // " " + recDepth);
+        // }
+        // }
+    }
 
 }

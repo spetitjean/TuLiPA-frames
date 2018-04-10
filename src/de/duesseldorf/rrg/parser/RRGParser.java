@@ -21,6 +21,10 @@ import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
  * @author david
  *
  */
+/**
+ * @author david
+ *
+ */
 public class RRGParser {
 
     private Situation situation;
@@ -80,11 +84,13 @@ public class RRGParser {
         // System.out.println("cons: " + consequent);
     }
 
+    /**
+     * the currentItem is either
+     * - a root item, for which we need to find a target tree
+     * - or a node such that we want to find a root item (this might be
+     * expensive. But we probably cant survive without it)
+     */
     private void sisteradjoin(SimpleRRGParseItem currentItem) {
-        // the currentItem is either
-        // - a root item, for which we need to find a target tree
-        // - or a node such that we want to find a root item (this might be
-        // expensive. But we probably cant survive without it)
         boolean sisadjroot = requirementFinder.isSisadjRoot(currentItem);
         // System.out.print(root);
         // System.out.println(" " + currentItem.toString());
@@ -128,15 +134,21 @@ public class RRGParser {
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         auxRootItem, currentItem);
             }
-
+            if (!sisadjroots.get("r").isEmpty()) {
+                // System.out.println("target: " + currentItem);
+                // System.out.println("roots: " + sisadjroots.get("r"));
+                // System.out.println("cons: " + deducer.applyRightAdjoin(
+                // currentItem, sisadjroots.get("r").iterator().next()));
+                // System.out.println();
+            }
             for (SimpleRRGParseItem auxRootItem : sisadjroots.get("r")) {
                 SimpleRRGParseItem consequent = deducer
                         .applyRightAdjoin(currentItem, auxRootItem);
                 if (!auxRootItem.equals(consequent)) {
                     addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
                             auxRootItem, currentItem);
-                    System.out.println(auxRootItem + " and " + currentItem
-                            + "\n\t lead to " + consequent);
+                    // System.out.println(auxRootItem + " and " + currentItem
+                    // + "\n\t lead to " + consequent);
                 } else {
                     System.out
                             .println("yay" + auxRootItem + " vs " + consequent);
