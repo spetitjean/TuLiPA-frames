@@ -106,7 +106,7 @@ public class TreeDeriver {
             // derivedTree.env);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     false);
-
+	    //System.out.println("Environment: "+derivedTree.env);
             // System.err.println("Sem after TOP-BOT: " +
             // derivedTree.semantics.toString());
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
@@ -117,7 +117,9 @@ public class TreeDeriver {
             // for variables and semantic labels renaming:
             // System.err.println("Sem labels:\n" + semlabels);
             derivedTree.env.setSemlabels(semlabels);
+     	    	    
             Environment.rename(derivedTree.env);
+	    //System.out.println("Ended rename ");
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     true);
@@ -132,6 +134,7 @@ public class TreeDeriver {
             //derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
             //        derivedTree.env, true);
 	    //Environment.rename(derivedTree.env);
+            //System.out.println("Environment: "+derivedTree.env);
 
 	    List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames,
 							   situation,derivedTree.env);
@@ -164,6 +167,9 @@ public class TreeDeriver {
                 return null;
             derivedTree.success = false;
         }
+	//System.out.println("\n\n\nFrames at the end: ");
+	// for(Fs a_frame:derivedTree.frames)
+	//     System.out.println(a_frame);
         return derivedTree;
     }
 

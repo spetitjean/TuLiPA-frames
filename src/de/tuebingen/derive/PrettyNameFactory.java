@@ -46,6 +46,7 @@ public class PrettyNameFactory {
 	
 	public String getName(String in){
 		String out = "";
+		//System.out.println("Getting name for in "+ in);
 		if (dictionary.containsKey(in)) {
 			out = dictionary.get(in);
 		} else {
@@ -57,6 +58,7 @@ public class PrettyNameFactory {
 	
 	public String getNextName(){
 		String res = "";
+		//System.out.println("Getting new name with index "+ index);
 		if (index > availableNames.length - 1) {
 			index = index % availableNames.length;
 			nameCtr+=1;

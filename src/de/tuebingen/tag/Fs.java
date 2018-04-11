@@ -698,11 +698,15 @@ public class Fs {
 
     public boolean collect_corefs(Situation situation, Environment env) {
 	// If the current coref is not a pretty name, we update it
-	if(env.deref(this.coref).getVarVal().charAt(0)!='@'){
+	Fs New = this;
+
+	if(env.deref(New.coref).getVarVal().charAt(0)!='@'){
 	    String oldVar=env.deref(this.coref).getVarVal();
 	    String newVar=env.getPnf().getNextName();
-	    env.deref(this.coref).setVarVal(newVar);
-	    env.bind(oldVar,new Value(5,newVar));
+	    //env.deref(New.coref).setVarVal(newVar);
+	    Value newVarVal=new Value(5, newVar);
+	    New.coref=newVarVal;
+	    env.bind(oldVar,newVarVal);
 	}
 	
 	// Go through all the frames
@@ -711,7 +715,6 @@ public class Fs {
 	String atCoref = "$"+env.deref(this.coref);
 	Value valCoref = new Value(5,atCoref);
 	
-	Fs New = this;
 	//System.out.println("coref: "+atCoref);
 	//System.out.println("$: "+env.deref(valCoref));
 	
