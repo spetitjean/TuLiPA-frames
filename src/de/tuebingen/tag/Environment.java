@@ -90,7 +90,10 @@ public class Environment {
                 // else{
                 // res=v;
                 // }
-                res = deref(v);
+		if(var!=v)
+		    res = deref(v);
+		else
+		    res=v;
             } else {
                 // var is bound to the constant v!
                 res = v;
