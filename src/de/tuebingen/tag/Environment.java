@@ -90,7 +90,7 @@ public class Environment {
                 // else{
                 // res=v;
                 // }
-                res = deref(v);
+		res = deref(v);
             } else {
                 // var is bound to the constant v!
                 res = v;
@@ -221,7 +221,7 @@ public class Environment {
      * renamed
      */
     public static void rename(Environment eEnv) {
-        eEnv.setPnf(new PrettyNameFactory());
+	eEnv.setPnf(new PrettyNameFactory());
         // 1. We rename (with pretty names) the semantic labels
         for (int i = 0; i < eEnv.getSemlabels().size(); i++) {
             String slabel = eEnv.getSemlabels().get(i);

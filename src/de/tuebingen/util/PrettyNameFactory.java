@@ -43,6 +43,7 @@ public class PrettyNameFactory {
 	}
 	
 	public String getName(String in){
+	    //System.out.println("Getting name (in util) for "+in);
 		String out = "";
 		if (dictionary.containsKey(in)) {
 			out = dictionary.get(in);
