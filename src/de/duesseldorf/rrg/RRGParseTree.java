@@ -9,11 +9,12 @@ public class RRGParseTree extends RRGTree {
         super(root);
     }
 
-    public RRGParseTree(RRGParseTree tree) {
+    public RRGParseTree(RRGTree tree) {
         super(tree.getRoot());
     }
 
     public void addSubTree(GornAddress address, RRGNode subTreeRoot) {
+        // not a good idea for things like left-sister-adjunction!
         findNode(address).addRightmostChild(subTreeRoot);
     }
 }

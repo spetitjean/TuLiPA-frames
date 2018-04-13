@@ -14,14 +14,6 @@ import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 
 /**
- * TODO
- * addToChartAndAgenda method also checks for goal items, or check for goal
- * items in the chart class
- * 
- * @author david
- *
- */
-/**
  * @author david
  *
  */
@@ -139,8 +131,8 @@ public class RRGParser {
                         .applyRightAdjoin(currentItem, auxRootItem);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
                         auxRootItem, currentItem);
-                System.out.println(auxRootItem + " and " + currentItem
-                        + "\n\t lead to " + consequent);
+                // System.out.println(auxRootItem + " and " + currentItem
+                // + "\n\t lead to " + consequent);
 
                 // System.out.println("RA " + currentItem + auxRootItem);
                 // System.out.println(sisadjroots.get("r"));

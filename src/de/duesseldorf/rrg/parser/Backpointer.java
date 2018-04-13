@@ -31,6 +31,16 @@ public class Backpointer {
         }
     }
 
+    /**
+     * 
+     * @param op
+     * @return the set with all sets of antecedents that created the item using
+     *         the {@code Operation} {@code op}.
+     */
+    public Set<Set<ParseItem>> getBackpointers(Operation op) {
+        return store.get(op);
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
