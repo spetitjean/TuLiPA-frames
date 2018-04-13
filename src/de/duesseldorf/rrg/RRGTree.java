@@ -17,9 +17,11 @@ public class RRGTree {
     private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
     private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
     private RRGNode ddaughter; // only one ddaughter is allowed!
+    private String id;
 
-    public RRGTree(Node root) {
+    public RRGTree(Node root, String id) {
         this.root = root;
+        this.id = id;
         retrieveSpecialNodes();
     }
 
@@ -137,6 +139,16 @@ public class RRGTree {
     }
 
     /**
+     * Always keep in mind that this Id is only unique in the XML input grammar.
+     * Later, it might reappear several times!
+     * 
+     * @return
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
      * 
      * @return <code>true</code> if the root node of this tree is a
      *         <code>STAR</code> node
@@ -152,7 +164,8 @@ public class RRGTree {
      */
     @Override
     public String toString() {
-        return RRGTreeTools.recursivelyPrintNode(root);
+        String beiwerk = "ID: " + id + "\n";
+        return beiwerk + RRGTreeTools.recursivelyPrintNode(root);
     }
 
 }

@@ -27,10 +27,11 @@ public class XMLRRGTreeRetriever {
         // System.out.println(RRGTreeTools.recursivelyPrintNode(treeRoot));
 
         // TODO: give the tree an id etc.
-
+        String id = root.getAttribute(XMLRRGTag.ID.StringVal());
+        // System.out.println("ID: " + id);
         // give the tree its gorn address:
         RRGTreeTools.initGornAddresses((RRGNode) treeRoot);
-        return new RRGTree(treeRoot);
+        return new RRGTree(treeRoot, id);
     }
 
     /**

@@ -33,12 +33,11 @@ import java.util.List;
 
 public interface Node {
 
-	public abstract String getName();
+    public abstract String getName();
 
-	public abstract void setName(String name);
+    public abstract void setName(String name);
 
-	public abstract List<Node> getChildren();
+    public abstract List<Node> getChildren();
 
-	public abstract void setChildren(List<Node> children);
-
+    public abstract void setChildren(List<Node> children);
 }

@@ -49,8 +49,8 @@ public class ParseForestExtractor {
             // recursive call with the item that created consequent
             SimpleRRGParseItem antecedent = (SimpleRRGParseItem) nlsset
                     .iterator().next().iterator().next();
-            System.out.println("NLS cons: " + consequent);
-            System.out.println("NLS antecedent: " + antecedent);
+            // System.out.println("NLS cons: " + consequent);
+            // System.out.println("NLS antecedent: " + antecedent);
             extract(antecedent, parseTrees);
         }
         // we assume that there is exactly one way to create an item using the
@@ -61,33 +61,48 @@ public class ParseForestExtractor {
             // recursive call with the item that created consequent
             SimpleRRGParseItem antecedent = (SimpleRRGParseItem) moveUpSet
                     .iterator().next().iterator().next();
-            System.out.println("MOVEUP cons: " + consequent);
-            System.out.println("MOVEUP antecedent: " + antecedent);
+            // System.out.println("MOVEUP cons: " + consequent);
+            // System.out.println("MOVEUP antecedent: " + antecedent);
             extract(antecedent, parseTrees);
         }
         // combine sisters
+        Set<Set<ParseItem>> combineSisSet = chart.getBackPointers(consequent)
+                .getBackpointers(Operation.COMBINESIS);
+        if (combineSisSet != null) {
+            if (combineSisSet.size() > 1) {
+                System.out
+                        .println("something wrong with combineSis extraction!");
+            }
+            for (ParseItem antecedent : combineSisSet.iterator().next()) {
 
+                // System.out.println("COMBINESIS cons: " + consequent);
+                // System.out.println("COMBINESIS antecedent: " + antecedent);
+                extract((SimpleRRGParseItem) antecedent, parseTrees);
+            }
+        }
+
+        // substitute
+        Set<Set<ParseItem>> substituteSet = chart.getBackPointers(consequent)
+                .getBackpointers(Operation.SUBSTITUTE);
+        if (substituteSet != null) {
+            if (substituteSet.size() > 1) {
+                System.out.println("sth wrong in substitution extraction!");
+            } else {
+                SimpleRRGParseItem substTreeRootItem = (SimpleRRGParseItem) substituteSet
+                        .iterator().next().iterator().next();
+                for (RRGParseTree rrgParseTree : parseTrees) {
+                    if (rrgParseTree.idequals(consequent.getTree())) {
+                        System.out.println("SUBST! " + substTreeRootItem);
+                        rrgParseTree
+                                .findNode(consequent.getNode().getGornaddress())
+                                .setChildren(substTreeRootItem.getNode()
+                                        .getChildren());
+                        extract(substTreeRootItem, parseTrees);
+                    }
+                }
+            }
+        }
         return parseTrees;
-    }
-
-    /**
-     * Print all backpointers of an item in a chart recursively. Initialize
-     * recDepth with "".
-     * 
-     * @param chart
-     * @param goal
-     * @param recDepth
-     */
-    private void printBackpointersRec(SimpleRRGParseChart chart,
-            SimpleRRGParseItem goal, String recDepth) {
-        System.out.println(recDepth + goal);
-        Backpointer backpointers = chart.getBackPointers(goal);
-        // for (Set<ParseItem> set : backpointers) {
-        // for (ParseItem parseItem : set) {
-        // printBackpointersRec(chart, (SimpleRRGParseItem) parseItem,
-        // " " + recDepth);
-        // }
-        // }
     }
 
 }
