@@ -30,6 +30,23 @@ public class RRGNode implements Node {
         this.setCategory(category);
     }
 
+    /**
+     * unifiesthis node and the other node by replacing (!) this nodes children
+     * with {@code other}s chilren, if the categories of both nodes
+     * match.
+     * 
+     * @param other
+     * @return {@code true} iff the unification succeeded
+     */
+    public boolean nodeUnification(RRGNode other) {
+        boolean result = false;
+        if (other.getCategory().equals(this.getCategory())) {
+            this.setChildren(other.getChildren());
+            result = true;
+        }
+        return result;
+    }
+
     public List<Node> getChildren() {
         return children;
     }

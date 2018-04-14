@@ -95,12 +95,24 @@ public class ParseForestExtractor {
                         System.out.println("SUBST! " + substTreeRootItem);
                         rrgParseTree
                                 .findNode(consequent.getNode().getGornaddress())
-                                .setChildren(substTreeRootItem.getNode()
-                                        .getChildren());
+                                .nodeUnification(substTreeRootItem.getNode());
                         extract(substTreeRootItem, parseTrees);
                     }
                 }
             }
+        }
+
+        // left-sister adjunction
+        Set<Set<ParseItem>> leftsisadjSet = chart.getBackPointers(consequent)
+                .getBackpointers(Operation.LEFTADJOIN);
+        if (leftsisadjSet != null) {
+            if (leftsisadjSet.size() > 1) {
+                System.out.println(
+                        "sth wrong in left sister adjunction extraction!");
+            } else {
+                leftsisadjSet.iterator().
+            }
+
         }
         return parseTrees;
     }
