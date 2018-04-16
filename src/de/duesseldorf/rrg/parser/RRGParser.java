@@ -66,6 +66,7 @@ public class RRGParser {
      * 
      * @param consequent
      * @param antecedents
+     *            always give the antecedent items in left-to-right order
      */
     private void addToChartAndAgenda(SimpleRRGParseItem consequent,
             Operation operation, SimpleRRGParseItem... antecedents) {
@@ -106,8 +107,8 @@ public class RRGParser {
             for (SimpleRRGParseItem target : rightAdjoinAntecedents) {
                 SimpleRRGParseItem consequent = deducer.applyRightAdjoin(target,
                         currentItem);
-                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
-                        currentItem, target);
+                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
+                        currentItem);
                 System.out.println(
                         "you triggered some special case for sister adjunction which I haven't tested yet. D");
             }
@@ -120,17 +121,19 @@ public class RRGParser {
             // System.out.println("sisl" + sisadjroots.get("l"));
             // System.out.println("sisr" + sisadjroots.get("r"));
 
+            // left-adjoin
             for (SimpleRRGParseItem auxRootItem : sisadjroots.get("l")) {
                 SimpleRRGParseItem consequent = deducer
                         .applyLeftAdjoin(currentItem, auxRootItem);
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         auxRootItem, currentItem);
             }
+            // right-adjoin
             for (SimpleRRGParseItem auxRootItem : sisadjroots.get("r")) {
                 SimpleRRGParseItem consequent = deducer
                         .applyRightAdjoin(currentItem, auxRootItem);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
-                        auxRootItem, currentItem);
+                        currentItem, auxRootItem);
                 // System.out.println(auxRootItem + " and " + currentItem
                 // + "\n\t lead to " + consequent);
 
@@ -171,21 +174,19 @@ public class RRGParser {
         }
     }
 
-    private void combinesisters(SimpleRRGParseItem currentItem) {
+    private void combinesisters(SimpleRRGParseItem leftSisterAntecedentItem) {
 
-        Set<SimpleRRGParseItem> combinesisCandidates = requirementFinder
-                .combinesisReq(currentItem, chart);
-        if (!combinesisCandidates.isEmpty()) {
-            // System.out.println("currentItem: " + currentItem);
-            for (SimpleRRGParseItem simpleRRGParseItem : combinesisCandidates) {
-                // System.out.println(
-                // "mate with: " + simpleRRGParseItem + "results in");
-                SimpleRRGParseItem rightSisTopItem = deducer
-                        .applyCombineSisters(currentItem, simpleRRGParseItem);
-                // System.out.println(rightSisTopItem);
-                addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                        currentItem, simpleRRGParseItem);
-            }
+        Set<SimpleRRGParseItem> rightSisterCandidates = requirementFinder
+                .combinesisReq(leftSisterAntecedentItem, chart);
+        // System.out.println("currentItem: " + leftSisterAntecedentItem);
+        for (SimpleRRGParseItem rightSisterAntecedentItem : rightSisterCandidates) {
+            // System.out.println(
+            // "mate with: " + rightSisterAntecedentItem + "results in");
+            SimpleRRGParseItem rightSisTopItem = deducer.applyCombineSisters(
+                    leftSisterAntecedentItem, rightSisterAntecedentItem);
+            // System.out.println(rightSisTopItem);
+            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
+                    leftSisterAntecedentItem, rightSisterAntecedentItem);
         }
     }
 

@@ -60,6 +60,17 @@ public class RRGNode implements Node {
     }
 
     /**
+     * Add the node {@code node} as the {@code position}'s child of
+     * {@code this}.
+     * 
+     * @param node
+     * @param position
+     */
+    public void addXchild(Node node, int position) {
+        this.children.add(position, node);
+    }
+
+    /**
      * 
      * @return the syntactic category of a node or its terminal label
      */

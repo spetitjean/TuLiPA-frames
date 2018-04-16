@@ -29,6 +29,8 @@ package de.duesseldorf.rrg.parser;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -182,11 +184,11 @@ public class SimpleRRGParseChart implements ParseChart {
      */
     public boolean addItem(ParseItem consequent, Operation operation,
             ParseItem... antecedents) {
-        Set<ParseItem> antes;
+        List<ParseItem> antes;
         if (antecedents.length > 0) {
-            antes = new HashSet<ParseItem>(Arrays.asList(antecedents));
+            antes = new LinkedList<ParseItem>(Arrays.asList(antecedents));
         } else {
-            antes = new HashSet<ParseItem>();
+            antes = new LinkedList<ParseItem>();
         }
         int startpos = consequent.startPos();
 

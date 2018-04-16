@@ -13,11 +13,11 @@ import de.tuebingen.tree.Node;
 public class RRGTree {
 
     // representation of the syntactic tree
-    private Node root;
+    protected Node root;
     private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
     private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
     private RRGNode ddaughter; // only one ddaughter is allowed!
-    private String id;
+    protected String id;
 
     public RRGTree(Node root, String id) {
         this.root = root;
