@@ -440,7 +440,14 @@ public class ViewTreeBuilder {
             String prefix) {
         ArrayList<Node> atts = new ArrayList<Node>();
         for (String key : features.getKeys()) {
-            String value = features.getFeat(key).toString();
+	    String value;
+	    // we want to remember when we see variables (not only the ones starting with X...)
+	    if(features.getFeat(key).getType()==5){
+		value = "_V_"+features.getFeat(key).toString();
+	    }
+	    else{
+		value = features.getFeat(key).toString();
+	    }
             Attr att = D.createAttribute(prefix + key);
             att.setNodeValue(value);
             atts.add(att);

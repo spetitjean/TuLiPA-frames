@@ -135,13 +135,13 @@ public class DOMderivationBuilder {
         
         parsecounter++;
         Element derivationTree = derivDoc.createElement("tree"); //you need
-        // seperate entries in the doocument for every tree
+        // separate entries in the document for every tree
         Element derivedTree = derivDoc.createElement("tree");
         Element semElem = derivDoc.createElement("semantics");
         Element specSemElem = derivDoc.createElement("specified_semantics");
         Element family = derivDoc.createElement("family");
         Element f = derivDoc.createElement("frame");
-
+	
         buildDerivationTree(derivationTree, derivation);
        // parseDerivationEntry.appendChild(derivationTree);
 
@@ -313,6 +313,12 @@ public class DOMderivationBuilder {
             e = derivDoc.createElement("sym");
             e.setAttribute("varname", val);
             mother.appendChild(e);
+        }
+	// should replace the previous case
+	  else if (val.startsWith("_V_")) {  
+            e = derivDoc.createElement("sym");
+            e.setAttribute("varname", val.substring(3,val.length()));
+            mother.appendChild(e);
         } else if (val.startsWith("?")) {
             e = derivDoc.createElement("sym");
             e.setAttribute("varname", val);
@@ -354,7 +360,7 @@ public class DOMderivationBuilder {
     }
 
     public static void buildFrame(Element mother, Fs frame){
-	System.out.println("Build frame: "+frame);
+	//System.out.println("Build frame: "+frame);
 	Element fs = derivDoc.createElement("fs");
 	fs.setAttribute("coref",frame.getCoref().toString());
 	
@@ -379,29 +385,26 @@ public class DOMderivationBuilder {
 	    f.setAttribute("name", k);
 	    
 	    // fval can be a variable, a constant, or a fs (we ignore int and adisj for now)
-	    Element e;
-	    System.out.println("Type: "+fval.getType());
-			
+	    Element e;			
 	    switch (fval.getType()){
 	    //case VAL
 	    case 1:
-		System.out.println("case VAL");
+		//System.out.println("case VAL");
 	    	e = derivDoc.createElement("sym");
 	    	e.setAttribute("value", fval.getSVal());
 	    	f.appendChild(e);
 		break;
 	    // case VAR
 	    case 5:
-		System.out.println("case VAR");
+		//System.out.println("case VAR");
 	    	e = derivDoc.createElement("sym");
 	    	e.setAttribute("varname", fval.getVarVal());
 	    	f.appendChild(e);
 		break;
 	    // case AVM
 	    case 3:
-		System.out.println("case AVM");
+		//System.out.println("case AVM");
 	    	buildFrame(f,fval.getAvmVal());
-		System.out.println("case Done");
 		break;
 	    }
 	    fs.appendChild(f);
