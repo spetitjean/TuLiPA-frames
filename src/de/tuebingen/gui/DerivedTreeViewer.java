@@ -146,7 +146,7 @@ public class DerivedTreeViewer {
                     }
                     ParseTreeCollection trees = new ParseTreeCollection(
                             viewTree, derivedTree, semanticsString,
-                            dTree.semantics, noUtool);
+                            dTree.semantics, dTree.frames, noUtool);
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : eTrees) {

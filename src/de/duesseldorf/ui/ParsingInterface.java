@@ -641,7 +641,6 @@ public class ParsingInterface {
                 } else if (op.check("xg")) {
                     DOMderivationBuilder webguiDerivationBuilder = new DOMderivationBuilder(
                             sentence);
-                    System.out.println("bahhhh\n\n");
                     Document dwebguiparses = webguiDerivationBuilder
                             .buildDOMderivationGrammar(viewTreesFromDOM);
                     XMLUtilities.writeXML(dwebguiparses, outputfile,

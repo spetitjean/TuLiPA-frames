@@ -237,7 +237,7 @@ public class CommandLineProcesses {
         res += "-k N    (limits the size of the list of pending arguments to N)\n\t";
         res += "-v      (verbose mode, for debugging purposes, information dumped in stderr)\n\t";
         res += "-w      (when used with the graphical interface, displays \n\t";
-        res += "         the derivation steps and uncomplete derivations";
+        res += "         the derivation steps and incomplete derivations \n\t";
         res += "-x      (output the parses in XML TuLiPA 2 format either in stdout or \n\t";
         res += "         in a file if the -o option has been used)\n\t";
         res += "-xg     (output the parses in XML format of XMG grammars either in stdout or \n\t";

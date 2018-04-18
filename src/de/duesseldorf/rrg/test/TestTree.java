@@ -36,7 +36,7 @@ public class TestTree {
         RRGNode root = new RRGNode(RRGNodeType.STD, "namer", "rcat");
         RRGNode child = new RRGNode(RRGNodeType.STD, "namec", "ccat");
         RRGNode grandchild = new RRGNode(RRGNodeType.SUBST, "namegc", "gccat");
-        RRGTree tree = new RRGTree(root);
+        RRGTree tree = new RRGTree(root, "great_treeeeeeee");
         System.out.println(tree.toString());
 
         ((RRGNode) root).addRightmostChild(child);
