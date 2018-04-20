@@ -47,6 +47,15 @@ declare ?X0
   }
 }
 
+class FrameReally
+declare ?X0
+{
+  <frame>{
+    ?X0[psych-state,
+              intensity:strong]};
+  <iface>{[e=?X0]}
+  }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % EVALUATION:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,3 +63,4 @@ declare ?X0
 value FramePizza
 value FrameJohn
 value FrameEat
+value FrameReally

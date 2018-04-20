@@ -119,12 +119,14 @@ public class DerivedTree {
             boolean finalUpdate) throws UnifyException {
         // update vars by environment
         Fs topFs = topFeatures.get(n);
+	//System.out.println("Top features: "+topFs);
         if (topFs != null) {
             topFs = Fs.updateFS(topFs, env, finalUpdate);
             if (!merge)
                 topFeatures.put(n, topFs);
         }
         Fs botFs = bottomFeatures.get(n);
+	//System.out.println("Bot features: "+botFs);
         if (botFs != null) {
             botFs = Fs.updateFS(botFs, env, finalUpdate);
             if (!merge)
@@ -158,6 +160,7 @@ public class DerivedTree {
             updateTopDownFeatures(n.getChildNodes().item(i), merge,
                     finalUpdate);
         }
+	//System.out.println("\nFinal features: "+ features);
     }
 
     public void updateFeatures(Node n, Environment eEnv, boolean finalUpdate)

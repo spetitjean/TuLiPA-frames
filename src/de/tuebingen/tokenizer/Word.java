@@ -75,7 +75,7 @@ public class Word {
 	}
 
 	public int getEnd() {
-		return end;
+	    return end;
 	}
 
 	public void setEnd(int end) {

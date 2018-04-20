@@ -48,6 +48,15 @@ class MorphJohn
    }
 }
 
+class MorphReally
+{
+  <morpho> {
+    morph <- "really";
+    lemma <- "really";
+    cat   <- adv
+   }
+}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,3 +66,4 @@ class MorphJohn
 value MorphEats
 value MorphPizza
 value MorphJohn
+value MorphReally

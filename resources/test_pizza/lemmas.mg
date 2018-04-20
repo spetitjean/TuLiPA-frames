@@ -54,9 +54,20 @@ class LemmaPizza
    }
 }
 
+class LemmaReally
+{
+  <lemma> {
+    entry <- "really";
+    sem   <- FrameReally;
+    cat   <- adv;
+    fam   <- adverb
+   }
+}
+
 
 
 value LemmaEat
 value LemmaJohn
 value LemmaPizza
+value LemmaReally
 

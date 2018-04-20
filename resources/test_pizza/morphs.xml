@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <mcgrammar>
 <morphs>
+  <morph lex="really">
+    <lemmaref cat="adv" name="really">
+      <fs>
+      </fs>
+    </lemmaref>
+  </morph>
   <morph lex="John">
     <lemmaref cat="n" name="john">
       <fs>
