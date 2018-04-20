@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <grammar>
-  <entry name="FrameEat_0">
+  <entry name="FrameReally_0">
+    <family>FrameReally</family>
+    <trace>
+      <class>FrameReally</class>
+    </trace>
+    <frame >
+      <fs coref="@Frame1">
+        <ctype>
+        </ctype>
+        <f name="intensity">
+          <sym value="strong"/>
+        </f>
+      </fs>
+    </frame>
+    <tree />
+    <interface>
+      <fs>
+        <f name="e">
+          <fs coref="@Frame1"/>
+        </f>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="FrameEat_1">
     <family>FrameEat</family>
     <trace>
       <class>FrameEat</class>
@@ -31,7 +54,7 @@
       </fs>
     </interface>
   </entry>
-  <entry name="FrameJohn_1">
+  <entry name="FrameJohn_2">
     <family>FrameJohn</family>
     <trace>
       <class>FrameJohn</class>
@@ -56,7 +79,7 @@
       </fs>
     </interface>
   </entry>
-  <entry name="FramePizza_2">
+  <entry name="FramePizza_3">
     <family>FramePizza</family>
     <trace>
       <class>FramePizza</class>

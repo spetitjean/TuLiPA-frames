@@ -6,23 +6,16 @@
       <class>adverb</class>
     </trace>
     <frame >
-      <fs coref="@Frame1">
-        <ctype>
-        </ctype>
-        <f name="intensity">
-          <sym value="strong"/>
-        </f>
-      </fs>
     </frame>
     <tree id="adverb_0">
       <node type="std" name="XMG_VAR_1">
         <narg>
-          <fs coref="@AVM2">
+          <fs coref="@AVM1">
             <f name="cat">
               <sym value="vp"/>
             </f>
             <f name="e">
-              <fs coref="@Frame1"/>
+              <sym varname="@V2"/>
             </f>
           </fs>
         </narg>
@@ -57,6 +50,9 @@
     </tree>
     <interface>
       <fs>
+        <f name="e">
+          <sym varname="@V2"/>
+        </f>
       </fs>
     </interface>
   </entry>

@@ -56,8 +56,7 @@ public class TreeDeriver {
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
 					 List<String> semlabels, boolean needsAnchoring, Situation situation) {
-
-        // System.out.println(derivationTree);
+	//System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
         try {
@@ -101,7 +100,9 @@ public class TreeDeriver {
             // System.err.println("Pre-final environment: " + derivedTree.env);
             // System.err.println("Pre-final sem: " +
             // derivedTree.semantics.toString());
+	    //System.out.println("\n\nUpdating top-down features");
             derivedTree.updateTopDownFeatures(derivedTree.root, true, false);
+	    //System.out.println("*****Updated top-down features******");
             // System.err.println("Environment after TOP-BOT: " +
             // derivedTree.env);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,

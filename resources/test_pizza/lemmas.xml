@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <mcgrammar>
 <lemmas>
+  <lemma name="really" cat="adv">
+    <anchor tree_id="family[@name=adverb]">
+      <filter>
+        <fs>
+        </fs>
+      </filter>
+      <sem>
+        <semclass name="FrameReally"/>
+      </sem>
+    </anchor>
+  </lemma>
   <lemma name="pizza" cat="n">
     <anchor tree_id="family[@name=commonnoun]">
       <filter>
