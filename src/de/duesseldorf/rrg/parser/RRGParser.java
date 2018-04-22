@@ -1,6 +1,7 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class RRGParser {
         System.out.println("Done scanning. ");
         // System.out.println(chart.toString());
         while (!agenda.isEmpty()) {
-            // TODO: optimize this based on the ws flag?
+            // TODO: optimize this based on the node position?
             SimpleRRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("cI: " + currentItem);
             noleftsister(currentItem);
@@ -49,6 +50,8 @@ public class RRGParser {
             combinesisters(currentItem);
             substitute(currentItem);
             sisteradjoin(currentItem);
+            predictwrapping(currentItem);
+            completewrapping(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
         System.out.println("Done parsing. \n" + chart.toString());
@@ -60,6 +63,21 @@ public class RRGParser {
             System.out.println(rrgParseTree);
         }
         return result;
+    }
+
+    private void completewrapping(SimpleRRGParseItem currentItem) {
+        // System.out.println("complW with " + currentItem);
+        boolean rootItem = requirementFinder
+                .isCompleteWrappingRootItem(currentItem);
+        boolean fillerItem = requirementFinder
+                .isCompleteWrappingFillerItem(currentItem);
+        if (rootItem) {
+            System.out.println("TODO in Parser CW");
+        }
+        if (fillerItem) {
+            System.out.println("TODO in Parser CW 2");
+        }
+
     }
 
     /**
@@ -74,8 +92,35 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        // System.out.println("cons: " + consequent + "\n\t " + operation
-        // + "\n\t antecedents: " + Arrays.asList(antecedents));
+        System.out.println("next to agenda: " + consequent + "\n\t " + operation
+                + "\n\t antecedents: " + Arrays.asList(antecedents));
+    }
+
+    private void predictwrapping(SimpleRRGParseItem currentItem) {
+        if (requirementFinder.predWrappingReqs(currentItem)) {
+            // look at the whole grammar and find fitting substitution nodes
+            String cat = currentItem.getNode().getCategory();
+            // System.out.println("got to predict: " + currentItem);
+            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+                Set<RRGNode> substNodes = tree.getSubstNodes().get(cat);
+                if (substNodes != null) {
+                    HashSet<Gap> gaps = new HashSet<Gap>();
+                    gaps.add(new Gap(currentItem.startPos(),
+                            currentItem.getEnd(), cat));
+                    for (RRGNode substNode : substNodes) {
+                        // System.out.println("got to for: " + substNode);
+                        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
+                                currentItem, tree, substNode,
+                                SimpleRRGParseItem.NodePos.BOT, -1, -1, gaps,
+                                false);
+
+                        System.out.println("cons: " + consequent);
+                        addToChartAndAgenda(consequent,
+                                Operation.PREDICTWRAPPING, currentItem);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -225,7 +270,7 @@ public class RRGParser {
                         // agenda
                         SimpleRRGParseItem scannedItem = new SimpleRRGParseItem(
                                 tree, lexLeaf, NodePos.BOT, start, start + 1,
-                                new LinkedList<Gap>(), false);
+                                new HashSet<Gap>(), false);
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
                 }

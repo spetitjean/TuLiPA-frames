@@ -1,7 +1,7 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
@@ -30,11 +30,11 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
     private NodePos nodepos;
     private int start;
     private int end;
-    private List<Gap> gaps;
+    private Set<Gap> gaps;
     private boolean ws;
 
     public SimpleRRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos,
-            int start, int end, List<Gap> gaps, boolean ws) {
+            int start, int end, Set<Gap> gaps, boolean ws) {
         this.tree = tree;
         this.node = node;
         this.nodepos = nodepos;
@@ -64,7 +64,7 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
      *            {@code null}
      */
     public SimpleRRGParseItem(SimpleRRGParseItem item, RRGTree tree,
-            RRGNode node, NodePos nodepos, int start, int end, List<Gap> gaps,
+            RRGNode node, NodePos nodepos, int start, int end, Set<Gap> gaps,
             Boolean ws) {
 
         // the optional ones
@@ -101,7 +101,7 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
         return ws;
     }
 
-    public List<Gap> getGaps() {
+    public Set<Gap> getGaps() {
         return gaps;
     }
 
@@ -128,9 +128,9 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
             gapstr += gap.toString();
         }
         gapstr += "]";
-        String itemstr = "[" + this.tree.getRoot() + ", " + this.node + ", "
-                + this.nodepos + ", " + this.start + ", " + this.end + ", "
-                + gapstr + ", " + ws + "]";
+        String itemstr = "[" + this.tree.getRoot() + " " + this.tree.getId()
+                + ", " + this.node + ", " + this.nodepos + ", " + this.start
+                + ", " + this.end + ", " + gapstr + ", " + ws + "]";
 
         return itemstr;
     }

@@ -7,5 +7,6 @@ public enum Operation {
     MOVEUP, // move up
     COMBINESIS, // combine sisters
     NLS, // no left sister
-    SCAN; // scan
+    SCAN, // scan
+    PREDICTWRAPPING, COMPLETEWRAPPING;
 }

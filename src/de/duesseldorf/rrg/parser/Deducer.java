@@ -1,8 +1,6 @@
 package de.duesseldorf.rrg.parser;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
@@ -21,7 +19,7 @@ public class Deducer {
      */
     public SimpleRRGParseItem applyCombineSisters(SimpleRRGParseItem leftItem,
             SimpleRRGParseItem rightItem) {
-        List<Gap> gaps = new LinkedList<Gap>(leftItem.getGaps());
+        Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
         SimpleRRGParseItem result = new SimpleRRGParseItem(rightItem, null,
                 null, SimpleRRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
@@ -80,7 +78,7 @@ public class Deducer {
     public SimpleRRGParseItem applyLeftAdjoin(SimpleRRGParseItem targetSister,
             SimpleRRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
-        List<Gap> gaps = new LinkedList<Gap>(auxTreeRoot.getGaps());
+        Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
 
         SimpleRRGParseItem result = new SimpleRRGParseItem(targetSister, null,
@@ -100,7 +98,7 @@ public class Deducer {
     public SimpleRRGParseItem applyRightAdjoin(SimpleRRGParseItem target,
             SimpleRRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
-        List<Gap> gaps = new LinkedList<Gap>(target.getGaps());
+        Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
 
         SimpleRRGParseItem result = new SimpleRRGParseItem(target, null, null,

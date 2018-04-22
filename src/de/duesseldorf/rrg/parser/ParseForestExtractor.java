@@ -56,6 +56,7 @@ public class ParseForestExtractor {
                     "sth to do in left sister adjunction extraction for moidifying multiple parse results!");
         }
         for (List<ParseItem> antecedentList : leftsisadjSet) {
+            // items in the list of antecedents are ordered from left to right
             SimpleRRGParseItem auxRootItem = (SimpleRRGParseItem) antecedentList
                     .get(0);
             SimpleRRGParseItem targetSisterItem = (SimpleRRGParseItem) antecedentList

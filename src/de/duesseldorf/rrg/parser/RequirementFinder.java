@@ -296,4 +296,47 @@ public class RequirementFinder {
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
         return result;
     }
+
+    /**
+     * needed:<br>
+     * 1. Bot position
+     * 2. ws-flag true
+     *
+     * @param currentItem
+     */
+    public boolean predWrappingReqs(SimpleRRGParseItem currentItem) {
+        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
+                && (currentItem.getwsflag() == true); // 2
+    }
+
+    /**
+     * needed:<br>
+     * 1. in TOP position<br>
+     * 2. of a root node <br>
+     * 3. at least one gap <br>
+     * 
+     * @param currentItem
+     * @return
+     */
+    public boolean isCompleteWrappingRootItem(SimpleRRGParseItem currentItem) {
+        return (currentItem.getNode().equals(SimpleRRGParseItem.NodePos.TOP)) // 1
+                && currentItem.getNode().getGornaddress().mother() == null // 2
+                && currentItem.getGaps().size() > 0; // 3
+    }
+
+    /**
+     * needed: <br>
+     * 1. BOT position<br>
+     * 2. ws=yes<br>
+     * 3. not in a root node<br>
+     * 
+     * @param currentItem
+     * @return
+     */
+    public boolean isCompleteWrappingFillerItem(
+            SimpleRRGParseItem currentItem) {
+        return (currentItem.getNode().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
+                && currentItem.getwsflag() == true // 2
+                && currentItem.getNode().getGornaddress().mother() != null; // 3
+    }
 }
