@@ -62,10 +62,17 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
      *            {@code null}
      * @param ws
      *            {@code null}
+     * @param takeGapsFromItem
+     *            if this is {@code true} and {@code gaps} is null, the items of
+     *            the model will be the ones from {@code item}.
+     *            If this is {@code false} and {@code gaps} is null, the gaps
+     *            will be null as well.
+     *            If this is {@code false} and {@code gaps} is not null, the
+     *            gaps will be the one in the {@code gaps parameter}
      */
     public SimpleRRGParseItem(SimpleRRGParseItem item, RRGTree tree,
             RRGNode node, NodePos nodepos, int start, int end, Set<Gap> gaps,
-            Boolean ws) {
+            Boolean ws, boolean takeGapsFromItem) {
 
         // the optional ones
         this.tree = !(tree == null) ? tree : item.getTree();
@@ -73,8 +80,12 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
         this.nodepos = !(nodepos == null) ? nodepos : item.getNodePos();
         this.start = !(start == -1) ? start : item.startPos();
         this.end = !(end == -1) ? end : item.getEnd();
-        this.gaps = !(gaps == null) ? gaps : item.getGaps();
         this.ws = !(ws == null) ? ws : item.getwsflag();
+        if (takeGapsFromItem) {
+            this.gaps = !(gaps == null) ? gaps : item.getGaps();
+        } else {
+            this.gaps = !(gaps == null) ? gaps : null;
+        }
     }
 
     public RRGTree getTree() {

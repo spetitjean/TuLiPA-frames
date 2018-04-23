@@ -25,11 +25,11 @@ public class ParseForestExtractor {
             System.out.println("no goal items!");
         } else {
             System.out.println("Goal items: " + chart.retrieveGoalItems());
-            for (ParseItem goal : goals) {
-                parseTrees.add(new RRGParseTree(
-                        ((SimpleRRGParseItem) goal).getTree()));
-                extract((SimpleRRGParseItem) goal);
-            }
+            // for (ParseItem goal : goals) {
+            // parseTrees.add(new RRGParseTree(
+            // ((SimpleRRGParseItem) goal).getTree()));
+            // extract((SimpleRRGParseItem) goal);
+            // }
         }
 
         return parseTrees;

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
 
 public class RequirementFinder {
@@ -54,56 +55,63 @@ public class RequirementFinder {
      * - ws no both times
      * - end of left item is start of right item
      * 
-     * @param currentItem
+     * @param leftSister
      * @param chart
      *            look up here
      * @return
      */
-    public Set<SimpleRRGParseItem> combinesisReq(SimpleRRGParseItem currentItem,
-            SimpleRRGParseChart chart) {
+    public Set<SimpleRRGParseItem> findCombineSisRightSisters(
+            SimpleRRGParseItem leftSister, SimpleRRGParseChart chart) {
         Set<SimpleRRGParseItem> candidates = new HashSet<SimpleRRGParseItem>();
-
-        // case 1: currentItem is the left node of the combination
         // find the right sister, which already ensures we are in the same tree
-        RRGNode rightSis = currentItem.getTree()
-                .findNode(currentItem.getNode().getGornaddress().rightSister());
+        RRGNode rightSis = leftSister.getTree()
+                .findNode(leftSister.getNode().getGornaddress().rightSister());
 
         boolean leftReq = rightSis != null // there is a right sister
-                && !currentItem.getwsflag() // no WS
-                && currentItem.getNodePos() // the left item is in TOP position
+                && !leftSister.getwsflag() // no WS
+                && leftSister.getNodePos() // the left item is in TOP position
                         .equals(SimpleRRGParseItem.NodePos.TOP);
+
         if (leftReq) {
             // System.out.println("starter: " + currentItem);
-            SimpleRRGParseItem model = new SimpleRRGParseItem(currentItem,
-                    currentItem.getTree(), rightSis,
-                    SimpleRRGParseItem.NodePos.BOT, currentItem.getEnd(), -2,
-                    null, false);
+            SimpleRRGParseItem model = new SimpleRRGParseItem(leftSister,
+                    leftSister.getTree(), rightSis,
+                    SimpleRRGParseItem.NodePos.BOT, leftSister.getEnd(), -2,
+                    null, false, false);
             // System.out.println("model: " + model);
             candidates = chart.findUnderspecifiedItem(model);
-        } else {
-            // case 2: current item is the right node of the combination
-            RRGNode leftSis = currentItem.getTree().findNode(
-                    currentItem.getNode().getGornaddress().leftSister());
-
-            boolean rightReq = leftSis != null // there is a left sister
-                    && currentItem.getNode().getGornaddress().hasLeftSister()
-                    && !currentItem.getwsflag() // no WS
-                    && currentItem.getNodePos() // the right item is in BOT
-                                                // position
-                            .equals(SimpleRRGParseItem.NodePos.BOT);
-            if (rightReq) {
-                SimpleRRGParseItem model = new SimpleRRGParseItem(currentItem,
-                        null, leftSis, SimpleRRGParseItem.NodePos.TOP, -2,
-                        currentItem.startPos(), null, false);
-                // System.out.println("right req met for: " + currentItem);
-                // System.out.println("model: " + model);
-                candidates = chart.findUnderspecifiedItem(model);
-            }
         }
+
         // System.out.println("currI" + currentItem + "\nmate with: ");
         // for (SimpleRRGParseItem simpleRRGParseItem : candidates) {
         // System.out.println(simpleRRGParseItem);
         // }
+        return candidates;
+
+    }
+
+    public Set<SimpleRRGParseItem> findCombineSisLeftSisters(
+            SimpleRRGParseItem rightSister, SimpleRRGParseChart chart) {
+        Set<SimpleRRGParseItem> candidates = new HashSet<SimpleRRGParseItem>();
+        // case 2: current item is the right node of the combination
+        RRGNode leftSis = rightSister.getTree()
+                .findNode(rightSister.getNode().getGornaddress().leftSister());
+
+        boolean rightReq = leftSis != null // there is a left sister
+                && rightSister.getNode().getGornaddress().hasLeftSister()
+                && !rightSister.getwsflag() // no WS
+                && rightSister.getNodePos() // the right item is in BOT
+                                            // position
+                        .equals(SimpleRRGParseItem.NodePos.BOT);
+        if (rightReq) {
+            // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
+            SimpleRRGParseItem model = new SimpleRRGParseItem(rightSister, null,
+                    leftSis, SimpleRRGParseItem.NodePos.TOP, -2,
+                    rightSister.startPos(), null, false, false);
+            // System.out.println("right req met for: " + currentItem);
+            // System.out.println("model: " + model);
+            candidates = chart.findUnderspecifiedItem(model);
+        }
         return candidates;
     }
 
@@ -319,7 +327,7 @@ public class RequirementFinder {
      * @return
      */
     public boolean isCompleteWrappingRootItem(SimpleRRGParseItem currentItem) {
-        return (currentItem.getNode().equals(SimpleRRGParseItem.NodePos.TOP)) // 1
+        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP)) // 1
                 && currentItem.getNode().getGornaddress().mother() == null // 2
                 && currentItem.getGaps().size() > 0; // 3
     }
@@ -335,8 +343,25 @@ public class RequirementFinder {
      */
     public boolean isCompleteWrappingFillerItem(
             SimpleRRGParseItem currentItem) {
-        return (currentItem.getNode().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
+        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
                 && currentItem.getwsflag() == true // 2
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
+    }
+
+    public Set<SimpleRRGParseItem> findCompleteWrappingFillers(
+            SimpleRRGParseItem targetRootItem, Gap gap,
+            SimpleRRGParseChart chart) {
+
+        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+                NodePos.BOT, gap.start, gap.end, null, true);
+        Set<SimpleRRGParseItem> candidates = chart
+                .findUnderspecifiedItem(model);
+        Set<SimpleRRGParseItem> candidatesWithFittingCats = new HashSet<SimpleRRGParseItem>();
+        for (SimpleRRGParseItem item : candidates) {
+            if (item.getNode().getCategory().equals(gap.nonterminal)) {
+                candidatesWithFittingCats.add(item);
+            }
+        }
+        return candidatesWithFittingCats;
     }
 }

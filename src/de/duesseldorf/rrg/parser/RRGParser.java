@@ -1,6 +1,5 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,11 @@ public class RRGParser {
 
         System.out.println("Done scanning. ");
         // System.out.println(chart.toString());
+        int i = 0;
         while (!agenda.isEmpty()) {
             // TODO: optimize this based on the node position?
+            // System.out.println("round: " + i);
+            // i++;
             SimpleRRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("cI: " + currentItem);
             noleftsister(currentItem);
@@ -72,7 +74,18 @@ public class RRGParser {
         boolean fillerItem = requirementFinder
                 .isCompleteWrappingFillerItem(currentItem);
         if (rootItem) {
-            System.out.println("TODO in Parser CW");
+            for (Gap gap : currentItem.getGaps()) {
+                Set<SimpleRRGParseItem> completeWrappingFillerAntecedents = requirementFinder
+                        .findCompleteWrappingFillers(currentItem, gap, chart);
+                for (SimpleRRGParseItem fillerddaughterItem : completeWrappingFillerAntecedents) {
+                    SimpleRRGParseItem consequent = deducer
+                            .applyCompleteWrapping(currentItem,
+                                    fillerddaughterItem, gap);
+                    addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
+                            currentItem, fillerddaughterItem);
+                }
+            }
+
         }
         if (fillerItem) {
             System.out.println("TODO in Parser CW 2");
@@ -92,8 +105,9 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("next to agenda: " + consequent + "\n\t " + operation
-                + "\n\t antecedents: " + Arrays.asList(antecedents));
+        // System.out.println("next to agenda: " + consequent + "\n\t " +
+        // operation
+        // + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     private void predictwrapping(SimpleRRGParseItem currentItem) {
@@ -112,7 +126,7 @@ public class RRGParser {
                         SimpleRRGParseItem consequent = new SimpleRRGParseItem(
                                 currentItem, tree, substNode,
                                 SimpleRRGParseItem.NodePos.BOT, -1, -1, gaps,
-                                false);
+                                false, false);
 
                         System.out.println("cons: " + consequent);
                         addToChartAndAgenda(consequent,
@@ -200,7 +214,7 @@ public class RRGParser {
                         SimpleRRGParseItem consequent = new SimpleRRGParseItem(
                                 currentItem, tree, substNode,
                                 SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
-                                false);
+                                false, true);
                         // System.out.println("cons: " + consequent);
                         addToChartAndAgenda(consequent, Operation.SUBSTITUTE,
                                 currentItem);
@@ -219,19 +233,30 @@ public class RRGParser {
         }
     }
 
-    private void combinesisters(SimpleRRGParseItem leftSisterAntecedentItem) {
+    private void combinesisters(SimpleRRGParseItem currentItem) {
 
+        // case 1: currentItem is the left node of the combination
         Set<SimpleRRGParseItem> rightSisterCandidates = requirementFinder
-                .combinesisReq(leftSisterAntecedentItem, chart);
+                .findCombineSisRightSisters(currentItem, chart);
         // System.out.println("currentItem: " + leftSisterAntecedentItem);
         for (SimpleRRGParseItem rightSisterAntecedentItem : rightSisterCandidates) {
             // System.out.println(
             // "mate with: " + rightSisterAntecedentItem + "results in");
             SimpleRRGParseItem rightSisTopItem = deducer.applyCombineSisters(
-                    leftSisterAntecedentItem, rightSisterAntecedentItem);
+                    currentItem, rightSisterAntecedentItem);
             // System.out.println(rightSisTopItem);
             addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                    leftSisterAntecedentItem, rightSisterAntecedentItem);
+                    currentItem, rightSisterAntecedentItem);
+        }
+        // case 2: currentItem is the right node of the combination
+        Set<SimpleRRGParseItem> leftSisterCandidates = requirementFinder
+                .findCombineSisLeftSisters(currentItem, chart);
+        for (SimpleRRGParseItem leftSisterAntecedentItem : leftSisterCandidates) {
+            SimpleRRGParseItem rightSisTopItem = deducer
+                    .applyCombineSisters(leftSisterAntecedentItem, currentItem);
+            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
+                    leftSisterAntecedentItem, currentItem);
+
         }
     }
 

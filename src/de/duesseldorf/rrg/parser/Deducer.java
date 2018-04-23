@@ -23,7 +23,7 @@ public class Deducer {
         gaps.addAll(rightItem.getGaps());
         SimpleRRGParseItem result = new SimpleRRGParseItem(rightItem, null,
                 null, SimpleRRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
-                gaps, false);
+                gaps, false, false);
         return result;
     }
 
@@ -44,7 +44,7 @@ public class Deducer {
 
         SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem, null,
                 mothernode, SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
-                newwsflag);
+                newwsflag, true);
 
         // Debug
         // System.out.println(motheraddress + " is the mother of "
@@ -62,7 +62,7 @@ public class Deducer {
     public SimpleRRGParseItem applyNoLeftSister(
             SimpleRRGParseItem currentItem) {
         return new SimpleRRGParseItem(currentItem, null, null,
-                SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null);
+                SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null, true);
 
     }
 
@@ -82,7 +82,7 @@ public class Deducer {
         gaps.addAll(targetSister.getGaps());
 
         SimpleRRGParseItem result = new SimpleRRGParseItem(targetSister, null,
-                null, null, auxTreeRoot.startPos(), -1, gaps, false);
+                null, null, auxTreeRoot.startPos(), -1, gaps, false, false);
         return result;
     }
 
@@ -102,8 +102,19 @@ public class Deducer {
         gaps.addAll(auxTreeRoot.getGaps());
 
         SimpleRRGParseItem result = new SimpleRRGParseItem(target, null, null,
-                null, -1, auxTreeRoot.getEnd(), gaps, null);
+                null, -1, auxTreeRoot.getEnd(), gaps, null, false);
         return result;
+    }
+
+    public SimpleRRGParseItem applyCompleteWrapping(
+            SimpleRRGParseItem targetRootItem,
+            SimpleRRGParseItem fillerddaughterItem, Gap gap) {
+        Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
+        gaps.remove(gap);
+        gaps.addAll(fillerddaughterItem.getGaps());
+        SimpleRRGParseItem consequent = new SimpleRRGParseItem(targetRootItem,
+                null, null, null, gap.start, gap.end, gaps, false, false);
+        return consequent;
     }
 
 }
