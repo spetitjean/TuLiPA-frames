@@ -112,8 +112,10 @@ public class Deducer {
         Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
-        SimpleRRGParseItem consequent = new SimpleRRGParseItem(targetRootItem,
-                null, null, null, gap.start, gap.end, gaps, false, false);
+        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
+                fillerddaughterItem, null, null, null,
+                targetRootItem.startPos(), targetRootItem.getEnd(), gaps, false,
+                false);
         return consequent;
     }
 

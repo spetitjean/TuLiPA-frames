@@ -79,7 +79,7 @@ public class RequirementFinder {
                     SimpleRRGParseItem.NodePos.BOT, leftSister.getEnd(), -2,
                     null, false, false);
             // System.out.println("model: " + model);
-            candidates = chart.findUnderspecifiedItem(model);
+            candidates = chart.findUnderspecifiedItem(model, false);
         }
 
         // System.out.println("currI" + currentItem + "\nmate with: ");
@@ -110,7 +110,7 @@ public class RequirementFinder {
                     rightSister.startPos(), null, false, false);
             // System.out.println("right req met for: " + currentItem);
             // System.out.println("model: " + model);
-            candidates = chart.findUnderspecifiedItem(model);
+            candidates = chart.findUnderspecifiedItem(model, false);
         }
         return candidates;
     }
@@ -165,8 +165,8 @@ public class RequirementFinder {
                 SimpleRRGParseItem.NodePos.TOP, sisAdjRoot.getEnd(), -2, null,
                 false);
         // find all items matching the template in the chart
-        Set<SimpleRRGParseItem> candidates = chart
-                .findUnderspecifiedItem(model);
+        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+                false);
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
         // filter all that have matching labels
@@ -195,8 +195,8 @@ public class RequirementFinder {
         SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
                 SimpleRRGParseItem.NodePos.TOP, -2, sisadjroot.startPos(), null,
                 false);
-        Set<SimpleRRGParseItem> candidates = chart
-                .findUnderspecifiedItem(model);
+        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+                false);
 
         return filterByMotherLabel(sisadjroot, candidates);
     }
@@ -264,7 +264,7 @@ public class RequirementFinder {
                 SimpleRRGParseItem.NodePos.TOP, -2, currentItem.startPos(),
                 null, false);
         Set<SimpleRRGParseItem> leftAdj = chart
-                .findUnderspecifiedItem(leftAdjModel);
+                .findUnderspecifiedItem(leftAdjModel, false);
 
         for (SimpleRRGParseItem item : leftAdj) {
             if (isSisadjRoot(item)) {
@@ -276,7 +276,7 @@ public class RequirementFinder {
                 SimpleRRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
                 false);
         Set<SimpleRRGParseItem> rightAdj = chart
-                .findUnderspecifiedItem(rightAdjModel);
+                .findUnderspecifiedItem(rightAdjModel, false);
         for (SimpleRRGParseItem item : rightAdj) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
@@ -348,20 +348,56 @@ public class RequirementFinder {
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
     }
 
+    /**
+     * Given the {@code targetRootItem}, which has a Gap {@code gap}, find all
+     * items in the chart such that one might do the CompleteWrapping operation
+     * with those two items.
+     * 
+     * @param targetRootItem
+     * @param gap
+     * @param chart
+     * @return
+     */
     public Set<SimpleRRGParseItem> findCompleteWrappingFillers(
             SimpleRRGParseItem targetRootItem, Gap gap,
             SimpleRRGParseChart chart) {
-
         SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
                 NodePos.BOT, gap.start, gap.end, null, true);
-        Set<SimpleRRGParseItem> candidates = chart
-                .findUnderspecifiedItem(model);
+        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+                false);
         Set<SimpleRRGParseItem> candidatesWithFittingCats = new HashSet<SimpleRRGParseItem>();
         for (SimpleRRGParseItem item : candidates) {
-            if (item.getNode().getCategory().equals(gap.nonterminal)) {
+            if (item.getNode().getCategory().equals(gap.nonterminal)
+                    && targetRootItem.getNode().getCategory()
+                            .equals(item
+                                    .getTree().findNode(item.getNode()
+                                            .getGornaddress().mother())
+                                    .getCategory())) {
                 candidatesWithFittingCats.add(item);
             }
         }
         return candidatesWithFittingCats;
+    }
+
+    /**
+     * Given the {@code fillerItem}, find all items in the chart that are in TOP
+     * position and have a gap such that both items might perform
+     * copleteWrapping.
+     * 
+     * Not tested yet! (April 25, 2018 D.)
+     * 
+     * @param fillerItem
+     * @param chart
+     * @return
+     */
+    public Set<SimpleRRGParseItem> findCompleteWrappingRoots(
+            SimpleRRGParseItem fillerItem, SimpleRRGParseChart chart) {
+        Gap modelgap = new Gap(fillerItem.startPos(), fillerItem.getEnd(),
+                fillerItem.getNode().getCategory());
+        Set<Gap> modelgaps = new HashSet<Gap>();
+        modelgaps.add(modelgap);
+        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+                NodePos.TOP, -2, -2, modelgaps, false);
+        return chart.findUnderspecifiedItem(model, true);
     }
 }

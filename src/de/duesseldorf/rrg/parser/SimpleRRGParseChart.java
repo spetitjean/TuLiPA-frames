@@ -115,11 +115,13 @@ public class SimpleRRGParseChart implements ParseChart {
      *            - give null for {@code tree}, {@code node}, {@code nodePos},
      *            {@code gaps}, {@code wsflag} <br>
      *            - give -2 for {@code start}, {@code end}
-     * 
+     * @param gapSubSet
+     *            are the gaps in the model only a subset of the gaps in the
+     *            item we look for?
      * @return
      */
     public Set<SimpleRRGParseItem> findUnderspecifiedItem(
-            SimpleRRGParseItem model) {
+            SimpleRRGParseItem model, boolean gapSubSet) {
         Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
 
         // collect all the items that might fit the model
@@ -150,10 +152,30 @@ public class SimpleRRGParseChart implements ParseChart {
                                 || model.getNodePos().equals(
                                         ((SimpleRRGParseItem) s).getNodePos());
                         if (posCheck) {
+                            // several cases: 1. no gaps given - gaps = null. 2.
+                            // gaps given, equal to the gaps we look for
+                            // (boolean is false), 3. gaps given, subset of the
+                            // gaps we look for (boolean is true)
 
-                            boolean gapCheck = model.getGaps() == null
-                                    || model.getGaps().equals(
+                            // case 1
+                            boolean gapCheck = model.getGaps() == null;
+                            if (!gapCheck) {
+                                // case 2
+                                if (!gapSubSet) {
+                                    gapCheck = model.getGaps().equals(
                                             ((SimpleRRGParseItem) s).getGaps());
+                                } else {
+                                    // case 3
+                                    gapCheck = ((SimpleRRGParseItem) s)
+                                            .getGaps()
+                                            .containsAll(model.getGaps());
+                                    // System.out.print(gapCheck);
+                                    // System.out.println("yay: "
+                                    // + ((SimpleRRGParseItem) s).getGaps()
+                                    // + model.getGaps());
+                                }
+                            }
+
                             if (gapCheck) {
                                 boolean wsCheck = (Boolean) model
                                         .getwsflag() == null

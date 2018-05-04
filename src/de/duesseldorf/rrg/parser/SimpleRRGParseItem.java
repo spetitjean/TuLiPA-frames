@@ -118,7 +118,7 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tree, start, end, node, gaps, nodepos);
+        return Objects.hash(tree, start, end, node, gaps, nodepos, ws);
     }
 
     @Override

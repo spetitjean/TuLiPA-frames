@@ -785,8 +785,13 @@ public class ParsingInterface {
         // Tokenizing
         List<String> toksentence = tokenize(op, sentence, verbose);
 
+        long startParsingTime = System.nanoTime();
         RRGParser rrgparser = new RRGParser(sit);
         rrgparser.parseSentence(toksentence);
+        long parsingTime = System.nanoTime() - startParsingTime;
+
+        System.err.println("Parsing time : " + (parsingTime) / (Math.pow(10, 9))
+                + " sec.");
 
         return false;
     }

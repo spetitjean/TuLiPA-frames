@@ -1,5 +1,6 @@
 package de.duesseldorf.rrg.parser;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +44,10 @@ public class RRGParser {
         int i = 0;
         while (!agenda.isEmpty()) {
             // TODO: optimize this based on the node position?
-            // System.out.println("round: " + i);
-            // i++;
+            System.out.println("step: " + i);
+            i++;
             SimpleRRGParseItem currentItem = agenda.pollFirst();
-            // System.out.println("cI: " + currentItem);
+            System.out.println("current item: " + currentItem);
             noleftsister(currentItem);
             moveup(currentItem);
             combinesisters(currentItem);
@@ -56,7 +57,7 @@ public class RRGParser {
             completewrapping(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
-        System.out.println("Done parsing. \n" + chart.toString());
+        // System.out.println("Done parsing. \n" + chart.toString());
         ParseForestExtractor extractor = new ParseForestExtractor(chart,
                 toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
@@ -65,6 +66,22 @@ public class RRGParser {
             System.out.println(rrgParseTree);
         }
         return result;
+    }
+
+    /**
+     * 
+     * @param consequent
+     * @param antecedents
+     *            always give the antecedent items in left-to-right order
+     */
+    private void addToChartAndAgenda(SimpleRRGParseItem consequent,
+            Operation operation, SimpleRRGParseItem... antecedents) {
+        if (chart.addItem(consequent, operation, antecedents)) {
+            agenda.add(consequent);
+        }
+        // Debug
+        System.out.println("next to agenda: " + consequent + "\n\t " + operation
+                + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     private void completewrapping(SimpleRRGParseItem currentItem) {
@@ -88,26 +105,13 @@ public class RRGParser {
 
         }
         if (fillerItem) {
-            System.out.println("TODO in Parser CW 2");
+            System.out.println("TODO in Parser CW 2 " + currentItem);
+            Set<SimpleRRGParseItem> completeWrappingRootAntecedents = requirementFinder
+                    .findCompleteWrappingRoots(currentItem, chart);
+            System.out.println("untested completeWrapping territory! D");
+            // System.out.println("root: " + completeWrappingRootAntecedents);
+            // System.out.println("ddaughter: " + currentItem);
         }
-
-    }
-
-    /**
-     * 
-     * @param consequent
-     * @param antecedents
-     *            always give the antecedent items in left-to-right order
-     */
-    private void addToChartAndAgenda(SimpleRRGParseItem consequent,
-            Operation operation, SimpleRRGParseItem... antecedents) {
-        if (chart.addItem(consequent, operation, antecedents)) {
-            agenda.add(consequent);
-        }
-        // Debug
-        // System.out.println("next to agenda: " + consequent + "\n\t " +
-        // operation
-        // + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     private void predictwrapping(SimpleRRGParseItem currentItem) {
@@ -128,7 +132,7 @@ public class RRGParser {
                                 SimpleRRGParseItem.NodePos.BOT, -1, -1, gaps,
                                 false, false);
 
-                        System.out.println("cons: " + consequent);
+                        // System.out.println("cons: " + consequent);
                         addToChartAndAgenda(consequent,
                                 Operation.PREDICTWRAPPING, currentItem);
                     }
