@@ -73,22 +73,22 @@ public class TypeHierarchy {
     public Type leastSpecificSubtype(Type a, Type b) throws UnifyException {
         Type union = a.union(b);
         int max = Collections.max(tyHi.keySet());
-	    if (union.getSpec() <= max) {
-		for (int i = union.getSpec(); i <= max; i++) {
-		    for (Type type : tyHi.get(i)) {
-			if (union.subsumes(type)) {
-			    return new Type(type);
-			}
-		    }
-		}
-	    }
-	
-	throw new UnifyException(
-                            "Types " + a + " and "+b+" are incompatible");
-	
-        //System.err.println("Unification of types failed: ");
-        //System.err.println(a.toString() + "\n" + b.toString());
-        //return null;
+        if (union.getSpec() <= max) {
+            for (int i = union.getSpec(); i <= max; i++) {
+                for (Type type : tyHi.get(i)) {
+                    if (union.subsumes(type)) {
+                        return new Type(type);
+                    }
+                }
+            }
+        }
+
+        throw new UnifyException(
+                "Types " + a + " and " + b + " are incompatible");
+
+        // System.err.println("Unification of types failed: ");
+        // System.err.println(a.toString() + "\n" + b.toString());
+        // return null;
     }
 
     public String toString() {
