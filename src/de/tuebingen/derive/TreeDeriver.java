@@ -142,10 +142,9 @@ public class TreeDeriver {
 	    derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
 
 	    if(mergedFrames==null){
-		System.err.println("Frame unification failed, tree discarded!\n");
-		failed = true;
-	    }
-	    else{
+	        System.err.println("Frame unification failed, tree discarded!\n");
+	        failed = true;
+	    }	    else{
 		List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
 		derivedTree.frames = cleanFrames;
 	    }
