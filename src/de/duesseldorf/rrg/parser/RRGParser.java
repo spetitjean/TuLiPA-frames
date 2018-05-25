@@ -1,6 +1,5 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +43,10 @@ public class RRGParser {
         int i = 0;
         while (!agenda.isEmpty()) {
             // TODO: optimize this based on the node position?
-            System.out.println("step: " + i);
+            // System.out.println("step: " + i);
             i++;
             SimpleRRGParseItem currentItem = agenda.pollFirst();
-            System.out.println("current item: " + currentItem);
+            // System.out.println("current item: " + currentItem);
             noleftsister(currentItem);
             moveup(currentItem);
             combinesisters(currentItem);
@@ -80,8 +79,9 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("next to agenda: " + consequent + "\n\t " + operation
-                + "\n\t antecedents: " + Arrays.asList(antecedents));
+        // System.out.println("next to agenda: " + consequent + "\n\t " +
+        // operation
+        // + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     private void completewrapping(SimpleRRGParseItem currentItem) {

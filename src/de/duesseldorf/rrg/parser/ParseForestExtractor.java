@@ -25,11 +25,11 @@ public class ParseForestExtractor {
             System.out.println("no goal items!");
         } else {
             System.out.println("Goal items: " + chart.retrieveGoalItems());
-            // for (ParseItem goal : goals) {
-            // parseTrees.add(new RRGParseTree(
-            // ((SimpleRRGParseItem) goal).getTree()));
-            // extract((SimpleRRGParseItem) goal);
-            // }
+            for (ParseItem goal : goals) {
+                parseTrees.add(new RRGParseTree(
+                        ((SimpleRRGParseItem) goal).getTree()));
+                extract((SimpleRRGParseItem) goal);
+            }
         }
 
         return parseTrees;
@@ -64,7 +64,7 @@ public class ParseForestExtractor {
             System.out.println("TODOleftSisAdj " + auxRootItem.toString()
                     + targetSisterItem);
             for (RRGParseTree rrgParseTree : parseTrees) {
-                // probably the wrong why to ask for an id
+                // probably the wrong way to ask for an id
                 // IDEA: make the containsElemTrees compare if the GornAddresses
                 // of the target and the id in the parse Tree match. If they do,
                 // addSubTree
