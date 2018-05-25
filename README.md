@@ -3,7 +3,7 @@
 This is an extension for the existing [TuLiPA](https://sourcesup.cru.fr/tulipa/) (Tuebingen Linguistic Parsing Architecture), a parser for Lexicalised Tree Adjoining Grammars. 
 It is extended with semantic frames paired with the elementary trees. 
 
-Documentation on the parser and the resources is provided in the [Wiki section](https://github.com/spetitjean/TuLiPA-frames/wiki)
+Documentation on the parser and the resources is provided in the [Wiki](https://github.com/spetitjean/TuLiPA-frames/wiki).
 
 ## Cite
 If you use TuLiPA-frames, please cite [this paper](http://www.lrec-conf.org/proceedings/lrec2018/summaries/567.html) for attribution:
