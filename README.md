@@ -39,23 +39,7 @@ To parse sentences, TuLiPA needs a set of resources, which should be given as pa
 * Sentence (-s): the sentence to parse.
 
 ## Cite
-If you use TuLiPA-frames, you can use the following citation for attribution.
+If you use TuLiPA-frames, please cite [this paper](http://www.lrec-conf.org/proceedings/lrec2018/summaries/567.html) for attribution:
 
 Arps, D. & Petitjean, S. (2018), A Parser for LTAG and Frame Semantics. In: N. Calzolari, K. Choukri, C. Cieri, T. Declerck, S. Goggi, K. Hasida, H. Isahara, B. Maegaard, J. Mariani, H. Mazo, A. Moreno, J. Odijk, S. Piperidis & T. Tokunaga, eds, ‘Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)’, European Language Resources Association (ELRA), Paris, France.
 
-```
-@InProceedings{ARPS18.567,
-  author = {David Arps and Simon Petitjean},
-  title = {A Parser for LTAG and Frame Semantics},
-  booktitle = {Proceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018)},
-  year = {2018},
-  month = {may},
-  date = {7-12},
-  location = {Miyazaki, Japan},
-  editor = {Nicoletta Calzolari (Conference chair) and Khalid Choukri and Christopher Cieri and Thierry Declerck and Sara Goggi and Koiti Hasida and Hitoshi Isahara and Bente Maegaard and Joseph Mariani and Hélène Mazo and Asuncion Moreno and Jan Odijk and Stelios Piperidis and Takenobu Tokunaga},
-  publisher = {European Language Resources Association (ELRA)},
-  address = {Paris, France},
-  isbn = {979-10-95546-00-9},
-  language = {english}
-  }
-```
