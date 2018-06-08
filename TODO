@@ -3,3 +3,6 @@ Documentation:
   * what do these files contain and how to create them
   * export parses to XML and view the XML (XMG-webGUI, TuLiPA?)
   * example of use, step by step
+  
+Code:
+  * bug in elementary tree viewer (frames are one derivation step ahead)
