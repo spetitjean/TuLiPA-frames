@@ -142,6 +142,12 @@ public class Interface {
             String sentence = op.getVal("s");
             try {
                 if (g instanceof TTMCTAG) {
+                    // Select the CYK parser if no parsing mode was specified
+                    // when startingthe parser without GUI and providing a
+                    // sentence.
+                    if (!op.check("cyktag") && !op.check("tag2rcg")) {
+                        op.setVal("cyktag", "");
+                    }
                     ParsingInterface.parseTAG(op, sit, sentence);
                 } else if (g instanceof RRG) {
                     ParsingInterface.parseRRG(op, sit, sentence);

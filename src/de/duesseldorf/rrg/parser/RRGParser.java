@@ -57,8 +57,13 @@ public class RRGParser {
             // System.out.println("Agenda size: " + agenda.size());
         }
         // System.out.println("Done parsing. \n" + chart.toString());
+        // old version:
         ParseForestExtractor extractor = new ParseForestExtractor(chart,
                 toksentence);
+        // new version:
+        // NewParseForestExtractor extractor = new
+        // NewParseForestExtractor(chart,
+        // toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
         System.out.println("result: ");
         for (RRGParseTree rrgParseTree : result) {

@@ -1,0 +1,5 @@
+Documentation:
+  * which files are needed (grammar, frame grammar, type hierarchy, etc)
+  * what do these files contain and how to create them
+  * export parses to XML and view the XML (XMG-webGUI, TuLiPA?)
+  * example of use, step by step
