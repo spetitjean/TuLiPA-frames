@@ -81,6 +81,9 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.UIManager.*;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.ui.CommandLineProcesses;
@@ -213,7 +216,19 @@ public class InputGUI implements ActionListener {
         System.setErr(errs);
         pt = new Thread();
 
-        guiFrame = new JFrame();
+	try {
+	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		if ("Nimbus".equals(info.getName())) {
+		    UIManager.setLookAndFeel(info.getClassName());
+		    break;
+		}
+	    }
+	} catch (Exception e) {
+	    // If Nimbus is not available, you can set the GUI to another look and feel.
+	}
+
+	
+	guiFrame = new JFrame();
         guiFrame.setTitle("TuLiPA " + InputGUI.VERSION);
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setJMenuBar(getMenuBar());
