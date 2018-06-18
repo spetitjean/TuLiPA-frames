@@ -23,6 +23,15 @@ public class RRGParseTree extends RRGTree {
     }
 
     /**
+     * replace the id of this parse tree with
+     * 
+     * @param newId
+     */
+    public void setId(String newId) {
+        this.id = newId;
+    }
+
+    /**
      * 
      * @param id
      * @return true iff this parse tree contains an elementary tree with the
@@ -43,10 +52,30 @@ public class RRGParseTree extends RRGTree {
         return this.getId().equals(tree.getId());
     }
 
-    public void addSubTree(GornAddress address, RRGTree subTree, int position) {
-        RRGNode motherOfSubtree = findNode(address);
+    public RRGParseTree replaceNodeWithSubTree(GornAddress address,
+            RRGTree subtree) {
+        RRGParseTree resultingTree = new RRGParseTree(this);
+        resultingTree.findNode(address)
+                .nodeUnification((RRGNode) subtree.getRoot());
 
+        return resultingTree;
+    }
+
+    /**
+     * Did I mess up this method, because it adds the root of the subtree as a
+     * daughter?
+     * 
+     * @param address
+     * @param subTree
+     * @param position
+     * @return
+     */
+    public RRGParseTree addSubTree(GornAddress address, RRGTree subTree,
+            int position) {
+        RRGParseTree resultingTree = new RRGParseTree(this);
+        RRGNode motherOfSubtree = resultingTree.findNode(address);
         motherOfSubtree.addXchild(subTree.getRoot(), position);
-        idMap.put(address, subTree.getId());
+        resultingTree.idMap.put(address, subTree.getId());
+        return resultingTree;
     }
 }

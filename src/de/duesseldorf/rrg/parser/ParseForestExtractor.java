@@ -53,7 +53,7 @@ public class ParseForestExtractor {
                 .getAntecedents(Operation.LEFTADJOIN);
         if (leftsisadjSet.size() > 1) {
             System.out.println(
-                    "sth to do in left sister adjunction extraction for moidifying multiple parse results!");
+                    "sth to do in left sister adjunction extraction for modifying multiple parse results!");
         }
         for (List<ParseItem> antecedentList : leftsisadjSet) {
             // items in the list of antecedents are ordered from left to right
@@ -125,7 +125,6 @@ public class ParseForestExtractor {
                 extract((SimpleRRGParseItem) antecedent);
             }
         }
-
     }
 
     /**

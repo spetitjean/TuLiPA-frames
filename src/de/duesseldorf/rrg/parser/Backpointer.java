@@ -1,5 +1,6 @@
 package de.duesseldorf.rrg.parser;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,22 @@ public class Backpointer {
         Set<List<ParseItem>> res = store.get(op);
 
         return (res != null) ? res : new HashSet<List<ParseItem>>();
+    }
+
+    public Set<List<ParseItem>> getAntecedents(Collection<Operation> ops) {
+        Set<List<ParseItem>> result = new HashSet<List<ParseItem>>();
+        for (Operation op : ops) {
+            result.addAll(getAntecedents(op));
+        }
+        return result;
+    }
+
+    public int size() {
+        int size = 0;
+        for (Set<List<ParseItem>> e : store.values()) {
+            size += e.size();
+        }
+        return size;
     }
 
     @Override

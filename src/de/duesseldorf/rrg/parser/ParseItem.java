@@ -26,4 +26,5 @@ public interface ParseItem {
      * @return a String representation of the item, e.g. in [brackets].
      */
     public String toString();
+
 }

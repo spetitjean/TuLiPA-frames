@@ -94,6 +94,14 @@ public class GornAddress {
         return new GornAddress(address.subList(0, address.size() - 1));
     }
 
+    /**
+     * 
+     * @return an integer ii such that this GA is the ith daughter of some node.
+     */
+    public int isIthDaughter() {
+        return this.address.get(address.size() - 1);
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

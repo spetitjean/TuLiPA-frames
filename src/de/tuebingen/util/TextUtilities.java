@@ -31,37 +31,64 @@
  */
 package de.tuebingen.util;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 public class TextUtilities {
-	
-	static public void writeText(File file, String text) throws FileNotFoundException, IOException {
-	    Writer output = null;
-	    try {
-	    	FileOutputStream fos = new FileOutputStream(file);
-	    	OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
-	    	output = new BufferedWriter(out);
-	    	output.write( text );
-	    }
-	    finally {	    	
-	    	if (output != null) output.close();
-	    }
-	}
-	
-	// attempt to save time on String processing:
-	static public String append(String init, String s) {
-		StringBuffer strBuf = new StringBuffer();
-		strBuf.append(init);
-		strBuf.append(s);
-		return strBuf.toString();
-	}
-	
-	static public String appendList(List<String> ls) {
-		StringBuffer strBuf = new StringBuffer();
-		for (String s : ls) {
-			strBuf.append(s);
-		}
-		return strBuf.toString();
-	}
+
+    static public void writeText(File file, String text)
+            throws FileNotFoundException, IOException {
+        Writer output = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+            output = new BufferedWriter(out);
+            output.write(text);
+        } finally {
+            if (output != null)
+                output.close();
+        }
+    }
+
+    // attempt to save time on String processing:
+    static public String append(String init, String s) {
+        StringBuffer strBuf = new StringBuffer();
+        strBuf.append(init);
+        strBuf.append(s);
+        return strBuf.toString();
+    }
+
+    static public String appendList(List<String> ls) {
+        StringBuffer strBuf = new StringBuffer();
+        for (String s : ls) {
+            strBuf.append(s);
+        }
+        return strBuf.toString();
+    }
+
+    /**
+     * Appends each element of that list to a single string by calling the
+     * toString method of each element. Inserts the @param separator after each
+     * element.
+     * 
+     * @param <T>
+     * 
+     * @param ls
+     *
+     * @return
+     */
+    static public <T> String appendList(List<T> ls, String separator) {
+        StringBuffer strBuf = new StringBuffer();
+        for (T s : ls) {
+            strBuf.append(s.toString());
+            strBuf.append(separator);
+        }
+        return strBuf.toString();
+    }
 }
