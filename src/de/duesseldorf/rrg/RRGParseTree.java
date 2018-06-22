@@ -16,10 +16,20 @@ public class RRGParseTree extends RRGTree {
         idMap.put(((RRGNode) root).getGornaddress(), id);
     }
 
+    public RRGParseTree(RRGParseTree tree) {
+        super(tree);
+        this.idMap = new HashMap<GornAddress, String>(tree.getIdMap());
+    }
+
     public RRGParseTree(RRGTree tree) {
-        super(tree.getRoot(), tree.getId());
-        this.idMap = new HashMap<GornAddress, String>();
-        idMap.put(((RRGNode) tree.getRoot()).getGornaddress(), tree.getId());
+        super(tree);
+        if (tree instanceof RRGParseTree) {
+            this.idMap = new HashMap<GornAddress, String>(
+                    ((RRGParseTree) tree).getIdMap());
+        } else {
+            this.idMap = new HashMap<GornAddress, String>();
+            this.idMap.put(new GornAddress(), tree.getId());
+        }
     }
 
     /**
@@ -29,6 +39,10 @@ public class RRGParseTree extends RRGTree {
      */
     public void setId(String newId) {
         this.id = newId;
+    }
+
+    public Map<GornAddress, String> getIdMap() {
+        return idMap;
     }
 
     /**
@@ -52,11 +66,48 @@ public class RRGParseTree extends RRGTree {
         return this.getId().equals(tree.getId());
     }
 
+    public void setNode(GornAddress address, RRGNode newNode) {
+        this.findNode(address.mother()).getChildren()
+                .set(address.isIthDaughter(), newNode);
+    }
+
+    /**
+     * replaces this trees node with gornaddress address with the root node of
+     * the subtree subtree. Returns a new tree (to leave the original one
+     * unchanged)
+     * 
+     * @param address
+     * @param subtree
+     * @return
+     */
     public RRGParseTree replaceNodeWithSubTree(GornAddress address,
             RRGTree subtree) {
         RRGParseTree resultingTree = new RRGParseTree(this);
-        resultingTree.findNode(address)
-                .nodeUnification((RRGNode) subtree.getRoot());
+        System.out.println(resultingTree);
+        RRGNode resTreeNode = resultingTree.findNode(address);
+        RRGNode subTreeRoot = new RRGNode((RRGNode) subtree.getRoot());
+
+        // System.out.println("whos null?");
+        // System.out.println(resTreeNode);
+        // System.out.println(subTreeRoot);
+
+        boolean substPossible = resTreeNode
+                .nodeUnificationPossible(subTreeRoot);
+        if (substPossible) {
+            // setNode(address, subTreeRoot);
+            resTreeNode.setChildren(subtree.getRoot().getChildren());
+        } else {
+            System.out.println(
+                    "substitution did not work when replacing at GA in\n" + this
+                            + "\nwith subtree\n" + subtree);
+        }
+
+        System.out.println("a GA that should not exist: " + address
+                .ithDaughter(1).ithDaughter(1).ithDaughter(1).ithDaughter(0));
+        System.out.println("a node: " + "" + resultingTree.findNode(address
+                .ithDaughter(1).ithDaughter(1).ithDaughter(1).ithDaughter(0)));
+        // // System.out.println(
+        // "resulting tree in replacement after: " + resultingTree);
 
         return resultingTree;
     }
@@ -77,5 +128,19 @@ public class RRGParseTree extends RRGTree {
         motherOfSubtree.addXchild(subTree.getRoot(), position);
         resultingTree.idMap.put(address, subTree.getId());
         return resultingTree;
+    }
+
+    public RRGParseTree substitute(RRGTree substitutionTree,
+            GornAddress address) {
+        RRGParseTree result = new RRGParseTree(this);
+        // can we substitute?
+        RRGNode targetNode = result.findNode(address);
+        if (((RRGNode) substitutionTree.getRoot())
+                .nodeUnificationPossible(targetNode)) {
+            result.setNode(address, (RRGNode) substitutionTree.getRoot());
+        }
+        // TODO add things to idmap
+        return result;
+
     }
 }

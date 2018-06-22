@@ -21,6 +21,13 @@ public class GornAddress {
         address = new LinkedList<Integer>();
     }
 
+    public GornAddress(GornAddress other) {
+        this.address = new LinkedList<Integer>();
+        for (Integer i : other.address) {
+            this.address.add(i);
+        }
+    }
+
     private GornAddress(List<Integer> list) {
         address = list;
     }

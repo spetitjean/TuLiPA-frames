@@ -23,15 +23,29 @@ public class RRGNode implements Node {
     private String category; // the cat of a node, or its terminal label
     private GornAddress gornaddress; // the gorn address
 
+    public RRGNode(RRGNode other) {
+        this.type = other.getType();
+        this.name = other.name;
+        this.category = other.category;
+
+        // deep processing of children
+        this.children = new LinkedList<Node>();
+        for (Node child : other.getChildren()) {
+            children.add(new RRGNode((RRGNode) child));
+        }
+        this.gornaddress = new GornAddress(other.getGornaddress());
+    }
+
     public RRGNode(RRGNodeType type, String name, String category) {
         children = new LinkedList<Node>();
         this.type = type;
         this.name = name;
         this.setCategory(category);
+        this.gornaddress = new GornAddress();
     }
 
     /**
-     * unifiesthis node and the other node by replacing (!) this nodes children
+     * unifies this node and the other node by replacing (!) this nodes children
      * with {@code other}s chilren, if the categories of both nodes
      * match.
      * 
@@ -41,8 +55,27 @@ public class RRGNode implements Node {
     public boolean nodeUnification(RRGNode other) {
         boolean result = false;
         if (other.getCategory().equals(this.getCategory())) {
-            this.setChildren(other.getChildren());
+            this.setChildren(new LinkedList<Node>(other.getChildren()));
             result = true;
+        }
+        return result;
+    }
+
+    /**
+     * returns true iff unification of this node and the other node is possible,
+     * i.e. iff the categories of both nodes
+     * match.
+     * 
+     * @param other
+     * @return {@code true} iff the unification succeeded
+     */
+    public boolean nodeUnificationPossible(RRGNode other) {
+        boolean result = false;
+        if (other.getCategory().equals(this.getCategory())) {
+            // this.setChildren(new LinkedList<Node>(other.getChildren()));
+            result = true;
+            // System.out.println(
+            // children.get(1).toString() + children.get(1).getChildren());
         }
         return result;
     }

@@ -11,6 +11,7 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.extractor.NewParseForestExtractor;
 import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 
 /**
