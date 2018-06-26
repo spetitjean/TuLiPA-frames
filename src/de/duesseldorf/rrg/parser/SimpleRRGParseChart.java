@@ -231,7 +231,9 @@ public class SimpleRRGParseChart implements ParseChart {
 
     @Override
     public String toString() {
+        String alphaOmega = "----------------------------------------------------------------------\n----------------------------------------------------------------------";
         StringBuffer sb = new StringBuffer("Printing chart\n");
+        sb.append(alphaOmega);
         for (Integer i = 0; i < chart.size(); i++) {
             if (i < chart.size()) {
                 sb.append("\nstart index " + i + "\n");
@@ -248,6 +250,7 @@ public class SimpleRRGParseChart implements ParseChart {
 
             }
         }
+        sb.append(alphaOmega);
         return sb.toString();
     }
 }

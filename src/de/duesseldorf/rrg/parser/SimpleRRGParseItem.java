@@ -15,8 +15,8 @@ import de.duesseldorf.rrg.RRGTree;
 public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
 
     /**
-     * Do we look at everything below this node, or do we also look at the left
-     * sister?
+     * Do we look at everything below this node ({@code BOT}), or do we also
+     * look at the left sister ({@code TOP})?
      * 
      * @author david
      *
@@ -147,15 +147,13 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
     }
 
     public int compareTo(ParseItem o) {
-        int res;
         if (this.equals(o)) {
             return 0;
         }
-
         if (((SimpleRRGParseItem) o).startPos() < this.startPos()) {
-            return -1;
-        } else {
             return 1;
+        } else {
+            return -1;
         }
     }
 }

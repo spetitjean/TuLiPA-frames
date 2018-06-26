@@ -1,24 +1,37 @@
 package de.duesseldorf.rrg;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import de.duesseldorf.rrg.extractor.GAShiftHandler;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
 public class RRGParseTree extends RRGTree {
 
     private Map<GornAddress, String> idMap;
+    /**
+     * A stack of the subtrees of wrapping trees from a ddaughter downwards. A
+     * subtree is to be pushed on here during completeWrapping, and taken again
+     * and substituted when doing predictWrapping
+     */
+    private List<RRGNode> wrappingSubTrees;
+
+    private GAShiftHandler addressShiftHandler;
 
     public RRGParseTree(Node root, String id) {
         super(root, id);
         this.idMap = new HashMap<GornAddress, String>();
         idMap.put(((RRGNode) root).getGornaddress(), id);
+        this.wrappingSubTrees = new LinkedList<RRGNode>();
     }
 
     public RRGParseTree(RRGParseTree tree) {
         super(tree);
         this.idMap = new HashMap<GornAddress, String>(tree.getIdMap());
+        initDeepCopyOfWrappingSubtrees(tree);
     }
 
     public RRGParseTree(RRGTree tree) {
@@ -29,6 +42,18 @@ public class RRGParseTree extends RRGTree {
         } else {
             this.idMap = new HashMap<GornAddress, String>();
             this.idMap.put(new GornAddress(), tree.getId());
+            this.wrappingSubTrees = new LinkedList<RRGNode>();
+        }
+    }
+
+    private void initDeepCopyOfWrappingSubtrees(RRGTree tree) {
+        this.wrappingSubTrees = new LinkedList<RRGNode>();
+        if (tree instanceof RRGParseTree) {
+            for (int i = 0; i < ((RRGParseTree) tree).getWrappingSubTrees()
+                    .size(); i++) {
+                this.wrappingSubTrees.set(i, new RRGNode(
+                        ((RRGParseTree) tree).getWrappingSubTrees().get(i)));
+            }
         }
     }
 
@@ -39,6 +64,10 @@ public class RRGParseTree extends RRGTree {
      */
     public void setId(String newId) {
         this.id = newId;
+    }
+
+    private List<RRGNode> getWrappingSubTrees() {
+        return wrappingSubTrees;
     }
 
     public Map<GornAddress, String> getIdMap() {
@@ -113,6 +142,98 @@ public class RRGParseTree extends RRGTree {
     }
 
     /**
+     * TODO deal with substitution of the tree below ddaughter. Keep that
+     * subtree somewhere?
+     * 
+     * Returns a new tree that is a (hopefully deep) copy of the one the method
+     * is called on.
+     * The method inserts all children of the root of wrappedTree at the
+     * position where the node ddaughter used to be. The ddaughter is The
+     * GornAddressees of all
+     * dmother's children further right might be affected, and are updated.
+     * 
+     * @param wrappedTree
+     * @param dmother
+     * @param position
+     * @return
+     */
+    public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
+            GornAddress ddaughterAddress) {
+        RRGParseTree resultingTree = new RRGParseTree(this);
+        GornAddress dmother = ddaughterAddress.mother();
+        int position = ddaughterAddress.isIthDaughter();
+
+        // insert the children
+        RRGNode targetNode = resultingTree.findNode(dmother);
+        boolean wrappingPossible = targetNode
+                .nodeUnificationPossible((RRGNode) wrappedTree.getRoot());
+        if (wrappingPossible) {
+            // put the subtree from the ddaughter downwards somewhere safe, in
+            // order to take it again when doing predictWrapping
+            RRGNode wrappingSubTreeRoot = resultingTree
+                    .findNode(ddaughterAddress);
+            this.wrappingSubTrees.add(0, wrappingSubTreeRoot);
+            resultingTree.findNode(dmother).getChildren().remove(position);
+
+            List<Node> rootChildren = new LinkedList<Node>(
+                    wrappedTree.getRoot().getChildren());
+            for (int i = rootChildren.size() - 1; i >= 0; i--) {
+                targetNode.addXchild(rootChildren.get(i), position);
+            }
+            // update GornAddress shifts
+        } else {
+            System.out.println(
+                    "could not complete a wrapping of target tree into wrapping tree at node "
+                            + dmother.toString() + "\nwrapped tree:\n"
+                            + wrappedTree.toString() + "\ntarget tree:\n"
+                            + this.toString());
+            return resultingTree;
+        }
+        return resultingTree;
+    }
+
+    /**
+     * TODO do I need to create a deep copy of the adjoining tree?
+     * 
+     * Returns a new tree that is a (hopefully deep) copy of the one the method
+     * is called on. Method sister-adjoins the adjoining tree at the GA
+     * targetAddress (root of adjoiningtree and targetAddress node are unified.
+     * 
+     * @param adjoiningTree
+     *            root of that tree must have only one daughter.
+     * @param targetAddress
+     * @param position
+     *            indicates at which position sisteradjunction happens. position
+     *            = 0 means that the adjoining tree is added as leftmost sister,
+     *            position = 1 that the adjoining tree has one left sister etc.
+     * @return
+     */
+    public RRGParseTree sisterAdjoin(RRGTree adjoiningTree,
+            GornAddress targetAddress, int position) {
+        RRGParseTree result = new RRGParseTree(this);
+        RRGNode targetNode = result.findNode(targetAddress);
+        if (((RRGNode) adjoiningTree.getRoot())
+                .nodeUnificationPossible(targetNode)) {
+            targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
+                    position);
+        }
+        return result;
+    }
+
+    public RRGParseTree substitute(RRGTree substitutionTree,
+            GornAddress address) {
+        RRGParseTree result = new RRGParseTree(this);
+        // can we substitute?
+        RRGNode targetNode = result.findNode(address);
+        if (((RRGNode) substitutionTree.getRoot())
+                .nodeUnificationPossible(targetNode)) {
+            result.setNode(address, (RRGNode) substitutionTree.getRoot());
+        }
+        // TODO add things to idmap
+        return result;
+    }
+
+    /**
      * Did I mess up this method, because it adds the root of the subtree as a
      * daughter?
      * 
@@ -128,19 +249,5 @@ public class RRGParseTree extends RRGTree {
         motherOfSubtree.addXchild(subTree.getRoot(), position);
         resultingTree.idMap.put(address, subTree.getId());
         return resultingTree;
-    }
-
-    public RRGParseTree substitute(RRGTree substitutionTree,
-            GornAddress address) {
-        RRGParseTree result = new RRGParseTree(this);
-        // can we substitute?
-        RRGNode targetNode = result.findNode(address);
-        if (((RRGNode) substitutionTree.getRoot())
-                .nodeUnificationPossible(targetNode)) {
-            result.setNode(address, (RRGNode) substitutionTree.getRoot());
-        }
-        // TODO add things to idmap
-        return result;
-
     }
 }

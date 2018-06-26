@@ -114,8 +114,8 @@ public class RRGParser {
             Set<SimpleRRGParseItem> completeWrappingRootAntecedents = requirementFinder
                     .findCompleteWrappingRoots(currentItem, chart);
             System.out.println("untested completeWrapping territory! D");
-            // System.out.println("root: " + completeWrappingRootAntecedents);
-            // System.out.println("ddaughter: " + currentItem);
+            System.out.println("root: " + completeWrappingRootAntecedents);
+            System.out.println("ddaughter: " + currentItem);
         }
     }
 

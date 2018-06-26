@@ -10,7 +10,7 @@ import java.util.List;
  * @author david
  *
  */
-public class GornAddress {
+public class GornAddress implements Comparable<GornAddress> {
 
     // represented as a list of Integers
     private List<Integer> address;
@@ -109,6 +109,28 @@ public class GornAddress {
         return this.address.get(address.size() - 1);
     }
 
+    List<Integer> getAddress() {
+        return address;
+    }
+
+    /**
+     * Another GA is bigger iff it is a GA right to and/or below this GA.
+     * 
+     * @param other
+     * @return
+     */
+    public int compareTo(GornAddress other) {
+        if (other.equals(this)) {
+            return 0;
+        }
+        if (address.size() < other.getAddress().size()
+                || isIthDaughter() < other.isIthDaughter()) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -124,5 +146,4 @@ public class GornAddress {
         }
         return stringrep;
     }
-
 }

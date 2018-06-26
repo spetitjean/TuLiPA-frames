@@ -55,6 +55,30 @@ public class TestTree {
                 new GornAddress().ithDaughter(0));
         System.out.println("result: " + selfSubstResult);
         System.out.println("original target tree: \n" + ptree1);
+
+        // 4. Sister adjunction
+        System.out.println(
+                "now to sisadj cases. Take this tree: \n" + substitutedTree);
+        System.out.println("and this one as adjoining tree: \n" + ptree2);
+        System.out.println("and sisadj at GA 1 as leftmost daughter. ");
+        RRGParseTree leftsisadj = substitutedTree.sisterAdjoin(ptree2,
+                new GornAddress().ithDaughter(0), 0);
+        System.out.println("result: " + leftsisadj);
+
+        System.out.println(
+                "now, do the same adjunction again to see if reference stuff works properly. "
+                        + "Result(1) should now have three children.");
+        RRGParseTree leftsisadj2 = leftsisadj.sisterAdjoin(ptree2,
+                new GornAddress().ithDaughter(0), 0);
+        System.out.println("result: \n" + leftsisadj2);
+
+        System.out.println(
+                "now, take this tree and add the following tree as 2nd daughter of GA 1:\n"
+                        + substitutedTree);
+
+        RRGParseTree rightsisadj1 = leftsisadj2.sisterAdjoin(substitutedTree,
+                new GornAddress().ithDaughter(0), 1);
+        System.out.println("result: \n" + rightsisadj1);
     }
 
     private static void testGornAddresses() {
