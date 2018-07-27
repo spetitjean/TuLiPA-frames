@@ -11,12 +11,36 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
-import de.duesseldorf.rrg.extractor.NewParseForestExtractor;
+import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
 
 /**
- * @author david
+ * File RRGParser.java
+ * 
+ * Authors:
+ * David Arps <david.arps@hhu.de>
+ * 
+ * Copyright
+ * David Arps, 2018
+ * 
+ * 
+ * This file is part of the TuLiPA-frames system
+ * https://github.com/spetitjean/TuLiPA-frames
+ * 
+ * 
+ * TuLiPA is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
+ * TuLiPA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
  */
 public class RRGParser {
 
@@ -25,6 +49,8 @@ public class RRGParser {
     private ConcurrentSkipListSet<SimpleRRGParseItem> agenda;
     private RequirementFinder requirementFinder;
     private Deducer deducer;
+
+    private boolean verbosePrintsToStdOut = true;
 
     public RRGParser(Situation sit) {
         this.situation = sit;
@@ -39,30 +65,37 @@ public class RRGParser {
         // Debug:
         this.requirementFinder = new RequirementFinder();
 
-        System.out.println("Done scanning. ");
-        // System.out.println(chart.toString());
+        if (verbosePrintsToStdOut) {
+            System.out.println("Done scanning. ");
+        }
         int i = 0;
         while (!agenda.isEmpty()) {
-            // TODO: optimize this based on the node position?
             // System.out.println("step: " + i);
             i++;
             SimpleRRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
-            noleftsister(currentItem);
-            moveup(currentItem);
-            combinesisters(currentItem);
-            substitute(currentItem);
-            sisteradjoin(currentItem);
+            if (currentItem.getNodePos()
+                    .equals(SimpleRRGParseItem.NodePos.BOT)) {
+                noleftsister(currentItem);
+            } else {
+                moveup(currentItem);
+                substitute(currentItem);
+                sisteradjoin(currentItem);
+            }
             predictwrapping(currentItem);
+            combinesisters(currentItem);
             completewrapping(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
-        System.out.println("Done parsing. \n" + chart.toString());
+        if (verbosePrintsToStdOut) {
+            System.out.println("Done parsing. \n" + chart.toString());
+        }
+
         // old version:
         // ParseForestExtractor extractor = new ParseForestExtractor(chart,
         // toksentence);
         // new version:
-        NewParseForestExtractor extractor = new NewParseForestExtractor(chart,
+        ParseForestExtractor extractor = new ParseForestExtractor(chart,
                 toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
         System.out.println("result: ");
@@ -103,6 +136,8 @@ public class RRGParser {
                     SimpleRRGParseItem consequent = deducer
                             .applyCompleteWrapping(currentItem,
                                     fillerddaughterItem, gap);
+                    // System.out.println("did a Compl Wrapping with: "
+                    // + consequent + currentItem);
                     addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
                             currentItem, fillerddaughterItem);
                 }
@@ -110,12 +145,13 @@ public class RRGParser {
 
         }
         if (fillerItem) {
-            System.out.println("TODO in Parser CW 2 " + currentItem);
-            Set<SimpleRRGParseItem> completeWrappingRootAntecedents = requirementFinder
-                    .findCompleteWrappingRoots(currentItem, chart);
-            System.out.println("untested completeWrapping territory! D");
-            System.out.println("root: " + completeWrappingRootAntecedents);
-            System.out.println("ddaughter: " + currentItem);
+            // System.out.println("TODO in Parser CW 2 " + currentItem);
+            // Set<SimpleRRGParseItem> completeWrappingRootAntecedents =
+            // requirementFinder
+            // .findCompleteWrappingRoots(currentItem, chart);
+            // System.out.println("untested completeWrapping territory! D");
+            // System.out.println("root: " + completeWrappingRootAntecedents);
+            // System.out.println("ddaughter: " + currentItem);
         }
     }
 
@@ -177,18 +213,20 @@ public class RRGParser {
                         currentItem);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
                         currentItem);
-                System.out.println(
-                        "you triggered some special case for sister adjunction which I haven't tested yet. D");
+                // System.out.println(
+                // "you triggered some special case for sister adjunction which
+                // I haven't tested yet. D");
             }
             // System.out.println("rightadjoin: " + currentItem);
             // System.out.println(rightAdjoinAntecedents);
         } else if (sisAdjTarget) {
             Map<String, Set<SimpleRRGParseItem>> sisadjroots = requirementFinder
                     .findSisAdjRoots(currentItem, chart);
+            // if (!sisadjroots.get("l").isEmpty()) {
             // System.out.println("sisadj with " + currentItem);
             // System.out.println("sisl" + sisadjroots.get("l"));
             // System.out.println("sisr" + sisadjroots.get("r"));
-
+            // }
             // left-adjoin
             for (SimpleRRGParseItem auxRootItem : sisadjroots.get("l")) {
                 SimpleRRGParseItem consequent = deducer
@@ -209,7 +247,6 @@ public class RRGParser {
                 // System.out.println(sisadjroots.get("r"));
             }
         }
-
     }
 
     private void substitute(SimpleRRGParseItem currentItem) {

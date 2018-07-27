@@ -790,10 +790,10 @@ public class ParsingInterface {
         rrgparser.parseSentence(toksentence);
         long parsingTime = System.nanoTime() - startParsingTime;
 
-        System.err.println("Parsing time : " + (parsingTime) / (Math.pow(10, 9))
-                + " sec.");
+        System.err.println(
+                "Total time : " + (parsingTime) / (Math.pow(10, 9)) + " sec.");
 
-        return false;
+        return true;
     }
 
     /**

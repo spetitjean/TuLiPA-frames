@@ -4,11 +4,42 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.extractor.GAShiftHandler;
+import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
+/**
+ * File RRGParseTree.java
+ * 
+ * Authors:
+ * David Arps <david.arps@hhu.de>
+ * 
+ * Copyright
+ * David Arps, 2018
+ * 
+ * 
+ * This file is part of the TuLiPA-frames system
+ * https://github.com/spetitjean/TuLiPA-frames
+ * 
+ * 
+ * TuLiPA is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TuLiPA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 public class RRGParseTree extends RRGTree {
 
     private Map<GornAddress, String> idMap;
@@ -17,7 +48,7 @@ public class RRGParseTree extends RRGTree {
      * subtree is to be pushed on here during completeWrapping, and taken again
      * and substituted when doing predictWrapping
      */
-    private List<RRGNode> wrappingSubTrees;
+    private Map<SimpleRRGParseItem, RRGNode> wrappingSubTrees;
 
     private GAShiftHandler addressShiftHandler;
 
@@ -25,7 +56,7 @@ public class RRGParseTree extends RRGTree {
         super(root, id);
         this.idMap = new HashMap<GornAddress, String>();
         idMap.put(((RRGNode) root).getGornaddress(), id);
-        this.wrappingSubTrees = new LinkedList<RRGNode>();
+        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
     }
 
     public RRGParseTree(RRGParseTree tree) {
@@ -42,17 +73,17 @@ public class RRGParseTree extends RRGTree {
         } else {
             this.idMap = new HashMap<GornAddress, String>();
             this.idMap.put(new GornAddress(), tree.getId());
-            this.wrappingSubTrees = new LinkedList<RRGNode>();
+            this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
         }
     }
 
     private void initDeepCopyOfWrappingSubtrees(RRGTree tree) {
-        this.wrappingSubTrees = new LinkedList<RRGNode>();
+        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
         if (tree instanceof RRGParseTree) {
-            for (int i = 0; i < ((RRGParseTree) tree).getWrappingSubTrees()
-                    .size(); i++) {
-                this.wrappingSubTrees.set(i, new RRGNode(
-                        ((RRGParseTree) tree).getWrappingSubTrees().get(i)));
+            for (Entry<SimpleRRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
+                    .getWrappingSubTrees().entrySet()) {
+                this.wrappingSubTrees.put(entry.getKey(),
+                        new RRGNode(entry.getValue()));
             }
         }
     }
@@ -66,7 +97,7 @@ public class RRGParseTree extends RRGTree {
         this.id = newId;
     }
 
-    private List<RRGNode> getWrappingSubTrees() {
+    public Map<SimpleRRGParseItem, RRGNode> getWrappingSubTrees() {
         return wrappingSubTrees;
     }
 
@@ -158,7 +189,7 @@ public class RRGParseTree extends RRGTree {
      * @return
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
-            GornAddress ddaughterAddress) {
+            GornAddress ddaughterAddress, SimpleRRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
         int position = ddaughterAddress.isIthDaughter();
@@ -172,7 +203,8 @@ public class RRGParseTree extends RRGTree {
             // order to take it again when doing predictWrapping
             RRGNode wrappingSubTreeRoot = resultingTree
                     .findNode(ddaughterAddress);
-            this.wrappingSubTrees.add(0, wrappingSubTreeRoot);
+            resultingTree.wrappingSubTrees.put(ddaughterItem,
+                    wrappingSubTreeRoot);
             resultingTree.findNode(dmother).getChildren().remove(position);
 
             List<Node> rootChildren = new LinkedList<Node>(
@@ -189,6 +221,45 @@ public class RRGParseTree extends RRGTree {
                             + this.toString());
             return resultingTree;
         }
+        return resultingTree;
+    }
+
+    /**
+     * Corresponding to the predict wrapping step. At the absolute address of
+     * the ddaughter in that parseTree, add the subtree of the wrapping tree
+     * below the ddaughter.
+     * 
+     * @param ddaughterAbsAddress
+     * @param ddaughterItem
+     * @return
+     */
+    public RRGParseTree addWrappingSubTree(GornAddress ddaughterAbsAddress,
+            SimpleRRGParseItem ddaughterItem) {
+        RRGParseTree resultingTree = new RRGParseTree(this);
+        RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
+
+        // System.out.println("target GA: " + ddaughterAbsAddress);
+        // System.out.println("in tree:\n" + resultingTree);
+        // System.out.println("parseTree target node: "
+        // + resultingTree.findNode(ddaughterAbsAddress));
+        // System.out.println(
+        // "subtree: " + RRGTreeTools.recursivelyPrintNode(subTreeRoot));
+        if (resultingTree.findNode(ddaughterAbsAddress)
+                .nodeUnificationPossible(subTreeRoot)) {
+            // try improvement: setting the node type to STD as wrapping is
+            // finished. No parse tree should have ddaughters in them now
+            subTreeRoot.setType(RRGNodeType.STD);
+            // old version, one liner, works but results in several ddaughters
+            resultingTree.setNode(ddaughterAbsAddress, subTreeRoot);
+
+            // when wrapping several times, the subtree we just added is
+            // "forgotten" in this step.
+            // resultingTree.wrappingSubTrees.remove(0);
+        } else {
+            System.out.println(
+                    "adding a subtree at extracting predict wrapping was not possible");
+        }
+
         return resultingTree;
     }
 
@@ -250,4 +321,5 @@ public class RRGParseTree extends RRGTree {
         resultingTree.idMap.put(address, subTree.getId());
         return resultingTree;
     }
+
 }

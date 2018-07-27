@@ -1,19 +1,131 @@
 package de.duesseldorf.rrg.test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 import de.duesseldorf.io.XMLRRGTag;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.extractor.NaiveGAShiftHandler;
 import de.duesseldorf.util.GornAddress;
 
+/**
+ * File TestTree.java
+ * 
+ * Authors:
+ * David Arps <david.arps@hhu.de>
+ * 
+ * Copyright
+ * David Arps, 2018
+ * 
+ * 
+ * This file is part of the TuLiPA-frames system
+ * https://github.com/spetitjean/TuLiPA-frames
+ * 
+ * 
+ * TuLiPA is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TuLiPA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 public class TestTree {
 
     public static void main(String[] args) {
         // testTreePrinting();
         // printXMLEnums();
         // testGornAddresses();
-        testTreeCloning();
+        // testTreeCloning();
+        // testGAcomparison();
+        testGAshifting();
+        // testSortedMaps();
+    }
+
+    private static void testSortedMaps() {
+
+        Map<String, String> unsortMap = new HashMap<String, String>();
+        unsortMap.put("Z", "z");
+        unsortMap.put("B", "b");
+        unsortMap.put("A", "a");
+        unsortMap.put("C", "c");
+        unsortMap.put("D", "d");
+        unsortMap.put("E", "e");
+        unsortMap.put("Y", "y");
+        unsortMap.put("N", "n");
+        unsortMap.put("J", "j");
+        unsortMap.put("M", "m");
+        unsortMap.put("F", "f");
+
+        System.out.println("Unsort Map......");
+        printMap(unsortMap);
+
+        System.out.println("\nSorted Map......By Key");
+        Map<String, String> treeMap = new TreeMap<String, String>(unsortMap);
+        printMap(treeMap);
+
+    }
+
+    // pretty print a map. Copied from
+    // https://www.mkyong.com/java/how-to-sort-a-map-in-java/ (June 27,2018)
+    private static <K, V> void printMap(Map<K, V> map) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            System.out.println(
+                    "Key : " + entry.getKey() + " Value : " + entry.getValue());
+        }
+    }
+
+    private static void testGAshifting() {
+        // try using a list? Comparators?
+        NaiveGAShiftHandler shiftHandler = new NaiveGAShiftHandler();
+        GornAddress root = new GornAddress();
+        GornAddress one = root.ithDaughter(0);
+        GornAddress two = one.rightSister();
+        GornAddress oneone = one.ithDaughter(0);
+        GornAddress onetwo = oneone.rightSister();
+
+        shiftHandler.addShift(onetwo, 3);
+        shiftHandler.addShift(oneone, 2);
+        shiftHandler.addShift(one, 1);
+        shiftHandler.addShift(two, 4);
+        System.out.println("got the following shifts:\n" + shiftHandler);
+        GornAddress toShift = one.ithDaughter(1);
+        System.out.println("compute shift for " + toShift + ":\n"
+                + shiftHandler.computeShift(toShift));
+        System.out.println("compute shift for " + root + ":\n"
+                + shiftHandler.computeShift(root));
+        System.out.println("compute shift for " + oneone + ":\n"
+                + shiftHandler.computeShift(oneone));
+
+    }
+
+    private static void testGAcomparison() {
+        GornAddress root = new GornAddress();
+        GornAddress one = root.ithDaughter(0);
+        System.out.println("root: " + root + "\ndaughter: " + one);
+        System.out
+                .println("one > root should be > 0:  " + (one.compareTo(root)));
+        GornAddress two = one.rightSister();
+        System.out
+                .println("one < root should be < 0:  " + (root.compareTo(one)));
+        System.out.println("two < one should be < 0: " + one.compareTo(two));
+        System.out.println("two > one should be > 0: " + two.compareTo(one));
+
+        GornAddress oneone = one.ithDaughter(0);
+        System.out
+                .println("oneone < two should be <0: " + oneone.compareTo(two));
+        System.out
+                .println("oneone > two should be >0: " + two.compareTo(oneone));
     }
 
     private static void testTreeCloning() {

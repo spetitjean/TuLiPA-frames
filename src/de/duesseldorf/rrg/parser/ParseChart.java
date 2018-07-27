@@ -26,11 +26,19 @@
  */
 package de.duesseldorf.rrg.parser;
 
+import java.util.Set;
+
 public interface ParseChart {
 
     public boolean containsItem(ParseItem item);
 
+    public Set<ParseItem> retrieveGoalItems();
+
+    public Backpointer getBackPointers(SimpleRRGParseItem item);
+
     public boolean addItem(ParseItem item, Operation op,
             ParseItem... antecedents);
+
+    public int computeSize();
 
 }

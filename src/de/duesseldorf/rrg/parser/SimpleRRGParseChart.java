@@ -39,13 +39,6 @@ import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 
 public class SimpleRRGParseChart implements ParseChart {
 
-    /**
-     * probably to much:
-     * map tree -> node -> i -> j -> ws? -> List of Gaps
-     */
-    // private HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
-    // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>> chart;
-
     // map start index to Parse Items to their backpointers
     private Map<Integer, Map<ParseItem, Backpointer>> chart;
     private int sentencelength;
@@ -229,6 +222,15 @@ public class SimpleRRGParseChart implements ParseChart {
         return !alreadythere;
     }
 
+    public int computeSize() {
+        int result = 0;
+        for (Entry<Integer, Map<ParseItem, Backpointer>> startingPos : chart
+                .entrySet()) {
+            result += startingPos.getValue().keySet().size();
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         String alphaOmega = "----------------------------------------------------------------------\n----------------------------------------------------------------------";
@@ -250,6 +252,7 @@ public class SimpleRRGParseChart implements ParseChart {
 
             }
         }
+        sb.append("size of the chart: " + computeSize() + " items.");
         sb.append(alphaOmega);
         return sb.toString();
     }
