@@ -1,9 +1,6 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
@@ -16,31 +13,30 @@ import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 
 /**
  * File RRGParser.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class RRGParser {
 
@@ -74,10 +70,10 @@ public class RRGParser {
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
-            if (currentItem.getNodePos()
-                    .equals(RRGParseItem.NodePos.BOT)) {
+            if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
-            } else {
+            }
+            else {
                 moveup(currentItem);
                 substitute(currentItem);
                 sisteradjoin(currentItem);
@@ -95,8 +91,7 @@ public class RRGParser {
         // ParseForestExtractor extractor = new ParseForestExtractor(chart,
         // toksentence);
         // new version:
-        ParseForestExtractor extractor = new ParseForestExtractor(chart,
-                toksentence);
+        ParseForestExtractor extractor = new ParseForestExtractor(chart, toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
         System.out.println("result: ");
         for (RRGParseTree rrgParseTree : result) {
@@ -106,40 +101,34 @@ public class RRGParser {
     }
 
     /**
-     * 
      * @param consequent
-     * @param antecedents
-     *            always give the antecedent items in left-to-right order
+     * @param antecedents always give the antecedent items in left-to-right order
      */
-    private void addToChartAndAgenda(RRGParseItem consequent,
-                                     Operation operation, RRGParseItem... antecedents) {
+    private void addToChartAndAgenda(RRGParseItem consequent, Operation operation,
+                                     RRGParseItem... antecedents) {
         if (chart.addItem(consequent, operation, antecedents)) {
             agenda.add(consequent);
         }
         // Debug
-        // System.out.println("next to agenda: " + consequent + "\n\t " +
-        // operation
-        // + "\n\t antecedents: " + Arrays.asList(antecedents));
+        System.out.println("next to agenda: " + consequent + "\n\t " +
+        operation + "\n\t antecedents: " + Arrays.asList(antecedents));
     }
 
     private void completewrapping(RRGParseItem currentItem) {
         // System.out.println("complW with " + currentItem);
-        boolean rootItem = requirementFinder
-                .isCompleteWrappingRootItem(currentItem);
-        boolean fillerItem = requirementFinder
-                .isCompleteWrappingFillerItem(currentItem);
+        boolean rootItem = requirementFinder.isCompleteWrappingRootItem(currentItem);
+        boolean fillerItem = requirementFinder.isCompleteWrappingFillerItem(currentItem);
         if (rootItem) {
             for (Gap gap : currentItem.getGaps()) {
                 Set<RRGParseItem> completeWrappingFillerAntecedents = requirementFinder
                         .findCompleteWrappingFillers(currentItem, gap, chart);
                 for (RRGParseItem fillerddaughterItem : completeWrappingFillerAntecedents) {
                     RRGParseItem consequent = deducer
-                            .applyCompleteWrapping(currentItem,
-                                    fillerddaughterItem, gap);
+                            .applyCompleteWrapping(currentItem, fillerddaughterItem, gap);
                     // System.out.println("did a Compl Wrapping with: "
                     // + consequent + currentItem);
-                    addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
-                            currentItem, fillerddaughterItem);
+                    addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING, currentItem,
+                                        fillerddaughterItem);
                 }
             }
 
@@ -164,18 +153,19 @@ public class RRGParser {
                 Set<RRGNode> substNodes = tree.getSubstNodes().get(cat);
                 if (substNodes != null) {
                     HashSet<Gap> gaps = new HashSet<Gap>();
-                    gaps.add(new Gap(currentItem.startPos(),
-                            currentItem.getEnd(), cat));
+                    gaps.add(new Gap(currentItem.startPos(), currentItem.getEnd(), cat));
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
-                        RRGParseItem consequent = new RRGParseItem(
-                                currentItem, tree, substNode,
-                                RRGParseItem.NodePos.BOT, -1, -1, gaps,
-                                false, false);
-
+                        RRGParseItem cons = new RRGParseItem.Builder().tree(tree)
+                                                                      .node(substNode)
+                                                                      .nodepos(NodePos.BOT)
+                                                                      .start(currentItem
+                                                                                     .startPos())
+                                                                      .end(currentItem.getEnd())
+                                                                      .gaps(gaps).ws(false)
+                                                                      .build();
                         // System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(consequent,
-                                Operation.PREDICTWRAPPING, currentItem);
+                        addToChartAndAgenda(cons, Operation.PREDICTWRAPPING, currentItem);
                     }
                 }
             }
@@ -199,27 +189,24 @@ public class RRGParser {
                     .findLeftAdjoinTargets(currentItem, chart);
             for (RRGParseItem target : leftAdjoinTargets) {
                 // System.out.println("THERE: " + simpleRRGParseItem);
-                RRGParseItem consequent = deducer.applyLeftAdjoin(target,
-                        currentItem);
-                addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
-                        currentItem, target);
+                RRGParseItem consequent = deducer.applyLeftAdjoin(target, currentItem);
+                addToChartAndAgenda(consequent, Operation.LEFTADJOIN, currentItem, target);
             }
 
             // right-adjoin
             Set<RRGParseItem> rightAdjoinAntecedents = requirementFinder
                     .findRightAdjoinTargets(currentItem, chart);
             for (RRGParseItem target : rightAdjoinAntecedents) {
-                RRGParseItem consequent = deducer.applyRightAdjoin(target,
-                        currentItem);
-                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
-                        currentItem);
+                RRGParseItem consequent = deducer.applyRightAdjoin(target, currentItem);
+                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target, currentItem);
                 // System.out.println(
                 // "you triggered some special case for sister adjunction which
                 // I haven't tested yet. D");
             }
             // System.out.println("rightadjoin: " + currentItem);
             // System.out.println(rightAdjoinAntecedents);
-        } else if (sisAdjTarget) {
+        }
+        else if (sisAdjTarget) {
             Map<String, Set<RRGParseItem>> sisadjroots = requirementFinder
                     .findSisAdjRoots(currentItem, chart);
             // if (!sisadjroots.get("l").isEmpty()) {
@@ -229,17 +216,14 @@ public class RRGParser {
             // }
             // left-adjoin
             for (RRGParseItem auxRootItem : sisadjroots.get("l")) {
-                RRGParseItem consequent = deducer
-                        .applyLeftAdjoin(currentItem, auxRootItem);
-                addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
-                        auxRootItem, currentItem);
+                RRGParseItem consequent = deducer.applyLeftAdjoin(currentItem, auxRootItem);
+                addToChartAndAgenda(consequent, Operation.LEFTADJOIN, auxRootItem, currentItem);
             }
             // right-adjoin
             for (RRGParseItem auxRootItem : sisadjroots.get("r")) {
-                RRGParseItem consequent = deducer
-                        .applyRightAdjoin(currentItem, auxRootItem);
-                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
-                        currentItem, auxRootItem);
+                RRGParseItem consequent = deducer.applyRightAdjoin(currentItem, auxRootItem);
+                addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, currentItem,
+                                    auxRootItem);
                 // System.out.println(auxRootItem + " and " + currentItem
                 // + "\n\t lead to " + consequent);
 
@@ -253,17 +237,21 @@ public class RRGParser {
         if (requirementFinder.substituteReq(currentItem)) {
             for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
                 Set<RRGNode> substNodes = tree.getSubstNodes()
-                        .get(currentItem.getNode().getCategory());
+                                              .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
-                        RRGParseItem consequent = new RRGParseItem(
-                                currentItem, tree, substNode,
-                                RRGParseItem.NodePos.BOT, -1, -1, null,
-                                false, true);
+                        RRGParseItem cons = new RRGParseItem.Builder().tree(tree)
+                                                                      .node(substNode)
+                                                                      .nodepos(NodePos.BOT)
+                                                                      .start(currentItem
+                                                                                     .startPos())
+                                                                      .end(currentItem.getEnd())
+                                                                      .gaps(currentItem
+                                                                                    .getGaps())
+                                                                      .ws(false).build();
                         // System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(consequent, Operation.SUBSTITUTE,
-                                currentItem);
+                        addToChartAndAgenda(cons, Operation.SUBSTITUTE, currentItem);
                     }
                 }
             }
@@ -288,11 +276,11 @@ public class RRGParser {
         for (RRGParseItem rightSisterAntecedentItem : rightSisterCandidates) {
             // System.out.println(
             // "mate with: " + rightSisterAntecedentItem + "results in");
-            RRGParseItem rightSisTopItem = deducer.applyCombineSisters(
-                    currentItem, rightSisterAntecedentItem);
+            RRGParseItem rightSisTopItem = deducer
+                    .applyCombineSisters(currentItem, rightSisterAntecedentItem);
             // System.out.println(rightSisTopItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                    currentItem, rightSisterAntecedentItem);
+            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS, currentItem,
+                                rightSisterAntecedentItem);
         }
         // case 2: currentItem is the right node of the combination
         Set<RRGParseItem> leftSisterCandidates = requirementFinder
@@ -300,8 +288,8 @@ public class RRGParser {
         for (RRGParseItem leftSisterAntecedentItem : leftSisterCandidates) {
             RRGParseItem rightSisTopItem = deducer
                     .applyCombineSisters(leftSisterAntecedentItem, currentItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                    leftSisterAntecedentItem, currentItem);
+            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS, leftSisterAntecedentItem,
+                                currentItem);
 
         }
     }
@@ -309,7 +297,7 @@ public class RRGParser {
     /**
      * note that NLS is the only deduction rule that can be done for items in
      * BOT position on a leftmost daughter node
-     * 
+     *
      * @param currentItem
      */
     private void noleftsister(RRGParseItem currentItem) {
@@ -339,9 +327,14 @@ public class RRGParser {
                     for (RRGNode lexLeaf : candidates) {
                         // If so, create a new item and add it to the chart and
                         // agenda
-                        RRGParseItem scannedItem = new RRGParseItem(
-                                tree, lexLeaf, NodePos.BOT, start, start + 1,
-                                new HashSet<Gap>(), false);
+                        RRGParseItem scannedItem = new RRGParseItem.Builder().tree(tree)
+                                                                             .node(lexLeaf)
+                                                                             .nodepos(
+                                                                                     NodePos.BOT)
+                                                                             .start(start)
+                                                                             .end(start + 1)
+                                                                             .gaps(new HashSet<Gap>())
+                                                                             .ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
                 }

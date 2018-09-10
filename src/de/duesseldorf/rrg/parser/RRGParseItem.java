@@ -11,7 +11,7 @@ import de.duesseldorf.rrg.RRGTree;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -34,27 +34,16 @@ import de.duesseldorf.rrg.RRGTree;
  */
 public class RRGParseItem implements Comparable<RRGParseItem> {
 
-    /**
-     * Do we look at everything below this node ({@code BOT}), or do we also
-     * look at the left sister ({@code TOP})?
-     * 
-     * @author david
-     *
-     */
-    public enum NodePos {
-        TOP, BOT;
-    }
+    private final RRGTree tree;
+    private final RRGNode node;
+    private final NodePos nodepos;
+    private final int start;
+    private final int end;
+    private final Set<Gap> gaps;
+    private final boolean ws;
 
-    private RRGTree tree;
-    private RRGNode node;
-    private NodePos nodepos;
-    private int start;
-    private int end;
-    private Set<Gap> gaps;
-    private boolean ws;
-
-    public RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos,
-                        int start, int end, Set<Gap> gaps, boolean ws) {
+    private RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos, int start, int end,
+                         Set<Gap> gaps, boolean ws) {
         this.tree = tree;
         this.node = node;
         this.nodepos = nodepos;
@@ -62,50 +51,6 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         this.end = end;
         this.gaps = gaps;
         this.ws = ws;
-    }
-
-    /**
-     * 
-     * 
-     * @param item
-     *            The item to take values from when the value given as parameter
-     *            is
-     * @param node
-     *            {@code null}
-     * @param nodepos
-     *            {@code null}
-     * @param start
-     *            {@code -1}
-     * @param end
-     *            {@code -1}
-     * @param gaps
-     *            {@code null}
-     * @param ws
-     *            {@code null}
-     * @param takeGapsFromItem
-     *            if this is {@code true} and {@code gaps} is null, the items of
-     *            the model will be the ones from {@code item}.
-     *            If this is {@code false} and {@code gaps} is null, the gaps
-     *            will be null as well.
-     *            If this is {@code false} and {@code gaps} is not null, the
-     *            gaps will be the one in the {@code gaps parameter}
-     */
-    public RRGParseItem(RRGParseItem item, RRGTree tree,
-                        RRGNode node, NodePos nodepos, int start, int end, Set<Gap> gaps,
-                        Boolean ws, boolean takeGapsFromItem) {
-
-        // the optional ones
-        this.tree = !(tree == null) ? tree : item.getTree();
-        this.node = !(node == null) ? node : item.getNode();
-        this.nodepos = !(nodepos == null) ? nodepos : item.getNodePos();
-        this.start = !(start == -1) ? start : item.startPos();
-        this.end = !(end == -1) ? end : item.getEnd();
-        this.ws = !(ws == null) ? ws : item.getwsflag();
-        if (takeGapsFromItem) {
-            this.gaps = !(gaps == null) ? gaps : item.getGaps();
-        } else {
-            this.gaps = !(gaps == null) ? gaps : null;
-        }
     }
 
     public RRGTree getTree() {
@@ -138,7 +83,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tree, node, start, end, node, gaps, nodepos, ws);
+        return Objects.hash(tree, start, end, node, gaps, nodepos, ws);
     }
 
     @Override
@@ -150,7 +95,6 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     /**
-     * 
      * @return
      */
     public String toString() {
@@ -159,9 +103,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             gapstr += gap.toString();
         }
         gapstr += "]";
-        String itemstr = "[" + this.tree.getRoot() + " " + this.tree.getId()
-                + ", " + this.node + ", " + this.nodepos + ", " + this.start
-                + ", " + this.end + ", " + gapstr + ", " + ws + "]";
+        String itemstr = "[" + this.tree.getRoot() + " " + this.tree
+                .getId() + ", " + this.node + ", " + this.nodepos + ", " + this.start + ", " + this.end + ", " + gapstr + ", " + ws + "]";
 
         return itemstr;
     }
@@ -172,8 +115,78 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         }
         if (o.startPos() < this.startPos()) {
             return 1;
-        } else {
+        }
+        else {
             return -1;
+        }
+    }
+
+    /**
+     * Do we look at everything below this node ({@code BOT}), or do we also
+     * look at the left sister ({@code TOP})?
+     *
+     * @author david
+     */
+    public enum NodePos {
+        TOP, BOT;
+    }
+
+    public static class Builder {
+        // all of the properties are initialized with their default (underspecified) values).
+        private RRGTree tree = null;
+        private RRGNode node = null;
+        private NodePos nodepos = null;
+        private int start = -2;
+        private int end = -2;
+        private Set<Gap> gaps = null;
+        private Boolean ws;
+
+        public Builder() {
+        }
+
+        public Builder tree(RRGTree tree) {
+            this.tree = tree;
+            return this;
+        }
+
+        public Builder node(RRGNode node) {
+            this.node = node;
+            return this;
+        }
+
+        public Builder nodepos(NodePos nodepos) {
+            this.nodepos = nodepos;
+            return this;
+        }
+
+        public Builder start(int start) {
+            this.start = start;
+            return this;
+        }
+
+        public Builder end(int end) {
+            this.end = end;
+            return this;
+        }
+
+        public Builder gaps(Set<Gap> gaps) {
+            this.gaps = gaps;
+            return this;
+        }
+
+        public Builder ws(boolean ws) {
+            this.ws = ws;
+            return this;
+        }
+
+        public RRGParseItem build() {
+           /* System.out.println();
+            System.out.println();
+            //     System.out.println(tree.toString());
+            System.out.println();
+            System.out.println();
+*/
+            return new RRGParseItem(tree, node, nodepos, start, end, gaps, ws);
         }
     }
 }

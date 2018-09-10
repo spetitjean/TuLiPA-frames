@@ -12,7 +12,7 @@ import de.duesseldorf.util.GornAddress;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -38,111 +38,113 @@ public class Deducer {
     /**
      * Assuming that both parameters are fitting antecedents, apply the
      * combineSisters deduction rule
-     * 
+     *
      * @param leftItem
      * @param rightItem
      * @return
      */
-    public RRGParseItem applyCombineSisters(RRGParseItem leftItem,
-                                            RRGParseItem rightItem) {
+    public RRGParseItem applyCombineSisters(RRGParseItem leftItem, RRGParseItem rightItem) {
         Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
-        RRGParseItem result = new RRGParseItem(rightItem, null,
-                null, RRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
-                gaps, false, false);
-        return result;
+        return new RRGParseItem.Builder().tree(rightItem.getTree()).node(rightItem.getNode())
+                                         .nodepos(RRGParseItem.NodePos.TOP)
+                                         .start(leftItem.startPos()).end(rightItem.getEnd())
+                                         .gaps(gaps).ws(false).build();
     }
 
     /**
      * Assuming that the {@code currentItem} is a fitting antecedent, apply the
      * moveUp deduction rule
-     * 
+     *
      * @param currentItem
      * @return
      */
     public RRGParseItem applyMoveUp(RRGParseItem currentItem) {
-        GornAddress motheraddress = currentItem.getNode().getGornaddress()
-                .mother();
+        GornAddress motheraddress = currentItem.getNode().getGornaddress().mother();
         RRGNode mothernode = currentItem.getTree().findNode(motheraddress);
         boolean newwsflag = mothernode.getType().equals(RRGNodeType.DDAUGHTER);
         Set<RRGParseItem> backpointers = new HashSet<RRGParseItem>();
         backpointers.add(currentItem);
 
-        RRGParseItem newItem = new RRGParseItem(currentItem, null,
-                mothernode, RRGParseItem.NodePos.BOT, -1, -1, null,
-                newwsflag, true);
-
         // Debug
         // System.out.println(motheraddress + " is the mother of "
         // + currentItem.getNode().getGornaddress());
-        return newItem;
+        return new RRGParseItem.Builder().tree(currentItem.getTree()).node(mothernode)
+                                         .nodepos(RRGParseItem.NodePos.BOT)
+                                         .start(currentItem.startPos())
+                                         .end(currentItem.getEnd()).gaps(currentItem.getGaps())
+                                         .ws(newwsflag).build();
     }
 
     /**
      * Assuming that {@code CurrentItem} is a fitting antecedent, apply the
      * noLeftSister deduction rule.
-     * 
+     *
      * @param currentItem
      * @return
      */
-    public RRGParseItem applyNoLeftSister(
-            RRGParseItem currentItem) {
-        return new RRGParseItem(currentItem, null, null,
-                RRGParseItem.NodePos.TOP, -1, -1, null, null, true);
-
+    public RRGParseItem applyNoLeftSister(RRGParseItem currentItem) {
+        return new RRGParseItem.Builder().tree(currentItem.getTree())
+                                         .node(currentItem.getNode())
+                                         .nodepos(RRGParseItem.NodePos.TOP)
+                                         .start(currentItem.startPos())
+                                         .end(currentItem.getEnd()).gaps(currentItem.getGaps())
+                                         .ws(currentItem.getwsflag()).build();
     }
 
     /**
      * Creates a new item by applying the left-adjoin deduction rule. The tree
      * in {@code auxTreeRoot} is sis-adjoined to the left of the
      * {@code targetSister} node.
-     * 
+     *
      * @param targetSister
      * @param auxTreeRoot
      * @return
      */
-    public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister,
-                                        RRGParseItem auxTreeRoot) {
+    public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister, RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
 
-        RRGParseItem result = new RRGParseItem(targetSister, null,
-                null, null, auxTreeRoot.startPos(), -1, gaps, false, false);
-        return result;
+        return new RRGParseItem.Builder().tree(targetSister.getTree())
+                                         .node(targetSister.getNode())
+                                         .nodepos(targetSister.getNodePos())
+                                         .start(auxTreeRoot.startPos())
+                                         .end(targetSister.getEnd()).gaps(gaps).ws(false)
+                                         .build();
     }
 
     /**
      * Creates a new item by applying the right-adjoin deduction rule. The tree
      * in {@code auxTreeRoot} is sis-adjoined to the right of the
      * {@code targetSister} node.
-     * 
+     *
      * @param target
      * @param auxTreeRoot
      * @return
      */
-    public RRGParseItem applyRightAdjoin(RRGParseItem target,
-                                         RRGParseItem auxTreeRoot) {
+    public RRGParseItem applyRightAdjoin(RRGParseItem target, RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
 
-        RRGParseItem result = new RRGParseItem(target, null, null,
-                null, -1, auxTreeRoot.getEnd(), gaps, null, false);
-        return result;
+        System.out.print(target.getTree());
+        return new RRGParseItem.Builder().tree(target.getTree()).node(target.getNode())
+                                         .nodepos(target.getNodePos()).start(target.startPos())
+                                         .end(auxTreeRoot.getEnd()).gaps(gaps)
+                                         .ws(target.getwsflag()).build();
     }
 
-    public RRGParseItem applyCompleteWrapping(
-            RRGParseItem targetRootItem,
-            RRGParseItem fillerddaughterItem, Gap gap) {
+    public RRGParseItem applyCompleteWrapping(RRGParseItem targetRootItem,
+                                              RRGParseItem fillerddaughterItem, Gap gap) {
         Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
-        RRGParseItem consequent = new RRGParseItem(
-                fillerddaughterItem, null, null, null,
-                targetRootItem.startPos(), targetRootItem.getEnd(), gaps, false,
-                false);
-        return consequent;
+        return new RRGParseItem.Builder().tree(fillerddaughterItem.getTree())
+                                         .node(fillerddaughterItem.getNode())
+                                         .nodepos(fillerddaughterItem.getNodePos())
+                                         .start(targetRootItem.startPos())
+                                         .end(targetRootItem.getEnd()).gaps(gaps).ws(false)
+                                         .build();
     }
-
 }
