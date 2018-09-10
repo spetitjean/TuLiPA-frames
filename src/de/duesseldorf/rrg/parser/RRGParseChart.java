@@ -1,5 +1,5 @@
 /*
- *  File SimpleRRGParseChart.java
+ *  File RRGParseChart.java
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
@@ -37,23 +37,23 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 
-public class SimpleRRGParseChart implements ParseChart {
+public class RRGParseChart {
 
     // map start index to Parse Items to their backpointers
-    private Map<Integer, Map<ParseItem, Backpointer>> chart;
+    private Map<Integer, Map<RRGParseItem, Backpointer>> chart;
     private int sentencelength;
 
-    public SimpleRRGParseChart(int sentencelength) {
+    public RRGParseChart(int sentencelength) {
         this.sentencelength = sentencelength;
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
-        chart = new HashMap<Integer, Map<ParseItem, Backpointer>>();
+        chart = new HashMap<Integer, Map<RRGParseItem, Backpointer>>();
         for (int i = 0; i <= sentencelength; i++) {
-            chart.put(i, new HashMap<ParseItem, Backpointer>());
+            chart.put(i, new HashMap<RRGParseItem, Backpointer>());
         }
     }
 
-    public boolean containsItem(ParseItem item) {
+    public boolean containsItem(RRGParseItem item) {
         int startpos = item.startPos();
         System.out.println(
                 "Simple...chart.containsItem() is not tested yet and might be wrong in some cases");
@@ -68,16 +68,16 @@ public class SimpleRRGParseChart implements ParseChart {
      *         - ws is false<br>
      *         - in TOP position in a STD root node
      */
-    public Set<ParseItem> retrieveGoalItems() {
-        Set<ParseItem> goals = new HashSet<ParseItem>();
-        for (ParseItem item : chart.get(0).keySet()) {
-            SimpleRRGParseItem rrgitem = (SimpleRRGParseItem) item;
+    public Set<RRGParseItem> retrieveGoalItems() {
+        Set<RRGParseItem> goals = new HashSet<RRGParseItem>();
+        for (RRGParseItem item : chart.get(0).keySet()) {
+            RRGParseItem rrgitem = (RRGParseItem) item;
             boolean goalReq = rrgitem.getEnd() == sentencelength && // end=n
             // no more ws
                     rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
                     // TOP position
                     && rrgitem.getNodePos()
-                            .equals(SimpleRRGParseItem.NodePos.TOP)
+                            .equals(RRGParseItem.NodePos.TOP)
                     // in a root
                     && rrgitem.getNode().getGornaddress().mother() == null
                     // in a STD node
@@ -95,7 +95,7 @@ public class SimpleRRGParseChart implements ParseChart {
      * @return A Set of the backpointers of item, i.e. a Set of all sets of
      *         items that created the item.
      */
-    public Backpointer getBackPointers(SimpleRRGParseItem item) {
+    public Backpointer getBackPointers(RRGParseItem item) {
         return chart.get(item.startPos()).get(item);
     }
 
@@ -113,13 +113,13 @@ public class SimpleRRGParseChart implements ParseChart {
      *            item we look for?
      * @return
      */
-    public Set<SimpleRRGParseItem> findUnderspecifiedItem(
-            SimpleRRGParseItem model, boolean gapSubSet) {
-        Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
+    public Set<RRGParseItem> findUnderspecifiedItem(
+            RRGParseItem model, boolean gapSubSet) {
+        Set<RRGParseItem> result = new HashSet<RRGParseItem>();
 
         // collect all the items that might fit the model
         // first find out in which area of the chart to look
-        Set<ParseItem> toCheck = new HashSet<ParseItem>();
+        Set<RRGParseItem> toCheck = new HashSet<RRGParseItem>();
         int startboundary = model.startPos() == -2 ? 0 : model.startPos();
         int endboundary = model.startPos() == -2 ? chart.size() - 1
                 : startboundary;
@@ -130,20 +130,20 @@ public class SimpleRRGParseChart implements ParseChart {
         }
 
         // this needs to be refactored!
-        for (ParseItem s : toCheck) {
+        for (RRGParseItem s : toCheck) {
             boolean endCheck = model.getEnd() == -2
-                    || model.getEnd() == ((SimpleRRGParseItem) s).getEnd();
+                    || model.getEnd() == ((RRGParseItem) s).getEnd();
             if (endCheck) {
                 boolean treeCheck = model.getTree() == null || model.getTree()
-                        .equals(((SimpleRRGParseItem) s).getTree());
+                        .equals(((RRGParseItem) s).getTree());
                 if (treeCheck) {
                     boolean nodeCheck = model.getNode() == null
                             || model.getNode()
-                                    .equals(((SimpleRRGParseItem) s).getNode());
+                                    .equals(((RRGParseItem) s).getNode());
                     if (nodeCheck) {
                         boolean posCheck = model.getNodePos() == null
                                 || model.getNodePos().equals(
-                                        ((SimpleRRGParseItem) s).getNodePos());
+                                        ((RRGParseItem) s).getNodePos());
                         if (posCheck) {
                             // several cases: 1. no gaps given - gaps = null. 2.
                             // gaps given, equal to the gaps we look for
@@ -156,15 +156,15 @@ public class SimpleRRGParseChart implements ParseChart {
                                 // case 2
                                 if (!gapSubSet) {
                                     gapCheck = model.getGaps().equals(
-                                            ((SimpleRRGParseItem) s).getGaps());
+                                            ((RRGParseItem) s).getGaps());
                                 } else {
                                     // case 3
-                                    gapCheck = ((SimpleRRGParseItem) s)
+                                    gapCheck = ((RRGParseItem) s)
                                             .getGaps()
                                             .containsAll(model.getGaps());
                                     // System.out.print(gapCheck);
                                     // System.out.println("yay: "
-                                    // + ((SimpleRRGParseItem) s).getGaps()
+                                    // + ((RRGParseItem) s).getGaps()
                                     // + model.getGaps());
                                 }
                             }
@@ -173,10 +173,10 @@ public class SimpleRRGParseChart implements ParseChart {
                                 boolean wsCheck = (Boolean) model
                                         .getwsflag() == null
                                         || ((Boolean) model.getwsflag())
-                                                .equals(((SimpleRRGParseItem) s)
+                                                .equals(((RRGParseItem) s)
                                                         .getwsflag());
                                 if (wsCheck) {
-                                    result.add((SimpleRRGParseItem) s);
+                                    result.add((RRGParseItem) s);
                                 }
                             }
                         }
@@ -195,15 +195,15 @@ public class SimpleRRGParseChart implements ParseChart {
      *            the item that should be added to the chart.
      * @param antecedents
      *            the antecedents from which this item was created.
-     * @return true if the ParseItem was not already in the chart
+     * @return true if the RRGParseItem was not already in the chart
      */
-    public boolean addItem(ParseItem consequent, Operation operation,
-            ParseItem... antecedents) {
-        List<ParseItem> antes;
+    public boolean addItem(RRGParseItem consequent, Operation operation,
+                           RRGParseItem... antecedents) {
+        List<RRGParseItem> antes;
         if (antecedents.length > 0) {
-            antes = new LinkedList<ParseItem>(Arrays.asList(antecedents));
+            antes = new LinkedList<RRGParseItem>(Arrays.asList(antecedents));
         } else {
-            antes = new LinkedList<ParseItem>();
+            antes = new LinkedList<RRGParseItem>();
         }
         int startpos = consequent.startPos();
 
@@ -224,7 +224,7 @@ public class SimpleRRGParseChart implements ParseChart {
 
     public int computeSize() {
         int result = 0;
-        for (Entry<Integer, Map<ParseItem, Backpointer>> startingPos : chart
+        for (Entry<Integer, Map<RRGParseItem, Backpointer>> startingPos : chart
                 .entrySet()) {
             result += startingPos.getValue().keySet().size();
         }
@@ -241,7 +241,7 @@ public class SimpleRRGParseChart implements ParseChart {
                 sb.append("\nstart index " + i + "\n");
             }
             // print the items
-            for (Entry<ParseItem, Backpointer> chartEntry : chart.get(i)
+            for (Entry<RRGParseItem, Backpointer> chartEntry : chart.get(i)
                     .entrySet()) {
                 sb.append(chartEntry.getKey().toString());
 

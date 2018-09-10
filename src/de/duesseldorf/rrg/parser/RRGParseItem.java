@@ -7,7 +7,7 @@ import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 
 /*
- *  File SimpleRRGParseItem.java
+ *  File RRGParseItem.java
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
@@ -32,7 +32,7 @@ import de.duesseldorf.rrg.RRGTree;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
+public class RRGParseItem implements Comparable<RRGParseItem> {
 
     /**
      * Do we look at everything below this node ({@code BOT}), or do we also
@@ -53,8 +53,8 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
     private Set<Gap> gaps;
     private boolean ws;
 
-    public SimpleRRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos,
-            int start, int end, Set<Gap> gaps, boolean ws) {
+    public RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos,
+                        int start, int end, Set<Gap> gaps, boolean ws) {
         this.tree = tree;
         this.node = node;
         this.nodepos = nodepos;
@@ -90,9 +90,9 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
      *            If this is {@code false} and {@code gaps} is not null, the
      *            gaps will be the one in the {@code gaps parameter}
      */
-    public SimpleRRGParseItem(SimpleRRGParseItem item, RRGTree tree,
-            RRGNode node, NodePos nodepos, int start, int end, Set<Gap> gaps,
-            Boolean ws, boolean takeGapsFromItem) {
+    public RRGParseItem(RRGParseItem item, RRGTree tree,
+                        RRGNode node, NodePos nodepos, int start, int end, Set<Gap> gaps,
+                        Boolean ws, boolean takeGapsFromItem) {
 
         // the optional ones
         this.tree = !(tree == null) ? tree : item.getTree();
@@ -138,12 +138,12 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tree, start, end, node, gaps, nodepos, ws);
+        return Objects.hash(tree, node, start, end, node, gaps, nodepos, ws);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof SimpleRRGParseItem) {
+        if (o instanceof RRGParseItem) {
             return o.hashCode() == this.hashCode();
         }
         return false;
@@ -166,11 +166,11 @@ public class SimpleRRGParseItem implements ParseItem, Comparable<ParseItem> {
         return itemstr;
     }
 
-    public int compareTo(ParseItem o) {
+    public int compareTo(RRGParseItem o) {
         if (this.equals(o)) {
             return 0;
         }
-        if (((SimpleRRGParseItem) o).startPos() < this.startPos()) {
+        if (o.startPos() < this.startPos()) {
             return 1;
         } else {
             return -1;

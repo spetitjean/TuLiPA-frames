@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.extractor.GAShiftHandler;
-import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
+import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
@@ -48,7 +48,7 @@ public class RRGParseTree extends RRGTree {
      * subtree is to be pushed on here during completeWrapping, and taken again
      * and substituted when doing predictWrapping
      */
-    private Map<SimpleRRGParseItem, RRGNode> wrappingSubTrees;
+    private Map<RRGParseItem, RRGNode> wrappingSubTrees;
 
     private GAShiftHandler addressShiftHandler;
 
@@ -56,7 +56,7 @@ public class RRGParseTree extends RRGTree {
         super(root, id);
         this.idMap = new HashMap<GornAddress, String>();
         idMap.put(((RRGNode) root).getGornaddress(), id);
-        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+        this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
     }
 
     public RRGParseTree(RRGParseTree tree) {
@@ -73,14 +73,14 @@ public class RRGParseTree extends RRGTree {
         } else {
             this.idMap = new HashMap<GornAddress, String>();
             this.idMap.put(new GornAddress(), tree.getId());
-            this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+            this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
         }
     }
 
     private void initDeepCopyOfWrappingSubtrees(RRGTree tree) {
-        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+        this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
         if (tree instanceof RRGParseTree) {
-            for (Entry<SimpleRRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
+            for (Entry<RRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
                     .getWrappingSubTrees().entrySet()) {
                 this.wrappingSubTrees.put(entry.getKey(),
                         new RRGNode(entry.getValue()));
@@ -97,7 +97,7 @@ public class RRGParseTree extends RRGTree {
         this.id = newId;
     }
 
-    public Map<SimpleRRGParseItem, RRGNode> getWrappingSubTrees() {
+    public Map<RRGParseItem, RRGNode> getWrappingSubTrees() {
         return wrappingSubTrees;
     }
 
@@ -183,13 +183,10 @@ public class RRGParseTree extends RRGTree {
      * GornAddressees of all
      * dmother's children further right might be affected, and are updated.
      * 
-     * @param wrappedTree
-     * @param dmother
-     * @param position
      * @return
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
-            GornAddress ddaughterAddress, SimpleRRGParseItem ddaughterItem) {
+            GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
         int position = ddaughterAddress.isIthDaughter();
@@ -234,7 +231,7 @@ public class RRGParseTree extends RRGTree {
      * @return
      */
     public RRGParseTree addWrappingSubTree(GornAddress ddaughterAbsAddress,
-            SimpleRRGParseItem ddaughterItem) {
+            RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
 

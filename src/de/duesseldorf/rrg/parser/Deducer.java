@@ -43,12 +43,12 @@ public class Deducer {
      * @param rightItem
      * @return
      */
-    public SimpleRRGParseItem applyCombineSisters(SimpleRRGParseItem leftItem,
-            SimpleRRGParseItem rightItem) {
+    public RRGParseItem applyCombineSisters(RRGParseItem leftItem,
+                                            RRGParseItem rightItem) {
         Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
-        SimpleRRGParseItem result = new SimpleRRGParseItem(rightItem, null,
-                null, SimpleRRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
+        RRGParseItem result = new RRGParseItem(rightItem, null,
+                null, RRGParseItem.NodePos.TOP, leftItem.startPos(), -1,
                 gaps, false, false);
         return result;
     }
@@ -60,16 +60,16 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public SimpleRRGParseItem applyMoveUp(SimpleRRGParseItem currentItem) {
+    public RRGParseItem applyMoveUp(RRGParseItem currentItem) {
         GornAddress motheraddress = currentItem.getNode().getGornaddress()
                 .mother();
         RRGNode mothernode = currentItem.getTree().findNode(motheraddress);
         boolean newwsflag = mothernode.getType().equals(RRGNodeType.DDAUGHTER);
-        Set<ParseItem> backpointers = new HashSet<ParseItem>();
+        Set<RRGParseItem> backpointers = new HashSet<RRGParseItem>();
         backpointers.add(currentItem);
 
-        SimpleRRGParseItem newItem = new SimpleRRGParseItem(currentItem, null,
-                mothernode, SimpleRRGParseItem.NodePos.BOT, -1, -1, null,
+        RRGParseItem newItem = new RRGParseItem(currentItem, null,
+                mothernode, RRGParseItem.NodePos.BOT, -1, -1, null,
                 newwsflag, true);
 
         // Debug
@@ -85,10 +85,10 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public SimpleRRGParseItem applyNoLeftSister(
-            SimpleRRGParseItem currentItem) {
-        return new SimpleRRGParseItem(currentItem, null, null,
-                SimpleRRGParseItem.NodePos.TOP, -1, -1, null, null, true);
+    public RRGParseItem applyNoLeftSister(
+            RRGParseItem currentItem) {
+        return new RRGParseItem(currentItem, null, null,
+                RRGParseItem.NodePos.TOP, -1, -1, null, null, true);
 
     }
 
@@ -101,13 +101,13 @@ public class Deducer {
      * @param auxTreeRoot
      * @return
      */
-    public SimpleRRGParseItem applyLeftAdjoin(SimpleRRGParseItem targetSister,
-            SimpleRRGParseItem auxTreeRoot) {
+    public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister,
+                                        RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
 
-        SimpleRRGParseItem result = new SimpleRRGParseItem(targetSister, null,
+        RRGParseItem result = new RRGParseItem(targetSister, null,
                 null, null, auxTreeRoot.startPos(), -1, gaps, false, false);
         return result;
     }
@@ -121,24 +121,24 @@ public class Deducer {
      * @param auxTreeRoot
      * @return
      */
-    public SimpleRRGParseItem applyRightAdjoin(SimpleRRGParseItem target,
-            SimpleRRGParseItem auxTreeRoot) {
+    public RRGParseItem applyRightAdjoin(RRGParseItem target,
+                                         RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
 
-        SimpleRRGParseItem result = new SimpleRRGParseItem(target, null, null,
+        RRGParseItem result = new RRGParseItem(target, null, null,
                 null, -1, auxTreeRoot.getEnd(), gaps, null, false);
         return result;
     }
 
-    public SimpleRRGParseItem applyCompleteWrapping(
-            SimpleRRGParseItem targetRootItem,
-            SimpleRRGParseItem fillerddaughterItem, Gap gap) {
+    public RRGParseItem applyCompleteWrapping(
+            RRGParseItem targetRootItem,
+            RRGParseItem fillerddaughterItem, Gap gap) {
         Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
-        SimpleRRGParseItem consequent = new SimpleRRGParseItem(
+        RRGParseItem consequent = new RRGParseItem(
                 fillerddaughterItem, null, null, null,
                 targetRootItem.startPos(), targetRootItem.getEnd(), gaps, false,
                 false);

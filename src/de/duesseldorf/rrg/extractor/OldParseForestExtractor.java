@@ -6,9 +6,8 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.parser.Operation;
-import de.duesseldorf.rrg.parser.ParseItem;
-import de.duesseldorf.rrg.parser.SimpleRRGParseChart;
-import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
+import de.duesseldorf.rrg.parser.RRGParseItem;
+import de.duesseldorf.rrg.parser.RRGParseChart;
 
 /*
  *  File ParseForestExtractor.java
@@ -38,27 +37,27 @@ import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
  */
 public class OldParseForestExtractor {
 
-    private SimpleRRGParseChart chart;
+    private RRGParseChart chart;
     private List<String> tokSentence;
     private Set<RRGParseTree> parseTrees;
 
-    public OldParseForestExtractor(SimpleRRGParseChart chart,
-            List<String> toksentence) {
+    public OldParseForestExtractor(RRGParseChart chart,
+                                   List<String> toksentence) {
         this.chart = chart;
         this.tokSentence = toksentence;
     }
 
     public Set<RRGParseTree> extractParseTrees() {
         this.parseTrees = new HashSet<RRGParseTree>();
-        Set<ParseItem> goals = chart.retrieveGoalItems();
+        Set<RRGParseItem> goals = chart.retrieveGoalItems();
         if (goals.isEmpty()) {
             System.out.println("no goal items!");
         } else {
             System.out.println("Goal items: " + chart.retrieveGoalItems());
-            for (ParseItem goal : goals) {
+            for (RRGParseItem goal : goals) {
                 parseTrees.add(new RRGParseTree(
-                        ((SimpleRRGParseItem) goal).getTree()));
-                extract((SimpleRRGParseItem) goal);
+                        ((RRGParseItem) goal).getTree()));
+                extract((RRGParseItem) goal);
             }
         }
 
@@ -66,7 +65,7 @@ public class OldParseForestExtractor {
 
     }
 
-    private void extract(SimpleRRGParseItem consequent) {
+    private void extract(RRGParseItem consequent) {
         extractNLS(consequent);
         extractMoveUp(consequent);
         extractCombineSisters(consequent);
@@ -77,19 +76,19 @@ public class OldParseForestExtractor {
     /**
      * @param consequent
      */
-    private void extractSisterAdjunction(SimpleRRGParseItem consequent) {
+    private void extractSisterAdjunction(RRGParseItem consequent) {
         // left-sister adjunction
-        Set<List<ParseItem>> leftsisadjSet = chart.getBackPointers(consequent)
+        Set<List<RRGParseItem>> leftsisadjSet = chart.getBackPointers(consequent)
                 .getAntecedents(Operation.LEFTADJOIN);
         if (leftsisadjSet.size() > 1) {
             System.out.println(
                     "sth to do in left sister adjunction extraction for modifying multiple parse results!");
         }
-        for (List<ParseItem> antecedentList : leftsisadjSet) {
+        for (List<RRGParseItem> antecedentList : leftsisadjSet) {
             // items in the list of antecedents are ordered from left to right
-            SimpleRRGParseItem auxRootItem = (SimpleRRGParseItem) antecedentList
+            RRGParseItem auxRootItem = (RRGParseItem) antecedentList
                     .get(0);
-            SimpleRRGParseItem targetSisterItem = (SimpleRRGParseItem) antecedentList
+            RRGParseItem targetSisterItem = (RRGParseItem) antecedentList
                     .get(1);
             System.out.println("TODOleftSisAdj " + auxRootItem.toString()
                     + targetSisterItem);
@@ -114,15 +113,15 @@ public class OldParseForestExtractor {
      * 
      * @param consequent
      */
-    private void extractSubstitution(SimpleRRGParseItem consequent) {
+    private void extractSubstitution(RRGParseItem consequent) {
         // substitute
-        Set<List<ParseItem>> substituteSet = chart.getBackPointers(consequent)
+        Set<List<RRGParseItem>> substituteSet = chart.getBackPointers(consequent)
                 .getAntecedents(Operation.SUBSTITUTE);
-        for (List<ParseItem> antecedentList : substituteSet) {
+        for (List<RRGParseItem> antecedentList : substituteSet) {
             if (substituteSet.size() > 1) {
                 System.out.println("sth wrong in substitution extraction!");
             } else {
-                SimpleRRGParseItem substTreeRootItem = (SimpleRRGParseItem) antecedentList
+                RRGParseItem substTreeRootItem = (RRGParseItem) antecedentList
                         .get(0);
                 for (RRGParseTree rrgParseTree : parseTrees) {
                     if (rrgParseTree.idequals(consequent.getTree())) {
@@ -140,19 +139,19 @@ public class OldParseForestExtractor {
     /**
      * @param consequent
      */
-    private void extractCombineSisters(SimpleRRGParseItem consequent) {
-        Set<List<ParseItem>> combineSisSet = chart.getBackPointers(consequent)
+    private void extractCombineSisters(RRGParseItem consequent) {
+        Set<List<RRGParseItem>> combineSisSet = chart.getBackPointers(consequent)
                 .getAntecedents(Operation.COMBINESIS);
         if (combineSisSet == null) {
             // if (combineSisSet.size() > 1) {
             System.out.println("something wrong with combineSis extraction!");
             // }
         }
-        for (List<ParseItem> antecedentList : combineSisSet) {
-            for (ParseItem antecedent : antecedentList) {
+        for (List<RRGParseItem> antecedentList : combineSisSet) {
+            for (RRGParseItem antecedent : antecedentList) {
                 // System.out.println("COMBINESIS cons: " + consequent);
                 // System.out.println("COMBINESIS antecedent: " + antecedent);
-                extract((SimpleRRGParseItem) antecedent);
+                extract((RRGParseItem) antecedent);
             }
         }
     }
@@ -164,12 +163,12 @@ public class OldParseForestExtractor {
      * 
      * @param consequent
      */
-    private void extractMoveUp(SimpleRRGParseItem consequent) {
-        Set<List<ParseItem>> moveUpSet = chart.getBackPointers(consequent)
+    private void extractMoveUp(RRGParseItem consequent) {
+        Set<List<RRGParseItem>> moveUpSet = chart.getBackPointers(consequent)
                 .getAntecedents(Operation.MOVEUP);
-        for (List<ParseItem> antecedentList : moveUpSet) {
+        for (List<RRGParseItem> antecedentList : moveUpSet) {
             // recursive call with the item that created consequent
-            SimpleRRGParseItem antecedent = (SimpleRRGParseItem) antecedentList
+            RRGParseItem antecedent = (RRGParseItem) antecedentList
                     .get(0);
             // System.out.println("MOVEUP cons: " + consequent);
             // System.out.println("MOVEUP antecedent: " + antecedent);
@@ -184,13 +183,13 @@ public class OldParseForestExtractor {
      * 
      * @param consequent
      */
-    private void extractNLS(SimpleRRGParseItem consequent) {
-        Set<List<ParseItem>> nlsset = chart.getBackPointers(consequent)
+    private void extractNLS(RRGParseItem consequent) {
+        Set<List<RRGParseItem>> nlsset = chart.getBackPointers(consequent)
                 .getAntecedents(Operation.NLS);
 
-        for (List<ParseItem> antecedentList : nlsset) {
+        for (List<RRGParseItem> antecedentList : nlsset) {
             // recursive call with the item that created consequent
-            SimpleRRGParseItem antecedent = (SimpleRRGParseItem) antecedentList
+            RRGParseItem antecedent = (RRGParseItem) antecedentList
                     .get(0);
             // System.out.println("NLS cons: " + consequent);
             // System.out.println("NLS antecedent: " + antecedent);

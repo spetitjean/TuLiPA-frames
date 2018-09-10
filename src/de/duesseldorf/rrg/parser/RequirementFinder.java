@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
+import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
 
 /**
@@ -50,9 +50,9 @@ public class RequirementFinder {
      * 
      * @param currentItem
      */
-    public boolean moveupReq(SimpleRRGParseItem currentItem) {
+    public boolean moveupReq(RRGParseItem currentItem) {
         boolean res = currentItem.getNodePos()
-                .equals(SimpleRRGParseItem.NodePos.TOP); // 1
+                .equals(RRGParseItem.NodePos.TOP); // 1
         GornAddress currentAddress = currentItem.getNode().getGornaddress();
 
         res = res && (currentAddress.mother() != null); // 2
@@ -71,8 +71,8 @@ public class RequirementFinder {
      * @param currentItem
      * @return
      */
-    public boolean nlsReq(SimpleRRGParseItem currentItem) {
-        return currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.BOT) // 1
+    public boolean nlsReq(RRGParseItem currentItem) {
+        return currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT) // 1
                 && !currentItem.getNode().getGornaddress().hasLeftSister(); // 2
     }
 
@@ -88,9 +88,9 @@ public class RequirementFinder {
      *            look up here
      * @return
      */
-    public Set<SimpleRRGParseItem> findCombineSisRightSisters(
-            SimpleRRGParseItem leftSister, SimpleRRGParseChart chart) {
-        Set<SimpleRRGParseItem> candidates = new HashSet<SimpleRRGParseItem>();
+    public Set<RRGParseItem> findCombineSisRightSisters(
+            RRGParseItem leftSister, RRGParseChart chart) {
+        Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
         // find the right sister, which already ensures we are in the same tree
         RRGNode rightSis = leftSister.getTree()
                 .findNode(leftSister.getNode().getGornaddress().rightSister());
@@ -98,29 +98,29 @@ public class RequirementFinder {
         boolean leftReq = rightSis != null // there is a right sister
                 && !leftSister.getwsflag() // no WS
                 && leftSister.getNodePos() // the left item is in TOP position
-                        .equals(SimpleRRGParseItem.NodePos.TOP);
+                        .equals(RRGParseItem.NodePos.TOP);
 
         if (leftReq) {
             // System.out.println("starter: " + currentItem);
-            SimpleRRGParseItem model = new SimpleRRGParseItem(leftSister,
+            RRGParseItem model = new RRGParseItem(leftSister,
                     leftSister.getTree(), rightSis,
-                    SimpleRRGParseItem.NodePos.BOT, leftSister.getEnd(), -2,
+                    RRGParseItem.NodePos.BOT, leftSister.getEnd(), -2,
                     null, false, false);
             // System.out.println("model: " + model);
             candidates = chart.findUnderspecifiedItem(model, false);
         }
 
         // System.out.println("currI" + currentItem + "\nmate with: ");
-        // for (SimpleRRGParseItem simpleRRGParseItem : candidates) {
+        // for (RRGParseItem simpleRRGParseItem : candidates) {
         // System.out.println(simpleRRGParseItem);
         // }
         return candidates;
 
     }
 
-    public Set<SimpleRRGParseItem> findCombineSisLeftSisters(
-            SimpleRRGParseItem rightSister, SimpleRRGParseChart chart) {
-        Set<SimpleRRGParseItem> candidates = new HashSet<SimpleRRGParseItem>();
+    public Set<RRGParseItem> findCombineSisLeftSisters(
+            RRGParseItem rightSister, RRGParseChart chart) {
+        Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
         // case 2: current item is the right node of the combination
         RRGNode leftSis = rightSister.getTree()
                 .findNode(rightSister.getNode().getGornaddress().leftSister());
@@ -130,11 +130,11 @@ public class RequirementFinder {
                 && !rightSister.getwsflag() // no WS
                 && rightSister.getNodePos() // the right item is in BOT
                                             // position
-                        .equals(SimpleRRGParseItem.NodePos.BOT);
+                        .equals(RRGParseItem.NodePos.BOT);
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
-            SimpleRRGParseItem model = new SimpleRRGParseItem(rightSister, null,
-                    leftSis, SimpleRRGParseItem.NodePos.TOP, -2,
+            RRGParseItem model = new RRGParseItem(rightSister, null,
+                    leftSis, RRGParseItem.NodePos.TOP, -2,
                     rightSister.startPos(), null, false, false);
             // System.out.println("right req met for: " + currentItem);
             // System.out.println("model: " + model);
@@ -151,9 +151,9 @@ public class RequirementFinder {
      * @param currentItem
      * @return
      */
-    public boolean substituteReq(SimpleRRGParseItem currentItem) {
+    public boolean substituteReq(RRGParseItem currentItem) {
         boolean res = currentItem.getNodePos()
-                .equals(SimpleRRGParseItem.NodePos.TOP) // 1.
+                .equals(RRGParseItem.NodePos.TOP) // 1.
                 // the current node has no mother, i.e. it is a root
                 && currentItem.getNode().getGornaddress().mother() == null;
         return res;
@@ -169,10 +169,10 @@ public class RequirementFinder {
      * @return {@code true} iff {@code item} is in the root of a sister
      *         adjunction tree
      */
-    public boolean isSisadjRoot(SimpleRRGParseItem item) {
+    public boolean isSisadjRoot(RRGParseItem item) {
         boolean result = item.getNode().getGornaddress().mother() == null && // 1a
                 item.getNode().getType().equals(RRGNodeType.STAR) && // 1b
-                item.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP) && // 2.
+                item.getNodePos().equals(RRGParseItem.NodePos.TOP) && // 2.
                 !item.getwsflag(); // 3
         return result;
     }
@@ -185,23 +185,23 @@ public class RequirementFinder {
      * @return All items in the chart that the {@code sisAdjRoot} node might
      *         left-sister-adjoin to.
      */
-    public Set<SimpleRRGParseItem> findLeftAdjoinTargets(
-            SimpleRRGParseItem sisAdjRoot, SimpleRRGParseChart chart) {
+    public Set<RRGParseItem> findLeftAdjoinTargets(
+            RRGParseItem sisAdjRoot, RRGParseChart chart) {
         // create a template for the items that might perform leftAdjoin with
         // currentItem
-        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
-                SimpleRRGParseItem.NodePos.TOP, sisAdjRoot.getEnd(), -2, null,
+        RRGParseItem model = new RRGParseItem(null, null,
+                RRGParseItem.NodePos.TOP, sisAdjRoot.getEnd(), -2, null,
                 false);
         // find all items matching the template in the chart
-        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+        Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
         // filter all that have matching labels
-        Set<SimpleRRGParseItem> sameMotherLabel = filterByMotherLabel(
+        Set<RRGParseItem> sameMotherLabel = filterByMotherLabel(
                 sisAdjRoot, candidates);
-        Set<SimpleRRGParseItem> result = new HashSet<SimpleRRGParseItem>();
-        for (SimpleRRGParseItem item : sameMotherLabel) {
+        Set<RRGParseItem> result = new HashSet<RRGParseItem>();
+        for (RRGParseItem item : sameMotherLabel) {
             if (!item.getNode().getGornaddress().hasLeftSister()) {
                 result.add(item);
             }
@@ -212,18 +212,18 @@ public class RequirementFinder {
 
     /**
      * 
-     * @param sisAdjRoot
+     * @param sisadjroot
      *            is the root of a sister adjunction tree
      * @param chart
      * @return All items in the chart that the {@code sisAdjRoot} node might
      *         right-sister-adjoin to.
      */
-    public Set<SimpleRRGParseItem> findRightAdjoinTargets(
-            SimpleRRGParseItem sisadjroot, SimpleRRGParseChart chart) {
-        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
-                SimpleRRGParseItem.NodePos.TOP, -2, sisadjroot.startPos(), null,
+    public Set<RRGParseItem> findRightAdjoinTargets(
+            RRGParseItem sisadjroot, RRGParseChart chart) {
+        RRGParseItem model = new RRGParseItem(null, null,
+                RRGParseItem.NodePos.TOP, -2, sisadjroot.startPos(), null,
                 false);
-        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+        Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
 
         return filterByMotherLabel(sisadjroot, candidates);
@@ -237,11 +237,11 @@ public class RequirementFinder {
      *         and the mother of the node has the same label as the mother of
      *         the (sister adjunction) root item sisadjroot.
      */
-    private Set<SimpleRRGParseItem> filterByMotherLabel(
-            SimpleRRGParseItem sisadjroot,
-            Set<SimpleRRGParseItem> targetCandidates) {
-        Set<SimpleRRGParseItem> filteredCandidates = new HashSet<SimpleRRGParseItem>();
-        for (SimpleRRGParseItem candidate : targetCandidates) {
+    private Set<RRGParseItem> filterByMotherLabel(
+            RRGParseItem sisadjroot,
+            Set<RRGParseItem> targetCandidates) {
+        Set<RRGParseItem> filteredCandidates = new HashSet<RRGParseItem>();
+        for (RRGParseItem candidate : targetCandidates) {
             if (sameMotherLabel(sisadjroot, candidate))
                 filteredCandidates.add(candidate);
         }
@@ -259,8 +259,8 @@ public class RequirementFinder {
      * @return true iff the node in root has the same label as the mother of the
      *         node in target
      */
-    private boolean sameMotherLabel(SimpleRRGParseItem root,
-            SimpleRRGParseItem target) {
+    private boolean sameMotherLabel(RRGParseItem root,
+                                    RRGParseItem target) {
         RRGNode targetMother = target.getTree()
                 .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
@@ -281,33 +281,33 @@ public class RequirementFinder {
      *         items suited for left-adjunction, the "r" entrie contains right
      *         adjoin root items.
      */
-    public Map<String, Set<SimpleRRGParseItem>> findSisAdjRoots(
-            SimpleRRGParseItem currentItem, SimpleRRGParseChart chart) {
-        Map<String, Set<SimpleRRGParseItem>> result = new HashMap<String, Set<SimpleRRGParseItem>>();
-        result.put("l", new HashSet<SimpleRRGParseItem>());
-        result.put("r", new HashSet<SimpleRRGParseItem>());
+    public Map<String, Set<RRGParseItem>> findSisAdjRoots(
+            RRGParseItem currentItem, RRGParseChart chart) {
+        Map<String, Set<RRGParseItem>> result = new HashMap<String, Set<RRGParseItem>>();
+        result.put("l", new HashSet<RRGParseItem>());
+        result.put("r", new HashSet<RRGParseItem>());
 
         // left adjunction
         if (!currentItem.getNode().getGornaddress().hasLeftSister()) {
-            SimpleRRGParseItem leftAdjModel = new SimpleRRGParseItem(null, null,
-                    SimpleRRGParseItem.NodePos.TOP, -2, currentItem.startPos(),
+            RRGParseItem leftAdjModel = new RRGParseItem(null, null,
+                    RRGParseItem.NodePos.TOP, -2, currentItem.startPos(),
                     null, false);
-            Set<SimpleRRGParseItem> leftAdj = chart
+            Set<RRGParseItem> leftAdj = chart
                     .findUnderspecifiedItem(leftAdjModel, false);
 
-            for (SimpleRRGParseItem item : leftAdj) {
+            for (RRGParseItem item : leftAdj) {
                 if (isSisadjRoot(item) && sameMotherLabel(item, currentItem)) {
                     result.get("l").add(item);
                 }
             }
         }
         // right adjunction
-        SimpleRRGParseItem rightAdjModel = new SimpleRRGParseItem(null, null,
-                SimpleRRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
+        RRGParseItem rightAdjModel = new RRGParseItem(null, null,
+                RRGParseItem.NodePos.TOP, currentItem.getEnd(), -2, null,
                 false);
-        Set<SimpleRRGParseItem> rightAdj = chart
+        Set<RRGParseItem> rightAdj = chart
                 .findUnderspecifiedItem(rightAdjModel, false);
-        for (SimpleRRGParseItem item : rightAdj) {
+        for (RRGParseItem item : rightAdj) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
             if (isSisadjRoot(item) && sameMotherLabel(item, currentItem)) {
@@ -327,10 +327,10 @@ public class RequirementFinder {
      * @param currentItem
      * @return
      */
-    public boolean isSisadjTarget(SimpleRRGParseItem currentItem) {
+    public boolean isSisadjTarget(RRGParseItem currentItem) {
         boolean result = !currentItem.getwsflag() // 1
                 && currentItem.getNodePos()
-                        .equals(SimpleRRGParseItem.NodePos.TOP) // 2
+                        .equals(RRGParseItem.NodePos.TOP) // 2
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
         return result;
     }
@@ -342,8 +342,8 @@ public class RequirementFinder {
      *
      * @param currentItem
      */
-    public boolean predWrappingReqs(SimpleRRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
+    public boolean predWrappingReqs(RRGParseItem currentItem) {
+        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
                 && (currentItem.getwsflag() == true); // 2
     }
 
@@ -356,8 +356,8 @@ public class RequirementFinder {
      * @param currentItem
      * @return
      */
-    public boolean isCompleteWrappingRootItem(SimpleRRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.TOP)) // 1
+    public boolean isCompleteWrappingRootItem(RRGParseItem currentItem) {
+        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
                 && currentItem.getNode().getGornaddress().mother() == null // 2
                 && currentItem.getGaps().size() > 0; // 3
     }
@@ -372,8 +372,8 @@ public class RequirementFinder {
      * @return
      */
     public boolean isCompleteWrappingFillerItem(
-            SimpleRRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(SimpleRRGParseItem.NodePos.BOT)) // 1
+            RRGParseItem currentItem) {
+        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
                 && currentItem.getwsflag() == true // 2
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
     }
@@ -388,15 +388,15 @@ public class RequirementFinder {
      * @param chart
      * @return
      */
-    public Set<SimpleRRGParseItem> findCompleteWrappingFillers(
-            SimpleRRGParseItem targetRootItem, Gap gap,
-            SimpleRRGParseChart chart) {
-        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+    public Set<RRGParseItem> findCompleteWrappingFillers(
+            RRGParseItem targetRootItem, Gap gap,
+            RRGParseChart chart) {
+        RRGParseItem model = new RRGParseItem(null, null,
                 NodePos.BOT, gap.start, gap.end, null, true);
-        Set<SimpleRRGParseItem> candidates = chart.findUnderspecifiedItem(model,
+        Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
-        Set<SimpleRRGParseItem> candidatesWithFittingCats = new HashSet<SimpleRRGParseItem>();
-        for (SimpleRRGParseItem item : candidates) {
+        Set<RRGParseItem> candidatesWithFittingCats = new HashSet<RRGParseItem>();
+        for (RRGParseItem item : candidates) {
             if (item.getNode().getCategory().equals(gap.nonterminal)
                     && targetRootItem.getNode().getCategory()
                             .equals(item
@@ -420,13 +420,13 @@ public class RequirementFinder {
      * @param chart
      * @return
      */
-    public Set<SimpleRRGParseItem> findCompleteWrappingRoots(
-            SimpleRRGParseItem fillerItem, SimpleRRGParseChart chart) {
+    public Set<RRGParseItem> findCompleteWrappingRoots(
+            RRGParseItem fillerItem, RRGParseChart chart) {
         Gap modelgap = new Gap(fillerItem.startPos(), fillerItem.getEnd(),
                 fillerItem.getNode().getCategory());
         Set<Gap> modelgaps = new HashSet<Gap>();
         modelgaps.add(modelgap);
-        SimpleRRGParseItem model = new SimpleRRGParseItem(null, null,
+        RRGParseItem model = new RRGParseItem(null, null,
                 NodePos.TOP, -2, -2, modelgaps, false);
         return chart.findUnderspecifiedItem(model, true);
     }
