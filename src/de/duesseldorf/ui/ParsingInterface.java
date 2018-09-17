@@ -47,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTreeTools;
+import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
@@ -787,13 +790,17 @@ public class ParsingInterface {
 
         long startParsingTime = System.nanoTime();
         RRGParser rrgparser = new RRGParser(sit);
-        rrgparser.parseSentence(toksentence);
+        Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
+
+        System.out.println("result: ");
+        for (RRGParseTree rrgParseTree : result) {
+            System.out.println(RRGTreeTools.asStringWithNodeLabelsAndNodeType(rrgParseTree));
+        }
         long parsingTime = System.nanoTime() - startParsingTime;
 
         System.err.println(
                 "Total time : " + (parsingTime) / (Math.pow(10, 9)) + " sec.");
-
-        return true;
+        return result.isEmpty();
     }
 
     /**

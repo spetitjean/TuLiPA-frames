@@ -4,10 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
-import de.duesseldorf.rrg.RRG;
-import de.duesseldorf.rrg.RRGNode;
-import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.*;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 
@@ -57,6 +54,7 @@ public class RRGParser {
     public Set<RRGParseTree> parseSentence(List<String> toksentence) {
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size());
+        //Axioms through scanning:
         scan(toksentence);
         // Debug:
         this.requirementFinder = new RequirementFinder();
@@ -64,6 +62,7 @@ public class RRGParser {
         if (verbosePrintsToStdOut) {
             System.out.println("Done scanning. ");
         }
+        // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
             // System.out.println("step: " + i);
@@ -86,17 +85,9 @@ public class RRGParser {
         if (verbosePrintsToStdOut) {
             System.out.println("Done parsing. \n" + chart.toString());
         }
-
-        // old version:
-        // ParseForestExtractor extractor = new ParseForestExtractor(chart,
-        // toksentence);
-        // new version:
+        // extract parse results from chart
         ParseForestExtractor extractor = new ParseForestExtractor(chart, toksentence);
         Set<RRGParseTree> result = extractor.extractParseTrees();
-        System.out.println("result: ");
-        for (RRGParseTree rrgParseTree : result) {
-            System.out.println(rrgParseTree);
-        }
         return result;
     }
 

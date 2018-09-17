@@ -95,4 +95,24 @@ public class RRGTreeTools {
         return;
     }
 
+    public static String asStringWithNodeLabelsAndNodeType(RRGTree tree) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("ID: " + tree.getId() + "\n");
+        asStringWithNodeLabelsAndNodeType(tree.getRoot(), sb, 0);
+        return sb.toString();
+    }
+
+    private static void asStringWithNodeLabelsAndNodeType(Node root, StringBuffer sb, int sep) {
+        // add separators+ root.)
+        for (int i = 0; i < sep; i++) {
+            sb.append(".");
+        }
+        sb.append(((RRGNode)root).getCategory());
+        sb.append(" ");
+        sb.append(((RRGNode) root).getType());
+        sb.append("\n");
+        for (Node node : root.getChildren()) {
+            asStringWithNodeLabelsAndNodeType(node, sb, sep + 1);
+        }
+    }
 }

@@ -137,7 +137,7 @@ public class RRGNode implements Node {
         return category;
     }
 
-    public void setCategory(String category) {
+    private void setCategory(String category) {
         this.category = category;
     }
 
@@ -147,11 +147,15 @@ public class RRGNode implements Node {
 
     // not yet implemented
     public String getName() {
-        return null;
+        return this.name;
     }
 
     // not yet implemented
     public void setName(String name) {
+        System.out.println("RRGNode.setName was called but is not implemented. ");
+        for(StackTraceElement ste : Thread.currentThread().getStackTrace()){
+            System.out.println(ste);
+        }
     }
 
     public GornAddress getGornaddress() {
