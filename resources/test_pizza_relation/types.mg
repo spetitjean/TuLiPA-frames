@@ -6,6 +6,7 @@ type MARK = {subst, subst, nadj, foot, anchor, coanchor, flex}
 type CAT = {np,n,v,vp,s,adv,pp,p,by,strong}
 type PHON = {e}
 type name = {John}
+type surname = {Doe}
 
 type LABEL!
 

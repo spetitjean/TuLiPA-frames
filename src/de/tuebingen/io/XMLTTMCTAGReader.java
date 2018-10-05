@@ -289,15 +289,30 @@ public class XMLTTMCTAGReader extends FileReader {
         List<Fs> framereprs = new ArrayList<Fs>();
 
         if (l.getLength() > 0) {
-            Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
-            framereprs.add(framerepr);
-            res.concatFrames(framerepr);
 
+            Element frameEl = (Element) l.item(0);
+            NodeList frameEls = frameEl.getChildNodes();
+            for (int i = 0; i < frameEls.getLength(); i++) {
+                if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element ithFrameEl = (Element) frameEls.item(i);
+                    if (ithFrameEl.getTagName().equals("fs")) {
+                        Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
+                        Fs framerepr = getFeats(ithFrameEl, NOFS, toAdd, nf);
+                        framereprs.add(framerepr);
+                        res.concatFrames(framerepr);
+                    } else if (ithFrameEl.getTagName().equals("relation")) {
+                        Relation rel = getRelation(ithFrameEl);
+                        System.out.println(rel);
+                    }
+
+                }
+            }
         } else {
             res.initFrames();
         }
 
-        // System.out.println("Frame from XMLTTMCTAGReader: " + framerepr);
+        // System.out.println("Frame from XMLTTMCTAGReader: " + framereprs);
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
         // get replaced with the contents of the frames
@@ -337,7 +352,7 @@ public class XMLTTMCTAGReader extends FileReader {
         String name = n.getAttribute("name");
         List<Value> arguments = new LinkedList<Value>();
 
-        NodeList syms = n.getChildNodes();
+        NodeList syms = n.getElementsByTagName("sym");
         for (int i = 0; i < syms.getLength(); i++) {
             Element sym = (Element) syms.item(i);
             String varname = sym.getAttribute("varname");

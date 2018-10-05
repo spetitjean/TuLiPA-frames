@@ -65,6 +65,15 @@
           <type val="entity"/>
           <type val="person"/>
         </ctype>
+        <f name="surname">
+          <sym value="Doe"/>
+        </f>
+      </fs>
+      <fs coref="@Frame2">
+        <ctype>
+          <type val="entity"/>
+          <type val="person"/>
+        </ctype>
         <f name="name">
           <sym value="John"/>
         </f>
@@ -74,7 +83,7 @@
     <interface>
       <fs>
         <f name="i">
-          <fs coref="@Frame1"/>
+          <fs coref="@Frame2"/>
         </f>
       </fs>
     </interface>
