@@ -301,6 +301,7 @@ public class XMLTTMCTAGReader extends FileReader {
                         Fs framerepr = getFeats(ithFrameEl, NOFS, toAdd, nf);
                         framereprs.add(framerepr);
                         res.concatFrames(framerepr);
+
                     } else if (ithFrameEl.getTagName().equals("relation")) {
                         Relation rel = getRelation(ithFrameEl);
                         System.out.println(rel);
@@ -328,18 +329,6 @@ public class XMLTTMCTAGReader extends FileReader {
         res.setSem(semrepr);
 
         return res;
-    }
-
-    private static List<Relation> getRelations(Element frames) {
-        NodeList childNodes = frames.getChildNodes();
-        LinkedList<Relation> result = new LinkedList<Relation>();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            Element n = (Element) childNodes.item(i);
-            if (n.getTagName().equals("relation")) {
-                result.add(getRelation(n));
-            }
-        }
-        return result;
     }
 
     /**
