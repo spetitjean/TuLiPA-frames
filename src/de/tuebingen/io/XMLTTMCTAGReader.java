@@ -58,6 +58,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Type;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Fs;
@@ -291,6 +292,7 @@ public class XMLTTMCTAGReader extends FileReader {
             Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
             framereprs.add(framerepr);
             res.concatFrames(framerepr);
+
         } else {
             res.initFrames();
         }
@@ -311,6 +313,38 @@ public class XMLTTMCTAGReader extends FileReader {
         res.setSem(semrepr);
 
         return res;
+    }
+
+    private static List<Relation> getRelations(Element frames) {
+        NodeList childNodes = frames.getChildNodes();
+        LinkedList<Relation> result = new LinkedList<Relation>();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Element n = (Element) childNodes.item(i);
+            if (n.getTagName().equals("relation")) {
+                result.add(getRelation(n));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * A relation element has an attribute
+     * 
+     * @param n
+     * @return
+     */
+    private static Relation getRelation(Element n) {
+        String name = n.getAttribute("name");
+        List<Value> arguments = new LinkedList<Value>();
+
+        NodeList syms = n.getChildNodes();
+        for (int i = 0; i < syms.getLength(); i++) {
+            Element sym = (Element) syms.item(i);
+            String varname = sym.getAttribute("varname");
+            Value val = new Value(Value.VAR, varname);
+            arguments.add(val);
+        }
+        return new Relation(name, arguments);
     }
 
     /**
