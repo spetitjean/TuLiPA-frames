@@ -288,14 +288,22 @@ public class XMLTTMCTAGReader extends FileReader {
         List<Fs> framereprs = new ArrayList<Fs>();
 
         if (l.getLength() > 0) {
-            Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
-            framereprs.add(framerepr);
-            res.concatFrames(framerepr);
+	    Element frameEl = (Element) l.item(0);
+	    NodeList frameEls = frameEl.getChildNodes();
+	    for (int i=0; i<frameEls.getLength(); i++){
+		if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
+
+		    Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
+		    Fs framerepr = getFeats((Element) frameEls.item(i), NOFS, toAdd, nf);
+		    framereprs.add(framerepr);
+		    res.concatFrames(framerepr);
+		}
+	    }
         } else {
             res.initFrames();
         }
 
-        // System.out.println("Frame from XMLTTMCTAGReader: " + framerepr);
+        // System.out.println("Frame from XMLTTMCTAGReader: " + framereprs);
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
         // get replaced with the contents of the frames

@@ -28,7 +28,9 @@ declare ?X0
 {
   <frame>{
     ?X0[person,
-      name: John]
+      name: John];
+    [person,
+       surname: Doe]
   };
   <iface>{
     [i=?X0]
