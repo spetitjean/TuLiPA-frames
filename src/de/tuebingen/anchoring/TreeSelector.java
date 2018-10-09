@@ -295,8 +295,7 @@ public class TreeSelector {
 			    if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
 				tlist = situation.getFrameGrammar().getGrammar()
 				    .get(lemmaSem.get(0).getSemclass());
-				//System.out.println("Size of the frame list for this entry: "+tlist.size());
-				    
+				//System.out.println("Size of the frame list for this entry: "+tlist.size());				    
 			    }
 			    // If we have more that one possible frame, try them all
 			    if(tlist.size()>1){
@@ -591,6 +590,10 @@ public class TreeSelector {
                     }
                 }
             }
+	    // Why does this happen?
+	    if(tt.getFrames()==null){
+		tt.setFrames(new ArrayList<Fs>());
+	    }
 	    for(Fs getFrame: tt.getFrames()){
 		try{
 		    Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
