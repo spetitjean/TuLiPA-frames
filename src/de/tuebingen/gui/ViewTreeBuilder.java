@@ -441,7 +441,7 @@ public class ViewTreeBuilder {
         ArrayList<Node> atts = new ArrayList<Node>();
         for (String key : features.getKeys()) {
 	    String value;
-	    // we want to remember when we see variables (not only the ones starting with X...)
+	    // we want to remember when we see variables (not only the ones starting with X...). This is necessary in case of XML export (varname vs value)
 	    if(features.getFeat(key).getType()==5){
 		value = "_V_"+features.getFeat(key).toString();
 	    }

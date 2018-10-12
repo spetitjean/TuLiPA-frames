@@ -244,7 +244,7 @@ public class Environment {
         }
         for (Value v : bounded)
             eEnv.bind(v.getVarVal(), new Value(Value.VAR,
-                    "?" + eEnv.getPnf().getName(v.getVarVal())));
+                    eEnv.getPnf().getName(v.getVarVal())));
 
     }
 
