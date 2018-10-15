@@ -171,7 +171,7 @@ public class ViewTreeBuilder {
                         if (n.tag.equals("tree")) {
                             n.tag = a.value;
                         } else {
-                            n.tag = n.tag + ": " + a.value;
+			     n.tag = n.tag + ": " + a.value;
                         }
                         nattr.remove(a);
                         i--;
@@ -241,8 +241,14 @@ public class ViewTreeBuilder {
             for (int j = 0; j < xmlNode.getAttributes().getLength(); j++) {
                 XMLViewTreeAttribute attr = new XMLViewTreeAttribute();
                 attr.name = xmlNode.getAttributes().item(j).getNodeName();
-                attr.value = xmlNode.getAttributes().item(j).getNodeValue();
-                tree.addAttr(nodeID, attr);
+		String val=xmlNode.getAttributes().item(j).getNodeValue();
+		if(val.startsWith("_V_")){
+		    attr.value=val.substring(3);
+		    }
+		else{
+		    attr.value=val;
+		}
+		tree.addAttr(nodeID, attr);
             }
         }
     }
@@ -374,8 +380,7 @@ public class ViewTreeBuilder {
                 ArrayList<Node> atts = extractFeatureAtts(features,
                         currentNode.getOwnerDocument(), "");
                 for (Node att : atts) {
-                    currentNode.getAttributes().setNamedItem(att);
-                }
+                    currentNode.getAttributes().setNamedItem(att);                }
             }
             for (int i = 0; i < currentNode.getChildNodes().getLength(); i++) {
                 recursivelyAddFeatures(currentNode.getChildNodes().item(i),
