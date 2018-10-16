@@ -240,7 +240,7 @@ public class ViewTreeBuilder {
         if (xmlNode.getAttributes() != null) {
             for (int j = 0; j < xmlNode.getAttributes().getLength(); j++) {
                 XMLViewTreeAttribute attr = new XMLViewTreeAttribute();
-                attr.name = xmlNode.getAttributes().item(j).getNodeName();
+		attr.name = xmlNode.getAttributes().item(j).getNodeName();
 		String val=xmlNode.getAttributes().item(j).getNodeValue();
 		if(val.startsWith("_V_")){
 		    attr.value=val.substring(3);
@@ -285,6 +285,7 @@ public class ViewTreeBuilder {
             if (feature instanceof Element) {
                 String name = feature.getAttributes().getNamedItem("name")
                         .getNodeValue();
+		name="abc";
                 String value = extractFeatureValue(feature);
                 Node attr = D.createAttribute(type + ":" + name);
                 attr.setNodeValue(value);

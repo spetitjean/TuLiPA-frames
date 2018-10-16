@@ -66,6 +66,7 @@ import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tag.Value;
 import de.tuebingen.tree.Node;
 import de.tuebingen.tokenizer.Word;
+import de.tuebingen.derive.ElementaryTree;
 
 public class TreeSelector {
 
@@ -594,18 +595,42 @@ public class TreeSelector {
 	    if(tt.getFrames()==null){
 		tt.setFrames(new ArrayList<Fs>());
 	    }
-	    for(Fs getFrame: tt.getFrames()){
-		try{
-		    Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
+	    
+	    try{
+		Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
+		
+		
+		tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(),env,false));
+		List<Fs> newFrames = tt.getFrames();
+		
+		for(int ii=0; ii<newFrames.size() - 1; ii++){
+		    for (int jj = ii+1; jj< newFrames.size(); jj++){
+			if(newFrames.get(ii).getCoref().equals(newFrames.get(jj).getCoref())){
+			    Fs res=Fs.unify(newFrames.get(ii),newFrames.get(jj),env,situation.getTypeHierarchy());
+			    newFrames.set(ii,res);
+			    newFrames.set(jj,res);
+			    //System.out.println("Unified frames by coreference");
+			}
+		    }
 		}
-		catch (UnifyException e) {
-		    System.err.println(
-				       "Semantic features unification failed on tree ");
-		    System.err.println(e);
-		    throw new AnchoringException(); // we withdraw the
-		    // current anchoring
-		}
+		tt.setFrames(newFrames);
+		//System.out.println("Frames after processing:");
+		// for(Fs ttframe: tt.getFrames()){
+		//     System.out.println(ttframe);
+		// }
 	    }
+	    catch (UnifyException e) {
+		System.err.println(
+				   "Semantic features unification failed on tree ");
+		System.err.println(e);
+		// This exception should be raised, but not cancel the whole anchoring
+		// it might just be one of the frames given by the lexicon which raises it
+		
+		//throw new AnchoringException(); // we withdraw the
+		// current anchoring
+	    }
+
+	
         }
 
 
