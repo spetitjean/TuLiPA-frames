@@ -607,13 +607,15 @@ public class TreeSelector {
 		    for (int jj = ii+1; jj< newFrames.size(); jj++){
 			if(newFrames.get(ii).getCoref().equals(newFrames.get(jj).getCoref())){
 			    Fs res=Fs.unify(newFrames.get(ii),newFrames.get(jj),env,situation.getTypeHierarchy());
-			    newFrames.set(ii,res);
-			    newFrames.set(jj,res);
+			    //newFrames.set(ii,res);
+			    //newFrames.set(jj,res);
 			    //System.out.println("Unified frames by coreference");
 			}
 		    }
 		}
 		tt.setFrames(newFrames);
+       
+		
 		//System.out.println("Frames after processing:");
 		// for(Fs ttframe: tt.getFrames()){
 		//     System.out.println(ttframe);
