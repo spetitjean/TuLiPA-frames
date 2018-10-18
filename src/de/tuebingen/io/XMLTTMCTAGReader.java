@@ -58,6 +58,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Type;
 import de.tuebingen.anchoring.NameFactory;
@@ -286,33 +287,32 @@ public class XMLTTMCTAGReader extends FileReader {
         // System.err.println("Frame part ");
 
         l = e.getElementsByTagName("frame");
-        List<Fs> framereprs = new ArrayList<Fs>();
 
         if (l.getLength() > 0) {
+            List<Fs> framefss = new ArrayList<Fs>();
+            Set<Relation> framerels = new HashSet<Relation>();
 
             Element frameEl = (Element) l.item(0);
             NodeList frameEls = frameEl.getChildNodes();
             for (int i = 0; i < frameEls.getLength(); i++) {
                 if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
-
                     Element ithFrameEl = (Element) frameEls.item(i);
                     if (ithFrameEl.getTagName().equals("fs")) {
                         Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
-                        Fs framerepr = getFeats(ithFrameEl, NOFS, toAdd, nf);
-                        framereprs.add(framerepr);
-                        res.concatFrames(framerepr);
-
+                        Fs framefs = getFeats(ithFrameEl, NOFS, toAdd, nf);
+                        framefss.add(framefs);
+                        res.concatFrames(framefs);
                     } else if (ithFrameEl.getTagName().equals("relation")) {
                         Relation rel = getRelation(ithFrameEl);
-                        System.out.println(rel);
+                        framerels.add(rel);
                     }
-
                 }
             }
-        } else {
-            res.initFrames();
+            Frame frameSem = new Frame(framefss, framerels);
+            // System.out.println(
+            // "frameSem in XMLTTMCTAGREADER:\n" + frameSem.toString());
+            res.setFrameSem(frameSem);
         }
-
         // System.out.println("Frame from XMLTTMCTAGReader: " + framereprs);
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
@@ -332,7 +332,8 @@ public class XMLTTMCTAGReader extends FileReader {
     }
 
     /**
-     * A relation element has an attribute
+     * A relation element has an attribute with the relation name and daughters
+     * for each of the arguments
      * 
      * @param n
      * @return

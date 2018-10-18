@@ -43,7 +43,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Situation;
+import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
 import de.tuebingen.disambiguate.PolarizedLemma;
 import de.tuebingen.disambiguate.PolarizedToken;
@@ -64,9 +66,8 @@ import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
 import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tag.Value;
-import de.tuebingen.tree.Node;
 import de.tuebingen.tokenizer.Word;
-import de.tuebingen.derive.ElementaryTree;
+import de.tuebingen.tree.Node;
 
 public class TreeSelector {
 
@@ -281,37 +282,43 @@ public class TreeSelector {
                         try {
                             // System.out.println("[1-] ");
 
-			    // In case we have several entries for
-			    // frames associated to the lemma, we need
-			    // several instantiated tuples
+                            // In case we have several entries for
+                            // frames associated to the lemma, we need
+                            // several instantiated tuples
 
-			    
-			    List<LexSem> lemmaSem = it.getAnchor().getSemantics();
-			    List<Tuple> tlist= new LinkedList<Tuple>();
+                            List<LexSem> lemmaSem = it.getAnchor()
+                                    .getSemantics();
+                            List<Tuple> tlist = new LinkedList<Tuple>();
 
-			    if (lemmaSem.size() > 1) {
-				System.out.println("TODO: create a loop in TreeSelector.546!");
-			    }
-				    
-			    if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
-				tlist = situation.getFrameGrammar().getGrammar()
-				    .get(lemmaSem.get(0).getSemclass());
-				//System.out.println("Size of the frame list for this entry: "+tlist.size());				    
-			    }
-			    // If we have more that one possible frame, try them all
-			    if(tlist.size()>1){
-				for(int iframe=0; iframe<tlist.size(); iframe++){
-				    InstantiatedTuple x = this.anchor(plm, it, l, slabels, iframe);
-				    anctuples.add(x);
-				}
-			    }
-			    // If we have 0 or 1, just go once
-			    else{
-				InstantiatedTuple x = this.anchor(plm, it, l, slabels, 0);
-				anctuples.add(x);
-			    }
+                            if (lemmaSem.size() > 1) {
+                                System.out.println(
+                                        "TODO: create a loop in TreeSelector.546!");
+                            }
 
-			    
+                            if (situation.getFrameGrammar() != null
+                                    && lemmaSem.size() > 0) {
+                                tlist = situation.getFrameGrammar().getGrammar()
+                                        .get(lemmaSem.get(0).getSemclass());
+                                // System.out.println("Size of the frame list
+                                // for this entry: "+tlist.size());
+                            }
+                            // If we have more that one possible frame, try them
+                            // all
+                            if (tlist.size() > 1) {
+                                for (int iframe = 0; iframe < tlist
+                                        .size(); iframe++) {
+                                    InstantiatedTuple x = this.anchor(plm, it,
+                                            l, slabels, iframe);
+                                    anctuples.add(x);
+                                }
+                            }
+                            // If we have 0 or 1, just go once
+                            else {
+                                InstantiatedTuple x = this.anchor(plm, it, l,
+                                        slabels, 0);
+                                anctuples.add(x);
+                            }
+
                         } catch (AnchoringException e) {
 
                             System.err.println(
@@ -369,12 +376,13 @@ public class TreeSelector {
     }
 
     public InstantiatedTuple anchor(PolarizedLemma plm, InstantiatedTuple t,
-				    int i, List<String> slabels, int frameid) throws AnchoringException {
+            int i, List<String> slabels, int frameid)
+            throws AnchoringException {
         /**
          * Method processing each instantiated tuples of the selector
          * in order to anchor it (unification between FS and lexical anchoring
          * of the head)
-	 * frameid is the number of the frame we are considering
+         * frameid is the number of the frame we are considering
          */
 
         if (verbose)
@@ -401,10 +409,10 @@ public class TreeSelector {
         String newTupleId = tt.getTupleId() + "--"
                 + (t.getLemma().getLexItem().getLex())
                 + (t.getLemma().getLexItem().getInToken().getEnd()) + "--" + i;
-        tt.setId(nf.getName(newTreeId));	
-	tt.setPosition(t.getLemma().getLexItem().getInToken().getEnd());
+        tt.setId(nf.getName(newTreeId));
+        tt.setPosition(t.getLemma().getLexItem().getInToken().getEnd());
 
-	tt.setOriginalId(newTreeId);
+        tt.setOriginalId(newTreeId);
         tt.setTupleId(nf.getName(newTupleId));
 
         tt.setOriginalTupleId(newTupleId);
@@ -542,7 +550,8 @@ public class TreeSelector {
                 // try to co-anchor the arguments
                 if (tl != null) {
                     while (k < tl.size() && !coaOk) {
-			//System.out.println("Looking for coanchor "+lca.get(j)+" in "+tt.getRoot());
+                        // System.out.println("Looking for coanchor
+                        // "+lca.get(j)+" in "+tt.getRoot());
                         coaOk = tl.get(k).coanchor(tl.get(k).getRoot(),
                                 lca.get(j));
                         k++;
@@ -566,75 +575,95 @@ public class TreeSelector {
         if (lemmaSem.size() > 1) {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
-	
+
         if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
-	    
-	    Fs frameInterface=new Fs(0);
-	    
+
+            Fs frameInterface = new Fs(0);
+
             if (tt.getFrames() != null) {
                 List<Fs> frames = tt.getFrames();
                 if (tlist != null) {
                     if (tlist.get(frameid) != null) {
-			// Looking for the interface of the frame
-			frameInterface=tlist.get(frameid).getHead().getIface();
+                        // Looking for the interface of the frame
+                        frameInterface = tlist.get(frameid).getHead()
+                                .getIface();
+                        // System.out.println(
+                        // "before in TS.anchor: " + tt.getFrames());
                         frames.addAll(tlist.get(frameid).getHead().getFrames());
+                        // System.out.println(
+                        // "after in TS.anchor: " + tt.getFrames());
                     }
                 }
+                // DA tryRelations
+                Frame frameSem = tt.getFrameSem();
+                if (tlist != null) {
+                    if (tlist.get(frameid) != null) {
+                        frameInterface = tlist.get(frameid).getHead()
+                                .getIface();
+                        // frameSem.addToFeatureStructures(fs);
+                        // Do we need frame unification here?
+                    }
+                }
+                // END DA tryRelations
             } else {
                 if (tlist != null) {
                     if (tlist.get(frameid) != null) {
-			// Looking for the interface of the frame
-			frameInterface=tlist.get(frameid).getHead().getIface();
+                        // Looking for the interface of the frame
+                        frameInterface = tlist.get(frameid).getHead()
+                                .getIface();
                         tt.setFrames(tlist.get(frameid).getHead().getFrames());
                     }
                 }
             }
-	    // Why does this happen?
-	    if(tt.getFrames()==null){
-		tt.setFrames(new ArrayList<Fs>());
-	    }
-	    
-	    try{
-		Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
-		
-		
-		tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(),env,false));
-		List<Fs> newFrames = tt.getFrames();
-		
-		for(int ii=0; ii<newFrames.size() - 1; ii++){
-		    for (int jj = ii+1; jj< newFrames.size(); jj++){
-			if(newFrames.get(ii).getCoref().equals(newFrames.get(jj).getCoref())){
-			    Fs res=Fs.unify(newFrames.get(ii),newFrames.get(jj),env,situation.getTypeHierarchy());
-			    newFrames.set(ii,res);
-			    newFrames.set(jj,res);
-			    //System.out.println("Unified frames by coreference");
-			}
-		    }
-		}
-		tt.setFrames(newFrames);
-		//System.out.println("Frames after processing:");
-		// for(Fs ttframe: tt.getFrames()){
-		//     System.out.println(ttframe);
-		// }
-	    }
-	    catch (UnifyException e) {
-		System.err.println(
-				   "Semantic features unification failed on tree ");
-		System.err.println(e);
-		// This exception should be raised, but not cancel the whole anchoring
-		// it might just be one of the frames given by the lexicon which raises it
-		
-		//throw new AnchoringException(); // we withdraw the
-		// current anchoring
-	    }
+            // Why does this happen?
+            if (tt.getFrames() == null) {
+                tt.setFrames(new ArrayList<Fs>());
+            }
 
-	
+            try {
+                Fs.unify(frameInterface, tt.getIface(), env,
+                        situation.getTypeHierarchy());
+
+                tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
+                        false));
+                List<Fs> newFrames = tt.getFrames();
+
+                for (int ii = 0; ii < newFrames.size() - 1; ii++) {
+                    for (int jj = ii + 1; jj < newFrames.size(); jj++) {
+                        if (newFrames.get(ii).getCoref()
+                                .equals(newFrames.get(jj).getCoref())) {
+                            Fs res = Fs.unify(newFrames.get(ii),
+                                    newFrames.get(jj), env,
+                                    situation.getTypeHierarchy());
+                            newFrames.set(ii, res);
+                            newFrames.set(jj, res);
+                            // System.out.println("Unified frames by
+                            // coreference");
+                        }
+                    }
+                }
+                tt.setFrames(newFrames);
+                // System.out.println("Frames after processing:");
+                // for(Fs ttframe: tt.getFrames()){
+                // System.out.println(ttframe);
+                // }
+            } catch (UnifyException e) {
+                System.err.println(
+                        "Semantic features unification failed on tree ");
+                System.err.println(e);
+                // This exception should be raised, but not cancel the whole
+                // anchoring
+                // it might just be one of the frames given by the lexicon which
+                // raises it
+
+                // throw new AnchoringException(); // we withdraw the
+                // current anchoring
+            }
+
         }
 
-
-	
         List<String> treeTrace = tt.getTrace();
         List<SemLit> treeSem = tt.getSem();
 
@@ -743,73 +772,80 @@ public class TreeSelector {
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
-	Map<String, List<MorphEntry>> lm = situation.getGrammar().getMorphEntries();
+        Map<String, List<MorphEntry>> lm = situation.getGrammar()
+                .getMorphEntries();
 
-	List<TagTree> ttlist = new ArrayList<TagTree>();
-	//for (Node CoAnchor:tt.getCoAnchors()){
-	for (int CoAnchorIndex=0; CoAnchorIndex<tt.getCoAnchors().size(); CoAnchorIndex++){
-	    //System.out.println(CoAnchor);
-	    Node CoAnchor=tt.getCoAnchors().get(CoAnchorIndex);
-	    //System.out.println(CoAnchor);
-	    TagNode CoAnc=(TagNode)CoAnchor;
-	    // Somehow the LexItem does not always get created before
-	    if(CoAnc.getChildren()==null){
-		List<Node> ch = new LinkedList<Node>();
-		TagNode lex = new TagNode();
-		lex.setType(TagNode.LEX); // lex node
-		lex.setCategory(CoAnc.getCategory()); // the word
-		lex.setAddress(CoAnc.getAddress() + ".1"); // Gorn
-		                                            // address
-		ch.add(lex);
+        List<TagTree> ttlist = new ArrayList<TagTree>();
+        // for (Node CoAnchor:tt.getCoAnchors()){
+        for (int CoAnchorIndex = 0; CoAnchorIndex < tt.getCoAnchors()
+                .size(); CoAnchorIndex++) {
+            // System.out.println(CoAnchor);
+            Node CoAnchor = tt.getCoAnchors().get(CoAnchorIndex);
+            // System.out.println(CoAnchor);
+            TagNode CoAnc = (TagNode) CoAnchor;
+            // Somehow the LexItem does not always get created before
+            if (CoAnc.getChildren() == null) {
+                List<Node> ch = new LinkedList<Node>();
+                TagNode lex = new TagNode();
+                lex.setType(TagNode.LEX); // lex node
+                lex.setCategory(CoAnc.getCategory()); // the word
+                lex.setAddress(CoAnc.getAddress() + ".1"); // Gorn
+                                                           // address
+                ch.add(lex);
                 CoAnc.setChildren(ch);
-	    }
-	    TagNode LexItem=(TagNode)CoAnc.getChildren().get(0);
-	    // If we can find the item in the lexicon, we add as many
-	    // trees as we can find items (if more than one)
-	    if (lm.containsKey(LexItem.getCategory())) {
-		List<MorphEntry> lme = lm.get(LexItem.getCategory());
-		for (int j = 0; j < lme.size(); j++) {
-		    	// try{
-			//     //TagTree ttt=new TagTree(tt.getRoot());
-			//     //ttt.setId(nf.getUniqueName());
-			//     //System.out.println("created new TagTree with ID: "+ttt.getId());
-			//     System.out.println(LexItem);
-			//     System.out.println("Unifying "+lme.get(j).getLemmarefs().get(0).getFeatures()+" and "+CoAnc.getLabel());
-			//     Environment E=new Environment(5);
-			//     Fs Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
-			//     // we also unify this Fs with top
-			//     if(CoAnc.getLabel().hasFeat("top")){
-			// 	Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
-			// 	Fs New=new Fs(0);
-			// 	New.setFeat("top",new Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
-			// 	Unify=Fs.unify(Unify,New,E);
-			//     }
-			//     CoAnc.setLabel(Unify);
-			//     //ttlist.add(ttt);
-			// }
-			// catch (UnifyException e) {
-			//     System.err.println(
-			// 		       "Features unification failed on tree ");
-			//     System.err.println(e);
-			//     throw new AnchoringException(); // we withdraw the
-			//     // current coanchoring
-			// }
-			
-		}
-	    }
-	}
-	if(ttlist.size()==0){
-	    ttlist.add(tt);
-	}
-	//System.out.println("Adding elements: "+ttlist.size());
-	for(TagTree one_tt: ttlist){
-	    //System.out.println("Current id: "+one_tt.getId());
-	    treeHash.put(one_tt.getId(), one_tt);
-	    // and the tuple:
-	    xTrees.add(one_tt.getId());
-	}
-	//System.out.println("Added elements");
-	
+            }
+            TagNode LexItem = (TagNode) CoAnc.getChildren().get(0);
+            // If we can find the item in the lexicon, we add as many
+            // trees as we can find items (if more than one)
+            if (lm.containsKey(LexItem.getCategory())) {
+                List<MorphEntry> lme = lm.get(LexItem.getCategory());
+                for (int j = 0; j < lme.size(); j++) {
+                    // try{
+                    // //TagTree ttt=new TagTree(tt.getRoot());
+                    // //ttt.setId(nf.getUniqueName());
+                    // //System.out.println("created new TagTree with ID:
+                    // "+ttt.getId());
+                    // System.out.println(LexItem);
+                    // System.out.println("Unifying
+                    // "+lme.get(j).getLemmarefs().get(0).getFeatures()+" and
+                    // "+CoAnc.getLabel());
+                    // Environment E=new Environment(5);
+                    // Fs
+                    // Unify=Fs.unify(lme.get(j).getLemmarefs().get(0).getFeatures(),CoAnc.getLabel(),E);
+                    // // we also unify this Fs with top
+                    // if(CoAnc.getLabel().hasFeat("top")){
+                    // Fs Top=CoAnc.getLabel().getFeat("top").getAvmVal();
+                    // Fs New=new Fs(0);
+                    // New.setFeat("top",new
+                    // Value(lme.get(j).getLemmarefs().get(0).getFeatures()));
+                    // Unify=Fs.unify(Unify,New,E);
+                    // }
+                    // CoAnc.setLabel(Unify);
+                    // //ttlist.add(ttt);
+                    // }
+                    // catch (UnifyException e) {
+                    // System.err.println(
+                    // "Features unification failed on tree ");
+                    // System.err.println(e);
+                    // throw new AnchoringException(); // we withdraw the
+                    // // current coanchoring
+                    // }
+
+                }
+            }
+        }
+        if (ttlist.size() == 0) {
+            ttlist.add(tt);
+        }
+        // System.out.println("Adding elements: "+ttlist.size());
+        for (TagTree one_tt : ttlist) {
+            // System.out.println("Current id: "+one_tt.getId());
+            treeHash.put(one_tt.getId(), one_tt);
+            // and the tuple:
+            xTrees.add(one_tt.getId());
+        }
+        // System.out.println("Added elements");
+
         // System.err.println("Added " + tt.getOriginalId());
         // System.err.println(tt.getRoot().toString());
         if (tl != null) {

@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
+import de.duesseldorf.frames.Frame;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
@@ -60,6 +61,7 @@ public class DerivedTree {
     // count the terminals to filter out incomplete trees
     public int numTerminals;
     public List<Fs> frames;
+    private Frame frameSem = new Frame();
 
     public static boolean verbose = false;
 
@@ -75,6 +77,7 @@ public class DerivedTree {
         bottomFeatures = new HashMap<Node, Fs>();
         semantics = iniTree.semantics;
         frames = iniTree.frames;
+        frameSem = iniTree.getFrameSem();
         env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);
         addMissingTopFeatures(iniTree.topFeatures);
@@ -82,6 +85,14 @@ public class DerivedTree {
 
     public List<SemLit> getSemantics() {
         return semantics;
+    }
+
+    public Frame getFrameSem() {
+        return frameSem;
+    }
+
+    public void setFrameSem(Frame frameSem) {
+        this.frameSem = frameSem;
     }
 
     public void showAllFeaturesWithMarkedFailures(Node n, String feat1,
@@ -119,14 +130,14 @@ public class DerivedTree {
             boolean finalUpdate) throws UnifyException {
         // update vars by environment
         Fs topFs = topFeatures.get(n);
-	//System.out.println("Top features: "+topFs);
+        // System.out.println("Top features: "+topFs);
         if (topFs != null) {
             topFs = Fs.updateFS(topFs, env, finalUpdate);
             if (!merge)
                 topFeatures.put(n, topFs);
         }
         Fs botFs = bottomFeatures.get(n);
-	//System.out.println("Bot features: "+botFs);
+        // System.out.println("Bot features: "+botFs);
         if (botFs != null) {
             botFs = Fs.updateFS(botFs, env, finalUpdate);
             if (!merge)
@@ -160,7 +171,7 @@ public class DerivedTree {
             updateTopDownFeatures(n.getChildNodes().item(i), merge,
                     finalUpdate);
         }
-	//System.out.println("\nFinal features: "+ features);
+        // System.out.println("\nFinal features: "+ features);
     }
 
     public void updateFeatures(Node n, Environment eEnv, boolean finalUpdate)
