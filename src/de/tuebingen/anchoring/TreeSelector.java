@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
@@ -589,24 +588,9 @@ public class TreeSelector {
                         // Looking for the interface of the frame
                         frameInterface = tlist.get(frameid).getHead()
                                 .getIface();
-                        // System.out.println(
-                        // "before in TS.anchor: " + tt.getFrames());
                         frames.addAll(tlist.get(frameid).getHead().getFrames());
-                        // System.out.println(
-                        // "after in TS.anchor: " + tt.getFrames());
                     }
                 }
-                // DA tryRelations
-                Frame frameSem = tt.getFrameSem();
-                if (tlist != null) {
-                    if (tlist.get(frameid) != null) {
-                        frameInterface = tlist.get(frameid).getHead()
-                                .getIface();
-                        // frameSem.addToFeatureStructures(fs);
-                        // Do we need frame unification here?
-                    }
-                }
-                // END DA tryRelations
             } else {
                 if (tlist != null) {
                     if (tlist.get(frameid) != null) {
@@ -637,14 +621,15 @@ public class TreeSelector {
                             Fs res = Fs.unify(newFrames.get(ii),
                                     newFrames.get(jj), env,
                                     situation.getTypeHierarchy());
-                            newFrames.set(ii, res);
-                            newFrames.set(jj, res);
+                            // newFrames.set(ii,res);
+                            // newFrames.set(jj,res);
                             // System.out.println("Unified frames by
                             // coreference");
                         }
                     }
                 }
                 tt.setFrames(newFrames);
+
                 // System.out.println("Frames after processing:");
                 // for(Fs ttframe: tt.getFrames()){
                 // System.out.println(ttframe);
