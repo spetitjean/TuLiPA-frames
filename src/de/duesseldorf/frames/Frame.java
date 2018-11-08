@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.duesseldorf.frames;
 
 import java.util.HashSet;
@@ -12,7 +9,7 @@ import de.tuebingen.tag.Fs;
 
 /**
  * @author david
- *         The frame serves as a holder for a feature structure (Fs) and a set
+ *         The frame serves as a holder for feature structures (Fs) and a set
  *         of relations
  */
 public class Frame {

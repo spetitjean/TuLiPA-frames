@@ -175,4 +175,22 @@ public class FsTools {
         }
         return sb.toString();
     }
+
+    private static String printRelation(Relation relation) {
+        StringBuffer sb = new StringBuffer("<p>");
+        sb.append(relation.toString());
+        sb.append("</p>");
+        return sb.toString();
+    }
+
+    public static String printFrame(Frame frameSem) {
+        StringBuffer sb = new StringBuffer();
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            sb.append(printFS(fs));
+        }
+        for (Relation rel : frameSem.getRelations()) {
+            sb.append(printRelation(rel));
+        }
+        return sb.toString();
+    }
 }

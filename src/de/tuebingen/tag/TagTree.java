@@ -172,6 +172,7 @@ public class TagTree implements Tree {
             // oldFrameSem);
             Frame newFrameSem = new FrameUpdater(oldFrameSem, nf).rename();
             // System.out.println("Recreating frameSem, after: " + newFrameSem);
+            this.frameSem = newFrameSem;
         }
         // END DA addRelations
 

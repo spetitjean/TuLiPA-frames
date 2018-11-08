@@ -57,8 +57,6 @@ import de.tuebingen.expander.ParseTreeHandler;
 import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.Environment;
-
 
 public class DerivedTreeViewer {
 
@@ -110,7 +108,8 @@ public class DerivedTreeViewer {
                 if (derivationStepOutput)
                     steps = new ArrayList<ElementaryTree>();
                 DerivedTree dTree = TreeDeriver.deriveTree(startNode, treeDict,
-							   eTrees, steps, debugMode, semlabels, needsAnchoring, situation);
+                        eTrees, steps, debugMode, semlabels, needsAnchoring,
+                        situation);
                 if (dTree != null) {
                     if (!dTree.success) {
                         viewTree.description = "*" + viewTree.description;
@@ -122,31 +121,38 @@ public class DerivedTreeViewer {
                         semanticsString += sl.toString() + "<br>";
                     }
                     if (dTree.frames != null) {
-			// All of this should be done in TreeDeriver
-			// Environment env= new Environment(0);
+                        // All of this should be done in TreeDeriver
+                        // Environment env= new Environment(0);
                         // List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
-			// 				   situation,env);
-			// if(mergedFrames==null){
-			//     continue;
-			// }
+                        // situation,env);
+                        // if(mergedFrames==null){
+                        // continue;
+                        // }
                         // // clean up the list here
                         // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-			// dTree.updateFeatures(dTree.root, env,
-			// 			   false);
-			// // This is only because it's not done in TreeDeriver:
-			// derivedTree = ViewTreeBuilder
-                        //     .makeViewableDerivedTree(dTree);
-			// That is the only thing which should be here:
-                        //for (Fs fs : cleanFrames) {
+                        // dTree.updateFeatures(dTree.root, env,
+                        // false);
+                        // // This is only because it's not done in TreeDeriver:
+                        // derivedTree = ViewTreeBuilder
+                        // .makeViewableDerivedTree(dTree);
+                        // That is the only thing which should be here:
+                        // for (Fs fs : cleanFrames) {
                         for (Fs fs : dTree.frames) {
                             semanticsString += FsTools.printFS(fs);
                         }
-                    } else {
+                    }
+                    if (dTree.getFrameSem() != null) {
+                        de.duesseldorf.frames.Frame frameSem = dTree
+                                .getFrameSem();
+                        semanticsString += FsTools.printFrame(frameSem);
+                    }
+                    if (dTree.frames == null && dTree.getFrameSem() != null) {
                         semanticsString += "frame null";
                     }
                     ParseTreeCollection trees = new ParseTreeCollection(
                             viewTree, derivedTree, semanticsString,
-                            dTree.semantics, dTree.frames, noUtool);
+                            dTree.semantics, dTree.frames, dTree.getFrameSem(),
+                            noUtool);
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : eTrees) {
@@ -154,12 +160,12 @@ public class DerivedTreeViewer {
                             // but doesnt care about frames:
                             // eTree.updateTBFeatures(eTree.root, dTree.env,
                             // false);
-                            //List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
-                            //        situation);
+                            // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
+                            // situation);
                             // clean up the list here7
-                            //List<Fs> cleanFrames = FsTools
-                            //        .cleanup(mergedFrames);
-                            //eTree.frames = cleanFrames;
+                            // List<Fs> cleanFrames = FsTools
+                            // .cleanup(mergedFrames);
+                            // eTree.frames = cleanFrames;
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
                             viewElemTrees.add(elemTree);

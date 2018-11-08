@@ -36,11 +36,10 @@ package de.tuebingen.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.duesseldorf.frames.Frame;
 import de.tuebingen.expander.DOMWriter;
-import de.tuebingen.tag.SemLit;
-
 import de.tuebingen.tag.Fs;
-
+import de.tuebingen.tag.SemLit;
 
 public class ParseTreeCollection {
     XMLViewTree derivationTree;
@@ -53,17 +52,18 @@ public class ParseTreeCollection {
     List<SemLit> realSemantics;
     String[] specifiedSemantics;
     List<Fs> frames;
+    Frame frameSem;
 
     public ParseTreeCollection(XMLViewTree derivationTree,
             XMLViewTree derivedTree, String semantics, List<SemLit> lsl,
-	    List<Fs> frames,
-            boolean noUtool) {
+            List<Fs> frames, Frame frameSem, boolean noUtool) {
         this.derivationTree = derivationTree;
         this.derivedTree = derivedTree;
         elementaryTrees = null;
         derivationSteps = null;
         this.semantics = semantics;
-	this.frames = frames;
+        this.frames = frames;
+        this.frameSem = frameSem;
         // System.out.print("noUTool is: ");
         // System.out.println(noUtool);
         // System.out.println("semantics: " + semantics);
@@ -120,6 +120,10 @@ public class ParseTreeCollection {
 
     public List<Fs> getFrames() {
         return frames;
+    }
+
+    public Frame getFrameSem() {
+        return frameSem;
     }
 
 }

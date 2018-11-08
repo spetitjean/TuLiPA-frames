@@ -171,7 +171,7 @@ public class ViewTreeBuilder {
                         if (n.tag.equals("tree")) {
                             n.tag = a.value;
                         } else {
-			     n.tag = n.tag + ": " + a.value;
+                            n.tag = n.tag + ": " + a.value;
                         }
                         nattr.remove(a);
                         i--;
@@ -240,15 +240,14 @@ public class ViewTreeBuilder {
         if (xmlNode.getAttributes() != null) {
             for (int j = 0; j < xmlNode.getAttributes().getLength(); j++) {
                 XMLViewTreeAttribute attr = new XMLViewTreeAttribute();
-		attr.name = xmlNode.getAttributes().item(j).getNodeName();
-		String val=xmlNode.getAttributes().item(j).getNodeValue();
-		if(val.startsWith("_V_")){
-		    attr.value=val.substring(3);
-		    }
-		else{
-		    attr.value=val;
-		}
-		tree.addAttr(nodeID, attr);
+                attr.name = xmlNode.getAttributes().item(j).getNodeName();
+                String val = xmlNode.getAttributes().item(j).getNodeValue();
+                if (val.startsWith("_V_")) {
+                    attr.value = val.substring(3);
+                } else {
+                    attr.value = val;
+                }
+                tree.addAttr(nodeID, attr);
             }
         }
     }
@@ -285,7 +284,7 @@ public class ViewTreeBuilder {
             if (feature instanceof Element) {
                 String name = feature.getAttributes().getNamedItem("name")
                         .getNodeValue();
-		name="abc";
+                name = "abc";
                 String value = extractFeatureValue(feature);
                 Node attr = D.createAttribute(type + ":" + name);
                 attr.setNodeValue(value);
@@ -369,6 +368,9 @@ public class ViewTreeBuilder {
                 semanticsString += FsTools.printFS(fs);
             }
         }
+        if (eTree.getFrameSem() != null) {
+            semanticsString += FsTools.printFrame(eTree.getFrameSem());
+        }
         xvt.prettySem = semanticsString;
         return xvt;
     }
@@ -381,7 +383,8 @@ public class ViewTreeBuilder {
                 ArrayList<Node> atts = extractFeatureAtts(features,
                         currentNode.getOwnerDocument(), "");
                 for (Node att : atts) {
-                    currentNode.getAttributes().setNamedItem(att);                }
+                    currentNode.getAttributes().setNamedItem(att);
+                }
             }
             for (int i = 0; i < currentNode.getChildNodes().getLength(); i++) {
                 recursivelyAddFeatures(currentNode.getChildNodes().item(i),
@@ -446,14 +449,15 @@ public class ViewTreeBuilder {
             String prefix) {
         ArrayList<Node> atts = new ArrayList<Node>();
         for (String key : features.getKeys()) {
-	    String value;
-	    // we want to remember when we see variables (not only the ones starting with X...). This is necessary in case of XML export (varname vs value)
-	    if(features.getFeat(key).getType()==5){
-		value = "_V_"+features.getFeat(key).toString();
-	    }
-	    else{
-		value = features.getFeat(key).toString();
-	    }
+            String value;
+            // we want to remember when we see variables (not only the ones
+            // starting with X...). This is necessary in case of XML export
+            // (varname vs value)
+            if (features.getFeat(key).getType() == 5) {
+                value = "_V_" + features.getFeat(key).toString();
+            } else {
+                value = features.getFeat(key).toString();
+            }
             Attr att = D.createAttribute(prefix + key);
             att.setNodeValue(value);
             atts.add(att);
