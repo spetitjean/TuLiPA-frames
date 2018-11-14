@@ -597,7 +597,7 @@ public class TreeSelector {
 	    }
 	    
 	    try{
-		Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy());
+		tt.setIface(Fs.unify(frameInterface, tt.getIface(), env, situation.getTypeHierarchy()));
 		
 		
 		tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(),env,false));
@@ -642,16 +642,16 @@ public class TreeSelector {
 
         if (lemmaSem != null) {
             for (int k = 0; k < lemmaSem.size(); k++) {
-                if (treeTrace.contains(lemmaSem.get(k).getSemclass())) {
-
+                //if (treeTrace.contains(lemmaSem.get(k).getSemclass())) {
+                if (true) {
                     // if the called semantic class has been used in the tree
                     // (cf trace)
                     // we unify the interface and semantic arguments
                     Fs semFs = new Fs(lemmaSem.get(k).getArgs());
                     try {
 
-                        Fs.unify(semFs, tt.getIface(), env,
-                                situation.getTypeHierarchy());
+                        tt.setIface(Fs.unify(semFs, tt.getIface(), env,
+					     situation.getTypeHierarchy()));
                         // the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics
