@@ -702,6 +702,7 @@ public class TreeSelector {
         // Updating the variables in the frames
         try {
             List<Fs> newFrames = new ArrayList<Fs>();
+	    if(tt.getFrames()!=null)
             for (Fs f : tt.getFrames()) {
                 // System.out.println(
                 // "Updating variables in a frame, with environment "
