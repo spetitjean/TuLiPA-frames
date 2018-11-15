@@ -37,6 +37,11 @@ public class Frame {
         return relations;
     }
 
+    public void addOtherFrame(Frame other) {
+        featureStructures.addAll(other.getFeatureStructures());
+        relations.addAll(other.getRelations());
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

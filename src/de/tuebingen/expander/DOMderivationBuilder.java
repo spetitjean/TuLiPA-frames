@@ -48,6 +48,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Type;
 import de.tuebingen.gui.ParseTreeCollection;
 import de.tuebingen.tag.Fs;
@@ -94,7 +95,7 @@ public class DOMderivationBuilder {
                     ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
                     ptc.getSemantics(), ptc.getSpecifiedSemantics(),
-                    ptc.getFrames());
+                    ptc.getFrames(), ptc.getFrameSem());
         }
         derivDoc.appendChild(root);
         return derivDoc;
@@ -125,7 +126,7 @@ public class DOMderivationBuilder {
 
     public void buildOneGrammarFormat(Element mother, Node derivation,
             Node derived, List<SemLit> semantics, String[] specifiedSemantics,
-            List<Fs> frames) {
+            List<Fs> frames, Frame frameSem) {
         // the entry with the derived tree
         Element parseDerivedEntry = derivDoc.createElement("entry");
         // Element parseDerivationEntry = derivDoc.createElement("entry"); //

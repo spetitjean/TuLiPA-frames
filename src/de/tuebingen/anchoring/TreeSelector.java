@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
@@ -591,7 +592,8 @@ public class TreeSelector {
                         frames.addAll(tlist.get(frameid).getHead().getFrames());
                     }
                 }
-            } else {
+            }
+            if (tt.getFrames() == null) {
                 if (tlist != null) {
                     if (tlist.get(frameid) != null) {
                         // Looking for the interface of the frame
@@ -601,9 +603,34 @@ public class TreeSelector {
                     }
                 }
             }
+            if (tt.getFrameSem() != null) {
+                Frame frameSem = tt.getFrameSem();
+                if (tlist != null && tlist.get(frameid) != null) {
+                    frameInterface = tlist.get(frameid).getHead().getIface();
+                    frameSem.addOtherFrame(
+                            tlist.get(frameid).getHead().getFrameSem());
+                }
+            }
+            if (tt.getFrameSem() == null) {
+                if (tlist != null) {
+                    if (tlist.get(frameid) != null) {
+                        // Looking for the interface of the frame
+                        frameInterface = tlist.get(frameid).getHead()
+                                .getIface();
+                        tt.setFrameSem(
+                                tlist.get(frameid).getHead().getFrameSem());
+                    }
+                }
+            }
+
             // Why does this happen?
+            // DA:Because the tlist and/or tlist.get(frameid) might be null,
+            // too?
             if (tt.getFrames() == null) {
                 tt.setFrames(new ArrayList<Fs>());
+            }
+            if (tt.getFrames() == null) {
+                tt.setFrameSem(new Frame());
             }
 
             try {
