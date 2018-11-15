@@ -679,8 +679,8 @@ public class TreeSelector {
             }
 
             try {
-                Fs.unify(frameInterface, tt.getIface(), env,
-                        situation.getTypeHierarchy());
+                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
+                        situation.getTypeHierarchy()));
 
                 tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
                         false));
