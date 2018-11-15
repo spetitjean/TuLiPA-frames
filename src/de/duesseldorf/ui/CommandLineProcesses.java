@@ -163,7 +163,11 @@ public class CommandLineProcesses {
         // selection)
         op.add(CommandLineOptions.Prefix.DASH, "global",
                 CommandLineOptions.Separator.BLANK, false);
-
+        // input trees in bracketed format
+        op.add(CommandLineOptions.Prefix.DASH, "rrgbrin",
+                CommandLineOptions.Separator.BLANK, false);
+        op.add(CommandLineOptions.Prefix.DASH, "rrgbrout",
+                CommandLineOptions.Separator.BLANK, false);
         // we compile the patterns for parsing the command line
         op.prepare();
         // we concatenate the command line

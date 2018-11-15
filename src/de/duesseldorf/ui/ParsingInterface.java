@@ -47,14 +47,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.RRGTreeTools;
-import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
+import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
@@ -794,7 +793,8 @@ public class ParsingInterface {
 
         System.out.println("result: ");
         for (RRGParseTree rrgParseTree : result) {
-            System.out.println(RRGTreeTools.asStringWithNodeLabelsAndNodeType(rrgParseTree));
+            System.out.println(RRGTreeTools
+                    .asStringWithNodeLabelsAndNodeType(rrgParseTree));
         }
         long parsingTime = System.nanoTime() - startParsingTime;
 
