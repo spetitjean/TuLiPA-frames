@@ -622,6 +622,51 @@ public class TreeSelector {
                     }
                 }
             }
+            // Why does this happen?
+            if (tt.getFrames() == null) {
+                tt.setFrames(new ArrayList<Fs>());
+            }
+
+            try {
+                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
+                        situation.getTypeHierarchy()));
+
+                tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
+                        false));
+                List<Fs> newFrames = tt.getFrames();
+
+                for (int ii = 0; ii < newFrames.size() - 1; ii++) {
+                    for (int jj = ii + 1; jj < newFrames.size(); jj++) {
+                        if (newFrames.get(ii).getCoref()
+                                .equals(newFrames.get(jj).getCoref())) {
+                            Fs res = Fs.unify(newFrames.get(ii),
+                                    newFrames.get(jj), env,
+                                    situation.getTypeHierarchy());
+                            // newFrames.set(ii,res);
+                            // newFrames.set(jj,res);
+                            // System.out.println("Unified frames by
+                            // coreference");
+                        }
+                    }
+                }
+                tt.setFrames(newFrames);
+
+                // System.out.println("Frames after processing:");
+                // for(Fs ttframe: tt.getFrames()){
+                // System.out.println(ttframe);
+                // }
+            } catch (UnifyException e) {
+                System.err.println(
+                        "Semantic features unification failed on tree ");
+                System.err.println(e);
+                // This exception should be raised, but not cancel the whole
+                // anchoring
+                // it might just be one of the frames given by the lexicon which
+                // raises it
+
+                // throw new AnchoringException(); // we withdraw the
+                // current anchoring
+            }
 
             // Why does this happen?
             // DA:Because the tlist and/or tlist.get(frameid) might be null,
@@ -673,24 +718,22 @@ public class TreeSelector {
                 // throw new AnchoringException(); // we withdraw the
                 // current anchoring
             }
-
         }
-
         List<String> treeTrace = tt.getTrace();
         List<SemLit> treeSem = tt.getSem();
 
         if (lemmaSem != null) {
             for (int k = 0; k < lemmaSem.size(); k++) {
-                if (treeTrace.contains(lemmaSem.get(k).getSemclass())) {
-
+                // if (treeTrace.contains(lemmaSem.get(k).getSemclass())) {
+                if (true) {
                     // if the called semantic class has been used in the tree
                     // (cf trace)
                     // we unify the interface and semantic arguments
                     Fs semFs = new Fs(lemmaSem.get(k).getArgs());
                     try {
 
-                        Fs.unify(semFs, tt.getIface(), env,
-                                situation.getTypeHierarchy());
+                        tt.setIface(Fs.unify(semFs, tt.getIface(), env,
+                                situation.getTypeHierarchy()));
                         // the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics
@@ -741,17 +784,18 @@ public class TreeSelector {
         // Updating the variables in the frames
         try {
             List<Fs> newFrames = new ArrayList<Fs>();
-            for (Fs f : tt.getFrames()) {
-                // System.out.println(
-                // "Updating variables in a frame, with environment "
-                // + env);
+            if (tt.getFrames() != null)
+                for (Fs f : tt.getFrames()) {
+                    // System.out.println(
+                    // "Updating variables in a frame, with environment "
+                    // + env);
 
-                // System.out.println("Before: " + f);
+                    // System.out.println("Before: " + f);
 
-                newFrames.add(Fs.updateFS(f, env, false));
-                // System.out.println("After: " + f);
+                    newFrames.add(Fs.updateFS(f, env, false));
+                    // System.out.println("After: " + f);
 
-            }
+                }
             tt.setFrames(newFrames);
         } catch (UnifyException e) {
             System.err
