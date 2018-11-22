@@ -154,10 +154,18 @@ public class TreeDeriver {
                 List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
                 derivedTree.frames = cleanFrames;
             }
+            System.out.println(
+                    "TreeDeriver.157, old frames after: " + derivedTree.frames);
+            System.out.println("TreeDeriver.158, new frames bedfore: "
+                    + derivedTree.getFrameSem());
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSem(
                     derivedTree.getFrameSem(), derivedTree.env, true);
             derivedTree.setFrameSem(newFrameSem);
+            System.out.println("TreeDeriver.164 new frames after: "
+                    + derivedTree.getFrameSem());
+            System.out.println("environment in TreeDeriver: "
+                    + derivedTree.env.toString());
             // End DA addRelations
         } catch (UnifyException e) {
             System.err.println("Unify Exception (derived tree building): "
@@ -223,16 +231,20 @@ public class TreeDeriver {
         // tree dict entries are accessed without disambiguation IDs
         // if (id.indexOf("__") >= 0) id = id.substring(0,id.indexOf("__"));
         ElementaryTree tree = new ElementaryTree(treeDict.get(id));
+
         // ----------------------------
         // added tree renaming (c.f. lexical ambiguity)
         tree.setID(treeDict.get(id).getOriginalId());
         // ----------------------------
         if (eTrees != null)
             eTrees.add(tree);
-        if (needsAnchoring)
+        if (needsAnchoring) {
+            ElementaryTree dump = tree.createDumpingInstance(D);
             return tree.createDumpingInstance(D);
-        else
+        } else {
+
             return tree.instantiate(D);
+        }
     }
 
     public static ArrayList<Object[]> prepareOperations(Node treeNode,

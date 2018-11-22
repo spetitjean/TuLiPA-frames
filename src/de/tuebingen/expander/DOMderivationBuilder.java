@@ -91,6 +91,7 @@ public class DOMderivationBuilder {
         Element root = derivDoc.createElement("grammar");
 
         for (ParseTreeCollection ptc : viewTreesFromDOM) {
+            System.out.println("DOMDerB frameSem: " + ptc.getFrameSem());
             buildOneGrammarFormat(root,
                     ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
@@ -113,6 +114,8 @@ public class DOMderivationBuilder {
         Element root = derivDoc.createElement("parses");
         root.setAttribute("sentence", sentence);
         for (ParseTreeCollection ptc : all) {
+            System.out.println(
+                    "buildDOMDerivation framesem: " + ptc.getFrameSem());
             buildOne(root, ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
                     ptc.getSemantics(), ptc.getSpecifiedSemantics(),
@@ -174,6 +177,7 @@ public class DOMderivationBuilder {
     public static void buildOne(Element mother, Node derivation, Node derived,
             List<SemLit> semantics, String[] specifiedSemantics,
             List<Fs> frames) {
+        System.out.println("use buildOne");
         Element p = derivDoc.createElement("parse");
         Element d1 = derivDoc.createElement("derivationTree");
         Element d2 = derivDoc.createElement("derivedTree");
@@ -204,6 +208,7 @@ public class DOMderivationBuilder {
     }
 
     public static void buildDerivationTree(Element mother, Node derivation) {
+        System.out.println("use buildDerivationTree");
         Element t = derivDoc.createElement("tree");
         NamedNodeMap atts = derivation.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) {
@@ -229,6 +234,8 @@ public class DOMderivationBuilder {
     }
 
     public static void buildDerivedTree(Element mother, Node derived) {
+        System.out.println("use buildDerivedTree");
+
         Element t = derivDoc.createElement("node");
         Element narg = derivDoc.createElement("narg");
         Element fs = derivDoc.createElement("fs");

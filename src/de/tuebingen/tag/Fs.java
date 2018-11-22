@@ -347,15 +347,14 @@ public class Fs {
         String res = "";
 
         if (isTyped()) {
-            res = "(" + coref + ")" + res + type + " - ";
-
+            res = "(" + coref + ")" + res + type + "\n ";
         }
 
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
             String k = (String) i.next();
-            res += k + " = " + AVlist.get(k).toString() + ", ";
+            res += k + " = " + AVlist.get(k).toString() + "\n ";
         }
         if (res.length() > 2) {
             // we remove the last ", "

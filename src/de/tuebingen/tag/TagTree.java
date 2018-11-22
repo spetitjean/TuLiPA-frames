@@ -1028,6 +1028,11 @@ public class TagTree implements Tree {
         position = p;
     }
 
+    @Override
+    public String toString() {
+        return toString("");
+    }
+
     public String toString(String space) {
         String s = "";
         for (int i = 0; i < trace.size(); i++) {
@@ -1038,11 +1043,15 @@ public class TagTree implements Tree {
         for (int i = 0; i < sem.size(); i++) {
             semantics += "  " + sem.get(i).toString() + "\n";
         }
+
+        String frameString = frames.toString();
+        String frameSemString = frameSem.toString();
         return ("\n Tree " + id + "\n  Original Id : " + originalId
                 + "\n  Family : " + family + "\n  Tuple id : " + tupleId
                 + "\n  Trace : " + s + "\n  Interface : [" + iface.toString()
                 + "]\n  Syn : \n" + space
                 + ((TagNode) root).toString(space + "  ") + "\n  Sem : \n"
-                + semantics);
+                + semantics + "\n Frames : \n" + frameString
+                + "\n FrameSem : \n" + frameSemString);
     }
 }

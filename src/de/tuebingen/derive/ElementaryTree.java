@@ -35,8 +35,10 @@ package de.tuebingen.derive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -45,6 +47,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
@@ -267,7 +270,7 @@ public class ElementaryTree {
                 copyNodeStructureWithoutNameFactory(root, D, newTopFeatures,
                         newBottomFeatures),
                 foot, anchor, newTopFeatures, newBottomFeatures, newSemantics,
-                newFrames);
+                newFrames, frameSem);
     }
 
     public Node copyNodeStructureWithoutNameFactory(Node n, Document D,
@@ -564,13 +567,23 @@ public class ElementaryTree {
      */
     public static Frame updateFrameSem(Frame frameSem, Environment env,
             boolean finalUpdate) throws UnifyException {
-        System.out.println(
-                "ElementaryTree.updateFrameSem does not handle relations");
+        // System.out.println(
+        // "ElementaryTree.updateFrameSem does not handle relations");
+        Set<Relation> newRelations = new HashSet<Relation>();
+        for (Relation oldRel : frameSem.getRelations()) {
+            List<Value> newArgs = new LinkedList<Value>();
+            for (Value oldVal : oldRel.getArguments()) {
+                oldVal.update(env, finalUpdate);
+                // Value newVal = env.deref(oldVal);
+                newArgs.add(oldVal);
+            }
+            newRelations.add(new Relation(oldRel.getName(), newArgs));
+        }
         List<Fs> newFs = new LinkedList<Fs>();
         for (Fs fs : frameSem.getFeatureStructures()) {
             newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
-        return new Frame(newFs, frameSem.getRelations());
+        return new Frame(newFs, newRelations);
     }
 
     public void updateTBFeatures(Node n, Environment env, boolean finalUpdate)

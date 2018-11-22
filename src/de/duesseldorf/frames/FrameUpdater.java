@@ -1,5 +1,6 @@
 package de.duesseldorf.frames;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -23,12 +24,6 @@ public class FrameUpdater {
      * @return
      */
     public Frame rename() {
-        Set<Relation> oldRels = frame.getRelations();
-        if (!oldRels.isEmpty()) {
-            System.out.println(
-                    "FrameUpdater.rename does not handle relations yet!");
-        }
-
         List<Fs> oldFSs = frame.getFeatureStructures();
 
         List<Fs> resultingFeatureStructures = new LinkedList<Fs>();
@@ -36,7 +31,16 @@ public class FrameUpdater {
             Fs newFs = new Fs(oldFs, nf);
             resultingFeatureStructures.add(newFs);
         }
-        Frame result = new Frame(resultingFeatureStructures, oldRels);
+        Set<Relation> oldRels = frame.getRelations();
+        Set<Relation> newRels = new HashSet<Relation>();
+        if (!oldRels.isEmpty()) {
+            // System.out.println(
+            // "FrameUpdater.rename does not handle relations yet!");#
+            for (Relation oldRel : oldRels) {
+                newRels.add(oldRel.rename(nf));
+            }
+        }
+        Frame result = new Frame(resultingFeatureStructures, newRels);
         return result;
     }
 

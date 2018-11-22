@@ -33,10 +33,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.tuebingen.anchoring.NameFactory;
-import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.TypeHierarchy;
-
+import de.tuebingen.anchoring.NameFactory;
 
 /**
  * Class referring to Values within AVMs A value can be a String, an integer, an
@@ -176,7 +174,7 @@ public class Value implements SemLit {
     }
 
     public Value(Value v, NameFactory nf) {
-			    
+
         if (v.getSVal() != null && nf.isIn(v.getSVal())) // for semantic labels
             sVal = nf.getName(v.getSVal());
         else
@@ -200,7 +198,7 @@ public class Value implements SemLit {
             varVal = nf.getName(v.getVarVal());
         }
         type = v.getType();
-			    
+
     }
 
     public boolean is(int whatType) {
@@ -330,7 +328,7 @@ public class Value implements SemLit {
             throws UnifyException {
         return unify(a, b, env, null);
     }
-    
+
     /**
      * Performs unification between values and returns a value
      * 
@@ -341,9 +339,9 @@ public class Value implements SemLit {
      * @param env
      *            is an Environment object where to interpret a and b
      */
-    public static Value unify(Value a, Value b, Environment env, TypeHierarchy tyHi)
-            throws UnifyException {
-	    
+    public static Value unify(Value a, Value b, Environment env,
+            TypeHierarchy tyHi) throws UnifyException {
+
         // System.err.println("Unification: " + a.toString() + " and " +
         // b.toString());
         if (a.equals(b)) { // no need to compute anything
@@ -410,7 +408,8 @@ public class Value implements SemLit {
         case AVM: // a is an avm
             switch (b.getType()) {
             case AVM: // b is an avm
-                res = new Value(Fs.unify(a.getAvmVal(), b.getAvmVal(), env, tyHi));
+                res = new Value(
+                        Fs.unify(a.getAvmVal(), b.getAvmVal(), env, tyHi));
                 /*
                  * // Uncaught exception (caught in Fs' unify method) try { res
                  * = new Value(Fs.unify(a.getAvmVal(), b.getAvmVal(), env)); }
@@ -425,45 +424,61 @@ public class Value implements SemLit {
                 Value bb = env.deref(b);
                 // if b is unbound, we bind it to a
                 if (bb.equals(b)) {
-		    // Simon: I added this
-		    // This might lead to problems when 2 bound variables refer to two different FS
-		    // One solution would be to store the FS somewhere in the environment, like
-		    // b <-> a.coref
-		    // @b <-> a
-		    if(a.getAvmVal().getCoref()!=null){
-			//System.out.println("Extra binding for coref: "+bb.getVarVal()+" and "+a.getAvmVal().getCoref());
-			//System.out.println("AVM for "+a.getAvmVal().getCoref()+" is "+a.getAvmVal());
-			//System.out.println("Deref "+a.getAvmVal().getCoref()+" is "+env.deref(a.getAvmVal().getCoref()));
-			if(bb.getVarVal()!= env.deref(a.getAvmVal().getCoref()).getVarVal()){
-			    env.bind(bb.getVarVal(),env.deref(a.getAvmVal().getCoref()));
-			}
-			else{
-			    //System.out.println("Not binding");
-			    //System.out.println("@"+bb.getVarVal());
-			    //System.out.println(env.deref(new Value(5,"@"+bb.getVarVal())));
-			    //System.out.println("Type of this: "+env.deref(new Value(5,"@"+bb.getVarVal())).getType());
-			    //env.bind("@"+bb.getVarVal(),new Value(a.getAvmVal()));
-			    if(env.deref(new Value(5,"@"+bb.getVarVal())).getType()==AVM){
-				//System.out.println("Unifying AVM with bound AVM");
-				env.bind("$"+bb.getVarVal(),new Value(Fs.unify(a.getAvmVal(), env.deref(new Value(5,"$"+bb.getVarVal())).getAvmVal(), env,tyHi)));
-			    }
-			    else{
-				//System.out.println("Binding a new AVM");
-				env.bind("$"+bb.getVarVal(),new Value(a.getAvmVal()));
-			    }
-			    //System.out.println("Environment: "+env);
-			}
-			//env.bind(a.getAvmVal().getCoref().getVarVal(),a);
-		    }
-		    else{
-		    //End
-		    env.bind(bb.getVarVal(), a);
-		    }
-		    res = a;
+                    // Simon: I added this
+                    // This might lead to problems when 2 bound variables refer
+                    // to two different FS
+                    // One solution would be to store the FS somewhere in the
+                    // environment, like
+                    // b <-> a.coref
+                    // @b <-> a
+                    if (a.getAvmVal().getCoref() != null) {
+                        // System.out.println("Extra binding for coref:
+                        // "+bb.getVarVal()+" and "+a.getAvmVal().getCoref());
+                        // System.out.println("AVM for
+                        // "+a.getAvmVal().getCoref()+" is "+a.getAvmVal());
+                        // System.out.println("Deref
+                        // "+a.getAvmVal().getCoref()+" is
+                        // "+env.deref(a.getAvmVal().getCoref()));
+                        if (bb.getVarVal() != env
+                                .deref(a.getAvmVal().getCoref()).getVarVal()) {
+                            env.bind(bb.getVarVal(),
+                                    env.deref(a.getAvmVal().getCoref()));
+                        } else {
+                            // System.out.println("Not binding");
+                            // System.out.println("@"+bb.getVarVal());
+                            // System.out.println(env.deref(new
+                            // Value(5,"@"+bb.getVarVal())));
+                            // System.out.println("Type of this: "+env.deref(new
+                            // Value(5,"@"+bb.getVarVal())).getType());
+                            // env.bind("@"+bb.getVarVal(),new
+                            // Value(a.getAvmVal()));
+                            if (env.deref(new Value(5, "@" + bb.getVarVal()))
+                                    .getType() == AVM) {
+                                // System.out.println("Unifying AVM with bound
+                                // AVM");
+                                env.bind("$" + bb.getVarVal(),
+                                        new Value(Fs.unify(a.getAvmVal(),
+                                                env.deref(new Value(5,
+                                                        "$" + bb.getVarVal()))
+                                                        .getAvmVal(),
+                                                env, tyHi)));
+                            } else {
+                                // System.out.println("Binding a new AVM");
+                                env.bind("$" + bb.getVarVal(),
+                                        new Value(a.getAvmVal()));
+                            }
+                            // System.out.println("Environment: "+env);
+                        }
+                        // env.bind(a.getAvmVal().getCoref().getVarVal(),a);
+                    } else {
+                        // End
+                        env.bind(bb.getVarVal(), a);
+                    }
+                    res = a;
                 } else { // b is already bound, the values must match !
                     if (bb.is(AVM)) { // let us see if they do:
-                        res = new Value(
-					Fs.unify(a.getAvmVal(), bb.getAvmVal(), env, tyHi));
+                        res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(),
+                                env, tyHi));
                         /*
                          * // Uncaught exception (caught in Fs' unify method)
                          * try { res = new Value(Fs.unify(a.getAvmVal(),
@@ -602,16 +617,16 @@ public class Value implements SemLit {
             // env.toString());
             break;
         case VAR: // a is a variable
-	    //System.out.println("VAR and VAR");
-	    //System.out.println("Deref "+a);
+            // System.out.println("VAR and VAR");
+            // System.out.println("Deref "+a);
             Value aa = env.deref(a);
-	    //System.out.println("is "+aa);
+            // System.out.println("is "+aa);
             switch (b.getType()) {
             case VAR: // if a and b are both variables
-		//System.out.println("Deref "+b);
-		Value bb = env.deref(b);
-		//System.out.println("is "+bb);
-		if (aa.is(Value.VAR) && bb.is(Value.VAR)) {
+                // System.out.println("Deref "+b);
+                Value bb = env.deref(b);
+                // System.out.println("is "+bb);
+                if (aa.is(Value.VAR) && bb.is(Value.VAR)) {
                     if (aa.equals(a) && bb.equals(b)) {
                         // if both variables are unbound
                         env.bind(a.getVarVal(), b);

@@ -297,13 +297,13 @@ public class XMLTTMCTAGReader extends FileReader {
             for (int i = 0; i < frameEls.getLength(); i++) {
                 if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     Element ithFrameEl = (Element) frameEls.item(i);
+                    Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
                     if (ithFrameEl.getTagName().equals("fs")) {
-                        Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
                         Fs framefs = getFeats(ithFrameEl, NOFS, toAdd, nf);
                         framefss.add(framefs);
                         res.concatFrames(framefs);
                     } else if (ithFrameEl.getTagName().equals("relation")) {
-                        Relation rel = getRelation(ithFrameEl);
+                        Relation rel = getRelation(ithFrameEl, toAdd, nf);
                         framerels.add(rel);
                     }
                 }
@@ -338,7 +338,8 @@ public class XMLTTMCTAGReader extends FileReader {
      * @param n
      * @return
      */
-    private static Relation getRelation(Element n) {
+    private static Relation getRelation(Element n,
+            Hashtable<String, Value> toAdd, NameFactory nf) {
         String name = n.getAttribute("name");
         List<Value> arguments = new LinkedList<Value>();
 
@@ -346,7 +347,7 @@ public class XMLTTMCTAGReader extends FileReader {
         for (int i = 0; i < syms.getLength(); i++) {
             Element sym = (Element) syms.item(i);
             String varname = sym.getAttribute("varname");
-            Value val = new Value(Value.VAR, varname);
+            Value val = getSingleValue(sym, nf);
             arguments.add(val);
         }
         return new Relation(name, arguments);

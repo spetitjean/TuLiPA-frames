@@ -399,7 +399,6 @@ public class TreeSelector {
         // System.err.println("[0] ");
 
         TagTree tt = new TagTree(hd, nf);
-
         // System.err.println("[1] ");
 
         // we build unique tree and tuple identifiers
@@ -609,6 +608,7 @@ public class TreeSelector {
                     frameInterface = tlist.get(frameid).getHead().getIface();
                     frameSem.addOtherFrame(
                             tlist.get(frameid).getHead().getFrameSem());
+                    // tt.setFrameSem(frameSem);
                 }
             }
             if (tt.getFrameSem() == null) {
@@ -623,58 +623,12 @@ public class TreeSelector {
                 }
             }
             // Why does this happen?
-            if (tt.getFrames() == null) {
-                tt.setFrames(new ArrayList<Fs>());
-            }
-
-            try {
-                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
-                        situation.getTypeHierarchy()));
-
-                tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
-                        false));
-                List<Fs> newFrames = tt.getFrames();
-
-                for (int ii = 0; ii < newFrames.size() - 1; ii++) {
-                    for (int jj = ii + 1; jj < newFrames.size(); jj++) {
-                        if (newFrames.get(ii).getCoref()
-                                .equals(newFrames.get(jj).getCoref())) {
-                            Fs res = Fs.unify(newFrames.get(ii),
-                                    newFrames.get(jj), env,
-                                    situation.getTypeHierarchy());
-                            // newFrames.set(ii,res);
-                            // newFrames.set(jj,res);
-                            // System.out.println("Unified frames by
-                            // coreference");
-                        }
-                    }
-                }
-                tt.setFrames(newFrames);
-
-                // System.out.println("Frames after processing:");
-                // for(Fs ttframe: tt.getFrames()){
-                // System.out.println(ttframe);
-                // }
-            } catch (UnifyException e) {
-                System.err.println(
-                        "Semantic features unification failed on tree ");
-                System.err.println(e);
-                // This exception should be raised, but not cancel the whole
-                // anchoring
-                // it might just be one of the frames given by the lexicon which
-                // raises it
-
-                // throw new AnchoringException(); // we withdraw the
-                // current anchoring
-            }
-
-            // Why does this happen?
             // DA:Because the tlist and/or tlist.get(frameid) might be null,
             // too?
             if (tt.getFrames() == null) {
                 tt.setFrames(new ArrayList<Fs>());
             }
-            if (tt.getFrames() == null) {
+            if (tt.getFrameSem() == null) {
                 tt.setFrameSem(new Frame());
             }
 
@@ -701,6 +655,13 @@ public class TreeSelector {
                     }
                 }
                 tt.setFrames(newFrames);
+
+                // DA do the same thing to the FrameSem
+                tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
+                        env, false));
+                // System.out.println("treeselector framesem: " +
+                // tt.getFrameSem());
+                // END DA
 
                 // System.out.println("Frames after processing:");
                 // for(Fs ttframe: tt.getFrames()){
@@ -914,6 +875,7 @@ public class TreeSelector {
             }
             x.setArguments(tl);
         }
+
         // -------------------------------
         tupleHash.put(x.getId(), xTrees);
         ptl.setPol(p);

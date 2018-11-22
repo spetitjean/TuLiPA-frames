@@ -78,6 +78,7 @@ public class DerivedTreeViewer {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
             Document derivationTrees = ParseTreeHandler
                     .extractDerivationTrees(d);
+
             // XMLTreeViewer.displayTree(derivationTrees.getDocumentElement());
             NodeList startNodes = derivationTrees.getElementsByTagName("start");
             // Simon: added this for debugging
@@ -93,6 +94,12 @@ public class DerivedTreeViewer {
             }
 
             ArrayList<ParseTreeCollection> viewTrees = new ArrayList<ParseTreeCollection>();
+            for (ParseTreeCollection parseTreeCollection : viewTrees) {
+                System.out.println(
+                        "DTV.97: frameSem" + parseTreeCollection.getFrameSem());
+                System.out.println(
+                        "DTV.97: frames" + parseTreeCollection.getFrames());
+            }
             for (int i = 0; i < startNodes.getLength(); i++) {
                 if (toRemove.contains(i)) {
                     continue;
