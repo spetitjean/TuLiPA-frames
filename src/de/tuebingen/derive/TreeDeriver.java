@@ -142,8 +142,9 @@ public class TreeDeriver {
             // System.out.println("Environment: "+derivedTree.env);
             derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
                     derivedTree.env, true);
-            List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames, situation,
-                    derivedTree.env);
+            // List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames, situation,
+            //         derivedTree.env);
+	    List<Fs> mergedFrames = derivedTree.frames;
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
 
             if (mergedFrames == null) {
@@ -156,11 +157,11 @@ public class TreeDeriver {
             }
             System.out.println(
                     "TreeDeriver.157, old frames after: " + derivedTree.frames);
-            System.out.println("TreeDeriver.158, new frames bedfore: "
+            System.out.println("TreeDeriver.158, new frames before: "
                     + derivedTree.getFrameSem());
             // DA addRelations
-            Frame newFrameSem = ElementaryTree.updateFrameSem(
-                    derivedTree.getFrameSem(), derivedTree.env, true);
+            Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+								       derivedTree.getFrameSem(), derivedTree.env, situation, true);
             derivedTree.setFrameSem(newFrameSem);
             System.out.println("TreeDeriver.164 new frames after: "
                     + derivedTree.getFrameSem());

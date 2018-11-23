@@ -47,7 +47,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Relation;
+import de.duesseldorf.frames.FsTools;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
@@ -586,6 +588,41 @@ public class ElementaryTree {
         return new Frame(newFs, newRelations);
     }
 
+    /**
+     * Like updateFrameSem, but merging the frames in the end
+     * 
+     * @param frameSem
+     * @param env
+     * @param finalUpdate
+     * @return
+     * @throws UnifyException
+     */
+    public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env, Situation situation,
+            boolean finalUpdate) throws UnifyException {
+        // System.out.println(
+        // "ElementaryTree.updateFrameSem does not handle relations");
+        List<Fs> newFs = new LinkedList<Fs>();
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            newFs.add(Fs.updateFS(fs, env, finalUpdate));
+        }
+	List<Fs> mergedFrames = Fs.mergeFS(newFs, situation,
+					   env);
+	List<Fs> cleanedFrames = FsTools.cleanup(mergedFrames);
+
+	Set<Relation> newRelations = new HashSet<Relation>();
+        for (Relation oldRel : frameSem.getRelations()) {
+            List<Value> newArgs = new LinkedList<Value>();
+            for (Value oldVal : oldRel.getArguments()) {
+                oldVal.update(env, finalUpdate);
+                // Value newVal = env.deref(oldVal);
+                newArgs.add(oldVal);
+            }
+            newRelations.add(new Relation(oldRel.getName(), newArgs));
+        }
+        return new Frame(cleanedFrames , newRelations);
+    }
+
+    
     public void updateTBFeatures(Node n, Environment env, boolean finalUpdate)
             throws UnifyException {
         // update vars by environment
