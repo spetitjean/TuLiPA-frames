@@ -169,6 +169,8 @@ public class TreeDeriver {
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, situation,
                     true);
+	    if(newFrameSem==null)
+		failed=true;
             derivedTree.setFrameSem(newFrameSem);
             System.out.println("TreeDeriver.164 new frames after: "
                     + derivedTree.getFrameSem());
