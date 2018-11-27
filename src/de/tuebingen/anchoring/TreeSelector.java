@@ -659,6 +659,25 @@ public class TreeSelector {
                 // DA do the same thing to the FrameSem
                 tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
                         env, false));
+
+                List<Fs> newFrames = tt.getFrameSem().getFeatureStructures();
+
+                for (int ii = 0; ii < newFrames.size() - 1; ii++) {
+                for (int jj = ii + 1; jj < newFrames.size(); jj++) {
+                if (newFrames.get(ii).getCoref()
+		    .equals(newFrames.get(jj).getCoref())) {
+		    Fs res = Fs.unify(newFrames.get(ii),
+				      newFrames.get(jj), env,
+				      situation.getTypeHierarchy());
+		    // newFrames.set(ii,res);
+		    // newFrames.set(jj,res);
+		    // System.out.println("Unified frames by
+		    // coreference");
+                }
+                }
+                }
+                tt.setFrameSem(new Frame(newFrames,tt.getFrameSem().getRelations()));
+		
                 // System.out.println("treeselector framesem: " +
                 // tt.getFrameSem());
                 // END DA
