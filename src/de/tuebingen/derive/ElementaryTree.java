@@ -603,7 +603,8 @@ public class ElementaryTree {
         }
         List<Fs> newFs = new LinkedList<Fs>();
         for (Fs fs : frameSem.getFeatureStructures()) {
-            newFs.add(Fs.updateFS(fs, env, finalUpdate));
+	    if(fs!=null)
+		newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
         return new Frame(newFs, newRelations);
     }
@@ -622,11 +623,21 @@ public class ElementaryTree {
         // System.out.println(
         // "ElementaryTree.updateFrameSem does not handle relations");
         List<Fs> newFs = new LinkedList<Fs>();
+	
         for (Fs fs : frameSem.getFeatureStructures()) {
-            newFs.add(Fs.updateFS(fs, env, finalUpdate));
+	    if (fs!=null)
+		newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
         List<Fs> mergedFrames = Fs.mergeFS(newFs, situation, env);
-        List<Fs> cleanedFrames = FsTools.cleanup(mergedFrames);
+	List<Fs> cleanedFrames =  new LinkedList<Fs>();
+	if (mergedFrames == null) {
+	    System.err
+		.println("Frame unification failed, tree discarded!\n");
+	    return null;
+	} else {
+	    cleanedFrames = FsTools.cleanup(mergedFrames);
+	}
+
 
         Set<Relation> newRelations = new HashSet<Relation>();
         for (Relation oldRel : frameSem.getRelations()) {
