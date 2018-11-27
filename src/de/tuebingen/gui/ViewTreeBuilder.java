@@ -358,16 +358,16 @@ public class ViewTreeBuilder {
             semanticsString += sl.toString() + "<br>";
         }
         // add frames to Elementary trees
-        if (eTree.frames != null) {
-            // try doing this here by adding situation as parameter. Also see
-            // DTV
-            // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames, situation);
-            // // clean up the list here
-            // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-            for (Fs fs : eTree.frames) {
-                semanticsString += FsTools.printFS(fs);
-            }
-        }
+        // if (eTree.frames != null) {
+        // try doing this here by adding situation as parameter. Also see
+        // DTV
+        // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames, situation);
+        // // clean up the list here
+        // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+        // for (Fs fs : eTree.frames) {
+        // semanticsString += FsTools.printFS(fs);
+        // }
+        // }
         if (eTree.getFrameSem() != null) {
             semanticsString += FsTools.printFrame(eTree.getFrameSem());
         }

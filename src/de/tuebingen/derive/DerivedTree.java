@@ -60,7 +60,7 @@ public class DerivedTree {
     public boolean success = true;
     // count the terminals to filter out incomplete trees
     public int numTerminals;
-    public List<Fs> frames;
+    // public List<Fs> frames;
     private Frame frameSem = new Frame();
 
     public static boolean verbose = false;
@@ -76,7 +76,7 @@ public class DerivedTree {
         topFeatures = new HashMap<Node, Fs>();
         bottomFeatures = new HashMap<Node, Fs>();
         semantics = iniTree.semantics;
-        frames = iniTree.frames;
+        // frames = iniTree.frames;
         frameSem = iniTree.getFrameSem();
         env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);

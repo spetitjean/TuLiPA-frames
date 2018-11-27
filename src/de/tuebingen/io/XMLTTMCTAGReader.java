@@ -301,7 +301,7 @@ public class XMLTTMCTAGReader extends FileReader {
                     if (ithFrameEl.getTagName().equals("fs")) {
                         Fs framefs = getFeats(ithFrameEl, NOFS, toAdd, nf);
                         framefss.add(framefs);
-                        res.concatFrames(framefs);
+                        // res.concatFrames(framefs);
                     } else if (ithFrameEl.getTagName().equals("relation")) {
                         Relation rel = getRelation(ithFrameEl, toAdd, nf);
                         framerels.add(rel);

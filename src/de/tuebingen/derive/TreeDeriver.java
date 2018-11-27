@@ -44,10 +44,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
-import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Situation;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.UnifyException;
 
@@ -75,10 +73,15 @@ public class TreeDeriver {
                 if (steps != null) {
                     derivedTree.updateTopDownFeatures(derivedTree.root, false,
                             false);
+                    // ElementaryTree newStep = (new ElementaryTree(
+                    // derivedTree.root, "", "", derivedTree.topFeatures,
+                    // derivedTree.bottomFeatures, derivedTree.semantics,
+                    // derivedTree.frames, derivedTree.getFrameSem()))
+                    // .createDumpingInstance(D);
                     ElementaryTree newStep = (new ElementaryTree(
                             derivedTree.root, "", "", derivedTree.topFeatures,
                             derivedTree.bottomFeatures, derivedTree.semantics,
-                            derivedTree.frames, derivedTree.getFrameSem()))
+                            derivedTree.getFrameSem()))
                                     .createDumpingInstance(D);
                     newStep.setID("Step " + steps.size());
                     steps.add(newStep);
@@ -140,28 +143,32 @@ public class TreeDeriver {
             // derivedTree.env, true);
             // Environment.rename(derivedTree.env);
             // System.out.println("Environment: "+derivedTree.env);
-            derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
-                    derivedTree.env, true);
+
+            // derivedTree.frames =
+            // ElementaryTree.updateFrames(derivedTree.frames,
+            // derivedTree.env, true);
+
             // List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames, situation,
-            //         derivedTree.env);
-	    List<Fs> mergedFrames = derivedTree.frames;
+            // derivedTree.env);
+            // List<Fs> mergedFrames = derivedTree.frames;
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
 
-            if (mergedFrames == null) {
-                System.err
-                        .println("Frame unification failed, tree discarded!\n");
-                failed = true;
-            } else {
-                List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-                derivedTree.frames = cleanFrames;
-            }
-            System.out.println(
-                    "TreeDeriver.157, old frames after: " + derivedTree.frames);
+            // if (mergedFrames == null) {
+            // System.err
+            // .println("Frame unification failed, tree discarded!\n");
+            // failed = true;
+            // } else {
+            // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+            // derivedTree.frames = cleanFrames;
+            // }
+            // System.out.println(
+            // "TreeDeriver.157, old frames after: " + derivedTree.frames);
             System.out.println("TreeDeriver.158, new frames before: "
                     + derivedTree.getFrameSem());
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
-								       derivedTree.getFrameSem(), derivedTree.env, situation, true);
+                    derivedTree.getFrameSem(), derivedTree.env, situation,
+                    true);
             derivedTree.setFrameSem(newFrameSem);
             System.out.println("TreeDeriver.164 new frames after: "
                     + derivedTree.getFrameSem());

@@ -581,27 +581,27 @@ public class TreeSelector {
 
             Fs frameInterface = new Fs(0);
 
-            if (tt.getFrames() != null) {
-                List<Fs> frames = tt.getFrames();
-                if (tlist != null) {
-                    if (tlist.get(frameid) != null) {
-                        // Looking for the interface of the frame
-                        frameInterface = tlist.get(frameid).getHead()
-                                .getIface();
-                        frames.addAll(tlist.get(frameid).getHead().getFrames());
-                    }
-                }
-            }
-            if (tt.getFrames() == null) {
-                if (tlist != null) {
-                    if (tlist.get(frameid) != null) {
-                        // Looking for the interface of the frame
-                        frameInterface = tlist.get(frameid).getHead()
-                                .getIface();
-                        tt.setFrames(tlist.get(frameid).getHead().getFrames());
-                    }
-                }
-            }
+            // if (tt.getFrames() != null) {
+            // List<Fs> frames = tt.getFrames();
+            // if (tlist != null) {
+            // if (tlist.get(frameid) != null) {
+            // // Looking for the interface of the frame
+            // frameInterface = tlist.get(frameid).getHead()
+            // .getIface();
+            // frames.addAll(tlist.get(frameid).getHead().getFrames());
+            // }
+            // }
+            // }
+            // if (tt.getFrames() == null) {
+            // if (tlist != null) {
+            // if (tlist.get(frameid) != null) {
+            // // Looking for the interface of the frame
+            // frameInterface = tlist.get(frameid).getHead()
+            // .getIface();
+            // tt.setFrames(tlist.get(frameid).getHead().getFrames());
+            // }
+            // }
+            // }
             if (tt.getFrameSem() != null) {
                 Frame frameSem = tt.getFrameSem();
                 if (tlist != null && tlist.get(frameid) != null) {
@@ -625,9 +625,9 @@ public class TreeSelector {
             // Why does this happen?
             // DA:Because the tlist and/or tlist.get(frameid) might be null,
             // too?
-            if (tt.getFrames() == null) {
-                tt.setFrames(new ArrayList<Fs>());
-            }
+            // if (tt.getFrames() == null) {
+            // tt.setFrames(new ArrayList<Fs>());
+            // }
             if (tt.getFrameSem() == null) {
                 tt.setFrameSem(new Frame());
             }
@@ -636,25 +636,25 @@ public class TreeSelector {
                 tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
                         situation.getTypeHierarchy()));
 
-                tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
-                        false));
-                List<Fs> newFrames = tt.getFrames();
+                // tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
+                // false));
+                // List<Fs> newFrames = tt.getFrames();
 
-                for (int ii = 0; ii < newFrames.size() - 1; ii++) {
-                    for (int jj = ii + 1; jj < newFrames.size(); jj++) {
-                        if (newFrames.get(ii).getCoref()
-                                .equals(newFrames.get(jj).getCoref())) {
-                            Fs res = Fs.unify(newFrames.get(ii),
-                                    newFrames.get(jj), env,
-                                    situation.getTypeHierarchy());
-                            // newFrames.set(ii,res);
-                            // newFrames.set(jj,res);
-                            // System.out.println("Unified frames by
-                            // coreference");
-                        }
-                    }
-                }
-                tt.setFrames(newFrames);
+                // for (int ii = 0; ii < newFrames.size() - 1; ii++) {
+                // for (int jj = ii + 1; jj < newFrames.size(); jj++) {
+                // if (newFrames.get(ii).getCoref()
+                // .equals(newFrames.get(jj).getCoref())) {
+                // Fs res = Fs.unify(newFrames.get(ii),
+                // newFrames.get(jj), env,
+                // situation.getTypeHierarchy());
+                // // newFrames.set(ii,res);
+                // // newFrames.set(jj,res);
+                // // System.out.println("Unified frames by
+                // // coreference");
+                // }
+                // }
+                // }
+                // tt.setFrames(newFrames);
 
                 // DA do the same thing to the FrameSem
                 tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
@@ -743,27 +743,27 @@ public class TreeSelector {
         }
 
         // Updating the variables in the frames
-        try {
-            List<Fs> newFrames = new ArrayList<Fs>();
-            if (tt.getFrames() != null)
-                for (Fs f : tt.getFrames()) {
-                    // System.out.println(
-                    // "Updating variables in a frame, with environment "
-                    // + env);
-
-                    // System.out.println("Before: " + f);
-
-                    newFrames.add(Fs.updateFS(f, env, false));
-                    // System.out.println("After: " + f);
-
-                }
-            tt.setFrames(newFrames);
-        } catch (UnifyException e) {
-            System.err
-                    .println("FS update failed on tree " + tt.getOriginalId());
-            System.err.println(e);
-            throw new AnchoringException(); // we withdraw the current anchoring
-        }
+        // try {
+        // List<Fs> newFrames = new ArrayList<Fs>();
+        // if (tt.getFrames() != null)
+        // for (Fs f : tt.getFrames()) {
+        // // System.out.println(
+        // // "Updating variables in a frame, with environment "
+        // // + env);
+        //
+        // // System.out.println("Before: " + f);
+        //
+        // newFrames.add(Fs.updateFS(f, env, false));
+        // // System.out.println("After: " + f);
+        //
+        // }
+        // tt.setFrames(newFrames);
+        // } catch (UnifyException e) {
+        // System.err
+        // .println("FS update failed on tree " + tt.getOriginalId());
+        // System.err.println(e);
+        // throw new AnchoringException(); // we withdraw the current anchoring
+        // }
 
         // System.err.println(" (after FS updating)");
         // System.err.println(env.toString());
