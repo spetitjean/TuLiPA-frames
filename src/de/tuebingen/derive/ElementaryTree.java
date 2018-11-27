@@ -247,8 +247,6 @@ public class ElementaryTree {
         // DA addRelations
 
         Frame newFrameSem = getFrameSem();
-        System.out.println(
-                "In ElementaryTree.instantiate, the frames do not get renamed.");
         // END DA addRelations
         // called different constructor for new frame:
         // return new ElementaryTree(
@@ -601,8 +599,8 @@ public class ElementaryTree {
         }
         List<Fs> newFs = new LinkedList<Fs>();
         for (Fs fs : frameSem.getFeatureStructures()) {
-	    if(fs!=null)
-		newFs.add(Fs.updateFS(fs, env, finalUpdate));
+            if (fs != null)
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
         return new Frame(newFs, newRelations);
     }
@@ -619,24 +617,22 @@ public class ElementaryTree {
     public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
             Situation situation, boolean finalUpdate) throws UnifyException {
         List<Fs> newFs = new LinkedList<Fs>();
-	
-        for (Fs fs : frameSem.getFeatureStructures()) {
-	    if (fs!=null)
-		newFs.add(Fs.updateFS(fs, env, finalUpdate));
-        }
-	// do not know why 2 merges are now necessary...
-        List<Fs> mergedFrames = Fs.mergeFS(newFs, situation, env);
-	if(mergedFrames != null)
-	    mergedFrames = Fs.mergeFS(newFs,situation,env);
-	List<Fs> cleanedFrames =  new LinkedList<Fs>();
-	if (mergedFrames == null) {
-	    System.err
-		.println("Frame unification failed, tree discarded!\n");
-	    return null;
-	} else {
-	    cleanedFrames = FsTools.cleanup(mergedFrames);
-	}
 
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null)
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
+        }
+        // do not know why 2 merges are now necessary...
+        List<Fs> mergedFrames = Fs.mergeFS(newFs, situation, env);
+        if (mergedFrames != null)
+            mergedFrames = Fs.mergeFS(newFs, situation, env);
+        List<Fs> cleanedFrames = new LinkedList<Fs>();
+        if (mergedFrames == null) {
+            System.err.println("Frame unification failed, tree discarded!\n");
+            return null;
+        } else {
+            cleanedFrames = FsTools.cleanup(mergedFrames);
+        }
 
         Set<Relation> newRelations = new HashSet<Relation>();
         for (Relation oldRel : frameSem.getRelations()) {

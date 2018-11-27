@@ -131,8 +131,6 @@ public class TreeDeriver {
                     true);
             // Environment.rename(derivedTree.env);
 
-            // System.out.println("Environment: "+derivedTree.env);
-            // System.out.println("Update frames in TreeDeriver");
             // derivedTree.frames =
             // ElementaryTree.updateFrames(derivedTree.frames,
             // derivedTree.env, true);
@@ -161,21 +159,15 @@ public class TreeDeriver {
             // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
             // derivedTree.frames = cleanFrames;
             // }
-            // System.out.println(
-            // "TreeDeriver.157, old frames after: " + derivedTree.frames);
-            System.out.println("TreeDeriver.158, new frames before: "
-                    + derivedTree.getFrameSem());
+
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, situation,
                     true);
-	    if(newFrameSem==null)
-		failed=true;
+            if (newFrameSem == null) {
+                failed = true;
+            }
             derivedTree.setFrameSem(newFrameSem);
-            System.out.println("TreeDeriver.164 new frames after: "
-                    + derivedTree.getFrameSem());
-            System.out.println("environment in TreeDeriver: "
-                    + derivedTree.env.toString());
             // End DA addRelations
         } catch (UnifyException e) {
             System.err.println("Unify Exception (derived tree building): "

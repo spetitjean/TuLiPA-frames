@@ -663,21 +663,22 @@ public class TreeSelector {
                 List<Fs> newFrames = tt.getFrameSem().getFeatureStructures();
 
                 for (int ii = 0; ii < newFrames.size() - 1; ii++) {
-                for (int jj = ii + 1; jj < newFrames.size(); jj++) {
-                if (newFrames.get(ii).getCoref()
-		    .equals(newFrames.get(jj).getCoref())) {
-		    Fs res = Fs.unify(newFrames.get(ii),
-				      newFrames.get(jj), env,
-				      situation.getTypeHierarchy());
-		    // newFrames.set(ii,res);
-		    // newFrames.set(jj,res);
-		    // System.out.println("Unified frames by
-		    // coreference");
+                    for (int jj = ii + 1; jj < newFrames.size(); jj++) {
+                        if (newFrames.get(ii).getCoref()
+                                .equals(newFrames.get(jj).getCoref())) {
+                            Fs res = Fs.unify(newFrames.get(ii),
+                                    newFrames.get(jj), env,
+                                    situation.getTypeHierarchy());
+                            // newFrames.set(ii,res);
+                            // newFrames.set(jj,res);
+                            // System.out.println("Unified frames by
+                            // coreference");
+                        }
+                    }
                 }
-                }
-                }
-                tt.setFrameSem(new Frame(newFrames,tt.getFrameSem().getRelations()));
-		
+                tt.setFrameSem(
+                        new Frame(newFrames, tt.getFrameSem().getRelations()));
+
                 // System.out.println("treeselector framesem: " +
                 // tt.getFrameSem());
                 // END DA
@@ -899,7 +900,6 @@ public class TreeSelector {
         tupleHash.put(x.getId(), xTrees);
         ptl.setPol(p);
         plm.addTuple(ptl);
-        System.out.println("framesem in ts: " + x.getHead().getFrameSem());
         return x;
     }
 
