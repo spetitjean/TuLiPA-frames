@@ -376,8 +376,10 @@ public class ElementaryTree {
             updateSem(dTree.semantics, dTree.env, false);
             // dTree.frames.addAll(((ElementaryTree) op[2]).frames);
             // dTree.frames = updateFrames(dTree.frames, dTree.env, false);
-            dTree.setFrameSem(
-                    updateFrameSem(dTree.getFrameSem(), dTree.env, false));
+
+            Frame newFrameSem = dTree.getFrameSem();
+            newFrameSem.addOtherFrame(((ElementaryTree) op[2]).getFrameSem());
+            dTree.setFrameSem(updateFrameSem(newFrameSem, dTree.env, false));
 
             // for verbose output of the steps
             // OLD:

@@ -880,6 +880,7 @@ public class TreeSelector {
         tupleHash.put(x.getId(), xTrees);
         ptl.setPol(p);
         plm.addTuple(ptl);
+        System.out.println("framesem in ts: " + x.getHead().getFrameSem());
         return x;
     }
 
