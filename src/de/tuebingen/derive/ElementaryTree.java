@@ -589,8 +589,6 @@ public class ElementaryTree {
      */
     public static Frame updateFrameSem(Frame frameSem, Environment env,
             boolean finalUpdate) throws UnifyException {
-        // System.out.println(
-        // "ElementaryTree.updateFrameSem does not handle relations");
         Set<Relation> newRelations = new HashSet<Relation>();
         for (Relation oldRel : frameSem.getRelations()) {
             List<Value> newArgs = new LinkedList<Value>();
@@ -619,8 +617,6 @@ public class ElementaryTree {
      */
     public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
             Situation situation, boolean finalUpdate) throws UnifyException {
-        // System.out.println(
-        // "ElementaryTree.updateFrameSem does not handle relations");
         List<Fs> newFs = new LinkedList<Fs>();
         for (Fs fs : frameSem.getFeatureStructures()) {
             newFs.add(Fs.updateFS(fs, env, finalUpdate));
