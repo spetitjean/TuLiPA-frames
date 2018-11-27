@@ -49,6 +49,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Type;
 import de.tuebingen.gui.ParseTreeCollection;
 import de.tuebingen.tag.Fs;
@@ -91,12 +92,11 @@ public class DOMderivationBuilder {
         Element root = derivDoc.createElement("grammar");
 
         for (ParseTreeCollection ptc : viewTreesFromDOM) {
-            System.out.println("DOMDerB frameSem: " + ptc.getFrameSem());
             buildOneGrammarFormat(root,
                     ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
                     ptc.getSemantics(), ptc.getSpecifiedSemantics(),
-                    ptc.getFrames(), ptc.getFrameSem());
+                    ptc.getFrameSem());
         }
         derivDoc.appendChild(root);
         return derivDoc;
@@ -114,12 +114,10 @@ public class DOMderivationBuilder {
         Element root = derivDoc.createElement("parses");
         root.setAttribute("sentence", sentence);
         for (ParseTreeCollection ptc : all) {
-            System.out.println(
-                    "buildDOMDerivation framesem: " + ptc.getFrameSem());
             buildOne(root, ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
                     ptc.getSemantics(), ptc.getSpecifiedSemantics(),
-                    ptc.getFrames());
+                    ptc.getFrameSem());
         }
         // finally we do not forget the root
         derivDoc.appendChild(root);
@@ -129,7 +127,7 @@ public class DOMderivationBuilder {
 
     public void buildOneGrammarFormat(Element mother, Node derivation,
             Node derived, List<SemLit> semantics, String[] specifiedSemantics,
-            List<Fs> frames, Frame frameSem) {
+            Frame frameSem) {
         // the entry with the derived tree
         Element parseDerivedEntry = derivDoc.createElement("entry");
         // Element parseDerivationEntry = derivDoc.createElement("entry"); //
@@ -167,7 +165,7 @@ public class DOMderivationBuilder {
         parseDerivedEntry.appendChild(specSemElem);
         // parseDerivationEntry.appendChild(specSemElem);
 
-        buildFrames(f, frames);
+        buildFrames(f, frameSem);
         parseDerivedEntry.appendChild(f);
 
         mother.appendChild(parseDerivedEntry);
@@ -176,8 +174,7 @@ public class DOMderivationBuilder {
 
     public static void buildOne(Element mother, Node derivation, Node derived,
             List<SemLit> semantics, String[] specifiedSemantics,
-            List<Fs> frames) {
-        System.out.println("use buildOne");
+            Frame frameSem) {
         Element p = derivDoc.createElement("parse");
         Element d1 = derivDoc.createElement("derivationTree");
         Element d2 = derivDoc.createElement("derivedTree");
@@ -197,7 +194,7 @@ public class DOMderivationBuilder {
         buildSpecifiedSemantics(s2, specifiedSemantics);
         p.appendChild(s2);
 
-        buildFrames(f, frames);
+        buildFrames(f, frameSem);
         p.appendChild(f);
 
         mother.appendChild(p);
@@ -208,7 +205,6 @@ public class DOMderivationBuilder {
     }
 
     public static void buildDerivationTree(Element mother, Node derivation) {
-        System.out.println("use buildDerivationTree");
         Element t = derivDoc.createElement("tree");
         NamedNodeMap atts = derivation.getAttributes();
         for (int i = 0; i < atts.getLength(); i++) {
@@ -234,8 +230,6 @@ public class DOMderivationBuilder {
     }
 
     public static void buildDerivedTree(Element mother, Node derived) {
-        System.out.println("use buildDerivedTree");
-
         Element t = derivDoc.createElement("node");
         Element narg = derivDoc.createElement("narg");
         Element fs = derivDoc.createElement("fs");
@@ -365,14 +359,29 @@ public class DOMderivationBuilder {
         }
     }
 
-    public static void buildFrames(Element mother, List<Fs> frames) {
-        for (Fs frame : frames) {
+    public static void buildFrames(Element mother, Frame frameSem) {
+        for (Fs frame : frameSem.getFeatureStructures()) {
             buildFrame(mother, frame);
+        }
+        buildRelations(mother, frameSem.getRelations());
+    }
+
+    private static void buildRelations(Element mother,
+            Set<Relation> relations) {
+        // go through all the relations
+        for (Relation properRelation : relations) {
+            // create the element
+            Element relationEl = derivDoc.createElement("relation");
+            relationEl.setAttribute("name", properRelation.getName());
+
+            for (Value properVal : properRelation.getArguments()) {
+                buildVal(relationEl, properVal.getVarVal());
+            }
+            mother.appendChild(relationEl);
         }
     }
 
     public static void buildFrame(Element mother, Fs frame) {
-        // System.out.println("Build frame: "+frame);
         Element fs = derivDoc.createElement("fs");
         fs.setAttribute("coref", frame.getCoref().toString());
 

@@ -250,9 +250,8 @@ public class TreeDeriver {
             eTrees.add(tree);
         if (needsAnchoring) {
             ElementaryTree dump = tree.createDumpingInstance(D);
-            return tree.createDumpingInstance(D);
+            return dump;
         } else {
-
             return tree.instantiate(D);
         }
     }
