@@ -75,6 +75,7 @@ public class DerivedTreeViewer {
             boolean noUtool) {
         try {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
+	    System.out.println("GETTING VIEW TREES");
             Document derivationTrees = ParseTreeHandler
                     .extractDerivationTrees(d);
 

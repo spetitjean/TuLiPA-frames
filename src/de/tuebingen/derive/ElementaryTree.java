@@ -587,7 +587,14 @@ public class ElementaryTree {
      */
     public static Frame updateFrameSem(Frame frameSem, Environment env,
             boolean finalUpdate) throws UnifyException {
-        Set<Relation> newRelations = new HashSet<Relation>();
+
+	List<Fs> newFs = new LinkedList<Fs>();
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null)
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
+        }
+
+	Set<Relation> newRelations = new HashSet<Relation>();
         for (Relation oldRel : frameSem.getRelations()) {
             List<Value> newArgs = new LinkedList<Value>();
             for (Value oldVal : oldRel.getArguments()) {
@@ -597,11 +604,7 @@ public class ElementaryTree {
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }
-        List<Fs> newFs = new LinkedList<Fs>();
-        for (Fs fs : frameSem.getFeatureStructures()) {
-            if (fs != null)
-                newFs.add(Fs.updateFS(fs, env, finalUpdate));
-        }
+
         return new Frame(newFs, newRelations);
     }
 
@@ -616,16 +619,18 @@ public class ElementaryTree {
      */
     public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
             Situation situation, boolean finalUpdate) throws UnifyException {
+        NameFactory nf = new NameFactory();
         List<Fs> newFs = new LinkedList<Fs>();
+	//System.out.println("Environment before update: "+env);
 
         for (Fs fs : frameSem.getFeatureStructures()) {
             if (fs != null)
                 newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
         // do not know why 2 merges are now necessary...
-        List<Fs> mergedFrames = Fs.mergeFS(newFs, situation, env);
+        List<Fs> mergedFrames = Fs.mergeFS(newFs, situation, env, nf);
         if (mergedFrames != null)
-            mergedFrames = Fs.mergeFS(newFs, situation, env);
+            mergedFrames = Fs.mergeFS(newFs, situation, env, nf);
         List<Fs> cleanedFrames = new LinkedList<Fs>();
         if (mergedFrames == null) {
             System.err.println("Frame unification failed, tree discarded!\n");
@@ -635,6 +640,8 @@ public class ElementaryTree {
         }
 
         Set<Relation> newRelations = new HashSet<Relation>();
+	//System.out.println("Old relations: "+frameSem.getRelations());
+	
         for (Relation oldRel : frameSem.getRelations()) {
             List<Value> newArgs = new LinkedList<Value>();
             for (Value oldVal : oldRel.getArguments()) {
@@ -644,6 +651,8 @@ public class ElementaryTree {
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }
+	//System.out.println("Environment: "+env);
+	//System.out.println("New relations: "+newRelations);
         return new Frame(cleanedFrames, newRelations);
     }
 

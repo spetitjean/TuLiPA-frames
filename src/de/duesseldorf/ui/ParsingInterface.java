@@ -624,9 +624,9 @@ public class ParsingInterface {
             System.err.println("Select a parsing mode");
         }
         if (res) {
-            ArrayList<ParseTreeCollection> viewTreesFromD = DerivedTreeViewer
-                    .getViewTreesFromDOM(fdoc, sit, grammarDict, false, false,
-                            false, needsAnchoring, slabels, noUtool);
+            // ArrayList<ParseTreeCollection> viewTreesFromD = DerivedTreeViewer
+            //         .getViewTreesFromDOM(fdoc, sit, grammarDict, false, false,
+            //                 false, needsAnchoring, slabels, noUtool);
             if (op.check("x") || op.check("xg")) { // XML output of the
                                                    // derivations!
                 long xmlTime = System.nanoTime();

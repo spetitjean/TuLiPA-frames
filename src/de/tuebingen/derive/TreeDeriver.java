@@ -124,7 +124,7 @@ public class TreeDeriver {
             // System.err.println("Sem labels:\n" + semlabels);
             derivedTree.env.setSemlabels(semlabels);
 
-            Environment.rename(derivedTree.env);
+            //Environment.rename(derivedTree.env);
             // System.out.println("Ended rename ");
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
@@ -159,7 +159,7 @@ public class TreeDeriver {
             // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
             // derivedTree.frames = cleanFrames;
             // }
-
+	    //System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, situation,
@@ -167,7 +167,13 @@ public class TreeDeriver {
             if (newFrameSem == null) {
                 failed = true;
             }
-            derivedTree.setFrameSem(newFrameSem);
+	    else{
+		derivedTree.setFrameSem(newFrameSem);
+		//System.out.println("Derived tree env after: "+derivedTree.env);
+		Environment.rename(derivedTree.env);
+		derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+		derivedTree.setFrameSem(ElementaryTree.updateFrameSem(newFrameSem, derivedTree.env, true));
+	    }
             // End DA addRelations
         } catch (UnifyException e) {
             System.err.println("Unify Exception (derived tree building): "
