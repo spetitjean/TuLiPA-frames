@@ -36,6 +36,7 @@ package de.tuebingen.anchoring;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
@@ -676,11 +678,22 @@ public class TreeSelector {
                         }
                     }
                 }
+		Set<Relation> newRelations = new HashSet<Relation>();
+		for (Relation oldRel : tt.getFrameSem().getRelations()) {
+		    List<Value> newArgs = new LinkedList<Value>();
+		    for (Value oldVal : oldRel.getArguments()) {
+			Value oldCopy = new Value(oldVal);
+			oldCopy.update(env, true);
+			// Value newVal = env.deref(oldVal);
+			newArgs.add(oldCopy);
+		    }
+		    newRelations.add(new Relation(oldRel.getName(), newArgs));
+		}
                 tt.setFrameSem(
-                        new Frame(newFrames, tt.getFrameSem().getRelations()));
+                        new Frame(newFrames, newRelations));
 
-                // System.out.println("treeselector framesem: " +
-                // tt.getFrameSem());
+		//System.out.println("treeselector framesem: " +
+				    // tt.getFrameSem());
                 // END DA
 
                 // System.out.println("Frames after processing:");
