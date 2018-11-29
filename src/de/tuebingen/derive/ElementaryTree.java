@@ -598,9 +598,10 @@ public class ElementaryTree {
         for (Relation oldRel : frameSem.getRelations()) {
             List<Value> newArgs = new LinkedList<Value>();
             for (Value oldVal : oldRel.getArguments()) {
-                oldVal.update(env, finalUpdate);
+		Value oldCopy = new Value(oldVal);
+                oldCopy.update(env, finalUpdate);
                 // Value newVal = env.deref(oldVal);
-                newArgs.add(oldVal);
+                newArgs.add(oldCopy);
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }
@@ -645,9 +646,10 @@ public class ElementaryTree {
         for (Relation oldRel : frameSem.getRelations()) {
             List<Value> newArgs = new LinkedList<Value>();
             for (Value oldVal : oldRel.getArguments()) {
-                oldVal.update(env, finalUpdate);
+		Value oldCopy = new Value(oldVal);
+                oldCopy.update(env, finalUpdate);
                 // Value newVal = env.deref(oldVal);
-                newArgs.add(oldVal);
+                newArgs.add(oldCopy);
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }

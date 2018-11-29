@@ -83,6 +83,7 @@ public class TreeDeriver {
                             derivedTree.bottomFeatures, derivedTree.semantics,
                             derivedTree.getFrameSem()))
                                     .createDumpingInstance(D);
+		    System.out.println("frameSem in newStep: "+newStep.getFrameSem());
                     newStep.setID("Step " + steps.size());
                     steps.add(newStep);
                 }
