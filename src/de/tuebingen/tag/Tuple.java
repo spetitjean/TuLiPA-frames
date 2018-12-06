@@ -104,7 +104,7 @@ public class Tuple {
     }
 
     public String getOriginalId() {
-        return originalId;
+        return (originalId == null) ? "" : originalId;
     }
 
     public void setOriginalId(String originalId) {
@@ -113,6 +113,7 @@ public class Tuple {
 
     public String toString() {
         try {
+
             String h = head.toString("");
             String a = "";
             if (arguments != null) {
@@ -120,13 +121,14 @@ public class Tuple {
                     a += arguments.get(i).toString("");
                 }
             }
-            return ("Tuple's id: " + id + "\n original Id: " + originalId
+            return ("Tuple's id: " + id + "\n original Id: " + getOriginalId()
                     + "\n Tuple family: " + family + "\n Head: " + h
                     + "\n Arguments: " + a + "\n\n");
         } catch (Exception e) {
-            return (e.getMessage()
-                    + "\nSomething in tuple.toString went wrong. This is whats left...\n"
-                    + "Tuple's id: " + id + "\n original Id: " + originalId
+            return (// e.getMessage()
+                    // + "\nSomething in tuple.toString went wrong. This is
+                    // whats left...\n"
+            "Tuple's id: " + id + "\n original Id: " + getOriginalId()
                     + "\n Tuple family: " + family);
         }
     }

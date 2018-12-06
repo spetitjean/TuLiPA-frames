@@ -35,8 +35,8 @@ package de.tuebingen.anchoring;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -281,51 +281,37 @@ public class TreeSelector {
                         InstantiatedTuple it = new InstantiatedTuple(la.get(k),
                                 lt.get(family).get(l), il);
 
-                        try {
-                            // System.out.println("[1-] ");
+                        // System.out.println("[1-] ");
 
-                            // In case we have several entries for
-                            // frames associated to the lemma, we need
-                            // several instantiated tuples
+                        // In case we have several entries for
+                        // frames associated to the lemma, we need
+                        // several instantiated tuples
 
-                            List<LexSem> lemmaSem = it.getAnchor()
-                                    .getSemantics();
-                            List<Tuple> tlist = new LinkedList<Tuple>();
+                        List<LexSem> lemmaSem = it.getAnchor().getSemantics();
+                        List<Tuple> tlist = new LinkedList<Tuple>();
 
-                            if (lemmaSem.size() > 1) {
-                                System.out.println(
-                                        "TODO: create a loop in TreeSelector.546!");
-                            }
+                        if (lemmaSem.size() > 1) {
+                            System.out.println(
+                                    "TODO: create a loop in TreeSelector.546!");
+                        }
 
-                            if (situation.getFrameGrammar() != null
-                                    && lemmaSem.size() > 0) {
-                                tlist = situation.getFrameGrammar().getGrammar()
-                                        .get(lemmaSem.get(0).getSemclass());
-                                // System.out.println("Size of the frame list
-                                // for this entry: "+tlist.size());
-                            }
-                            // If we have more that one possible frame, try them
-                            // all
-                            if (tlist.size() > 1) {
-                                for (int iframe = 0; iframe < tlist
-                                        .size(); iframe++) {
-                                    InstantiatedTuple x = this.anchor(plm, it,
-                                            l, slabels, iframe);
-                                    anctuples.add(x);
-                                }
-                            }
-                            // If we have 0 or 1, just go once
-                            else {
+                        if (situation.getFrameGrammar() != null
+                                && lemmaSem.size() > 0) {
+                            tlist = situation.getFrameGrammar().getGrammar()
+                                    .get(lemmaSem.get(0).getSemclass());
+                            // System.out.println("Size of the frame list
+                            // for this entry: "+tlist.size());
+                        }
+                        for (int iframe = 0; iframe < tlist.size(); iframe++) {
+                            try {
                                 InstantiatedTuple x = this.anchor(plm, it, l,
-                                        slabels, 0);
+                                        slabels, iframe);
                                 anctuples.add(x);
+                            } catch (AnchoringException e) {
+                                System.err.println("Tuple non-anchored: "
+                                        + it.getId() + " with frame "
+                                        + tlist.get(iframe));
                             }
-
-                        } catch (AnchoringException e) {
-
-                            System.err.println(
-                                    "Tuple non-anchored: " + it.getId());
-
                         }
                     } else {
                         if (verbose) {
@@ -464,8 +450,7 @@ public class TreeSelector {
 
             } catch (UnifyException e) {
                 System.err.println("Interface unification failed on tree "
-                        + tt.getOriginalId() + " for filter "
-                        + ancfs.toString());
+                        + tt.getId() + " for filter " + ancfs.toString());
                 System.err.println(e);
                 throw new AnchoringException(); // we withdraw the current
                                                 // anchoring
@@ -678,22 +663,21 @@ public class TreeSelector {
                         }
                     }
                 }
-		Set<Relation> newRelations = new HashSet<Relation>();
-		for (Relation oldRel : tt.getFrameSem().getRelations()) {
-		    List<Value> newArgs = new LinkedList<Value>();
-		    for (Value oldVal : oldRel.getArguments()) {
-			Value oldCopy = new Value(oldVal);
-			oldCopy.update(env, true);
-			// Value newVal = env.deref(oldVal);
-			newArgs.add(oldCopy);
-		    }
-		    newRelations.add(new Relation(oldRel.getName(), newArgs));
-		}
-                tt.setFrameSem(
-                        new Frame(newFrames, newRelations));
+                Set<Relation> newRelations = new HashSet<Relation>();
+                for (Relation oldRel : tt.getFrameSem().getRelations()) {
+                    List<Value> newArgs = new LinkedList<Value>();
+                    for (Value oldVal : oldRel.getArguments()) {
+                        Value oldCopy = new Value(oldVal);
+                        oldCopy.update(env, true);
+                        // Value newVal = env.deref(oldVal);
+                        newArgs.add(oldCopy);
+                    }
+                    newRelations.add(new Relation(oldRel.getName(), newArgs));
+                }
+                tt.setFrameSem(new Frame(newFrames, newRelations));
 
-		//System.out.println("treeselector framesem: " +
-				    // tt.getFrameSem());
+                // System.out.println("treeselector framesem: " +
+                // tt.getFrameSem());
                 // END DA
 
                 // System.out.println("Frames after processing:");
