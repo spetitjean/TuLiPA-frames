@@ -234,6 +234,8 @@ public class CommandLineProcesses {
         res += "for functionalities:\n\t";
         res += "-rrg      parser for RRG as of Kallmeyer and Osswald (2017), "
                 + "default parsing algorithm for rrg\n\t";
+        res += "-rrgbrin     input as bracketed elementary trees with the lexical element in front\n\t";
+        res += "-rrgbrout    output in bracketed notation, either to stdout or to the specified output file\n\t";
         res += "-cyktag      use CYK parser for TAG, default parsing algorithm\n\t";
         res += "-tag2rcg     (use TAG to RCG conversion)\n\t";
         res += "-nofiltering cancels polarity filtering\n\t";

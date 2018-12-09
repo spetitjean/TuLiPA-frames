@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.duesseldorf.io.XMLRRGTag;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.extractor.NaiveGAShiftHandler;
+import de.duesseldorf.rrg.io.XMLRRGTag;
 import de.duesseldorf.util.GornAddress;
 
 /**

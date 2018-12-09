@@ -44,9 +44,9 @@ import java.util.Map;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.TypeHierarchy;
-import de.duesseldorf.io.BracketedRRGReader;
-import de.duesseldorf.io.XMLRRGReader;
 import de.duesseldorf.io.XMLTypeHierarchyReader;
+import de.duesseldorf.rrg.io.BracketedRRGReader;
+import de.duesseldorf.rrg.io.XMLRRGReader;
 import de.tuebingen.anchoring.InstantiatedTagTree;
 import de.tuebingen.anchoring.LexicalSelection;
 import de.tuebingen.io.RCGReader;
