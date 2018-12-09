@@ -1,4 +1,4 @@
-package de.duesseldorf.io;
+package de.duesseldorf.rrg.io;
 
 /**
  * Everything used for parsing the input RRG is listed here

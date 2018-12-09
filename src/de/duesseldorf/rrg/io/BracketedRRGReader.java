@@ -1,4 +1,4 @@
-package de.duesseldorf.io;
+package de.duesseldorf.rrg.io;
 
 import java.io.BufferedReader;
 import java.io.File;

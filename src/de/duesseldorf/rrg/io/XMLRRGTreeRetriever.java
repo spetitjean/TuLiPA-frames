@@ -1,4 +1,4 @@
-package de.duesseldorf.io;
+package de.duesseldorf.rrg.io;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
