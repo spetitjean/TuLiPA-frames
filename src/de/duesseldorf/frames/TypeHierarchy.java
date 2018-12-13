@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.UnifyException;
 
 /**
@@ -70,8 +71,9 @@ public class TypeHierarchy {
      *         - is subsumed by the union of types a and b
      *         - if there is no such type in the type hierarchy, return null
      */
-    public Type leastSpecificSubtype(Type a, Type b) throws UnifyException {
-        Type union = a.union(b);
+    public Type leastSpecificSubtype(Type a, Type b, Environment env)
+            throws UnifyException {
+        Type union = a.union(b, env);
         int max = Collections.max(tyHi.keySet());
         if (union.getSpec() <= max) {
             for (int i = union.getSpec(); i <= max; i++) {
@@ -82,10 +84,8 @@ public class TypeHierarchy {
                 }
             }
         }
-
-        throw new UnifyException(
-                "Types " + a + " and " + b + " are incompatible");
-
+        throw new UnifyException("Types " + a + " and " + b
+                + " are incompatible in the environment " + env);
         // System.err.println("Unification of types failed: ");
         // System.err.println(a.toString() + "\n" + b.toString());
         // return null;

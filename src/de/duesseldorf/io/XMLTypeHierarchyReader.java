@@ -44,6 +44,7 @@ import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.UnifyException;
 import de.tuebingen.util.XMLUtilities;
 
@@ -131,8 +132,8 @@ public class XMLTypeHierarchyReader extends FileReader {
         System.out.println("Type a: " + a.toString());
         System.out.println("Type b: " + b.toString());
         try {
-            System.out.println(
-                    "result: " + th.leastSpecificSubtype(a, b).toString());
+            System.out.println("result: " + th
+                    .leastSpecificSubtype(a, b, new Environment(4)).toString());
         } catch (UnifyException e) {
             e.printStackTrace();
         }

@@ -132,7 +132,7 @@ public class FsTools {
             sb.append("<br>");
             sb.append(nonBreakingSpace(recursiondepth));
             sb.append("type: ");
-            sb.append(fs.getType().toString());
+            sb.append(fs.getType().toStringWithoutVariable());
             sb.append("</br>");
         }
 

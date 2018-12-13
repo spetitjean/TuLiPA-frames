@@ -496,7 +496,7 @@ public class Fs {
                     // System.out.println("Unify types: "+fs1.getType()+" and
                     // "+fs2.getType());
                     resType = tyHi.leastSpecificSubtype(fs1.getType(),
-                            fs2.getType());
+                            fs2.getType(), env);
                 } catch (UnifyException e) {
                     System.err.println("Incompatible types: " + fs1.getType()
                             + " and " + fs2.getType());
@@ -635,7 +635,7 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Situation situation,
-				   Environment env, NameFactory nf) {
+            Environment env, NameFactory nf) {
         // System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
@@ -695,16 +695,17 @@ public class Fs {
         return newFrames;
     }
 
-    public boolean collect_corefs(Situation situation, Environment env, NameFactory nf) {
+    public boolean collect_corefs(Situation situation, Environment env,
+            NameFactory nf) {
         // If the current coref is not a pretty name, we update it
         Fs New = this;
 
         if (env.deref(New.coref).getVarVal().charAt(0) != '@') {
             String oldVar = env.deref(this.coref).getVarVal();
-            //String newVar = env.getPnf().getNextName();
-	    String newVar = nf.getUniqueName();
-	    //System.out.println("New name: "+newVar);
-	    // env.deref(New.coref).setVarVal(newVar);
+            // String newVar = env.getPnf().getNextName();
+            String newVar = nf.getUniqueName();
+            // System.out.println("New name: "+newVar);
+            // env.deref(New.coref).setVarVal(newVar);
             Value newVarVal = new Value(5, newVar);
             New.coref = newVarVal;
             env.bind(oldVar, newVarVal);

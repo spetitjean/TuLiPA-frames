@@ -31,26 +31,49 @@
 package de.duesseldorf.frames;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.Value;
 
 /**
  * 
  * @author david
  * 
  * 
- *         A class representing a type as a set of elementary type.
+ *         A class representing a type as a set of elementary type or a
+ *         Variable.
  *
  */
 public final class Type {
 
     private Set<String> elemTypes;
+    private Value var;
+
+    public Type(Set<String> elementaryTypes, Value variable) {
+        this.var = variable;
+    }
 
     public Type(Set<String> elementaryTypes) {
         this.elemTypes = elementaryTypes;
+        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
     }
 
+    /**
+     * Attention: If t is of Kind Variable, then the same variable String is
+     * assigned to the new type
+     * 
+     * @param t
+     */
     public Type(Type t) {
         this.elemTypes = t.getElementaryTypes();
+        this.var = new Value(t.getVar(), new NameFactory());
+    }
+
+    public Value getVar() {
+        return var;
     }
 
     /**
@@ -58,10 +81,13 @@ public final class Type {
      * @param t
      * @return this type unified with t
      */
-    public Type union(Type t) {
+    public Type union(Type t, Environment env) {
+        Type result = null;
+        // if (kind == Kind.ELTYPES && t.getKind() == Kind.ELTYPES) {
         Set<String> s = t.getElementaryTypes();
         s.addAll(elemTypes);
-        return new Type(s);
+        result = new Type(s);
+        return result;
     }
 
     /**
@@ -99,31 +125,27 @@ public final class Type {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object o) {
         boolean res = false;
-        if (obj instanceof Type) {
-            Type that = (Type) obj;
-            if (this.subsumes(that) && that.subsumes(this)) {
-                res = true;
-            }
+        if (o instanceof Type) {
+            // old version:
+            // Type that = (Type) o;
+            // if (this.subsumes(that) && that.subsumes(this)) {
+            // res = true;
+            // }
+            res = o.hashCode() == this.hashCode();
         }
         return res;
     }
 
     @Override
     public int hashCode() {
-        return (41 * (41 + this.elemTypes.hashCode()));
+        return Objects.hash(elemTypes, var);
     }
 
-    /**
-     * @return A string representation of this type in the format
-     *         [elemtype1-elemtype2-...]
-     *         Example:
-     *         [sleep-activity-event]
-     */
-    @Override
-    public String toString() {
-        String s = "[";
+    public String toStringWithoutVariable() {
+        String s = "";
+        s = "[";
         for (String string : elemTypes) {
             s = s + string + "-";
         }
@@ -133,6 +155,20 @@ public final class Type {
         if (last > 0) {
             s = s.substring(0, last);
         }
-        return s + "]";
+        s += "]";
+        return s;
+    }
+
+    /**
+     * @return A string representation of this type in the format
+     *         [elemtype1-elemtype2-...] Value
+     *         Example:
+     *         [sleep-activity-event] Value
+     */
+    @Override
+    public String toString() {
+        String s = toStringWithoutVariable();
+        s += " " + var.toString();
+        return s;
     }
 }
