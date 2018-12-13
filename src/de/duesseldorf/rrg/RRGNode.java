@@ -152,8 +152,9 @@ public class RRGNode implements Node {
 
     // not yet implemented
     public void setName(String name) {
-        System.out.println("RRGNode.setName was called but is not implemented. ");
-        for(StackTraceElement ste : Thread.currentThread().getStackTrace()){
+        System.out
+                .println("RRGNode.setName was called but is not implemented. ");
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
             System.out.println(ste);
         }
     }
