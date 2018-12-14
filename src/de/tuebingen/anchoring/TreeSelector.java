@@ -709,10 +709,15 @@ public class TreeSelector {
                     // we unify the interface and semantic arguments
                     Fs semFs = new Fs(lemmaSem.get(k).getArgs());
                     try {
-
+			System.out.println("Unifying: "+semFs);
+			System.out.println(" with : "+tt.getIface());
+			
                         tt.setIface(Fs.unify(semFs, tt.getIface(), env,
                                 situation.getTypeHierarchy()));
-                        // the environment now contains the bindings for
+			tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
+								     env, false));
+			System.out.println("Result in FrameSem: "+tt.getFrameSem());
+			// the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics
                         for (int ksem = 0; ksem < treeSem.size(); ksem++) {

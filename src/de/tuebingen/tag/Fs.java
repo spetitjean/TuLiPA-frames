@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Type;
@@ -493,10 +494,11 @@ public class Fs {
             // "+fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
-                    // System.out.println("Unify types: "+fs1.getType()+" and
-                    // "+fs2.getType());
+                    System.out.println("Unify types: "+fs1.getType()+" and "+fs2.getType());
                     resType = tyHi.leastSpecificSubtype(fs1.getType(),
                             fs2.getType(), env);
+		    System.out.println("Result: "+resType);
+		    System.out.println("Env: "+env);
                 } catch (UnifyException e) {
                     System.err.println("Incompatible types: " + fs1.getType()
                             + " and " + fs2.getType());
@@ -518,6 +520,10 @@ public class Fs {
                 resType = fs2.getType();
             }
         }
+
+
+
+	
         // System.out.println("Computed type: "+resType);
         // 5. set the coref of the resulting FS
         Value resCoref;
@@ -551,11 +557,32 @@ public class Fs {
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
             Value vderef = env.deref(coref);
+	    Value typevar = fs.getType().getVar();
+	    Type newType= fs.getType();
+	    switch (typevar.getType()) {
+            case Value.VAL:
+		// here we should unify the value with the type of the fs (after converting it to a type)
+
+		// convert the value to a type
+		Set elementaryTypes= new HashSet<String>();
+		elementaryTypes.add(typevar.getSVal());
+		newType = new Type(newType.union(new Type(elementaryTypes,typevar),env));
+		break;
+	    case Value.VAR:
+		System.out.println("Trying deref on: "+typevar+" ("+typevar.getType()+")");
+		Value typevarderef = env.deref(typevar);
+		if(!typevarderef.equals(typevar)){
+		    newType = new Type(fs.getType().getElementaryTypes(),Value.unify(typevarderef,typevar,env));
+		}
+		else{
+		    newType = new Type(fs.getType().getElementaryTypes(),typevarderef);
+		}
+	    }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
-                res = new Fs(fs.getSize(), fs.getType(),
+                res = new Fs(fs.getSize(), newType,
                         Value.unify(vderef, coref, env));
             } else { // it is not:
-                res = new Fs(fs.getSize(), fs.getType(), vderef);
+                res = new Fs(fs.getSize(), newType, vderef);
                 // This was added for testing
                 // env.bind(vderef,coref);
             }
@@ -684,7 +711,7 @@ public class Fs {
         for (Fs cleanFrame : cleanFrames) {
             try {
                 updateFS(cleanFrame, env, true);
-                // System.out.println("Updated : "+cleanFrame);
+                System.out.println("Updated : "+cleanFrame);
             } catch (Exception e) {
                 e.printStackTrace();
             }

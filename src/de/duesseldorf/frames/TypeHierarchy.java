@@ -36,6 +36,7 @@ import java.util.Set;
 
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.UnifyException;
+import de.tuebingen.tag.Value;
 
 /**
  * 
@@ -74,12 +75,13 @@ public class TypeHierarchy {
     public Type leastSpecificSubtype(Type a, Type b, Environment env)
             throws UnifyException {
         Type union = a.union(b, env);
+	Value resvar = Value.unify(a.getVar(), b.getVar(), env, this);
         int max = Collections.max(tyHi.keySet());
         if (union.getSpec() <= max) {
             for (int i = union.getSpec(); i <= max; i++) {
                 for (Type type : tyHi.get(i)) {
                     if (union.subsumes(type)) {
-                        return new Type(type);
+                        return new Type(type.getElementaryTypes(),resvar);
                     }
                 }
             }
