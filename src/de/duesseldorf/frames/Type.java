@@ -53,6 +53,7 @@ public final class Type {
     private Value var;
 
     public Type(Set<String> elementaryTypes, Value variable) {
+	this.elemTypes = elementaryTypes;
         this.var = variable;
     }
 

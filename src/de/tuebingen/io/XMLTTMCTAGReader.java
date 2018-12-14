@@ -635,6 +635,7 @@ public class XMLTTMCTAGReader extends FileReader {
         Value corefval = new Value(Value.VAR, nf.getName(coref));
 
         NodeList etypes = null;
+	Value typevar = null;
         NodeList l = e.getChildNodes();
 
         // NodeList etypes = e.getElementsByTagName("type");
@@ -644,6 +645,7 @@ public class XMLTTMCTAGReader extends FileReader {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
                     etypes = el.getElementsByTagName("type");
+		    typevar = new Value(Value.VAR, nf.getName(el.getAttribute("coref")));
                 }
             }
         }
@@ -657,8 +659,12 @@ public class XMLTTMCTAGReader extends FileReader {
                 types.add(el.getAttribute("val"));
             }
         }
-        Type frame_type = new Type(types);
-        // System.out.println("Found a type: "+frame_type);
+        Type frame_type;
+	if(typevar==null)
+	    frame_type = new Type(types);
+	else
+	    frame_type = new Type(types,typevar);
+        System.out.println("Found a type: "+frame_type);
 
         res = new Fs(l.getLength(), frame_type, corefval);
 
