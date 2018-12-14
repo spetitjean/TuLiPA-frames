@@ -176,6 +176,7 @@ public class XMLTTMCTAGReader extends FileReader {
                     // System.err.println("Using a new NameFactory for " + id);
 
                     TagTree ttree = getEntry(e, needsAnchoring, nf);
+		    System.out.println("TTREE: "+ttree);
                     ttree.setTupleId(id);
                     ttree.setIsHead(true);
                     t.setHead(ttree);
@@ -664,7 +665,7 @@ public class XMLTTMCTAGReader extends FileReader {
 	    frame_type = new Type(types);
 	else
 	    frame_type = new Type(types,typevar);
-        System.out.println("Found a type: "+frame_type);
+        //System.out.println("Found a type: "+frame_type);
 
         res = new Fs(l.getLength(), frame_type, corefval);
 
