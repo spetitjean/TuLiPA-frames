@@ -124,8 +124,8 @@ public class XMLTTMCTAGReader extends FileReader {
                     ttree.setIsHead(true);
                     t.setHead(ttree);
                     updateHash(sets, t.getHead().getFamily(), t);
-		    System.out.println("TTREE: "+ttree.getFrameSem());
-		    System.out.println("IFACE: "+ttree.getIface());
+		    // System.out.println("TTREE: "+ttree.getFrameSem());
+		    // System.out.println("IFACE: "+ttree.getIface());
                 } else if (e.getTagName().equals("mcset")) {
                     id = e.getAttribute("id");
                     t = new Tuple(id);

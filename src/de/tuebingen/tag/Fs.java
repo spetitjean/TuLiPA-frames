@@ -494,12 +494,12 @@ public class Fs {
             // "+fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
-                    System.out.println("Unify types: " + fs1.getType() + " and "
-                            + fs2.getType());
+                    // System.out.println("Unify types: " + fs1.getType() + " and "
+                    //         + fs2.getType());
                     resType = tyHi.leastSpecificSubtype(fs1.getType(),
                             fs2.getType(), env);
-                    System.out.println("Result: " + resType);
-                    System.out.println("Env: " + env);
+                    // System.out.println("Result: " + resType);
+                    // System.out.println("Env: " + env);
                 } catch (UnifyException e) {
                     System.err.println("Incompatible types: " + fs1.getType()
                             + " and " + fs2.getType());
@@ -570,8 +570,8 @@ public class Fs {
                         .leastSpecificSubtype(fs.getType(), otherType, env);
                 break;
             case Value.VAR:
-                System.out.println("Trying deref on: " + typevar + " ("
-                        + typevar.getType() + ")");
+                // System.out.println("Trying deref on: " + typevar + " ("
+                //         + typevar.getType() + ")");
                 Value typevarderef = env.deref(typevar);
                 if (!typevarderef.equals(typevar)) {
                     newType = new Type(fs.getType().getElementaryTypes(),
@@ -714,7 +714,7 @@ public class Fs {
         for (Fs cleanFrame : cleanFrames) {
             try {
                 updateFS(cleanFrame, env, true);
-                System.out.println("Updated : " + cleanFrame);
+                //System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
                 e.printStackTrace();
             }
