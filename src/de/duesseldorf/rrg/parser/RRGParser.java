@@ -44,7 +44,6 @@ import de.duesseldorf.rrg.parser.SimpleRRGParseItem.NodePos;
  */
 public class RRGParser {
 
-    private Situation situation;
     private SimpleRRGParseChart chart;
     private ConcurrentSkipListSet<SimpleRRGParseItem> agenda;
     private RequirementFinder requirementFinder;
@@ -52,8 +51,7 @@ public class RRGParser {
 
     private boolean verbosePrintsToStdOut = true;
 
-    public RRGParser(Situation sit) {
-        this.situation = sit;
+    public RRGParser() {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
     }
@@ -160,7 +158,7 @@ public class RRGParser {
             // look at the whole grammar and find fitting substitution nodes
             String cat = currentItem.getNode().getCategory();
             // System.out.println("got to predict: " + currentItem);
-            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
                 Set<RRGNode> substNodes = tree.getSubstNodes().get(cat);
                 if (substNodes != null) {
                     HashSet<Gap> gaps = new HashSet<Gap>();
@@ -251,7 +249,7 @@ public class RRGParser {
 
     private void substitute(SimpleRRGParseItem currentItem) {
         if (requirementFinder.substituteReq(currentItem)) {
-            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
                 Set<RRGNode> substNodes = tree.getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
@@ -328,7 +326,7 @@ public class RRGParser {
      */
     private void scan(List<String> sentence) {
         // Look at all trees
-        for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+        for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

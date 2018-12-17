@@ -49,7 +49,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.FsTools;
-import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.derive.TreeDeriver;
@@ -63,19 +62,10 @@ public class DerivedTreeViewer {
             Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
             boolean derivationStepOutput, boolean debugMode,
             boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
-        return getViewTreesFromDOM(d, null, treeDict, elementaryTreeOutput,
-                derivationStepOutput, debugMode, needsAnchoring, semlabels,
-                noUtool);
-    }
 
-    public static ArrayList<ParseTreeCollection> getViewTreesFromDOM(Document d,
-            Situation situation, Map<String, TagTree> treeDict,
-            boolean elementaryTreeOutput, boolean derivationStepOutput,
-            boolean debugMode, boolean needsAnchoring, List<String> semlabels,
-            boolean noUtool) {
         try {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
-	    System.out.println("GETTING VIEW TREES");
+            System.out.println("GETTING VIEW TREES");
             Document derivationTrees = ParseTreeHandler
                     .extractDerivationTrees(d);
 
@@ -115,8 +105,7 @@ public class DerivedTreeViewer {
                 if (derivationStepOutput)
                     steps = new ArrayList<ElementaryTree>();
                 DerivedTree dTree = TreeDeriver.deriveTree(startNode, treeDict,
-                        eTrees, steps, debugMode, semlabels, needsAnchoring,
-                        situation);
+                        eTrees, steps, debugMode, semlabels, needsAnchoring);
                 if (dTree != null) {
                     if (!dTree.success) {
                         viewTree.description = "*" + viewTree.description;
@@ -214,19 +203,10 @@ public class DerivedTreeViewer {
             Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
             boolean derivationStepOutput, boolean debugMode,
             boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
-        displayTreesfromDOM(s, d, null, treeDict, elementaryTreeOutput,
-                derivationStepOutput, debugMode, needsAnchoring, semlabels,
-                noUtool);
-    }
 
-    public static void displayTreesfromDOM(final String s, Document d,
-            Situation situation, Map<String, TagTree> treeDict,
-            boolean elementaryTreeOutput, boolean derivationStepOutput,
-            boolean debugMode, boolean needsAnchoring, List<String> semlabels,
-            boolean noUtool) {
         ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
-                situation, treeDict, elementaryTreeOutput, derivationStepOutput,
-                debugMode, needsAnchoring, semlabels, noUtool);
+                treeDict, elementaryTreeOutput, derivationStepOutput, debugMode,
+                needsAnchoring, semlabels, noUtool);
         // final ArrayList<ParseTreeCollection> viewTrees =
         // getViewTreesFromDOM(d,
         // situation, treeDict, elementaryTreeOutput, derivationStepOutput,

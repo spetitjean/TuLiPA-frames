@@ -92,12 +92,6 @@ public class ParsingInterface {
 
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
-        Situation sit = new Situation(g, null, null);
-        return parseTAG(op, sit, sentence);
-    }
-
-    public static boolean parseTAG(CommandLineOptions op, Situation sit,
-            String sentence) throws Exception {
         // you might want to check if everything is in order here
         try {
             // System.out.println(sit.getGrammar().toString());
@@ -110,7 +104,7 @@ public class ParsingInterface {
         long totalTime = 0;
         boolean verbose = op.check("v");
         boolean noUtool = op.check("n");
-        boolean needsAnchoring = sit.getGrammar().needsAnchoring();
+        boolean needsAnchoring = Situation.getGrammar().needsAnchoring();
         Document fdoc = null;
 
         String outputfile = "";
@@ -169,7 +163,7 @@ public class ParsingInterface {
             // pertinent tuples
             // 6. Tree anchoring
             try {
-                ts.retrieve(sit, slabels);
+                ts.retrieve(slabels);
                 // ts.retrieve(g.getMorphEntries(), g.getLemmas(),
                 // g.getGrammar(),
                 // slabels);
@@ -226,7 +220,7 @@ public class ParsingInterface {
                                 + ts.getambig() + "\n");
             }
         } else {
-            ts.store(sit.getGrammar().getGrammar());
+            ts.store(Situation.getGrammar().getGrammar());
         }
         // Tree Selection results stored in specific variables to avoid
         // keeping a pointer to the ts variable (and wasting memory)
@@ -625,15 +619,15 @@ public class ParsingInterface {
         }
         if (res) {
             // ArrayList<ParseTreeCollection> viewTreesFromD = DerivedTreeViewer
-            //         .getViewTreesFromDOM(fdoc, sit, grammarDict, false, false,
-            //                 false, needsAnchoring, slabels, noUtool);
+            // .getViewTreesFromDOM(fdoc, sit, grammarDict, false, false,
+            // false, needsAnchoring, slabels, noUtool);
             if (op.check("x") || op.check("xg")) { // XML output of the
                                                    // derivations!
                 long xmlTime = System.nanoTime();
 
                 ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
-                        .getViewTreesFromDOM(fdoc, sit, grammarDict, false,
-                                false, false, needsAnchoring, slabels, noUtool);
+                        .getViewTreesFromDOM(fdoc, grammarDict, false, false,
+                                false, needsAnchoring, slabels, noUtool);
                 if (op.check("x")) {
                     DOMderivationBuilder standardDerivationBuilder = new DOMderivationBuilder(
                             sentence);
@@ -659,7 +653,7 @@ public class ParsingInterface {
                 totalTime += estXMLTime;
             } else { // graphical output (default)
                 long estDTime = System.nanoTime();
-                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc, sit,
+                DerivedTreeViewer.displayTreesfromDOM(sentence, fdoc,
                         grammarDict, true, op.check("w"), op.check("w"),
                         needsAnchoring, slabels, noUtool);
                 // XMLUtilities.writeXML(fdoc, "stdout",
@@ -711,8 +705,8 @@ public class ParsingInterface {
     // END_BY_TS
 
     public static List<Word> clean_tokens(List<Word> tokens) {
-        List clean = new LinkedList<Word>();
-        Set mem = new HashSet<String>();
+        List<Word> clean = new LinkedList<Word>();
+        Set<String> mem = new HashSet<String>();
         for (Word word : tokens) {
             if (!mem.contains(word.getWord())) {
                 clean.add(word);
@@ -779,8 +773,8 @@ public class ParsingInterface {
         return res;
     }
 
-    public static boolean parseRRG(CommandLineOptions op, Situation sit,
-            String sentence) throws Exception {
+    public static boolean parseRRG(CommandLineOptions op, String sentence)
+            throws Exception {
         System.out.println("yay, go RRG!");
 
         boolean verbose = op.check("v");
@@ -789,7 +783,7 @@ public class ParsingInterface {
         List<String> toksentence = tokenize(op, sentence, verbose);
 
         long startParsingTime = System.nanoTime();
-        RRGParser rrgparser = new RRGParser(sit);
+        RRGParser rrgparser = new RRGParser();
         rrgparser.parseSentence(toksentence);
         long parsingTime = System.nanoTime() - startParsingTime;
 

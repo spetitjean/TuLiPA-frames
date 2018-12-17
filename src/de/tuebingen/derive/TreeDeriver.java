@@ -44,7 +44,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
-import de.duesseldorf.frames.Situation;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.UnifyException;
@@ -53,8 +52,7 @@ public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
-            List<String> semlabels, boolean needsAnchoring,
-            Situation situation) {
+            List<String> semlabels, boolean needsAnchoring) {
         // System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
@@ -83,7 +81,8 @@ public class TreeDeriver {
                             derivedTree.bottomFeatures, derivedTree.semantics,
                             derivedTree.getFrameSem()))
                                     .createDumpingInstance(D);
-		    System.out.println("frameSem in newStep: "+newStep.getFrameSem());
+                    System.out.println(
+                            "frameSem in newStep: " + newStep.getFrameSem());
                     newStep.setID("Step " + steps.size());
                     steps.add(newStep);
                 }
@@ -125,7 +124,7 @@ public class TreeDeriver {
             // System.err.println("Sem labels:\n" + semlabels);
             derivedTree.env.setSemlabels(semlabels);
 
-            //Environment.rename(derivedTree.env);
+            // Environment.rename(derivedTree.env);
             // System.out.println("Ended rename ");
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
@@ -160,21 +159,22 @@ public class TreeDeriver {
             // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
             // derivedTree.frames = cleanFrames;
             // }
-	    //System.out.println("Derived tree env before: "+derivedTree.env);
+            // System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
-                    derivedTree.getFrameSem(), derivedTree.env, situation,
-                    true);
+                    derivedTree.getFrameSem(), derivedTree.env, true);
             if (newFrameSem == null) {
                 failed = true;
+            } else {
+                derivedTree.setFrameSem(newFrameSem);
+                // System.out.println("Derived tree env after:
+                // "+derivedTree.env);
+                Environment.rename(derivedTree.env);
+                derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
+                        true);
+                derivedTree.setFrameSem(ElementaryTree
+                        .updateFrameSem(newFrameSem, derivedTree.env, true));
             }
-	    else{
-		derivedTree.setFrameSem(newFrameSem);
-		//System.out.println("Derived tree env after: "+derivedTree.env);
-		Environment.rename(derivedTree.env);
-		derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
-		derivedTree.setFrameSem(ElementaryTree.updateFrameSem(newFrameSem, derivedTree.env, true));
-	    }
             // End DA addRelations
         } catch (UnifyException e) {
             System.err.println("Unify Exception (derived tree building): "

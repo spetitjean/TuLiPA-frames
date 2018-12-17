@@ -108,10 +108,10 @@ public class TreeSelector {
         ambiguity = new HashMap<String, Integer>();
     }
 
-    public void retrieve(Situation sit, List<String> slabels) {
-        this.situation = sit;
-        if (sit.getFrameGrammar() != null) {
-            Map<String, List<Tuple>> g = sit.getFrameGrammar().getGrammar();
+    public void retrieve(List<String> slabels) {
+        if (Situation.getFrameGrammar() != null) {
+            Map<String, List<Tuple>> g = Situation.getFrameGrammar()
+                    .getGrammar();
 
             for (Entry<String, List<Tuple>> e : g.entrySet()) {
                 // System.out.println("Key: " + e.getKey());
@@ -129,9 +129,9 @@ public class TreeSelector {
                 }
             }
         }
-        retrieve(sit.getGrammar().getMorphEntries(),
-                sit.getGrammar().getLemmas(), sit.getGrammar().getGrammar(),
-                slabels);
+        retrieve(Situation.getGrammar().getMorphEntries(),
+                Situation.getGrammar().getLemmas(),
+                Situation.getGrammar().getGrammar(), slabels);
     }
 
     /**
@@ -709,15 +709,16 @@ public class TreeSelector {
                     // we unify the interface and semantic arguments
                     Fs semFs = new Fs(lemmaSem.get(k).getArgs());
                     try {
-			System.out.println("Unifying: "+semFs);
-			System.out.println(" with : "+tt.getIface());
-			
+                        System.out.println("Unifying: " + semFs);
+                        System.out.println(" with : " + tt.getIface());
+
                         tt.setIface(Fs.unify(semFs, tt.getIface(), env,
                                 situation.getTypeHierarchy()));
-			tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
-								     env, false));
-			System.out.println("Result in FrameSem: "+tt.getFrameSem());
-			// the environment now contains the bindings for
+                        tt.setFrameSem(ElementaryTree
+                                .updateFrameSem(tt.getFrameSem(), env, false));
+                        System.out.println(
+                                "Result in FrameSem: " + tt.getFrameSem());
+                        // the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics
                         for (int ksem = 0; ksem < treeSem.size(); ksem++) {
@@ -811,7 +812,7 @@ public class TreeSelector {
         ptl.addLexicals(tt.getLexItems());
         // we update the tree dictionary
         // -------------------------------
-        Map<String, List<MorphEntry>> lm = situation.getGrammar()
+        Map<String, List<MorphEntry>> lm = Situation.getGrammar()
                 .getMorphEntries();
 
         List<TagTree> ttlist = new ArrayList<TagTree>();

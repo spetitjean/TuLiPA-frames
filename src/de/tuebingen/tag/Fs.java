@@ -33,12 +33,12 @@
  */
 package de.tuebingen.tag;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Type;
@@ -494,11 +494,12 @@ public class Fs {
             // "+fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
-                    System.out.println("Unify types: "+fs1.getType()+" and "+fs2.getType());
+                    System.out.println("Unify types: " + fs1.getType() + " and "
+                            + fs2.getType());
                     resType = tyHi.leastSpecificSubtype(fs1.getType(),
                             fs2.getType(), env);
-		    System.out.println("Result: "+resType);
-		    System.out.println("Env: "+env);
+                    System.out.println("Result: " + resType);
+                    System.out.println("Env: " + env);
                 } catch (UnifyException e) {
                     System.err.println("Incompatible types: " + fs1.getType()
                             + " and " + fs2.getType());
@@ -521,9 +522,6 @@ public class Fs {
             }
         }
 
-
-
-	
         // System.out.println("Computed type: "+resType);
         // 5. set the coref of the resulting FS
         Value resCoref;
@@ -557,27 +555,32 @@ public class Fs {
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
             Value vderef = env.deref(coref);
-	    Value typevar = fs.getType().getVar();
-	    Type newType= fs.getType();
-	    switch (typevar.getType()) {
+            Value typevar = fs.getType().getVar();
+            Type newType = fs.getType();
+            switch (typevar.getType()) {
             case Value.VAL:
-		// here we should unify the value with the type of the fs (after converting it to a type)
+                // here we should unify the value with the type of the fs (after
+                // converting it to a type)
 
-		// convert the value to a type
-		Set elementaryTypes= new HashSet<String>();
-		elementaryTypes.add(typevar.getSVal());
-		newType = new Type(newType.union(new Type(elementaryTypes,typevar),env));
-		break;
-	    case Value.VAR:
-		System.out.println("Trying deref on: "+typevar+" ("+typevar.getType()+")");
-		Value typevarderef = env.deref(typevar);
-		if(!typevarderef.equals(typevar)){
-		    newType = new Type(fs.getType().getElementaryTypes(),Value.unify(typevarderef,typevar,env));
-		}
-		else{
-		    newType = new Type(fs.getType().getElementaryTypes(),typevarderef);
-		}
-	    }
+                // convert the value to a type
+                Set<String> elementaryTypes = new HashSet<String>();
+                elementaryTypes.add(typevar.getSVal());
+                Type otherType = new Type(elementaryTypes, typevar);
+                newType = Situation.getTypeHierarchy()
+                        .leastSpecificSubtype(fs.getType(), otherType, env);
+                break;
+            case Value.VAR:
+                System.out.println("Trying deref on: " + typevar + " ("
+                        + typevar.getType() + ")");
+                Value typevarderef = env.deref(typevar);
+                if (!typevarderef.equals(typevar)) {
+                    newType = new Type(fs.getType().getElementaryTypes(),
+                            Value.unify(typevarderef, typevar, env));
+                } else {
+                    newType = new Type(fs.getType().getElementaryTypes(),
+                            typevarderef);
+                }
+            }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
                 res = new Fs(fs.getSize(), newType,
                         Value.unify(vderef, coref, env));
@@ -661,8 +664,8 @@ public class Fs {
         return res;
     }
 
-    public static List<Fs> mergeFS(List<Fs> frames, Situation situation,
-            Environment env, NameFactory nf) {
+    public static List<Fs> mergeFS(List<Fs> frames, Environment env,
+            NameFactory nf) {
         // System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
@@ -675,7 +678,7 @@ public class Fs {
         for (Fs fs : cleanFrames) {
             // System.out.println("Collecting corefs in: "+fs);
             // System.out.println("with environment "+env);
-            if (fs.collect_corefs(situation, env, nf) == false) {
+            if (fs.collect_corefs(env, nf) == false) {
                 // If collect_corefs returns false, it means that
                 // unification failed somewhere, so we discard the
                 // solution
@@ -694,7 +697,7 @@ public class Fs {
             // System.out.println("Rounds of update corefs left : "+i);
             newFrames = new LinkedList<Fs>();
             for (Fs fs : cleanFrames) {
-                Fs new_fs = fs.update_corefs(situation, env);
+                Fs new_fs = fs.update_corefs(env);
                 if (new_fs == null) {
                     // If the result of update_corefs is null, it is
                     // because unification failed somewhere, so we
@@ -711,7 +714,7 @@ public class Fs {
         for (Fs cleanFrame : cleanFrames) {
             try {
                 updateFS(cleanFrame, env, true);
-                System.out.println("Updated : "+cleanFrame);
+                System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -722,8 +725,7 @@ public class Fs {
         return newFrames;
     }
 
-    public boolean collect_corefs(Situation situation, Environment env,
-            NameFactory nf) {
+    public boolean collect_corefs(Environment env, NameFactory nf) {
         // If the current coref is not a pretty name, we update it
         Fs New = this;
 
@@ -750,7 +752,7 @@ public class Fs {
         if (env.deref(valCoref) != valCoref) {
             try {
                 New = unify(env.deref(valCoref).getAvmVal(), New, env,
-                        situation.getTypeHierarchy());
+                        Situation.getTypeHierarchy());
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -764,13 +766,13 @@ public class Fs {
             String f = i.next();
             Value v = New.AVlist.get(f);
             if (v.is(Value.AVM)) {
-                v.getAvmVal().collect_corefs(situation, env, nf);
+                v.getAvmVal().collect_corefs(env, nf);
             }
         }
         return true;
     }
 
-    public Fs update_corefs(Situation situation, Environment env) {
+    public Fs update_corefs(Environment env) {
         // System.out.println("Updating corefs in "+ this);
         Fs result = this;
         String atCoref = "$" + env.deref(this.coref);
@@ -780,7 +782,7 @@ public class Fs {
             // System.out.println("Trying to unify: "+coref);
             try {
                 result = unify(this, env.deref(valCoref).getAvmVal(), env,
-                        situation.getTypeHierarchy());
+                        Situation.getTypeHierarchy());
                 env.bind("$" + env.deref(this.coref), new Value(result));
                 // System.out.println("Done unify");
 
@@ -796,9 +798,9 @@ public class Fs {
             Value v = this.AVlist.get(f);
             if (v.is(Value.AVM)) {
                 // System.out.println("AVM");
-                v.getAvmVal().update_corefs(situation, env);
+                v.getAvmVal().update_corefs(env);
                 result.AVlist.put(f,
-                        new Value(v.getAvmVal().update_corefs(situation, env)));
+                        new Value(v.getAvmVal().update_corefs(env)));
 
             }
 

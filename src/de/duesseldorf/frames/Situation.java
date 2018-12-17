@@ -42,25 +42,26 @@ import de.tuebingen.tree.Grammar;
  */
 public class Situation {
 
-    private Grammar g;
-    private Grammar frameG;
-    private TypeHierarchy tyHi;
+    private static Grammar g;
+    private static Grammar frameG;
+    private static TypeHierarchy tyHi;
 
-    public Situation(Grammar g, Grammar frameG, TypeHierarchy tyHi) {
-        this.g = g;
-        this.frameG = frameG;
-        this.tyHi = tyHi;
+    public static void instantiate(Grammar grammar, Grammar frameGrammar,
+            TypeHierarchy typeHierarchy) {
+        g = grammar;
+        frameG = frameGrammar;
+        tyHi = typeHierarchy;
     }
 
-    public Grammar getGrammar() {
-        return this.g;
+    public static Grammar getGrammar() {
+        return g;
     }
 
-    public Grammar getFrameGrammar() {
-        return this.frameG;
+    public static Grammar getFrameGrammar() {
+        return frameG;
     }
 
-    public TypeHierarchy getTypeHierarchy() {
-        return this.tyHi;
+    public static TypeHierarchy getTypeHierarchy() {
+        return tyHi;
     }
 }
