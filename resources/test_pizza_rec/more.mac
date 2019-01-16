@@ -1,0 +1,126 @@
+<type_info>
+  <hierarchy>
+    <entry>
+      <ctype>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="event"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="person"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="food"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="food"/>
+        <type val="pizza"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="activity"/>
+        <type val="event"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="activity"/>
+        <type val="eat"/>
+        <type val="event"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+  </hierarchy>
+  <type_constraints>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="pizza"/>
+      </ctype1>
+      <ctype2>
+        <type val="food"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="food"/>
+        <type val="person"/>
+      </ctype1>
+      <ctype2>
+        <type val="false"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="food"/>
+      </ctype1>
+      <ctype2>
+        <type val="entity"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="person"/>
+      </ctype1>
+      <ctype2>
+        <type val="entity"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="eat"/>
+      </ctype1>
+      <ctype2>
+        <type val="activity"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="entity"/>
+        <type val="event"/>
+      </ctype1>
+      <ctype2>
+        <type val="false"/>
+      </ctype2>
+    </type_constraint>
+    <type_constraint type="implies">
+      <ctype1>
+        <type val="activity"/>
+      </ctype1>
+      <ctype2>
+        <type val="event"/>
+      </ctype2>
+    </type_constraint>
+  </type_constraints>
+</type_info>
