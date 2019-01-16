@@ -357,7 +357,7 @@ public class Fs {
             res = "(" + coref + ")" + res + type + "\n ";
         }
 	if(seen.contains(coref)){
-	    System.out.println("Stopping print because of recursion");
+	    //System.out.println("Stopping print because of recursion");
 	    return res;
 	}
 	else
@@ -454,7 +454,7 @@ public class Fs {
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
 	if(seen.contains(fs1.getCoref()) && fs1.getCoref()!=null){
-	    System.out.println("Stopping unification because of recursion");
+	    //System.out.println("Stopping unification because of recursion");
 	    //;
 	    return fs1;
 	}
@@ -595,7 +595,7 @@ public class Fs {
         //System.err.println("updating [" + fs.toString() + "] env: " +
         //env.toString());
 	//System.out.println("Updating FS: "+fs);
-	System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave "+fs.getCoref());
+	//System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave "+fs.getCoref());
 
         Fs res = null;
         if (fs.isTyped()) {
@@ -644,8 +644,8 @@ public class Fs {
 
 	if(fs.getCoref()!=null && seen.contains(fs.getCoref())){
 	    //;
-	    System.out.println("Stopping update because of recursion: "+fs);
-	    System.out.println(env);
+	    //System.out.println("Stopping update because of recursion: "+fs);
+	    //System.out.println(env);
 	    return res;
 	}
 	else
@@ -684,7 +684,7 @@ public class Fs {
                 }
                 break;
             case Value.AVM: // the value is an avm, we go on updating
-		System.out.println("Updating FS [rec] ");
+		//System.out.println("Updating FS [rec] ");
                 res.setFeat(k, new Value(
 					 updateFS(fval.getAvmVal(), env, finalUpdate,seen)));
                 break;
@@ -727,7 +727,7 @@ public class Fs {
 
     public static List<Fs> mergeFS(List<Fs> frames, Environment env,
             NameFactory nf) {
-        System.out.println("Starting merging frames");
+        //System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
         for (Fs fs : frames) {
@@ -746,7 +746,7 @@ public class Fs {
                 return null;
             }
             try {
-		System.out.println("Updating FS [0] ");
+		//System.out.println("Updating FS [0] ");
                 updateFS(fs, env, true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -756,7 +756,7 @@ public class Fs {
         // that should be the upper bound
         int i = cleanFrames.size();
         while (i > 0) {
-            System.out.println("\n\n\nRounds of update corefs left : "+i);
+            //System.out.println("\n\n\nRounds of update corefs left : "+i);
             newFrames = new LinkedList<Fs>();
             for (Fs fs : cleanFrames) {
 		Set<Value> seen = new HashSet<Value>();
@@ -778,7 +778,7 @@ public class Fs {
 
         for (Fs cleanFrame : cleanFrames) {
             try {
-		System.out.println("Updating FS [1] ");
+		//System.out.println("Updating FS [1] ");
                 updateFS(cleanFrame, env, true);
                 //System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
@@ -884,8 +884,8 @@ public class Fs {
         }
 
 	if(seen.contains(coref)){
-	    System.out.println("Update corefs stopped by recursion: "+coref);
-	    System.out.println(env.deref(this.coref));
+	    //System.out.println("Update corefs stopped by recursion: "+coref);
+	    //System.out.println(env.deref(this.coref));
 	    return result;
 	    //;
 	}

@@ -96,7 +96,7 @@ public class FsTools {
 
     public static boolean included(Fs fs1, Fs fs2, HashSet<Value> seen) {
 	if(seen.contains(fs2.getCoref())){
-	    System.out.println("Included fail because of recursion");
+	    //System.out.println("Included fail because of recursion");
 	    return false;
 	}
 	else
@@ -143,7 +143,7 @@ public class FsTools {
         }
 	
 	if(seen.contains(fs.getCoref())){
-	    System.out.println("Printing stopped because of recursion");
+	    //System.out.println("Printing stopped because of recursion");
 	    return sb.toString();
 	}
 	else
