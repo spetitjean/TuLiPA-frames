@@ -413,6 +413,7 @@ public class Value implements SemLit {
             }
             break;
         case AVM: // a is an avm
+	    //System.out.println("A  is an AVM");
             switch (b.getType()) {
             case AVM: // b is an avm
                 res = new Value(
@@ -428,9 +429,12 @@ public class Value implements SemLit {
                 break;
 
             case VAR: // b is a variable
+		//System.out.println("B is a variable");
                 Value bb = env.deref(b);
+		//System.out.println(bb);
                 // if b is unbound, we bind it to a
                 if (bb.equals(b)) {
+		    //System.out.println("B is unbound");
                     // Simon: I added this
                     // This might lead to problems when 2 bound variables refer
                     // to two different FS
@@ -483,6 +487,7 @@ public class Value implements SemLit {
                     }
                     res = a;
                 } else { // b is already bound, the values must match !
+		    //System.out.println("B is bound");
                     if (bb.is(AVM)) { // let us see if they do:
                         res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(),
 						 env, tyHi, seen));
@@ -494,14 +499,19 @@ public class Value implements SemLit {
                          * caught here for now // but it will later be given to
                          * the calling method }
                          */
-                    } else { // they do not:
-                        throw new UnifyException(a.toString(), b.toString());
-                    }
-                }
-                break;
-            default:
-                throw new UnifyException(a.toString(), b.toString());
-            }
+                    } else {
+			if(bb.is(VAR)){
+			    res = new Value(unify(a,bb,env,tyHi,seen));
+			}
+			else{// they do not:
+			    throw new UnifyException(a.toString(), b.toString());
+			}
+		    }}
+		
+		    break;
+		    default:
+			throw new UnifyException(a.toString(), b.toString());
+		}
             break;
         case ADISJ: // a is an atomic disjunction
             // System.err.println("Unifying ... " + a.toString() + " and " +
@@ -617,7 +627,7 @@ public class Value implements SemLit {
                 }
                 break;
             default:
-                throw new UnifyException("Unification failure between "
+                throw new UnifyException("Unification failure (value) between "
                         + a.toString() + " and " + b.toString());
             }
             // System.err.println(" ... ==> " + res.toString() + " " +

@@ -478,6 +478,7 @@ public class Fs {
                 try {
                     // exception caught and re-thrown to extend the error
                     // message
+		    //System.out.println("Unifying "+avm1.get(k)+" and "+avm2.get(k));
                     nval = Value.unify(avm1.get(k), avm2.get(k), env, tyHi, seen);
                 } catch (UnifyException e) {
                     throw new UnifyException(
