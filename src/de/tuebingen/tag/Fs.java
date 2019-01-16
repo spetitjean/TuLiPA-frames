@@ -454,8 +454,7 @@ public class Fs {
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
 	if(seen.contains(fs1.getCoref()) && fs1.getCoref()!=null){
-	    //System.out.println("Stopping unification because of recursion");
-	    //;
+	    //System.out.println("Stopping unification because of recursion: "+fs1);
 	    return fs1;
 	}
 	else{
@@ -643,7 +642,6 @@ public class Fs {
 
 
 	if(fs.getCoref()!=null && seen.contains(fs.getCoref())){
-	    //;
 	    //System.out.println("Stopping update because of recursion: "+fs);
 	    //System.out.println(env);
 	    return res;
@@ -743,6 +741,7 @@ public class Fs {
                 // If collect_corefs returns false, it means that
                 // unification failed somewhere, so we discard the
                 // solution
+		System.out.println("Failed to collect corefs");
                 return null;
             }
             try {
@@ -766,6 +765,7 @@ public class Fs {
                     // If the result of update_corefs is null, it is
                     // because unification failed somewhere, so we
                     // need to discard the solution
+		    System.out.println("Failed to update corefs");	    
                     return null;
                 }
                 newFrames.add(new_fs);
@@ -794,15 +794,6 @@ public class Fs {
     public boolean collect_corefs(Environment env, NameFactory nf, Set<Value> seen) {
         // If the current coref is not a pretty name, we update it
         Fs New = this;
-	//System.out.println("Collecting corefs in: "+this);
-	//System.out.println("Seen: "+seen);
-	if(seen.contains(this.coref)){
-	    ;
-	    //System.out.println("Collect coref stopped by recursion");
-	    //return true;
-	}
-	else
-	    seen.add(this.coref);
 
 	//System.out.println("Going on ");
         if (env.deref(New.coref).getVarVal().charAt(0) != '@') {
@@ -878,7 +869,7 @@ public class Fs {
                 //System.out.println("Done unify");
 
             } catch (Exception e) {
-                // e.printStackTrace();
+                e.printStackTrace();
                 return null;
             }
         }
