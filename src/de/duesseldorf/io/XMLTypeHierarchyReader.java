@@ -82,9 +82,11 @@ public class XMLTypeHierarchyReader extends FileReader {
         List<Type> typeCollector = new LinkedList<Type>();
         for (int i = 0; i < entries.getLength(); i++) {
             Element entry = (Element) entries.item(i);
-            NodeList entryChildren = entry.getElementsByTagName("ctype");
 
-            Element cType = (Element) entryChildren.item(0);
+            // retrieve the elementary types
+            NodeList cTypesForEntry = entry.getElementsByTagName("ctype");
+
+            Element cType = (Element) cTypesForEntry.item(0);
             NodeList types = cType.getElementsByTagName("type");
 
             Set<String> eltypes = new HashSet<String>();
@@ -93,10 +95,61 @@ public class XMLTypeHierarchyReader extends FileReader {
                 String elt = elType.getAttribute("val");
                 eltypes.add(elt);
             }
+
+            // retrieve the constraints
+            NodeList constraintsForEntry = entry
+                    .getElementsByTagName("constraints");
+            retrieveConstraints(constraintsForEntry);
+
             Type t = new Type(eltypes);
             typeCollector.add(t);
         }
         return typeCollector;
+    }
+
+    private void retrieveConstraints(NodeList constraintsForEntry) {
+        NodeList constraints = ((Element) constraintsForEntry.item(0))
+                .getElementsByTagName("constraint");
+        for (int i = 0; i < constraints.getLength(); i++) {
+            Element constraint = (Element) constraints.item(i);
+
+            Set<String> attrsInPathParsed = new HashSet<String>();
+
+            // find the attr or path
+            // the path set also holds the single attr at the moment
+            if (constraint.getElementsByTagName("path").getLength() > 0) {
+
+                Element path = (Element) constraint.getElementsByTagName("path")
+                        .item(0);
+                NodeList attrsInPath = path.getElementsByTagName("attr");
+                for (int j = 0; j < attrsInPath.getLength(); j++) {
+                    attrsInPathParsed.add(
+                            ((Element) constraint.getElementsByTagName("attr")
+                                    .item(j)).getAttribute("val"));
+                }
+            } else {
+                String attr = ((Element) constraint.getElementsByTagName("attr")
+                        .item(0)).getAttribute("val");
+                attrsInPathParsed.add(attr);
+            }
+            // find the val, which is always a variable
+            String val = ((Element) constraint.getElementsByTagName("val")
+                    .item(0)).getAttribute("val");
+            // TODO create variable
+
+            // find the type
+            String type = ((Element) constraint.getElementsByTagName("type")
+                    .item(0)).getAttribute("val");
+            if (type.startsWith("@")) {
+                // TODO variable
+            } else {
+                // TODO The type is a set of elemTypes?
+
+            }
+
+            System.out.println("attrs: " + attrsInPathParsed + " val: " + val
+                    + " type: " + type);
+        }
     }
 
     /**
