@@ -16,11 +16,19 @@ import de.duesseldorf.rrg.RRGTree;
 public class BracketedRRGReader {
 
     File grammar = null;
+    private SystemLogger log;
 
     public BracketedRRGReader(File grammar) {
         this.grammar = grammar;
+        this.log = new SystemLogger(System.err, true);
     }
 
+    /**
+     * create a Reader for the trees file and go through it line by line,
+     * creating an RRG object consisting of lexicalised trees.
+     * 
+     * @return
+     */
     public RRG parseRRG() {
         Set<RRGTree> resultingTrees = new HashSet<RRGTree>();
         // TODO all references to the treestrings can be removed when proper
@@ -31,11 +39,13 @@ public class BracketedRRGReader {
                     new FileReader(grammar));
             String nextLine = tsvFileReader.readLine();
             while (nextLine != null) {
-                // the most innovative condition to filter out trees
+                // the most innovative condition to filter out lines without
+                // trees
                 if (nextLine.contains("(")) {
                     treeStrings.add(nextLine);
-                    RRGTree treeFromCurrentLine = createTreeFromTabSeparatedLine(
-                            nextLine);
+                    RRGTree treeFromCurrentLine = new TreeFromBracketedStringRetriever(
+                            nextLine).createTree();
+                    log.info("created tree: " + treeFromCurrentLine);
                 }
                 nextLine = tsvFileReader.readLine();
             }
@@ -51,17 +61,4 @@ public class BracketedRRGReader {
         System.exit(1);
         return new RRG(resultingTrees);
     }
-
-    private RRGTree createTreeFromTabSeparatedLine(String nextLine) {
-        String[] split = nextLine.split("\t");
-        for (String s : split) {
-            System.out.println(s);
-        }
-        if (split.length != 2) {
-            System.out.println("could not properly split the line \"" + nextLine
-                    + "\" because it contains more than one tab");
-        }
-        return null;
-    }
-
 }
