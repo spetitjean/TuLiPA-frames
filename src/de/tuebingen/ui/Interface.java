@@ -198,7 +198,7 @@ public class Interface {
             int i = 0;
             String out = op.check("o") ? op.getVal("o") : "a.out"; // for RCG
                                                                    // output
-            if (!op.check("x"))
+            if (!(op.check("x") || op.check("xg")))
                 op.setVal("x", "true"); // to deactivate graphical output
                                         // interface
             // parse the input
