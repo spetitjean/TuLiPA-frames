@@ -1,8 +1,6 @@
 Documentation:
-  * which files are needed (grammar, frame grammar, type hierarchy, etc)
-  * what do these files contain and how to create them
-  * export parses to XML and view the XML (XMG-webGUI, TuLiPA?)
-  * example of use, step by step
+  * examples of use of commands
   
 Code:
-  * bug in elementary tree viewer (frames are one derivation step ahead)
+  * support for more constraints in type hierarchies
+  
