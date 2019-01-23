@@ -781,6 +781,7 @@ public class Fs {
             try {
 		//System.out.println("Updating FS [1] ");
                 updateFS(cleanFrame, env, true);
+		cleanFrame.cleanCorefs();
                 //System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -790,6 +791,29 @@ public class Fs {
         //System.out.println("Environment in the end: "+env);
 
         return newFrames;
+    }
+
+    public void cleanCorefs(){
+	cleanCorefs(new HashSet<Value>());
+    }
+
+    public void cleanCorefs(Set<Value> seen){
+	
+	Iterator<String> i = this.AVlist.keySet().iterator();
+        while (i.hasNext()) {
+            String f = i.next();
+            Value v = this.AVlist.get(f);
+            if (v.is(Value.AVM)) {
+		Fs fs1=v.getAvmVal();
+		if(seen.contains(fs1.getCoref())){
+		    this.AVlist.put(f,new Value(fs1.getCoref()));
+		}
+		else{
+		    seen.add(fs1.getCoref());
+		    fs1.cleanCorefs(seen);
+		}
+	    }
+	}
     }
 
     public boolean collect_corefs(Environment env, NameFactory nf, Set<Value> seen) {
