@@ -622,7 +622,6 @@ public class TreeSelector {
             try {
                 tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
                         situation.getTypeHierarchy()));
-
                 // tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
                 // false));
                 // List<Fs> newFrames = tt.getFrames();
@@ -676,7 +675,7 @@ public class TreeSelector {
                 }
                 tt.setFrameSem(new Frame(newFrames, newRelations));
 
-                // System.out.println("treeselector framesem: " +
+		//System.out.println("treeselector framesem: " + tt+
                 // tt.getFrameSem());
                 // END DA
 
