@@ -1,27 +1,51 @@
 
 package de.duesseldorf.rrg.io;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.util.GornAddress;
 
+/**
+ * This class takes a tab-separated pair of lexical element and bracketed tree
+ * and creates an RRGTree object out of it.
+ * Example:
+ * greatly (NUC_ADV (ADV <>))
+ * 
+ * becomes
+ * 
+ * eps NUC_ADV NUC_ADV (STD)
+ * .0 ADV ADV (STD)
+ * ..0.0 greatly greatly (LEX)
+ * 
+ * @author david
+ *
+ */
 public class TreeFromBracketedStringRetriever {
     public SystemLogger log;
     private String tabSeparatedLine;
     private RRGNode lexicalElement;
 
+    private RRGTree resultingTree;
+    GornAddress currentGA;
+
+    /**
+     * in: Tab-separated line of lexical element and bracketed tree, with
+     * placeholder <> for the lex. element.
+     * Important: Lexical Elements can only ever have one daugherj (because of
+     * the way they are appended to the tree
+     * 
+     * @param tabSeparatedLine
+     */
     public TreeFromBracketedStringRetriever(String tabSeparatedLine) {
         this.tabSeparatedLine = tabSeparatedLine;
         this.log = new SystemLogger(System.err, true);
     }
 
     /**
-     * in: Tab-separated line of lexical element and bracketed tree, with
-     * placeholder <> for the lex. element.
-     * Out: An RRGTree object lexicalized with that lexical element
+     * 
+     * Out: An RRGTree object lexicalized with the lexical element in the
+     * tabseparatedline
      * 
      * @param nextLine
      * @return
@@ -33,56 +57,86 @@ public class TreeFromBracketedStringRetriever {
             log.info("could not properly split the line \"" + tabSeparatedLine
                     + "\" because it contains more or less than one tab");
         } else {
+            // init variables needed for the whole process
+            currentGA = new GornAddress();
             this.lexicalElement = new RRGNode(RRGNodeType.LEX, split[0],
                     split[0]);
             log.info("created lexical node " + lexicalElement);
-            // log.info("bracketed subtrees: " + splitToSubtrees(split[1]));
-            RRGTree resultingTree = new RRGTree(
-                    createTreeFromBracketedString(split[1]), "fakeID");
+
+            // creat the root (needed to append to tree recursively later
+            RRGNode resultingRootNode = createRootNodeFromBracketedTree(
+                    split[1]);
+            log.info("created root node: " + resultingRootNode);
+            this.resultingTree = new RRGTree(resultingRootNode, "");
+            // currentGA = currentGA.ithDaughter(0);
+            createTreeFromBracketedString(
+                    split[1].substring(split[1].indexOf(" ")));
             return resultingTree;
         }
         return null;
     }
 
-    private RRGNode createTreeFromBracketedString(
+    private void createTreeFromBracketedString(
             String remainingBracketedSubTree) {
-        // log.info("create Tree from " + remainingBracketedSubTree);
+        // log.info("create tree from " + remainingBracketedSubTree);
         if (remainingBracketedSubTree.startsWith("(")) {
             remainingBracketedSubTree = remainingBracketedSubTree.substring(1);
+            RRGNode motherOfTheNewNode = resultingTree.findNode(currentGA);
+            // check currentGA to add to the right place
+            int newDaughterIndex = motherOfTheNewNode.getChildren().size();
+            currentGA = currentGA.ithDaughter(newDaughterIndex);
+
+            // create node
             String[] remainingBracketedSubTreeSplit = remainingBracketedSubTree
                     .split(" ");
-            RRGNode root = createNodeFromString(
+            RRGNode node = createNodeFromString(
                     remainingBracketedSubTreeSplit[0]);
+            // add node to the tree
+            motherOfTheNewNode.addRightmostChild(node);
 
-            // hier mit einer externne Methode die gut geklammerten Subtrees
-            // finden und dann die einzelnen Töchter hinzufügen
-            // List<String> goodBracketedSubtrees = splitToSubtrees(
-            // remainingBracketedSubTree);
-            RRGNode subTreeAppendedToRoot = createTreeFromBracketedString(
-                    remainingBracketedSubTree.substring(
-                            remainingBracketedSubTreeSplit[0].length()));
-            root.addRightmostChild(subTreeAppendedToRoot);
-            return root;
-
+            // adapt the GA to change position in tree for next round
+            createTreeFromBracketedString(remainingBracketedSubTree
+                    .substring(remainingBracketedSubTreeSplit[0].length()));
+            return;
         } else if (remainingBracketedSubTree.startsWith(" ")) {
-            return createTreeFromBracketedString(
+            createTreeFromBracketedString(
                     remainingBracketedSubTree.substring(1));
+            return;
         } else if (remainingBracketedSubTree.length() == 0) {
-            return null;
+            // recursion base case: finished reading tree
+            return;
         } else if (remainingBracketedSubTree.startsWith(")")) {
-            return createTreeFromBracketedString(
+            currentGA = currentGA.mother();
+            createTreeFromBracketedString(
                     remainingBracketedSubTree.substring(1));
+            return;
         } else if (remainingBracketedSubTree.startsWith("<>")) {
-            return lexicalElement;
+            // append lexical element to the right place
+            RRGNode motherOfLex = resultingTree.findNode(currentGA);
+            currentGA = currentGA.ithDaughter(0);
+            lexicalElement.setGornAddress(currentGA);
+            motherOfLex.addRightmostChild(lexicalElement);
+            createTreeFromBracketedString(
+                    remainingBracketedSubTree.substring(2));
+            return;
         }
         log.info("an error occured during retrieving tree " + tabSeparatedLine);
-        return null;
+        log.info("at current status in bracketed tree parsing: '"
+                + remainingBracketedSubTree + "'");
+        return;
+    }
+
+    private RRGNode createRootNodeFromBracketedTree(String bracketedTree) {
+        // find the root node string
+        String rootNode = bracketedTree.substring(
+                bracketedTree.indexOf("(") + 1, bracketedTree.indexOf(" "));
+        // create tree
+        return createNodeFromString(rootNode);
     }
 
     private RRGNode createNodeFromString(String nodeStringFromResource) {
-        if (nodeStringFromResource.equals("<>")) {
-            return lexicalElement;
-        }
+        // note that the lexical element is not handled here
+
         RRGNodeType nodeType = null;
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;
@@ -92,45 +146,6 @@ public class TreeFromBracketedStringRetriever {
             nodeType = RRGNodeType.STD;
         }
         return new RRGNode(nodeType, nodeStringFromResource,
-                nodeStringFromResource);
-    }
-
-    List<String> splitToSubtrees(String remainingBracketedSubTree) {
-        List<String> result = new LinkedList<String>();
-        int openBrackets = 0;
-        if (remainingBracketedSubTree.startsWith("(")) {
-            openBrackets = openBrackets + 1;
-            remainingBracketedSubTree = remainingBracketedSubTree.substring(1);
-        } else {
-            return splitToSubtrees(remainingBracketedSubTree.substring(1));
-        }
-        while (remainingBracketedSubTree.length() > 0) {
-            String oneSubTree = "";
-            log.info("open Brackets: " + openBrackets + ", oneSubTree"
-                    + oneSubTree);
-            while (openBrackets > 0) {
-                if (remainingBracketedSubTree.startsWith("(")) {
-                    openBrackets++;
-                } else if (remainingBracketedSubTree.startsWith(")")) {
-                    openBrackets--;
-                }
-                oneSubTree += remainingBracketedSubTree.charAt(0);
-                remainingBracketedSubTree = remainingBracketedSubTree
-                        .substring(1);
-            }
-            result.add(oneSubTree);
-        }
-        return result;
-    }
-
-    public static void main(String[] args) {
-        String testBracketedTree1 = "(NP (CORE_N (NUC_N (N ) (N <>))))";
-        String testBracketedTree2 = "(CORE_N (NUC_N (N ) (N <>)))";
-        String testBracketedTree3 = "(CORE_N (NUC_N (N ) (N <>)))";
-
-        TreeFromBracketedStringRetriever testObj = new TreeFromBracketedStringRetriever(
-                testBracketedTree2);
-
-        System.out.println(testObj.splitToSubtrees(testBracketedTree2));
+                nodeStringFromResource, currentGA);
     }
 }

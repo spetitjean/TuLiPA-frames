@@ -70,6 +70,15 @@ public class RRGNode implements Node {
         this.gornaddress = new GornAddress();
     }
 
+    public RRGNode(RRGNodeType type, String name, String category,
+            GornAddress gornaddress) {
+        children = new LinkedList<Node>();
+        this.type = type;
+        this.name = name;
+        this.setCategory(category);
+        this.gornaddress = gornaddress;
+    }
+
     /**
      * unifies this node and the other node by replacing (!) this nodes children
      * with {@code other}s chilren, if the categories of both nodes

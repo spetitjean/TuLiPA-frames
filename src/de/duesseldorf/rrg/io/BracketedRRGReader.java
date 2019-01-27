@@ -34,11 +34,22 @@ public class BracketedRRGReader {
         // TODO all references to the treestrings can be removed when proper
         // trees are created
         List<String> treeStrings = new LinkedList<String>();
+        BufferedReader tsvFileReader;
         try {
-            BufferedReader tsvFileReader = new BufferedReader(
-                    new FileReader(grammar));
-            String nextLine = tsvFileReader.readLine();
-            while (nextLine != null) {
+            tsvFileReader = new BufferedReader(new FileReader(grammar));
+        } catch (FileNotFoundException e) {
+            log.info("could not read grammar file " + grammar);
+            return null;
+        }
+        String nextLine = "";
+        try {
+            nextLine = tsvFileReader.readLine();
+        } catch (Exception e) {
+            log.info("could not read first line of grammar" + grammar);
+            return null;
+        }
+        while (nextLine != null) {
+            try {
                 // the most innovative condition to filter out lines without
                 // trees
                 if (nextLine.contains("(")) {
@@ -47,14 +58,19 @@ public class BracketedRRGReader {
                             nextLine).createTree();
                     log.info("created tree: " + treeFromCurrentLine);
                 }
+
                 nextLine = tsvFileReader.readLine();
+            } catch (Exception e) {
+                log.info("exception while retrieving grammar entry: "
+                        + nextLine);
             }
+        }
+        try {
             tsvFileReader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         // for (String treeString : treeStrings) {
         // System.out.println(treeString);
         // }
