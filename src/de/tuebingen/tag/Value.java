@@ -32,6 +32,8 @@ package de.tuebingen.tag;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
@@ -326,7 +328,12 @@ public class Value implements SemLit {
 
     public static Value unify(Value a, Value b, Environment env)
             throws UnifyException {
-        return unify(a, b, env, null);
+        return unify(a, b, env, null, new HashSet<Value>());
+    }
+
+    public static Value unify(Value a, Value b, Environment env, TypeHierarchy tyHi)
+            throws UnifyException {
+        return unify(a, b, env, tyHi, new HashSet<Value>());
     }
 
     /**
@@ -340,7 +347,7 @@ public class Value implements SemLit {
      *            is an Environment object where to interpret a and b
      */
     public static Value unify(Value a, Value b, Environment env,
-            TypeHierarchy tyHi) throws UnifyException {
+			      TypeHierarchy tyHi, Set<Value> seen) throws UnifyException {
 
         // System.err.println("Unification: " + a.toString() + " and " +
         // b.toString());
@@ -366,11 +373,11 @@ public class Value implements SemLit {
                     env.bind(b.getVarVal(), a);
                     res = a;
                 } else { // b is already bound, the values must unify !
-                    res = Value.unify(a, bb, env, tyHi);
+                    res = Value.unify(a, bb, env, tyHi, seen);
                 }
                 break;
             case ADISJ:
-                res = unify(b, a, env, tyHi);
+                res = unify(b, a, env, tyHi, seen);
                 break;
             default:
                 throw new UnifyException(a.toString(), b.toString());
@@ -406,10 +413,11 @@ public class Value implements SemLit {
             }
             break;
         case AVM: // a is an avm
+	    //System.out.println("A  is an AVM");
             switch (b.getType()) {
             case AVM: // b is an avm
                 res = new Value(
-                        Fs.unify(a.getAvmVal(), b.getAvmVal(), env, tyHi));
+				Fs.unify(a.getAvmVal(), b.getAvmVal(), env, tyHi, seen));
                 /*
                  * // Uncaught exception (caught in Fs' unify method) try { res
                  * = new Value(Fs.unify(a.getAvmVal(), b.getAvmVal(), env)); }
@@ -421,9 +429,12 @@ public class Value implements SemLit {
                 break;
 
             case VAR: // b is a variable
+		//System.out.println("B is a variable");
                 Value bb = env.deref(b);
+		//System.out.println(bb);
                 // if b is unbound, we bind it to a
                 if (bb.equals(b)) {
+		    //System.out.println("B is unbound");
                     // Simon: I added this
                     // This might lead to problems when 2 bound variables refer
                     // to two different FS
@@ -461,7 +472,7 @@ public class Value implements SemLit {
                                                 env.deref(new Value(5,
                                                         "$" + bb.getVarVal()))
                                                         .getAvmVal(),
-                                                env, tyHi)));
+							   env, tyHi, seen)));
                             } else {
                                 // System.out.println("Binding a new AVM");
                                 env.bind("$" + bb.getVarVal(),
@@ -476,9 +487,10 @@ public class Value implements SemLit {
                     }
                     res = a;
                 } else { // b is already bound, the values must match !
+		    //System.out.println("B is bound");
                     if (bb.is(AVM)) { // let us see if they do:
                         res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(),
-                                env, tyHi));
+						 env, tyHi, seen));
                         /*
                          * // Uncaught exception (caught in Fs' unify method)
                          * try { res = new Value(Fs.unify(a.getAvmVal(),
@@ -487,14 +499,19 @@ public class Value implements SemLit {
                          * caught here for now // but it will later be given to
                          * the calling method }
                          */
-                    } else { // they do not:
-                        throw new UnifyException(a.toString(), b.toString());
-                    }
-                }
-                break;
-            default:
-                throw new UnifyException(a.toString(), b.toString());
-            }
+                    } else {
+			if(bb.is(VAR)){
+			    res = new Value(unify(a,bb,env,tyHi,seen));
+			}
+			else{// they do not:
+			    throw new UnifyException(a.toString(), b.toString());
+			}
+		    }}
+		
+		    break;
+		    default:
+			throw new UnifyException(a.toString(), b.toString());
+		}
             break;
         case ADISJ: // a is an atomic disjunction
             // System.err.println("Unifying ... " + a.toString() + " and " +
@@ -514,7 +531,7 @@ public class Value implements SemLit {
                     v = a;
                 }
                 if (!(v.equals(a))) {
-                    return unify(v, b, env, tyHi);
+                    return unify(v, b, env, tyHi, seen);
                 }
             }
             // if a is either not bound or bound to a free variable:
@@ -548,7 +565,7 @@ public class Value implements SemLit {
                         w = b;
                     }
                     if (!(w.equals(b))) {
-                        return unify(a, w, env, tyHi);
+                        return unify(a, w, env, tyHi, seen);
                     }
                 }
                 // here, b is either not bound or bound to a free variable!
@@ -606,11 +623,11 @@ public class Value implements SemLit {
                     // System.err.println(" adisj + var ... ==> " +
                     // res.toString());
                 } else { // b is already bound, the values must unify !
-                    res = unify(a, bb, env, tyHi);
+                    res = unify(a, bb, env, tyHi, seen);
                 }
                 break;
             default:
-                throw new UnifyException("Unification failure between "
+                throw new UnifyException("Unification failure (value) between "
                         + a.toString() + " and " + b.toString());
             }
             // System.err.println(" ... ==> " + res.toString() + " " +
@@ -633,18 +650,18 @@ public class Value implements SemLit {
                         res = a;
                     } else {
                         if (!(hasCycle(aa.getVarVal(), bb, env))) {
-                            res = Value.unify(aa, bb, env, tyHi);
+                            res = Value.unify(aa, bb, env, tyHi, seen);
                         } else {
                             res = aa;
                         }
                     }
                 } else {
-                    res = Value.unify(aa, bb, env, tyHi);
+                    res = Value.unify(aa, bb, env, tyHi, seen);
                 }
                 break;
             default:
                 // the case has already been defined above
-                res = Value.unify(b, aa, env, tyHi);
+                res = Value.unify(b, aa, env, tyHi, seen);
             }
             break;
         default: // skip

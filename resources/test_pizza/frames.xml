@@ -8,6 +8,7 @@
     <frame >
       <fs coref="@Frame1">
         <ctype>
+          <type val="psych-state"/>
         </ctype>
         <f name="intensity">
           <sym value="strong"/>

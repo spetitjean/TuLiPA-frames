@@ -314,8 +314,8 @@ public class XMLTTMCTAGReader extends FileReader {
             // System.out.println(
             // "frameSem in XMLTTMCTAGREADER:\n" + frameSem.toString());
             res.setFrameSem(frameSem);
+	    //System.out.println("Frame from XMLTTMCTAGReader: " + frameSem);
         }
-        // System.out.println("Frame from XMLTTMCTAGReader: " + framereprs);
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
         // get replaced with the contents of the frames
@@ -754,17 +754,19 @@ public class XMLTTMCTAGReader extends FileReader {
                     // the XML tag is fs and refers to a feature structure
                     Value tmpres = new Value(getFeats(el, type, toAdd, nf));
 
-                    if (tmpres.getAvmVal().getAVlist().isEmpty()
-                            && tmpres.getAvmVal().getType().isEmpty()) {
-                        // System.out.println(
-                        // "Empty feature stucture as value of " + key);
-                        res = tmpres.getAvmVal().getCoref();
-                        // System.out.println("Coref is " + res);
-                        toAdd.put(key, res);
+		    // Simon: I think we do not want this anymore (partly because of type variables)
+                    // if (tmpres.getAvmVal().getAVlist().isEmpty()
+                    //         && tmpres.getAvmVal().getType().isEmpty()) {
+                    //     // System.out.println(
+                    //     // "Empty feature stucture as value of " + key);
+                    //     res = tmpres.getAvmVal().getCoref();
+                    //     // System.out.println("Coref is " + res);
+                    //     toAdd.put(key, res);
 
-                    } else {
-                        res = tmpres;
-                    }
+                    // } else {
+                    //     res = tmpres;
+                    // }
+		    res = tmpres;
                 }
             }
         }

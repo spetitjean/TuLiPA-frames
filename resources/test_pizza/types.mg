@@ -18,7 +18,7 @@ feature arg1 : LABEL
 feature i : LABEL
 feature e : LABEL
 
-frame-types = {event, activity, eat, entity, person, food, pizza}
+frame-types = {event, activity, eat, entity, person, food, pizza, psych-state}
 frame-constraints = { 
 	activity -> event,
 	entity event -> -,

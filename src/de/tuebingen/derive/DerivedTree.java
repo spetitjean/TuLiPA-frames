@@ -36,6 +36,8 @@ package de.tuebingen.derive;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.HashSet;
 
 import org.w3c.dom.Node;
 
@@ -77,7 +79,8 @@ public class DerivedTree {
         bottomFeatures = new HashMap<Node, Fs>();
         semantics = iniTree.semantics;
         // frames = iniTree.frames;
-        frameSem = iniTree.getFrameSem();
+	// Here, copies are need, otherwise semantics of elementary trees are displayed wrong 
+        frameSem = new Frame(new LinkedList(iniTree.getFrameSem().getFeatureStructures()), new HashSet(iniTree.getFrameSem().getRelations()));
         env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);
         addMissingTopFeatures(iniTree.topFeatures);
