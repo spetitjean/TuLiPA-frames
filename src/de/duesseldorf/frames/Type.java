@@ -30,6 +30,7 @@
 
 package de.duesseldorf.frames;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -51,15 +52,26 @@ public final class Type {
 
     private Set<String> elemTypes;
     private Value var;
+    private Set<TypeConstraint> typeConstraints;
 
-    public Type(Set<String> elementaryTypes, Value variable) {
-        this.elemTypes = elementaryTypes;
+    public Type(Collection<String> elementaryTypes, Value variable) {
+        this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = variable;
+        this.typeConstraints = new HashSet<TypeConstraint>();
     }
 
-    public Type(Set<String> elementaryTypes) {
-        this.elemTypes = elementaryTypes;
+    public Type(Collection<String> elementaryTypes) {
+        this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.typeConstraints = new HashSet<TypeConstraint>();
+    }
+
+    public Type(Collection<String> elementaryTypes,
+            Collection<TypeConstraint> typeConstraints) {
+        this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+
     }
 
     /**

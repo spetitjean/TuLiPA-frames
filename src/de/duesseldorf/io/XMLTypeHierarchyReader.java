@@ -43,9 +43,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.Type;
+import de.duesseldorf.frames.TypeConstraint;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.UnifyException;
+import de.tuebingen.tag.Value;
 import de.tuebingen.util.XMLUtilities;
 
 /**
@@ -99,22 +102,51 @@ public class XMLTypeHierarchyReader extends FileReader {
             // retrieve the constraints
             NodeList constraintsForEntry = entry
                     .getElementsByTagName("constraints");
-            retrieveConstraints(constraintsForEntry);
-
-            Type t = new Type(eltypes);
+            Set<TypeConstraint> constraints = retrieveConstraints(
+                    constraintsForEntry);
+            if (!constraints.isEmpty()) {
+                System.out.println("created type constraints: " + constraints);
+            }
+            Type t = new Type(eltypes, constraints);
             typeCollector.add(t);
         }
         return typeCollector;
     }
 
-    private void retrieveConstraints(NodeList constraintsForEntry) {
+    /**
+     * a type constraint can look like this
+     * <constraint>
+     * <attr val="theme"/>
+     * <type val="@1"/>
+     * <val val="@0"/>
+     * </constraint>
+     * 
+     * The attribute val in the type element can also be a single elementary
+     * type.
+     * The attribute val in the val element cal also be a String.
+     * If the constraint considers more than one attribute, these are collected
+     * under a path element like so:
+     * 
+     * <constraint>
+     * <path>
+     * <attr val="initial_state"/>
+     * <attr val="theme"/>
+     * </path>
+     * ...
+     * 
+     * @param constraintsForEntry
+     * @return
+     */
+    private Set<TypeConstraint> retrieveConstraints(
+            NodeList constraintsForEntry) {
+        Set<TypeConstraint> typeConstraints = new HashSet<TypeConstraint>();
         NodeList constraints = ((Element) constraintsForEntry.item(0))
                 .getElementsByTagName("constraint");
+        NameFactory nf = new NameFactory();
         for (int i = 0; i < constraints.getLength(); i++) {
             Element constraint = (Element) constraints.item(i);
 
             Set<String> attrsInPathParsed = new HashSet<String>();
-
             // find the attr or path
             // the path set also holds the single attr at the moment
             if (constraint.getElementsByTagName("path").getLength() > 0) {
@@ -132,24 +164,30 @@ public class XMLTypeHierarchyReader extends FileReader {
                         .item(0)).getAttribute("val");
                 attrsInPathParsed.add(attr);
             }
-            // find the val, which is always a variable
-            String val = ((Element) constraint.getElementsByTagName("val")
+            // find the val
+            String valString = ((Element) constraint.getElementsByTagName("val")
                     .item(0)).getAttribute("val");
-            // TODO create variable
+            int valType = valString.startsWith("@") ? Value.VAR : Value.VAL;
+            Value val = new Value(valType, nf.getName(valString));
 
             // find the type
-            String type = ((Element) constraint.getElementsByTagName("type")
-                    .item(0)).getAttribute("val");
-            if (type.startsWith("@")) {
-                // TODO variable
-            } else {
-                // TODO The type is a set of elemTypes?
+            String typeString = ((Element) constraint
+                    .getElementsByTagName("type").item(0)).getAttribute("val");
+            int typeType = typeString.startsWith("@") ? Value.VAR : Value.VAL;
+            Value typeVal = typeString.startsWith("@")
+                    ? new Value(typeType, nf.getName(typeString))
+                    : new Value(typeType, nf.getUniqueName());
 
+            Set<String> elemTypes = new HashSet<String>();
+            if (!typeString.startsWith("@")) {
+                elemTypes.add(typeString);
             }
+            Type type = new Type(elemTypes, typeVal);
 
-            System.out.println("attrs: " + attrsInPathParsed + " val: " + val
-                    + " type: " + type);
+            typeConstraints
+                    .add(new TypeConstraint(attrsInPathParsed, type, val));
         }
+        return typeConstraints;
     }
 
     /**
