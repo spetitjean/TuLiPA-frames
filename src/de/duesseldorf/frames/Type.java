@@ -51,15 +51,18 @@ public final class Type {
 
     private Set<String> elemTypes;
     private Value var;
+    private Boolean truevar;
 
     public Type(Set<String> elementaryTypes, Value variable) {
         this.elemTypes = elementaryTypes;
         this.var = variable;
+	this.truevar = true;
     }
 
     public Type(Set<String> elementaryTypes) {
         this.elemTypes = elementaryTypes;
         this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+	this.truevar = false;
     }
 
     /**
@@ -71,6 +74,7 @@ public final class Type {
     public Type(Type t) {
         this.elemTypes = t.getElementaryTypes();
         this.var = new Value(t.getVar(), new NameFactory());
+	this.truevar = false;
     }
 
     public Value getVar() {
@@ -96,7 +100,7 @@ public final class Type {
      * @return Is this a type containing no elementary types?
      */
     public boolean isEmpty() {
-        return this.elemTypes.isEmpty();
+        return this.elemTypes.isEmpty()&&!this.truevar;
     }
 
     /**
