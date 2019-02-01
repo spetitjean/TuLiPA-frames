@@ -742,7 +742,7 @@ public class Fs {
                 // If collect_corefs returns false, it means that
                 // unification failed somewhere, so we discard the
                 // solution
-		System.out.println("Failed to collect corefs");
+		//System.out.println("Failed to collect corefs");
                 return null;
             }
             try {
@@ -766,7 +766,7 @@ public class Fs {
                     // If the result of update_corefs is null, it is
                     // because unification failed somewhere, so we
                     // need to discard the solution
-		    System.out.println("Failed to update corefs");	    
+		    //System.out.println("Failed to update corefs");	    
                     return null;
                 }
                 newFrames.add(new_fs);
