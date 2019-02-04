@@ -167,6 +167,8 @@ public class TreeDeriver {
             // TODO put this call in the right place
             boolean allConstraintsSatisfied = new ConstraintChecker(newFrameSem,
                     derivedTree.env).checkConstraints();
+            System.out.println("satisfied constraints: "
+                    + Boolean.toString(allConstraintsSatisfied));
             if (newFrameSem == null) {
                 failed = true;
             } else {

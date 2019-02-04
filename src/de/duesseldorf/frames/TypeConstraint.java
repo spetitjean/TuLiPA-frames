@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.Value;
 
 public class TypeConstraint {
@@ -28,6 +29,15 @@ public class TypeConstraint {
 
     public Value getVal() {
         return val;
+    }
+
+    public Fs asFs() {
+        Fs result = new Fs(1);
+        result.setType(getType());
+        for (String attr : attributes) {
+            result.setFeat(attr, getVal());
+        }
+        return result;
     }
 
     @Override

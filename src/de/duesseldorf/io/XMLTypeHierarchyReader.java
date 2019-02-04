@@ -77,8 +77,9 @@ public class XMLTypeHierarchyReader extends FileReader {
         Element e = (Element) l.item(0);
         NodeList entries = e.getElementsByTagName("entry");
         List<Type> typeCollector = getTypesfromNL(entries);
-
-        return new TypeHierarchy(typeCollector);
+        TypeHierarchy result = new TypeHierarchy(typeCollector);
+        System.out.println(result + "\n\n\n");
+        return result;
     }
 
     private List<Type> getTypesfromNL(NodeList entries) {

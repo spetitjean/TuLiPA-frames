@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
+import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tag.Value;
 
 public class ConstraintChecker {
@@ -23,11 +24,9 @@ public class ConstraintChecker {
         for (Fs fsToCheck : frame.getFeatureStructures()) {
             Set<TypeConstraint> constraintsToCheck = fsToCheck.getType()
                     .getTypeConstraints();
-            System.out.println("constraintsToCheck: " + constraintsToCheck);
             if (!checkConstraintsAgainstOneFS(constraintsToCheck, fsToCheck)) {
                 return false;
             }
-
         }
         return true;
     }
@@ -39,45 +38,48 @@ public class ConstraintChecker {
                 return false;
             }
         }
+        for (String fsAttr : fsToCheck.getKeys()) {
+            Value fsValForfsAttr = fsToCheck.getFeat(fsAttr);
+            if (fsValForfsAttr.is(Value.AVM)) {
+                Set<TypeConstraint> constraintsForVal = fsValForfsAttr
+                        .getAvmVal().getType().getTypeConstraints();
+                if (!checkConstraintsAgainstOneFS(constraintsForVal,
+                        fsValForfsAttr.getAvmVal())) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
     private boolean checkConstraint(TypeConstraint constraint, Fs fs) {
+        // System.out.println(
+        // "check constraint: " + constraint + " against fs " + fs);
         // first check the particular constraint, then go recursive on the
         // AVList.
-        boolean fsHasCorrectType = checkForType(constraint.getType(),
-                fs.getType());
+        Fs constraintAsFs = constraint.asFs();
+        Fs testUnify = null;
+        try {
+            testUnify = Fs.unify(constraintAsFs, fs, env,
+                    Situation.getTypeHierarchy());
+        } catch (UnifyException e) {
+            return false;
+        }
+        if (testUnify == null) {
+            return false;
+        }
+
+        System.out.println("constraint met.");
         System.out.println("constraint:\n" + constraint);
-        System.out.println("fs:\n" + fs);
-        for (String attrFromConstraint : constraint.getAttributes()) {
-            boolean fsHasFeat = fs.hasFeat(attrFromConstraint);
-            // TODO get elemtypes from type Variable
-            // boolean fsHasType = fs.getType().getElementaryTypes().
-            if (fsHasFeat) {
-                Value valFromFS = fs.getFeat(attrFromConstraint);
-                Value valFromEnv = env.get(attrFromConstraint);
-            } else {
-                // attribute not there, constraint not met
-                return false;
-            }
-        }
-
-        // go recursive here? Is a constraint on a frame valid for fs within
-        // that frame?
-
-        return false;
+        System.out.println("fs:\n" + fs
+                + "\n++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+        System.out.println("testUnify: " + testUnify + "\n\n");
+        System.out.println(
+                "problem: the constraint is met, but the amazement feature is"
+                        + " not put in the printed fs and it is not clear what the values mean.");
+        System.out.println("the value is not even in the environment:");
+        System.out.println(env.get(constraint.getVal().getVarVal()));
+        return true;
     }
-
-    private boolean checkForType(Type fromConstraint, Type fromFS) {
-        if (fromConstraint.getElementaryTypes().size() == 0
-                || fromFS.getElementaryTypes().size() == 0) {
-            System.out.println(
-                    "types only with variables and not with elementary types. Check ConstraintChecker:\n"
-                            + fromConstraint + "\n" + fromFS);
-        }
-        if (fromConstraint.subsumes(fromFS))
-            return true;
-        return false;
-    }
-
 }

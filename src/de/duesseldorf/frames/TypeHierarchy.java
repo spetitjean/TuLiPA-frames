@@ -74,6 +74,9 @@ public class TypeHierarchy {
      */
     public Type leastSpecificSubtype(Type a, Type b, Environment env)
             throws UnifyException {
+        // System.out.println("Find least specific subtype of a and b");
+        // System.out.println(a);
+        // System.out.println(b);
         Type union = a.union(b, env);
         Value resvar = Value.unify(a.getVar(), b.getVar(), env, this);
         int max = Collections.max(tyHi.keySet());

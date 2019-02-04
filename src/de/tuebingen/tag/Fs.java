@@ -531,8 +531,8 @@ public class Fs {
             // // } else if (fs1.isTyped() && fs2.isTyped()) {
             // // resType =
             // }
-            // System.out.println("Unification of "+fs1.getType()+" and
-            // "+fs2.getType());
+            // System.out.println("Unification of " + fs1.getType() + " and "
+            // + fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
                     // System.out.println("Unify types: " + fs1.getType() + "
@@ -617,7 +617,8 @@ public class Fs {
                 // convert the value to a type
                 Set<String> elementaryTypes = new HashSet<String>();
                 elementaryTypes.add(typevar.getSVal());
-                Type otherType = new Type(elementaryTypes, typevar);
+                Type otherType = new Type(elementaryTypes, typevar,
+                        fs.getType().getTypeConstraints());
                 newType = Situation.getTypeHierarchy()
                         .leastSpecificSubtype(fs.getType(), otherType, env);
                 typevar = new Value(new Fs(0));
@@ -629,10 +630,11 @@ public class Fs {
                 Value typevarderef = env.deref(typevar);
                 if (!typevarderef.equals(typevar)) {
                     newType = new Type(fs.getType().getElementaryTypes(),
-                            Value.unify(typevarderef, typevar, env));
+                            Value.unify(typevarderef, typevar, env),
+                            fs.getType().getTypeConstraints());
                 } else {
                     newType = new Type(fs.getType().getElementaryTypes(),
-                            typevarderef);
+                            typevarderef, fs.getType().getTypeConstraints());
                 }
             }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
