@@ -294,11 +294,16 @@ public class TreeSelector {
                             System.out.println(
                                     "TODO: create a loop in TreeSelector.546!");
                         }
-
-                        if (situation.getFrameGrammar() != null
-                                && lemmaSem.size() > 0) {
-                            tlist = situation.getFrameGrammar().getGrammar()
+                        if (situation.getFrameGrammar() != null) {
+			    if(lemmaSem.size() > 0){
+				tlist = situation.getFrameGrammar().getGrammar()
                                     .get(lemmaSem.get(0).getSemclass());
+			    }
+			    else{
+				System.err.println("No semantics for lemma "+it.getLemma().getName()+"\nCreating empty semantics.");
+				tlist = new LinkedList<Tuple>();
+				tlist.add(new Tuple());
+			    }
                             // System.out.println("Size of the frame list
                             // for this entry: "+tlist.size());
                         }
@@ -435,7 +440,7 @@ public class TreeSelector {
             }
         }
         // System.err.println("Tree "+hd.getId());
-
+	
         Fs ancfs = t.getAnchor().getFilter();
         Fs iface = tt.getIface();
         // the default size of the environment is 10 (trade-off)

@@ -53,17 +53,20 @@ public final class Type {
     private Set<String> elemTypes;
     private Value var;
     private Set<TypeConstraint> typeConstraints;
+    private Boolean truevar;
 
     public Type(Collection<String> elementaryTypes) {
         this.typeConstraints = new HashSet<TypeConstraint>();
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.truevar = false;
     }
 
     public Type(Collection<String> elementaryTypes, Value variable) {
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = variable;
         this.typeConstraints = new HashSet<TypeConstraint>();
+        this.truevar = true;
     }
 
     public Type(Collection<String> elementaryTypes, Value variable,
@@ -71,6 +74,7 @@ public final class Type {
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = variable;
         this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
+        this.truevar = true;
     }
 
     public Type(Collection<String> elementaryTypes,
@@ -78,6 +82,7 @@ public final class Type {
         this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.truevar = false;
     }
 
     /**
@@ -90,10 +95,15 @@ public final class Type {
         this.elemTypes = t.getElementaryTypes();
         this.var = new Value(t.getVar(), new NameFactory());
         this.typeConstraints = t.getTypeConstraints();
+        this.truevar = false;
     }
 
     public Value getVar() {
         return var;
+    }
+
+    public void setVar(Value v) {
+        this.var = v;
     }
 
     /**
@@ -118,7 +128,7 @@ public final class Type {
      * @return Is this a type containing no elementary types?
      */
     public boolean isEmpty() {
-        return this.elemTypes.isEmpty();
+        return this.elemTypes.isEmpty() && !this.truevar;
     }
 
     /**

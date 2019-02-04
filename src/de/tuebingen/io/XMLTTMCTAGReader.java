@@ -754,19 +754,17 @@ public class XMLTTMCTAGReader extends FileReader {
                     // the XML tag is fs and refers to a feature structure
                     Value tmpres = new Value(getFeats(el, type, toAdd, nf));
 
-		    // Simon: I think we do not want this anymore (partly because of type variables)
-                    // if (tmpres.getAvmVal().getAVlist().isEmpty()
-                    //         && tmpres.getAvmVal().getType().isEmpty()) {
-                    //     // System.out.println(
-                    //     // "Empty feature stucture as value of " + key);
-                    //     res = tmpres.getAvmVal().getCoref();
-                    //     // System.out.println("Coref is " + res);
-                    //     toAdd.put(key, res);
+                    if (tmpres.getAvmVal().getAVlist().isEmpty()
+                            && tmpres.getAvmVal().getType().isEmpty()) {
+                        // System.out.println(
+                        // "Empty feature stucture as value of " + key);
+                        res = tmpres.getAvmVal().getCoref();
+                        // System.out.println("Coref is " + res);
+                        toAdd.put(key, res);
 
-                    // } else {
-                    //     res = tmpres;
-                    // }
-		    res = tmpres;
+                    } else {
+                        res = tmpres;
+                    }
                 }
             }
         }
