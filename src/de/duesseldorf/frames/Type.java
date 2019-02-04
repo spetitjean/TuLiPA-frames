@@ -81,6 +81,10 @@ public final class Type {
         return var;
     }
 
+    public void setVar(Value v) {
+        this.var=v;
+    }
+
     /**
      * 
      * @param t

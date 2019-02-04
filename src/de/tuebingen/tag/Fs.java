@@ -614,6 +614,8 @@ public class Fs {
                 Type otherType = new Type(elementaryTypes, typevar);
                 newType = Situation.getTypeHierarchy()
                         .leastSpecificSubtype(fs.getType(), otherType, env);
+		typevar=new Value(new Fs(0));
+		newType.setVar(typevar);
                 break;
             case Value.VAR:
                 // System.out.println("Trying deref on: " + typevar + " ("
