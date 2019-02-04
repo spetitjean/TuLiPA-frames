@@ -54,16 +54,23 @@ public final class Type {
     private Value var;
     private Set<TypeConstraint> typeConstraints;
 
+    public Type(Collection<String> elementaryTypes) {
+        this.typeConstraints = new HashSet<TypeConstraint>();
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+    }
+
     public Type(Collection<String> elementaryTypes, Value variable) {
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = variable;
         this.typeConstraints = new HashSet<TypeConstraint>();
     }
 
-    public Type(Collection<String> elementaryTypes) {
+    public Type(Collection<String> elementaryTypes, Value variable,
+            Collection<TypeConstraint> typeConstraints) {
         this.elemTypes = new HashSet<String>(elementaryTypes);
-        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
-        this.typeConstraints = new HashSet<TypeConstraint>();
+        this.var = variable;
+        this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
     }
 
     public Type(Collection<String> elementaryTypes,
@@ -71,18 +78,18 @@ public final class Type {
         this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
         this.elemTypes = new HashSet<String>(elementaryTypes);
         this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
-
     }
 
     /**
      * Attention: If t is of Kind Variable, then the same variable String is
-     * assigned to the new type
+     * assigned to the new type. Or is it?
      * 
      * @param t
      */
     public Type(Type t) {
         this.elemTypes = t.getElementaryTypes();
         this.var = new Value(t.getVar(), new NameFactory());
+        this.typeConstraints = t.getTypeConstraints();
     }
 
     public Value getVar() {
@@ -97,9 +104,12 @@ public final class Type {
     public Type union(Type t, Environment env) {
         Type result = null;
         // if (kind == Kind.ELTYPES && t.getKind() == Kind.ELTYPES) {
-        Set<String> s = t.getElementaryTypes();
-        s.addAll(elemTypes);
-        result = new Type(s);
+        Set<String> resultingElementaryTypes = t.getElementaryTypes();
+        resultingElementaryTypes.addAll(elemTypes);
+
+        Set<TypeConstraint> resultingTypeConstraints = t.getTypeConstraints();
+        resultingTypeConstraints.addAll(typeConstraints);
+        result = new Type(resultingElementaryTypes, resultingTypeConstraints);
         return result;
     }
 
@@ -122,6 +132,10 @@ public final class Type {
     public boolean subsumes(Type t) {
         Set<String> ttypes = t.getElementaryTypes();
         return ttypes.containsAll(elemTypes);
+    }
+
+    public Set<TypeConstraint> getTypeConstraints() {
+        return this.typeConstraints;
     }
 
     public Set<String> getElementaryTypes() {
@@ -153,7 +167,7 @@ public final class Type {
 
     @Override
     public int hashCode() {
-        return Objects.hash(elemTypes, var);
+        return Objects.hash(elemTypes, var, typeConstraints);
     }
 
     public String toStringWithoutVariable() {
@@ -182,6 +196,12 @@ public final class Type {
     public String toString() {
         String s = toStringWithoutVariable();
         s += " " + var.toString();
+        if (!typeConstraints.isEmpty()) {
+            s += "\nConstraints:";
+            for (TypeConstraint constraint : typeConstraints) {
+                s += "\n" + constraint;
+            }
+        }
         return s;
     }
 }

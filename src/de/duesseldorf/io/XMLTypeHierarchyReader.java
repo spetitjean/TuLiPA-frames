@@ -104,10 +104,13 @@ public class XMLTypeHierarchyReader extends FileReader {
                     .getElementsByTagName("constraints");
             Set<TypeConstraint> constraints = retrieveConstraints(
                     constraintsForEntry);
-            if (!constraints.isEmpty()) {
-                System.out.println("created type constraints: " + constraints);
-            }
+            // if (!constraints.isEmpty()) {
+            // System.out.println("created type constraints: " + constraints);
+            // }
             Type t = new Type(eltypes, constraints);
+            if (!constraints.isEmpty()) {
+                System.out.println("created type : " + t);
+            }
             typeCollector.add(t);
         }
         return typeCollector;

@@ -18,6 +18,18 @@ public class TypeConstraint {
         this.val = val;
     }
 
+    public Set<String> getAttributes() {
+        return attributes;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public Value getVal() {
+        return val;
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

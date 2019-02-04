@@ -43,6 +43,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import de.duesseldorf.frames.ConstraintChecker;
 import de.duesseldorf.frames.Frame;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
@@ -53,7 +54,7 @@ public class TreeDeriver {
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
             List<String> semlabels, boolean needsAnchoring) {
-        // System.out.println("\n\nDeriving new tree");
+        System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
         try {
@@ -163,6 +164,9 @@ public class TreeDeriver {
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, true);
+            // TODO put this call in the right place
+            boolean allConstraintsSatisfied = new ConstraintChecker(newFrameSem,
+                    derivedTree.env).checkConstraints();
             if (newFrameSem == null) {
                 failed = true;
             } else {

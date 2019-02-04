@@ -81,7 +81,8 @@ public class TypeHierarchy {
             for (int i = union.getSpec(); i <= max; i++) {
                 for (Type type : tyHi.get(i)) {
                     if (union.subsumes(type)) {
-                        return new Type(type.getElementaryTypes(), resvar);
+                        return new Type(type.getElementaryTypes(), resvar,
+                                type.getTypeConstraints());
                     }
                 }
             }
