@@ -177,6 +177,33 @@ public class RRGNode implements Node {
     }
 
     /**
+     * returns true iff the node category and node type is the same
+     * and weakEquals is true for all children of this
+     * 
+     * @param other
+     * @return
+     */
+    public boolean weakEquals(RRGNode other) {
+        boolean baseCase = this.getCategory() == other.getCategory()
+                && this.getType() == other.getType();
+        if (!baseCase) {
+            return false;
+        }
+        // look at the children
+        if (this.getChildren().size() != other.getChildren().size()) {
+            return false;
+        }
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            RRGNode thisChild = (RRGNode) getChildren().get(i);
+            RRGNode otherChild = (RRGNode) other.getChildren().get(i);
+            if (!thisChild.weakEquals(otherChild)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @return a String representation of this node, without children
      */
     @Override

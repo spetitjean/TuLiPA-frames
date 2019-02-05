@@ -58,7 +58,6 @@ public class BracketedRRGReader {
                             nextLine).createTree();
                     log.info("created tree: " + treeFromCurrentLine);
                 }
-
                 nextLine = tsvFileReader.readLine();
             } catch (Exception e) {
                 log.info("exception while retrieving grammar entry: "
