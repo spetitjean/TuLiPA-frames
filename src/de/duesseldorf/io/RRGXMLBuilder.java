@@ -40,6 +40,12 @@ public class RRGXMLBuilder {
             entry.setAttribute(XMLRRGTag.NAME.StringVal(), parse.getId());
             Element tree = createTree(parse);
             entry.appendChild(tree);
+
+            // At the moment, we don't have a frame. But the empty element is
+            // needed to display on the WebGUI properly
+            Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
+            entry.appendChild(frame);
+
             rootGrammar.appendChild(entry);
         }
         doc.appendChild(rootGrammar);
@@ -52,7 +58,6 @@ public class RRGXMLBuilder {
 
             DOMSource source = new DOMSource(doc);
             transformer.transform(source, resultStream);
-            System.out.println("yay");
         } catch (Exception e) {
             System.err.println(
                     "Something went wrong during output transformation");
