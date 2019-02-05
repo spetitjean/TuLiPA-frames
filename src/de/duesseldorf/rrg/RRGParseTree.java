@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.rrg.extractor.GAShiftHandler;
 import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
@@ -49,8 +48,6 @@ public class RRGParseTree extends RRGTree {
      * and substituted when doing predictWrapping
      */
     private Map<RRGParseItem, RRGNode> wrappingSubTrees;
-
-    private GAShiftHandler addressShiftHandler;
 
     public RRGParseTree(Node root, String id) {
         super(root, id);
