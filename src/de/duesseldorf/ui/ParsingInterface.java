@@ -47,9 +47,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.io.RRGXMLBuilder;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -796,6 +800,25 @@ public class ParsingInterface {
             System.out.println(RRGTreeTools
                     .asStringWithNodeLabelsAndNodeType(rrgParseTree));
         }
+
+        // XML Output
+        if (op.check("xg")) {
+            StreamResult resultStream = (op.check("o"))
+                    ? new StreamResult(op.getVal("o"))
+                    : new StreamResult(System.out);
+
+            try {
+                RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(resultStream,
+                        result);
+                rrgXMLBuilder.buildAndWrite();
+            } catch (ParserConfigurationException e) {
+                System.err.println(
+                        "could not build parse results due to ParserConfigurationException");
+            }
+        } else {
+            System.out.println("no output file specified with option -o");
+        }
+
         long parsingTime = System.nanoTime() - startParsingTime;
 
         System.err.println(

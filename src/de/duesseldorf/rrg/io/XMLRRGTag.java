@@ -30,6 +30,7 @@ package de.duesseldorf.rrg.io;
  */
 public enum XMLRRGTag {
     // tags
+    GRAMMAR("grammar"), // root element
     ENTRY("entry"), // grammar entry
     FAMILY("family"), // family the entry belongs to
     TRACE("trace"), // trace
