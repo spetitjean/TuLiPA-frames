@@ -14,10 +14,12 @@ public class ConstraintChecker {
 
     private Frame frame;
     private Environment env;
+    private boolean debugMode;
 
-    public ConstraintChecker(Frame frame, Environment env) {
+    public ConstraintChecker(Frame frame, Environment env, boolean debugMode) {
         this.frame = frame;
         this.env = env;
+        this.debugMode = debugMode;
     }
 
     public Frame checkConstraints() {
@@ -97,25 +99,12 @@ public class ConstraintChecker {
         if (testUnify == null) {
             return null;
         }
+        if (debugMode) {
+            System.err.println("constraint checked: " + constraint);
+            System.err.println("on feature structure: " + fs);
+            System.err.println("resulting in a change to the frame semantics: "
+                    + testUnify);
+        }
         return testUnify;
-        // System.out.println(testUnify.getSize());
-        //
-        // for (Entry<String, Value> s : testUnify.getAVlist().entrySet()) {
-        // System.out.println("key: " + s.getKey());
-        // System.out.println("val: " + s.getValue());
-        // }
-        // // System.out
-        // // .println("at this point, set testUnify to the right attribute");
-        // // System.out.println("constraint met.");
-        // // System.out.println("constraint:\n" + constraint);
-        // System.out.println("fs:\n" + fs
-        // + "\n++++++++++++++++++++++++++++++++++++++++++++++\n\n");
-        // System.out.println("testUnify: " + testUnify + "\n\n");
-        // System.out.println(
-        // "problem: the constraint is met, but the amazement feature is"
-        // + " not put in the printed fs and it is not clear what the values
-        // mean.");
-        // System.out.println("the value is not even in the environment:");
-        // System.out.println(env.get(constraint.getVal().getVarVal()));
     }
 }

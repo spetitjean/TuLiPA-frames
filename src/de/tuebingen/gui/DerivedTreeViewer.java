@@ -65,7 +65,7 @@ public class DerivedTreeViewer {
 
         try {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
-            //System.out.println("GETTING VIEW TREES");
+            // System.out.println("GETTING VIEW TREES");
             Document derivationTrees = ParseTreeHandler
                     .extractDerivationTrees(d);
 
@@ -140,7 +140,8 @@ public class DerivedTreeViewer {
                     if (dTree.getFrameSem() != null) {
                         de.duesseldorf.frames.Frame frameSem = dTree
                                 .getFrameSem();
-                        semanticsString += FsTools.printFrame(frameSem);
+                        semanticsString += FsTools.printFrame(frameSem,
+                                debugMode);
                     }
                     // if (dTree.frames == null && dTree.getFrameSem() != null)
                     // {

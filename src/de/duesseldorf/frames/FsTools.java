@@ -122,15 +122,15 @@ public class FsTools {
      * @param fs
      * @return
      */
-    public static String printFS(Fs fs) {
+    public static String printFS(Fs fs, boolean printTypeConstraints) {
         String res = "<p>";
-        res += printFS(fs, 0, new HashSet<Value>());
+        res += printFS(fs, 0, new HashSet<Value>(), printTypeConstraints);
         res += "</p>";
         return res;
     }
 
     private static String printFS(Fs fs, int recursiondepth,
-            HashSet<Value> seen) {
+            HashSet<Value> seen, boolean printTypeConstraints) {
         StringBuffer sb = new StringBuffer();
         recursiondepth++;
         if (fs.isTyped()) {
@@ -139,10 +139,13 @@ public class FsTools {
             sb.append(nonBreakingSpace(recursiondepth));
             sb.append("type: ");
             sb.append(fs.getType().toStringWithoutVariable());
-            sb.append("<br>");
-            sb.append(nonBreakingSpace(recursiondepth));
-            sb.append("type constraints: " + fs.getType().getTypeConstraints());
-            sb.append("</br>");
+            if (printTypeConstraints) {
+                sb.append("<br>");
+                sb.append(nonBreakingSpace(recursiondepth));
+                sb.append("type constraints: "
+                        + fs.getType().getTypeConstraints());
+                sb.append("</br>");
+            }
 
         }
 
@@ -166,7 +169,7 @@ public class FsTools {
 
             if (v.is(Value.AVM)) {
                 sb.append(printFS(v.getAvmVal(), recursiondepth + k.length(),
-                        seen));
+                        seen, printTypeConstraints));
             } else if (v.is(Value.VAL)) {
                 sb.append(v.getSVal());
                 sb.append("</br>");
@@ -201,10 +204,11 @@ public class FsTools {
         return sb.toString();
     }
 
-    public static String printFrame(Frame frameSem) {
+    public static String printFrame(Frame frameSem,
+            boolean printTypeConstraints) {
         StringBuffer sb = new StringBuffer();
         for (Fs fs : frameSem.getFeatureStructures()) {
-            sb.append(printFS(fs));
+            sb.append(printFS(fs, printTypeConstraints));
         }
         for (Relation rel : frameSem.getRelations()) {
             sb.append(printRelation(rel));
