@@ -78,7 +78,7 @@ public class XMLTypeHierarchyReader extends FileReader {
         NodeList entries = e.getElementsByTagName("entry");
         List<Type> typeCollector = getTypesfromNL(entries);
         TypeHierarchy result = new TypeHierarchy(typeCollector);
-        System.out.println(result + "\n\n\n");
+        // System.out.println(result + "\n\n\n");
         return result;
     }
 
@@ -109,9 +109,9 @@ public class XMLTypeHierarchyReader extends FileReader {
             // System.out.println("created type constraints: " + constraints);
             // }
             Type t = new Type(eltypes, constraints);
-            if (!constraints.isEmpty()) {
-                System.out.println("created type : " + t);
-            }
+            // if (!constraints.isEmpty()) {
+            // System.out.println("created type : " + t);
+            // }
             typeCollector.add(t);
         }
         return typeCollector;
