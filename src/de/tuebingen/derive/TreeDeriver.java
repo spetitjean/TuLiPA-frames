@@ -165,10 +165,9 @@ public class TreeDeriver {
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, true);
             // TODO put this call in the right place
-            boolean allConstraintsSatisfied = new ConstraintChecker(newFrameSem,
-                    derivedTree.env).checkConstraints();
-            System.out.println("satisfied constraints: "
-                    + Boolean.toString(allConstraintsSatisfied));
+            newFrameSem = new ConstraintChecker(newFrameSem, derivedTree.env)
+                    .checkConstraints();
+
             if (newFrameSem == null) {
                 failed = true;
             } else {

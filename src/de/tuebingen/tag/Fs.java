@@ -167,6 +167,19 @@ public class Fs {
     }
 
     /**
+     * like setFeat, but if the val is already in there, the new val is stored
+     * 
+     * @param key
+     * @param val
+     */
+    public void replaceFeat(String key, Value val) {
+        if (AVlist.containsKey(key)) {
+            AVlist.remove(key);
+        }
+        AVlist.put(key, val);
+    }
+
+    /**
      * method that lookup a feature in the FS
      */
     public Value getFeat(String key) {
