@@ -165,7 +165,6 @@ public class WorkbenchLoader {
             System.err.println("RCG grammar loading time: "
                     + (loadedTime) / (Math.pow(10, 9)) + " sec.");
         } else if (op.check("rrg")) { // RRG-parsing
-
             if (op.check("rrgbrin")) {
                 BracketedRRGReader brReader = new BracketedRRGReader(grammar);
                 g = brReader.parseRRG();

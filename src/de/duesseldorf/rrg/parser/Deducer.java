@@ -43,13 +43,14 @@ public class Deducer {
      * @param rightItem
      * @return
      */
-    public RRGParseItem applyCombineSisters(RRGParseItem leftItem, RRGParseItem rightItem) {
+    public RRGParseItem applyCombineSisters(RRGParseItem leftItem,
+            RRGParseItem rightItem) {
         Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
-        return new RRGParseItem.Builder().tree(rightItem.getTree()).node(rightItem.getNode())
-                                         .nodepos(RRGParseItem.NodePos.TOP)
-                                         .start(leftItem.startPos()).end(rightItem.getEnd())
-                                         .gaps(gaps).ws(false).build();
+        return new RRGParseItem.Builder().tree(rightItem.getTree())
+                .node(rightItem.getNode()).nodepos(RRGParseItem.NodePos.TOP)
+                .start(leftItem.startPos()).end(rightItem.getEnd()).gaps(gaps)
+                .ws(false).build();
     }
 
     /**
@@ -60,7 +61,8 @@ public class Deducer {
      * @return
      */
     public RRGParseItem applyMoveUp(RRGParseItem currentItem) {
-        GornAddress motheraddress = currentItem.getNode().getGornaddress().mother();
+        GornAddress motheraddress = currentItem.getNode().getGornaddress()
+                .mother();
         RRGNode mothernode = currentItem.getTree().findNode(motheraddress);
         boolean newwsflag = mothernode.getType().equals(RRGNodeType.DDAUGHTER);
         Set<RRGParseItem> backpointers = new HashSet<RRGParseItem>();
@@ -69,11 +71,10 @@ public class Deducer {
         // Debug
         // System.out.println(motheraddress + " is the mother of "
         // + currentItem.getNode().getGornaddress());
-        return new RRGParseItem.Builder().tree(currentItem.getTree()).node(mothernode)
-                                         .nodepos(RRGParseItem.NodePos.BOT)
-                                         .start(currentItem.startPos())
-                                         .end(currentItem.getEnd()).gaps(currentItem.getGaps())
-                                         .ws(newwsflag).build();
+        return new RRGParseItem.Builder().tree(currentItem.getTree())
+                .node(mothernode).nodepos(RRGParseItem.NodePos.BOT)
+                .start(currentItem.startPos()).end(currentItem.getEnd())
+                .gaps(currentItem.getGaps()).ws(newwsflag).build();
     }
 
     /**
@@ -85,11 +86,10 @@ public class Deducer {
      */
     public RRGParseItem applyNoLeftSister(RRGParseItem currentItem) {
         return new RRGParseItem.Builder().tree(currentItem.getTree())
-                                         .node(currentItem.getNode())
-                                         .nodepos(RRGParseItem.NodePos.TOP)
-                                         .start(currentItem.startPos())
-                                         .end(currentItem.getEnd()).gaps(currentItem.getGaps())
-                                         .ws(currentItem.getwsflag()).build();
+                .node(currentItem.getNode()).nodepos(RRGParseItem.NodePos.TOP)
+                .start(currentItem.startPos()).end(currentItem.getEnd())
+                .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
+                .build();
     }
 
     /**
@@ -101,17 +101,16 @@ public class Deducer {
      * @param auxTreeRoot
      * @return
      */
-    public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister, RRGParseItem auxTreeRoot) {
+    public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister,
+            RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
 
         return new RRGParseItem.Builder().tree(targetSister.getTree())
-                                         .node(targetSister.getNode())
-                                         .nodepos(targetSister.getNodePos())
-                                         .start(auxTreeRoot.startPos())
-                                         .end(targetSister.getEnd()).gaps(gaps).ws(false)
-                                         .build();
+                .node(targetSister.getNode()).nodepos(targetSister.getNodePos())
+                .start(auxTreeRoot.startPos()).end(targetSister.getEnd())
+                .gaps(gaps).ws(false).build();
     }
 
     /**
@@ -123,28 +122,28 @@ public class Deducer {
      * @param auxTreeRoot
      * @return
      */
-    public RRGParseItem applyRightAdjoin(RRGParseItem target, RRGParseItem auxTreeRoot) {
+    public RRGParseItem applyRightAdjoin(RRGParseItem target,
+            RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
 
-        System.out.print(target.getTree());
-        return new RRGParseItem.Builder().tree(target.getTree()).node(target.getNode())
-                                         .nodepos(target.getNodePos()).start(target.startPos())
-                                         .end(auxTreeRoot.getEnd()).gaps(gaps)
-                                         .ws(target.getwsflag()).build();
+        // System.out.print(target.getTree());
+        return new RRGParseItem.Builder().tree(target.getTree())
+                .node(target.getNode()).nodepos(target.getNodePos())
+                .start(target.startPos()).end(auxTreeRoot.getEnd()).gaps(gaps)
+                .ws(target.getwsflag()).build();
     }
 
     public RRGParseItem applyCompleteWrapping(RRGParseItem targetRootItem,
-                                              RRGParseItem fillerddaughterItem, Gap gap) {
+            RRGParseItem fillerddaughterItem, Gap gap) {
         Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
         return new RRGParseItem.Builder().tree(fillerddaughterItem.getTree())
-                                         .node(fillerddaughterItem.getNode())
-                                         .nodepos(fillerddaughterItem.getNodePos())
-                                         .start(targetRootItem.startPos())
-                                         .end(targetRootItem.getEnd()).gaps(gaps).ws(false)
-                                         .build();
+                .node(fillerddaughterItem.getNode())
+                .nodepos(fillerddaughterItem.getNodePos())
+                .start(targetRootItem.startPos()).end(targetRootItem.getEnd())
+                .gaps(gaps).ws(false).build();
     }
 }

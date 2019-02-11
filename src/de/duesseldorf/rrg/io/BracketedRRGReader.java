@@ -11,16 +11,20 @@ import java.util.List;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 
 public class BracketedRRGReader {
 
     File grammar = null;
     private SystemLogger log;
+    private int treeIdCount;
+    private boolean removeDoubleTrees = true;
 
     public BracketedRRGReader(File grammar) {
         this.grammar = grammar;
         this.log = new SystemLogger(System.err, true);
+        this.treeIdCount = 0;
     }
 
     /**
@@ -56,7 +60,13 @@ public class BracketedRRGReader {
                     treeStrings.add(nextLine);
                     RRGTree treeFromCurrentLine = new TreeFromBracketedStringRetriever(
                             nextLine).createTree();
-                    log.info("created tree: " + treeFromCurrentLine);
+                    // log.info("created tree: " + treeFromCurrentLine);
+                    String lexLabel = new LinkedList<String>(
+                            treeFromCurrentLine.getLexNodes().keySet()).get(0)
+                                    .toString();
+                    treeFromCurrentLine.setId(lexLabel + "_" + treeIdCount);
+                    treeIdCount++;
+                    resultingTrees.add(treeFromCurrentLine);
                 }
                 nextLine = tsvFileReader.readLine();
             } catch (Exception e) {
@@ -73,7 +83,34 @@ public class BracketedRRGReader {
         // for (String treeString : treeStrings) {
         // System.out.println(treeString);
         // }
-        System.exit(1);
+        if (removeDoubleTrees) {
+            resultingTrees = removeDoubleTrees(resultingTrees);
+        }
         return new RRG(resultingTrees);
+    }
+
+    private Set<RRGTree> removeDoubleTrees(Set<RRGTree> trees) {
+        Set<RRGTree> result = new HashSet<RRGTree>();
+        for (RRGTree treeFromResource : trees) {
+            if (result.isEmpty()) {
+                result.add(treeFromResource);
+                continue;
+            }
+            boolean treeIsAlreadyIn = false;
+            for (RRGTree treeFromResult : result) {
+                if (((RRGNode) treeFromResult.getRoot())
+                        .weakEquals((RRGNode) treeFromResource.getRoot())) {
+                    treeIsAlreadyIn = true;
+                    // log.info("found double tree: " + treeFromResource);
+                    break;
+                }
+            }
+            if (!treeIsAlreadyIn) {
+                result.add(treeFromResource);
+            }
+        }
+        log.info("number of equal trees that were filtered out: "
+                + (trees.size() - result.size()));
+        return result;
     }
 }

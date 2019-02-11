@@ -184,9 +184,10 @@ public class RRGNode implements Node {
      * @return
      */
     public boolean weakEquals(RRGNode other) {
-        boolean baseCase = this.getCategory() == other.getCategory()
-                && this.getType() == other.getType();
+        boolean baseCase = this.getCategory().equals(other.getCategory())
+                && this.getType().equals(other.getType());
         if (!baseCase) {
+            // System.out.println("no basecase: " + this + " VS " + other);
             return false;
         }
         // look at the children

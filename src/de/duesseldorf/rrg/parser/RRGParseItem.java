@@ -42,8 +42,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     private final Set<Gap> gaps;
     private final boolean ws;
 
-    private RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos, int start, int end,
-                         Set<Gap> gaps, boolean ws) {
+    private RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos, int start,
+            int end, Set<Gap> gaps, boolean ws) {
         this.tree = tree;
         this.node = node;
         this.nodepos = nodepos;
@@ -103,8 +103,9 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             gapstr += gap.toString();
         }
         gapstr += "]";
-        String itemstr = "[" + this.tree.getRoot() + " " + this.tree
-                .getId() + ", " + this.node + ", " + this.nodepos + ", " + this.start + ", " + this.end + ", " + gapstr + ", " + ws + "]";
+        String itemstr = "[" + this.tree.getId() + ", " + this.node + ", "
+                + this.nodepos + ", " + this.start + ", " + this.end + ", "
+                + gapstr + ", " + ws + "]";
 
         return itemstr;
     }
@@ -115,8 +116,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         }
         if (o.startPos() < this.startPos()) {
             return 1;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -132,7 +132,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     public static class Builder {
-        // all of the properties are initialized with their default (underspecified) values).
+        // all of the properties are initialized with their default
+        // (underspecified) values).
         private RRGTree tree = null;
         private RRGNode node = null;
         private NodePos nodepos = null;
@@ -180,12 +181,13 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         }
 
         public RRGParseItem build() {
-           /* System.out.println();
-            System.out.println();
-            //     System.out.println(tree.toString());
-            System.out.println();
-            System.out.println();
-*/
+            /*
+             * System.out.println();
+             * System.out.println();
+             * // System.out.println(tree.toString());
+             * System.out.println();
+             * System.out.println();
+             */
             return new RRGParseItem(tree, node, nodepos, start, end, gaps, ws);
         }
     }

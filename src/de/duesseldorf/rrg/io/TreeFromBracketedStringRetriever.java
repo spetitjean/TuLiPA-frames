@@ -1,6 +1,9 @@
 
 package de.duesseldorf.rrg.io;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
@@ -71,6 +74,10 @@ public class TreeFromBracketedStringRetriever {
             // currentGA = currentGA.ithDaughter(0);
             createTreeFromBracketedString(
                     split[1].substring(split[1].indexOf(" ")));
+
+            // here, it's necessary to create a copy to retrieve the special
+            // nodes
+            resultingTree = new RRGTree(resultingTree);
             return resultingTree;
         }
         return null;
@@ -78,23 +85,27 @@ public class TreeFromBracketedStringRetriever {
 
     private void createTreeFromBracketedString(
             String remainingBracketedSubTree) {
-        // log.info("create tree from " + remainingBracketedSubTree);
+        log.info("create tree from Br String called with "
+                + remainingBracketedSubTree + " current GA: " + currentGA);
         if (remainingBracketedSubTree.startsWith("(")) {
             remainingBracketedSubTree = remainingBracketedSubTree.substring(1);
             RRGNode motherOfTheNewNode = resultingTree.findNode(currentGA);
             // check currentGA to add to the right place
             int newDaughterIndex = motherOfTheNewNode.getChildren().size();
+            // adapt the GA to change position in tree for next round
             currentGA = currentGA.ithDaughter(newDaughterIndex);
 
             // create node
             String[] remainingBracketedSubTreeSplit = remainingBracketedSubTree
                     .split(" ");
+            boolean isASubstNode = !(remainingBracketedSubTreeSplit[1]
+                    .startsWith("(")
+                    || remainingBracketedSubTreeSplit[1].startsWith("<"));
             RRGNode node = createNodeFromString(
-                    remainingBracketedSubTreeSplit[0]);
+                    remainingBracketedSubTreeSplit[0], isASubstNode);
             // add node to the tree
             motherOfTheNewNode.addRightmostChild(node);
 
-            // adapt the GA to change position in tree for next round
             createTreeFromBracketedString(remainingBracketedSubTree
                     .substring(remainingBracketedSubTreeSplit[0].length()));
             return;
@@ -113,8 +124,8 @@ public class TreeFromBracketedStringRetriever {
         } else if (remainingBracketedSubTree.startsWith("<>")) {
             // append lexical element to the right place
             RRGNode motherOfLex = resultingTree.findNode(currentGA);
-            currentGA = currentGA.ithDaughter(0);
-            lexicalElement.setGornAddress(currentGA);
+            // currentGA = currentGA.ithDaughter(0);
+            lexicalElement.setGornAddress(currentGA.ithDaughter(0));
             motherOfLex.addRightmostChild(lexicalElement);
             createTreeFromBracketedString(
                     remainingBracketedSubTree.substring(2));
@@ -131,17 +142,30 @@ public class TreeFromBracketedStringRetriever {
         String rootNode = bracketedTree.substring(
                 bracketedTree.indexOf("(") + 1, bracketedTree.indexOf(" "));
         // create tree
-        return createNodeFromString(rootNode);
+        return createNodeFromString(rootNode, false);
     }
 
-    private RRGNode createNodeFromString(String nodeStringFromResource) {
+    /**
+     * 
+     * @param nodeStringFromResource
+     *            the node label to create a node from
+     * @param nodeIsRoot
+     *            if the node is a root, NP and N nodes are STD and not SUBST
+     *            nodes
+     * @return
+     */
+    private RRGNode createNodeFromString(String nodeStringFromResource,
+            boolean couldBeASubstNode) {
         // note that the lexical element is not handled here
-
+        List<String> substNodeLabels = Arrays.asList("NP", "N");
         RRGNodeType nodeType = null;
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;
             nodeStringFromResource = nodeStringFromResource.substring(0,
                     nodeStringFromResource.lastIndexOf("*"));
+        } else if (couldBeASubstNode
+                && substNodeLabels.contains(nodeStringFromResource)) {
+            nodeType = RRGNodeType.SUBST;
         } else {
             nodeType = RRGNodeType.STD;
         }

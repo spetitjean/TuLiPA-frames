@@ -38,6 +38,7 @@ package de.duesseldorf.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -789,8 +790,9 @@ public class ParsingInterface {
         boolean verbose = op.check("v");
 
         // Tokenizing
-        List<String> toksentence = tokenize(op, sentence, verbose);
-
+        // tokenizer is a piece of crap, deletes full stops.
+        // List<String> toksentence = tokenize(op, sentence, verbose);
+        List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
         long startParsingTime = System.nanoTime();
         RRGParser rrgparser = new RRGParser(sit);
         Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);

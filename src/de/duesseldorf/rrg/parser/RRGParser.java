@@ -12,6 +12,7 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 
@@ -59,10 +60,18 @@ public class RRGParser {
     }
 
     public Set<RRGParseTree> parseSentence(List<String> toksentence) {
+        System.out.println("start parsing sentence " + toksentence);
+        System.out.println("number of trees: "
+                + ((RRG) situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size());
         // Axioms through scanning:
         scan(toksentence);
+
+        for (RRGParseItem item : agenda) {
+            System.out.println(RRGTreeTools
+                    .recursivelyPrintNode(item.getTree().getRoot()));
+        }
         // Debug:
         this.requirementFinder = new RequirementFinder();
 
@@ -72,7 +81,7 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
-            // System.out.println("step: " + i);
+            System.out.println("step: " + i);
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
@@ -86,10 +95,11 @@ public class RRGParser {
             predictwrapping(currentItem);
             combinesisters(currentItem);
             completewrapping(currentItem);
+
             // System.out.println("Agenda size: " + agenda.size());
         }
         if (verbosePrintsToStdOut) {
-            System.out.println("Done parsing. \n" + chart.toString());
+            // System.out.println("Done parsing. \n" + chart.toString());
         }
         // extract parse results from chart
         ParseForestExtractor extractor = new ParseForestExtractor(chart,
@@ -320,6 +330,7 @@ public class RRGParser {
     private void scan(List<String> sentence) {
         // Look at all trees
         for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+            // System.out.println("looking at tree: " + tree.getLexNodes());
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

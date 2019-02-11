@@ -107,7 +107,6 @@ public class RRGTree {
                                 + toString());
             }
         }
-
         for (Node daughter : root.getChildren()) {
             retrieveSpecialNodes((RRGNode) daughter);
         }
@@ -180,6 +179,10 @@ public class RRGTree {
      */
     public String getId() {
         return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
