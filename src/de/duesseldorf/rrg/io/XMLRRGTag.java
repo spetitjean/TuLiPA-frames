@@ -29,6 +29,7 @@ package de.duesseldorf.rrg.io;
  *
  */
 public enum XMLRRGTag {
+
     // tags
     GRAMMAR("grammar"), // root element
     ENTRY("entry"), // grammar entry

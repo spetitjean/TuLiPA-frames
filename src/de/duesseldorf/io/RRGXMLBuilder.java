@@ -1,5 +1,7 @@
 package de.duesseldorf.io;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,11 +16,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.io.XMLRRGTag;
 import de.tuebingen.tree.Node;
 
 public class RRGXMLBuilder {
+
+    static Map<RRGNode.RRGNodeType, XMLRRGTag> nodeTypesToXMLTags = new HashMap<RRGNode.RRGNodeType, XMLRRGTag>();
+    static {
+        nodeTypesToXMLTags.put(RRGNodeType.ANCHOR, XMLRRGTag.XMLANCHORNode);
+        nodeTypesToXMLTags.put(RRGNodeType.DDAUGHTER,
+                XMLRRGTag.XMLDDAUGHTERNode);
+        nodeTypesToXMLTags.put(RRGNodeType.LEX, XMLRRGTag.XMLLEXNode);
+        nodeTypesToXMLTags.put(RRGNodeType.STAR, XMLRRGTag.XMLSISADJFOOTNode);
+        nodeTypesToXMLTags.put(RRGNodeType.STD, XMLRRGTag.XMLSTDNode);
+        nodeTypesToXMLTags.put(RRGNodeType.SUBST, XMLRRGTag.XMLSUBSTNode);
+    }
 
     private Set<RRGParseTree> parseResult;
     private Document doc;
@@ -76,8 +90,9 @@ public class RRGXMLBuilder {
     private Element createTreeRec(RRGNode root) {
         Element result = doc.createElement(XMLRRGTag.NODE.StringVal());
         // build the node itself
-        result.setAttribute(XMLRRGTag.TYPE.StringVal(),
-                root.getType().toString());
+        String nodeTypeString = nodeTypesToXMLTags.get(root.getType())
+                .StringVal();
+        result.setAttribute(XMLRRGTag.TYPE.StringVal(), nodeTypeString);
         Element narg = createnarg(root);
         result.appendChild(narg);
 
