@@ -157,7 +157,7 @@ public class TreeFromBracketedStringRetriever {
     private RRGNode createNodeFromString(String nodeStringFromResource,
             boolean couldBeASubstNode) {
         // note that the lexical element is not handled here
-        List<String> substNodeLabels = Arrays.asList("NP", "N");
+        List<String> substNodeLabels = Arrays.asList("NP", "N", "RP");
         RRGNodeType nodeType = null;
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;
