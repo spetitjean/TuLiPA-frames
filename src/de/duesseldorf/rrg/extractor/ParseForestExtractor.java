@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.Backpointer;
 import de.duesseldorf.rrg.parser.Operation;
@@ -46,9 +47,9 @@ import de.tuebingen.util.TextUtilities;
 public class ParseForestExtractor {
 
     private RRGParseChart parseChart;
-    Set<RRGParseTree> resultingParses;
+    private Set<RRGTree> resultingParses;
 
-    public boolean verbosePrintsToStdOut = false;
+    public boolean verbosePrintsToStdOut = true;
 
     private Set<Operation> sameElemTree = new HashSet<Operation>(Arrays
             .asList(Operation.COMBINESIS, Operation.MOVEUP, Operation.NLS));
@@ -58,7 +59,7 @@ public class ParseForestExtractor {
             List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
-        resultingParses = new HashSet<RRGParseTree>();
+        resultingParses = new HashSet<RRGTree>();
     }
 
     public Set<RRGParseTree> extractParseTrees() {
@@ -74,29 +75,11 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         }
-        Set<RRGParseTree> resultingParsesFiltered = filterDoublesByIdMap();
+        Set<RRGParseTree> resultingParsesFiltered = RRGTools.convertTreeSet(
+                RRGTools.removeDoubleTreesByWeakEquals(resultingParses));
+        // .filterDoublesByIdMap(resultingParses);
         return resultingParsesFiltered;
-    }
-
-    private Set<RRGParseTree> filterDoublesByIdMap() {
-        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
-        for (RRGParseTree candidate : resultingParses) {
-            if (result.isEmpty()) {
-                result.add(candidate);
-            } else {
-                boolean addCandidate = true;
-                for (RRGParseTree alreadyFilteredTree : result) {
-                    if (alreadyFilteredTree.getIdMap()
-                            .equals(candidate.getIdMap())) {
-                        addCandidate = false;
-                    }
-                }
-                if (addCandidate) {
-                    result.add(candidate);
-                }
-            }
-        }
-        return result;
+        // return RRGTools.convertTreeSet(resultingParses);
     }
 
     /**
@@ -182,7 +165,19 @@ public class ParseForestExtractor {
         // System.out.println(parseInThisStep);
         // }
 
+        Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep = addExtractionStepToAllTrees(
+                parsesInThisStep, extractionstep);
         return parsesInThisStep;
+    }
+
+    private Set<RRGParseTree> addExtractionStepToAllTrees(
+            Set<RRGParseTree> parsesInThisStep, ExtractionStep e) {
+        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
+        for (RRGParseTree tree : parsesInThisStep) {
+            tree.addExtractionStep(e);
+            result.add(tree);
+        }
+        return result;
     }
 
     private Set<RRGParseTree> extractPredictWrapping(
@@ -271,113 +266,46 @@ public class ParseForestExtractor {
                 System.out.println(Operation.RIGHTADJOIN);
             }
             Set<RRGParseTree> tmpResult = new HashSet<RRGParseTree>();
-
             // First: find both items
             // Second: extract the right one (might cause problem when the
             // consequent item of this extraction step was the left sister in a
             // ComBSis step and was extracted there first
             RRGParseItem auxRootItem, targetItem;
-            for (List<RRGParseItem> rightAdjAntecedentList : rightAdjAntecedents) {
-                if ((((RRGParseItem) rightAdjAntecedentItems.get(0)).getNode()
-                        .getType().equals(RRGNodeType.STAR))) {
-                    auxRootItem = ((RRGParseItem) rightAdjAntecedentItems
-                            .get(0));
-                    targetItem = ((RRGParseItem) rightAdjAntecedentItems
-                            .get(1));
-                } else {
-                    auxRootItem = ((RRGParseItem) rightAdjAntecedentItems
-                            .get(1));
-                    targetItem = ((RRGParseItem) rightAdjAntecedentItems
-                            .get(0));
-                }
-
-                RRGParseTree nextStepParseTree = extractionstep
-                        .getCurrentParseTree()
-                        .sisterAdjoin(auxRootItem.getTree(),
-                                extractionstep.getGAInParseTree().mother(),
-                                extractionstep.getGAInParseTree()
-                                        .isIthDaughter() + 1);
-                // extract aux tree:
-                ExtractionStep nextStep = new ExtractionStep(auxRootItem,
-                        extractionstep.getGAInParseTree().mother(),
-                        nextStepParseTree,
-                        extractionstep.goToRightWhenGoingDown + 1);
-
-                tmpResult = extract(nextStep);
-                // extract target:
-                for (RRGParseTree rrgParseTree : tmpResult) {
-                    nextStep = new ExtractionStep(targetItem,
-                            extractionstep.getGAInParseTree(), rrgParseTree);
-                    parsesInThisRightAdjStep.addAll(extract(nextStep));
-                }
+            if ((((RRGParseItem) rightAdjAntecedentItems.get(0)).getNode()
+                    .getType().equals(RRGNodeType.STAR))) {
+                auxRootItem = ((RRGParseItem) rightAdjAntecedentItems.get(0));
+                targetItem = ((RRGParseItem) rightAdjAntecedentItems.get(1));
+            } else {
+                auxRootItem = ((RRGParseItem) rightAdjAntecedentItems.get(1));
+                targetItem = ((RRGParseItem) rightAdjAntecedentItems.get(0));
             }
-            // first, do the actual sister adjunction
-            // RRGTree adjoiningTree;
-            // if ((((RRGParseItem)
-            // rightAdjAntecedentItems.get(0)).getNode()
-            // .getType().equals(RRGNodeType.STAR))) {
-            // adjoiningTree = ((RRGParseItem) rightAdjAntecedentItems
-            // .get(0)).getTree();
-            // } else {
-            // adjoiningTree = ((RRGParseItem) rightAdjAntecedentItems
-            // .get(1)).getTree();
-            // }
-            // System.out.println(
-            // "before sisadj: " + extractionstep.getCurrentParseTree());
-            // System.out.println(
-            // "sisadj at " + extractionstep.getGAInParseTree().mother());
-            // System.out.println("as daughter: "
-            // + (extractionstep.getGAInParseTree().isIthDaughter() + 1));
-            // RRGParseTree nextStepParseTree = extractionstep
-            // .getCurrentParseTree().sisterAdjoin(adjoiningTree,
-            // extractionstep.getGAInParseTree().mother(),
-            // extractionstep.getGAInParseTree().isIthDaughter()
-            // + 1);
-            // System.out.println("after: " + nextStepParseTree);
-            // tmpResult.add(nextStepParseTree);
-            // for (RRGParseTree parseTree : tmpResult) {
+            RRGParseTree nextStepParseTree = extractionstep
+                    .getCurrentParseTree().sisterAdjoin(auxRootItem.getTree(),
+                            extractionstep.getGAInParseTree().mother(),
+                            extractionstep.getGAInParseTree().isIthDaughter()
+                                    + 1);
+            // extract aux tree:
+            ExtractionStep nextStep = new ExtractionStep(auxRootItem,
+                    extractionstep.getGAInParseTree().mother(),
+                    nextStepParseTree,
+                    extractionstep.goToRightWhenGoingDown + 1);
 
-            // for (int i = 0; i < rightAdjAntecedentItems.size(); i++) {
-            // RRGParseItem rightAdjAntecedentItem =
-            // (RRGParseItem) rightAdjAntecedentItems
-            // .get(i);
-            // ExtractionStep nextStep;
-            // GornAddress GAtoExtractFrom;
-            // boolean antItemIsAdjoiningTree = rightAdjAntecedentItem
-            // .getNode().getType().equals(RRGNodeType.STAR);
-            // int goToRightWhenGoingDown = 0;
-            // if (antItemIsAdjoiningTree) { // extraction of the adjoining
-            // // tree
-            // GAtoExtractFrom = extractionstep.getGAInParseTree()
-            // .mother();
-            // goToRightWhenGoingDown = 1;
-            // } else { // continue extraction of the target tree
-            // GAtoExtractFrom = extractionstep.getGAInParseTree();
-            // }
-            // System.out.println(
-            // "the GAs have changed. Consider GA shifting again!");
-            // nextStep = new ExtractionStep(rightAdjAntecedentItem,
-            // GAtoExtractFrom, nextStepParseTree,
-            // goToRightWhenGoingDown);
-            // // System.out.println("next round: " + nextStep);
-            // if (i == 0) {
-            // tmpResult = extract(nextStep);
-            // } else {
-            // parsesInThisRightAdjStep.addAll(extract(nextStep));
-            // }
-            //
-            // }
-            // }
+            tmpResult = extract(nextStep);
+            // extract target:
+            for (RRGParseTree rrgParseTree : tmpResult) {
+                nextStep = new ExtractionStep(targetItem,
+                        extractionstep.getGAInParseTree(), rrgParseTree);
+                parsesInThisRightAdjStep.addAll(extract(nextStep));
+            }
         }
-
         return parsesInThisRightAdjStep;
-
     }
 
     private Set<RRGParseTree> extractLeftAdjoin(
             Set<List<RRGParseItem>> leftAdjAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisLeftAdjStep = new HashSet<RRGParseTree>();
+        // for all possible antecedents
         for (List<RRGParseItem> leftAdjAntecedentItems : leftAdjAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.LEFTADJOIN);
@@ -387,86 +315,33 @@ public class ParseForestExtractor {
             // tmpResult.add(extractionstep.getCurrentParseTree());
 
             RRGParseItem auxRootItem, rightSisItem;
-            if (((RRGParseItem) leftAdjAntecedentItems.get(0))
-                    .startPos() <= ((RRGParseItem) leftAdjAntecedentItems
-                            .get(1)).startPos()) {
+            if ((((RRGParseItem) leftAdjAntecedentItems.get(0)).getNode()
+                    .getType().equals(RRGNodeType.STAR))) {
                 auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
                 rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
             } else {
                 auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
                 rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
             }
-
+            // first extract the right sister
             ExtractionStep nextStep = new ExtractionStep(rightSisItem,
                     extractionstep.getGAInParseTree(),
                     extractionstep.getCurrentParseTree());
             tmpResult = extract(nextStep);
+            System.out.println("aux root:  " + auxRootItem);
+            System.out.println("right sis: " + rightSisItem);
+            // then extract the left sister
             for (RRGParseTree rrgParseTree : tmpResult) {
+                int position = Math.max(
+                        extractionstep.getGAInParseTree().isIthDaughter(), 0);
                 RRGParseTree nextStepParseTree = rrgParseTree.sisterAdjoin(
                         auxRootItem.getTree(),
-                        extractionstep.getGAInParseTree().mother(), 0);
+                        extractionstep.getGAInParseTree().mother(), position);
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
                         nextStepParseTree);
                 parsesInThisLeftAdjStep.addAll(extract(nextStep));
             }
-            // first, do the actual sister adjunction
-            // RRGTree adjoiningTree;
-            // if ((((RRGParseItem)
-            // leftAdjAntecedentItems.get(0)).getNode()
-            // .getType().equals(RRGNodeType.STAR))) {
-            // adjoiningTree = ((RRGParseItem) leftAdjAntecedentItems
-            // .get(0)).getTree();
-            // } else {
-            // adjoiningTree = ((RRGParseItem) leftAdjAntecedentItems
-            // .get(1)).getTree();
-            // }
-            // System.out.println(
-            // "before sisadj: " + extractionstep.getCurrentParseTree());
-            // System.out.println("adjoin this tree at: "
-            // + extractionstep.getGAInParseTree().mother() + ":\n"
-            // + adjoiningTree);
-            // RRGParseTree nextStepParseTree = extractionstep
-            // .getCurrentParseTree().sisterAdjoin(adjoiningTree,
-            // extractionstep.getGAInParseTree().mother(), 0);
-            // System.out.println("after: " + nextStepParseTree);
-            // tmpResult.add(nextStepParseTree);
-            //
-            // for (RRGParseTree parseTree : tmpResult) {
-            // for (int i = 0; i < leftAdjAntecedentItems.size(); i++) {
-            // RRGParseItem leftAdjAntecedentItem = (RRGParseItem)
-            // leftAdjAntecedentItems
-            // .get(i);
-            // ExtractionStep nextStep;
-            // GornAddress GAtoExtractFrom;
-            // int goToRightWhenGoingDown = 0;
-            // boolean antItemIsAdjoiningTree = leftAdjAntecedentItem
-            // .getNode().getType().equals(RRGNodeType.STAR);
-            // if (antItemIsAdjoiningTree) { // extraction of the adjoining
-            // // tree
-            // GAtoExtractFrom = extractionstep.getGAInParseTree()
-            // .mother();
-            // } else { // continue extraction of the target tree
-            // // goToRightWhenGoingDown = 1;
-            // GAtoExtractFrom = extractionstep.getGAInParseTree()
-            // .rightSister();
-            // // nextStepParseTree = parseTree;
-            // }
-            // nextStep = new ExtractionStep(leftAdjAntecedentItem,
-            // GAtoExtractFrom, nextStepParseTree,
-            // goToRightWhenGoingDown);
-            // System.out.println("next round: " + nextStep);
-            // // TODO problem: When extracting sisadj or wrapping as well,
-            // // probably, the GA to extract from has changing conditions
-            // // because material can be added in places affecting the GA.
-            // if (i == 0) {
-            // tmpResult = extract(nextStep);
-            // } else {
-            // parsesInThisLeftAdjStep.addAll(extract(nextStep));
-            // }
-            //
-            // }
-            // }
         }
         return parsesInThisLeftAdjStep;
     }

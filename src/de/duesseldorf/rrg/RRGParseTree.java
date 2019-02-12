@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.extractor.ExtractionStep;
 import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
@@ -42,6 +43,7 @@ import de.tuebingen.tree.Node;
  */
 public class RRGParseTree extends RRGTree {
 
+    private List<ExtractionStep> extractionsteps;
     private Map<GornAddress, String> idMap;
     /**
      * A stack of the subtrees of wrapping trees from a ddaughter downwards. A
@@ -55,12 +57,14 @@ public class RRGParseTree extends RRGTree {
         this.idMap = new HashMap<GornAddress, String>();
         idMap.put(((RRGNode) root).getGornaddress(), id);
         this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
+        this.extractionsteps = new LinkedList<ExtractionStep>();
     }
 
     public RRGParseTree(RRGParseTree tree) {
         super(tree);
         this.idMap = new HashMap<GornAddress, String>(tree.getIdMap());
         initDeepCopyOfWrappingSubtrees(tree);
+        this.extractionsteps = tree.getExtractionsteps();
     }
 
     public RRGParseTree(RRGTree tree) {
@@ -68,10 +72,12 @@ public class RRGParseTree extends RRGTree {
         if (tree instanceof RRGParseTree) {
             this.idMap = new HashMap<GornAddress, String>(
                     ((RRGParseTree) tree).getIdMap());
+            this.extractionsteps = ((RRGParseTree) tree).getExtractionsteps();
         } else {
             this.idMap = new HashMap<GornAddress, String>();
             this.idMap.put(new GornAddress(), tree.getId());
             this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
+            this.extractionsteps = new LinkedList<ExtractionStep>();
         }
     }
 
@@ -287,9 +293,21 @@ public class RRGParseTree extends RRGTree {
                 .nodeUnificationPossible(targetNode)) {
             targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
                     position);
+            result.idMap.put(targetAddress.ithDaughter(position),
+                    adjoiningTree.getId());
+        } else {
+            System.out.println(
+                    "node unification not possible during sister adjunction");
         }
-        result.idMap.put(targetAddress.ithDaughter(position),
-                adjoiningTree.getId());
+        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            System.out.println(e.toString());
+        }
+        System.out.println(
+                "Sister adjunction at GA" + targetAddress + "pos: " + position);
+        System.out.println("in tree: " + this.toString());
+        System.out.println("resultingTree: " + result);
+        System.out.println("adjoining tree: " + adjoiningTree);
+
         return result;
     }
 
@@ -301,6 +319,13 @@ public class RRGParseTree extends RRGTree {
         if (((RRGNode) substitutionTree.getRoot())
                 .nodeUnificationPossible(targetNode)) {
             result.setNode(address, (RRGNode) substitutionTree.getRoot());
+        } else {
+            System.out.println(
+                    "NU not possible on tree with id: " + this.getId());
+            System.out.println("at GA " + address);
+            System.out.println("target tree: " + this);
+            System.out.println("subst tree: " + substitutionTree);
+            System.exit(0);
         }
         result.idMap.put(address, substitutionTree.getId());
         return result;
@@ -349,6 +374,24 @@ public class RRGParseTree extends RRGTree {
     @Override
     public String toString() {
 
-        return idMap2string() + super.toString();
+        return id + idMap2string() + super.toString();
+    }
+
+    public List<ExtractionStep> getExtractionsteps() {
+        return extractionsteps;
+    }
+
+    public boolean addExtractionStep(ExtractionStep e) {
+        this.extractionsteps.add(0, e);
+        return true;
+    }
+
+    public String extractionstepsPrinted() {
+        StringBuffer sb = new StringBuffer();
+        for (ExtractionStep e : extractionsteps) {
+            sb.append(e);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

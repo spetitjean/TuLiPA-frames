@@ -799,6 +799,11 @@ public class ParsingInterface {
 
         System.out.println("result: ");
         for (RRGParseTree rrgParseTree : result) {
+            // System.out.println("Extraction steps for " +
+            // rrgParseTree.getId());
+            // System.out.println(rrgParseTree.extractionstepsPrinted());
+            System.out.println("result for " + rrgParseTree.getId());
+
             System.out.println(RRGTreeTools
                     .asStringWithNodeLabelsAndNodeType(rrgParseTree));
         }
