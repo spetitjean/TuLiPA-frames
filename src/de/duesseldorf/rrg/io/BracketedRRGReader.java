@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRG;
-import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
 
 public class BracketedRRGReader {
@@ -72,6 +72,8 @@ public class BracketedRRGReader {
             } catch (Exception e) {
                 log.info("exception while retrieving grammar entry: "
                         + nextLine);
+                e.printStackTrace();
+                System.exit(1);
             }
         }
         try {
@@ -84,33 +86,9 @@ public class BracketedRRGReader {
         // System.out.println(treeString);
         // }
         if (removeDoubleTrees) {
-            resultingTrees = removeDoubleTrees(resultingTrees);
+            resultingTrees = RRGTools
+                    .removeDoubleTreesByWeakEquals(resultingTrees);
         }
         return new RRG(resultingTrees);
-    }
-
-    private Set<RRGTree> removeDoubleTrees(Set<RRGTree> trees) {
-        Set<RRGTree> result = new HashSet<RRGTree>();
-        for (RRGTree treeFromResource : trees) {
-            if (result.isEmpty()) {
-                result.add(treeFromResource);
-                continue;
-            }
-            boolean treeIsAlreadyIn = false;
-            for (RRGTree treeFromResult : result) {
-                if (((RRGNode) treeFromResult.getRoot())
-                        .weakEquals((RRGNode) treeFromResource.getRoot())) {
-                    treeIsAlreadyIn = true;
-                    // log.info("found double tree: " + treeFromResource);
-                    break;
-                }
-            }
-            if (!treeIsAlreadyIn) {
-                result.add(treeFromResource);
-            }
-        }
-        log.info("number of equal trees that were filtered out: "
-                + (trees.size() - result.size()));
-        return result;
     }
 }
