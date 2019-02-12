@@ -2,6 +2,7 @@ package de.duesseldorf.rrg;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
@@ -174,6 +175,19 @@ public class RRGNode implements Node {
 
     public void setGornAddress(GornAddress gornaddress) {
         this.gornaddress = gornaddress;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gornaddress, children, type, name, category);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this != null && obj != null && obj instanceof RRGNode) {
+            return this.hashCode() == obj.hashCode();
+        }
+        return false;
     }
 
     /**

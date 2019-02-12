@@ -10,8 +10,8 @@ import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.Backpointer;
 import de.duesseldorf.rrg.parser.Operation;
-import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.rrg.parser.RRGParseChart;
+import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.util.TextUtilities;
 
@@ -55,7 +55,7 @@ public class ParseForestExtractor {
     private List<String> toksentence;
 
     public ParseForestExtractor(RRGParseChart parseChart,
-                                List<String> toksentence) {
+            List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
         resultingParses = new HashSet<RRGParseTree>();
@@ -74,7 +74,29 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         }
-        return resultingParses;
+        Set<RRGParseTree> resultingParsesFiltered = filterDoublesByIdMap();
+        return resultingParsesFiltered;
+    }
+
+    private Set<RRGParseTree> filterDoublesByIdMap() {
+        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
+        for (RRGParseTree candidate : resultingParses) {
+            if (result.isEmpty()) {
+                result.add(candidate);
+            } else {
+                boolean addCandidate = true;
+                for (RRGParseTree alreadyFilteredTree : result) {
+                    if (alreadyFilteredTree.getIdMap()
+                            .equals(candidate.getIdMap())) {
+                        addCandidate = false;
+                    }
+                }
+                if (addCandidate) {
+                    result.add(candidate);
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -256,8 +278,8 @@ public class ParseForestExtractor {
             // ComBSis step and was extracted there first
             RRGParseItem auxRootItem, targetItem;
             for (List<RRGParseItem> rightAdjAntecedentList : rightAdjAntecedents) {
-                if ((((RRGParseItem) rightAdjAntecedentItems.get(0))
-                        .getNode().getType().equals(RRGNodeType.STAR))) {
+                if ((((RRGParseItem) rightAdjAntecedentItems.get(0)).getNode()
+                        .getType().equals(RRGNodeType.STAR))) {
                     auxRootItem = ((RRGParseItem) rightAdjAntecedentItems
                             .get(0));
                     targetItem = ((RRGParseItem) rightAdjAntecedentItems
@@ -368,15 +390,11 @@ public class ParseForestExtractor {
             if (((RRGParseItem) leftAdjAntecedentItems.get(0))
                     .startPos() <= ((RRGParseItem) leftAdjAntecedentItems
                             .get(1)).startPos()) {
-                auxRootItem = (RRGParseItem) leftAdjAntecedentItems
-                        .get(0);
-                rightSisItem = (RRGParseItem) leftAdjAntecedentItems
-                        .get(1);
+                auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
+                rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
             } else {
-                auxRootItem = (RRGParseItem) leftAdjAntecedentItems
-                        .get(1);
-                rightSisItem = (RRGParseItem) leftAdjAntecedentItems
-                        .get(0);
+                auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
+                rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
             }
 
             ExtractionStep nextStep = new ExtractionStep(rightSisItem,
@@ -465,8 +483,8 @@ public class ParseForestExtractor {
 
             // find out which item is which
             RRGParseItem leftItem, rightItem;
-            if (((RRGParseItem) combsisantecedentItems.get(0))
-                    .getNodePos().equals(RRGParseItem.NodePos.TOP)) {
+            if (((RRGParseItem) combsisantecedentItems.get(0)).getNodePos()
+                    .equals(RRGParseItem.NodePos.TOP)) {
                 leftItem = (RRGParseItem) combsisantecedentItems.get(0);
                 rightItem = (RRGParseItem) combsisantecedentItems.get(1);
             } else {

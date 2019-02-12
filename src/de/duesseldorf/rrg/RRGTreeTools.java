@@ -98,16 +98,20 @@ public class RRGTreeTools {
     public static String asStringWithNodeLabelsAndNodeType(RRGTree tree) {
         StringBuffer sb = new StringBuffer();
         sb.append("ID: " + tree.getId() + "\n");
+        if (tree instanceof RRGParseTree) {
+            sb.append(((RRGParseTree) tree).idMap2string());
+        }
         asStringWithNodeLabelsAndNodeType(tree.getRoot(), sb, 0);
         return sb.toString();
     }
 
-    private static void asStringWithNodeLabelsAndNodeType(Node root, StringBuffer sb, int sep) {
+    private static void asStringWithNodeLabelsAndNodeType(Node root,
+            StringBuffer sb, int sep) {
         // add separators+ root.)
         for (int i = 0; i < sep; i++) {
             sb.append(".");
         }
-        sb.append(((RRGNode)root).getCategory());
+        sb.append(((RRGNode) root).getCategory());
         sb.append(" ");
         sb.append(((RRGNode) root).getType());
         sb.append("\n");

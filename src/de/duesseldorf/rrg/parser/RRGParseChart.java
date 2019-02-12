@@ -76,8 +76,7 @@ public class RRGParseChart {
             // no more ws
                     rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
                     // TOP position
-                    && rrgitem.getNodePos()
-                            .equals(RRGParseItem.NodePos.TOP)
+                    && rrgitem.getNodePos().equals(RRGParseItem.NodePos.TOP)
                     // in a root
                     && rrgitem.getNode().getGornaddress().mother() == null
                     // in a STD node
@@ -86,6 +85,7 @@ public class RRGParseChart {
                 goals.add(rrgitem);
             }
         }
+        System.out.println("found goal items: " + goals);
         return goals;
     }
 
@@ -113,8 +113,8 @@ public class RRGParseChart {
      *            item we look for?
      * @return
      */
-    public Set<RRGParseItem> findUnderspecifiedItem(
-            RRGParseItem model, boolean gapSubSet) {
+    public Set<RRGParseItem> findUnderspecifiedItem(RRGParseItem model,
+            boolean gapSubSet) {
         Set<RRGParseItem> result = new HashSet<RRGParseItem>();
 
         // collect all the items that might fit the model
@@ -134,12 +134,11 @@ public class RRGParseChart {
             boolean endCheck = model.getEnd() == -2
                     || model.getEnd() == ((RRGParseItem) s).getEnd();
             if (endCheck) {
-                boolean treeCheck = model.getTree() == null || model.getTree()
-                        .equals(((RRGParseItem) s).getTree());
+                boolean treeCheck = model.getTree() == null
+                        || model.getTree().equals(((RRGParseItem) s).getTree());
                 if (treeCheck) {
-                    boolean nodeCheck = model.getNode() == null
-                            || model.getNode()
-                                    .equals(((RRGParseItem) s).getNode());
+                    boolean nodeCheck = model.getNode() == null || model
+                            .getNode().equals(((RRGParseItem) s).getNode());
                     if (nodeCheck) {
                         boolean posCheck = model.getNodePos() == null
                                 || model.getNodePos().equals(
@@ -159,8 +158,7 @@ public class RRGParseChart {
                                             ((RRGParseItem) s).getGaps());
                                 } else {
                                     // case 3
-                                    gapCheck = ((RRGParseItem) s)
-                                            .getGaps()
+                                    gapCheck = ((RRGParseItem) s).getGaps()
                                             .containsAll(model.getGaps());
                                     // System.out.print(gapCheck);
                                     // System.out.println("yay: "
@@ -172,9 +170,8 @@ public class RRGParseChart {
                             if (gapCheck) {
                                 boolean wsCheck = (Boolean) model
                                         .getwsflag() == null
-                                        || ((Boolean) model.getwsflag())
-                                                .equals(((RRGParseItem) s)
-                                                        .getwsflag());
+                                        || ((Boolean) model.getwsflag()).equals(
+                                                ((RRGParseItem) s).getwsflag());
                                 if (wsCheck) {
                                     result.add((RRGParseItem) s);
                                 }
@@ -198,7 +195,8 @@ public class RRGParseChart {
      * @return true if the RRGParseItem was not already in the chart
      */
     public boolean addItem(RRGParseItem consequent, Operation operation,
-                           RRGParseItem... antecedents) {
+            RRGParseItem... antecedents) {
+        System.out.println("chart.addItem: " + consequent);
         List<RRGParseItem> antes;
         if (antecedents.length > 0) {
             antes = new LinkedList<RRGParseItem>(Arrays.asList(antecedents));
@@ -211,9 +209,11 @@ public class RRGParseChart {
         boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
+            System.out.println("item already there, just put backpointers");
             chart.get(startpos).get(consequent).addToBackpointer(operation,
                     antes);
         } else {
+            System.out.println("item not there yet");
             // add the consequent and a fresh set of backpointers
             Backpointer backpointer = new Backpointer();
             backpointer.addToBackpointer(operation, antes);

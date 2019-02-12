@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.parser.RRGParseItem;
@@ -207,6 +208,7 @@ public class RRGParseTree extends RRGTree {
                 targetNode.addXchild(rootChildren.get(i), position);
             }
             // update GornAddress shifts
+            resultingTree.idMap.put(ddaughterAddress, wrappedTree.getId());
         } else {
             System.out.println(
                     "could not complete a wrapping of target tree into wrapping tree at node "
@@ -222,6 +224,9 @@ public class RRGParseTree extends RRGTree {
      * Corresponding to the predict wrapping step. At the absolute address of
      * the ddaughter in that parseTree, add the subtree of the wrapping tree
      * below the ddaughter.
+     * 
+     * TODO change the wrappingsubtrees stack from Nodes to trees, so that the
+     * idMap can properly work.
      * 
      * @param ddaughterAbsAddress
      * @param ddaughterItem
@@ -253,7 +258,8 @@ public class RRGParseTree extends RRGTree {
             System.out.println(
                     "adding a subtree at extracting predict wrapping was not possible");
         }
-
+        // TODO see comment
+        resultingTree.idMap.put(ddaughterAbsAddress, subTreeRoot.getCategory());
         return resultingTree;
     }
 
@@ -282,6 +288,8 @@ public class RRGParseTree extends RRGTree {
             targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
                     position);
         }
+        result.idMap.put(targetAddress.ithDaughter(position),
+                adjoiningTree.getId());
         return result;
     }
 
@@ -294,7 +302,7 @@ public class RRGParseTree extends RRGTree {
                 .nodeUnificationPossible(targetNode)) {
             result.setNode(address, (RRGNode) substitutionTree.getRoot());
         }
-        // TODO add things to idmap
+        result.idMap.put(address, substitutionTree.getId());
         return result;
     }
 
@@ -316,4 +324,31 @@ public class RRGParseTree extends RRGTree {
         return resultingTree;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode() * Objects.hash(idMap);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this != null && obj != null && obj instanceof RRGParseTree) {
+            return this.hashCode() == obj.hashCode();
+        }
+        return false;
+    }
+
+    public String idMap2string() {
+        String idMap2str = "";
+
+        for (GornAddress key : idMap.keySet()) {
+            idMap2str += key + " -> " + idMap.get(key) + "\n";
+        }
+        return idMap2str;
+    }
+
+    @Override
+    public String toString() {
+
+        return idMap2string() + super.toString();
+    }
 }
