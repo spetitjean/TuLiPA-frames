@@ -353,8 +353,7 @@ public class ParseForestExtractor {
                         extractionstep.getGAInParseTree().mother(), position);
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
-                        nextStepParseTree,
-                        extractionstep.getGoToRightWhenGoingDown());
+                        nextStepParseTree, position);
                 parsesInThisLeftAdjStep.addAll(extract(nextStep));
             }
             System.out.println("LEFTADJOIN");
