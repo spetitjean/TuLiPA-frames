@@ -299,14 +299,14 @@ public class RRGParseTree extends RRGTree {
             System.out.println(
                     "node unification not possible during sister adjunction");
         }
-        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
-            System.out.println(e.toString());
-        }
-        System.out.println(
-                "Sister adjunction at GA" + targetAddress + "pos: " + position);
-        System.out.println("in tree: " + this.toString());
-        System.out.println("resultingTree: " + result);
-        System.out.println("adjoining tree: " + adjoiningTree);
+        // for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+        // System.out.println(e.toString());
+        // }
+        // System.out.println(
+        // "Sister adjunction at GA" + targetAddress + "pos: " + position);
+        // System.out.println("in tree: " + this.toString());
+        // System.out.println("resultingTree: " + result);
+        // System.out.println("adjoining tree: " + adjoiningTree);
 
         return result;
     }

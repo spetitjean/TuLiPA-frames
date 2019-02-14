@@ -49,7 +49,7 @@ public class ParseForestExtractor {
     private RRGParseChart parseChart;
     private Set<RRGTree> resultingParses;
 
-    public boolean verbosePrintsToStdOut = true;
+    public boolean verbosePrintsToStdOut = false;
 
     private Set<Operation> sameElemTree = new HashSet<Operation>(Arrays
             .asList(Operation.COMBINESIS, Operation.MOVEUP, Operation.NLS));
@@ -297,6 +297,12 @@ public class ParseForestExtractor {
                         extractionstep.getGAInParseTree(), rrgParseTree);
                 parsesInThisRightAdjStep.addAll(extract(nextStep));
             }
+            System.out.println("RIGHTADJOIN");
+            System.out.println("extractionstep: " + extractionstep);
+            System.out.println("auxroot: " + auxRootItem);
+            System.out.println("targetitem: " + targetItem);
+            System.out.println("nextStep: " + nextStep);
+            System.out.println("tmpResult: " + tmpResult);
         }
         return parsesInThisRightAdjStep;
     }
@@ -328,8 +334,8 @@ public class ParseForestExtractor {
                     extractionstep.getGAInParseTree(),
                     extractionstep.getCurrentParseTree());
             tmpResult = extract(nextStep);
-            System.out.println("aux root:  " + auxRootItem);
-            System.out.println("right sis: " + rightSisItem);
+            // System.out.println("aux root: " + auxRootItem);
+            // System.out.println("right sis: " + rightSisItem);
             // then extract the left sister
             for (RRGParseTree rrgParseTree : tmpResult) {
                 int position = Math.max(

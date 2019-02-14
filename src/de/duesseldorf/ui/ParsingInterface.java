@@ -803,7 +803,6 @@ public class ParsingInterface {
             // rrgParseTree.getId());
             // System.out.println(rrgParseTree.extractionstepsPrinted());
             System.out.println("result for " + rrgParseTree.getId());
-
             System.out.println(RRGTreeTools
                     .asStringWithNodeLabelsAndNodeType(rrgParseTree));
         }
