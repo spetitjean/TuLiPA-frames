@@ -90,7 +90,7 @@ public class ParseForestExtractor {
      */
     private ExtractionStep initialExtractionStep(RRGParseItem goal) {
         ExtractionStep result = new ExtractionStep(goal, new GornAddress(),
-                new RRGParseTree(goal.getTree()));
+                new RRGParseTree(goal.getTree()), 0);
         return result;
     }
 
@@ -206,7 +206,8 @@ public class ParseForestExtractor {
                             ddaughterAbsAddress, predictWrappingAntecedentItem);
             ExtractionStep nextStep = new ExtractionStep(
                     predictWrappingAntecedentItem, ddaughterAbsAddress,
-                    nextStepParseTree);
+                    nextStepParseTree,
+                    extractionstep.getGoToRightWhenGoingDown());
             parsesInThisPWStep.addAll(extract(nextStep));
         }
         return parsesInThisPWStep;
@@ -251,7 +252,8 @@ public class ParseForestExtractor {
             // + shiftedGAInParseTree);
             ExtractionStep nextStep = new ExtractionStep(gapItem,
                     shiftedGAInParseTree, nextStepParseTree,
-                    extractionstep.getGAInParseTree().isIthDaughter());
+                    extractionstep.getGAInParseTree().isIthDaughter()
+            /* + extractionstep.getGoToRightWhenGoingDown() */);
             parsesInThisCWStep.addAll(extract(nextStep));
         }
         return parsesInThisCWStep;
@@ -283,18 +285,22 @@ public class ParseForestExtractor {
                     .getCurrentParseTree().sisterAdjoin(auxRootItem.getTree(),
                             extractionstep.getGAInParseTree().mother(),
                             extractionstep.getGAInParseTree().isIthDaughter()
+                                    + extractionstep.getGoToRightWhenGoingDown()
                                     + 1);
             // extract aux tree:
             ExtractionStep nextStep = new ExtractionStep(auxRootItem,
                     extractionstep.getGAInParseTree().mother(),
                     nextStepParseTree,
-                    extractionstep.goToRightWhenGoingDown + 1);
+                    extractionstep.goToRightWhenGoingDown
+                            + extractionstep.getGAInParseTree().isIthDaughter()
+                            + 1);
 
             tmpResult = extract(nextStep);
             // extract target:
             for (RRGParseTree rrgParseTree : tmpResult) {
                 nextStep = new ExtractionStep(targetItem,
-                        extractionstep.getGAInParseTree(), rrgParseTree);
+                        extractionstep.getGAInParseTree(), rrgParseTree,
+                        extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisRightAdjStep.addAll(extract(nextStep));
             }
             System.out.println("RIGHTADJOIN");
@@ -332,22 +338,31 @@ public class ParseForestExtractor {
             // first extract the right sister
             ExtractionStep nextStep = new ExtractionStep(rightSisItem,
                     extractionstep.getGAInParseTree(),
-                    extractionstep.getCurrentParseTree());
+                    extractionstep.getCurrentParseTree(),
+                    extractionstep.getGoToRightWhenGoingDown());
             tmpResult = extract(nextStep);
             // System.out.println("aux root: " + auxRootItem);
             // System.out.println("right sis: " + rightSisItem);
             // then extract the left sister
             for (RRGParseTree rrgParseTree : tmpResult) {
-                int position = Math.max(
-                        extractionstep.getGAInParseTree().isIthDaughter(), 0);
+                int position = Math
+                        .max(extractionstep.getGAInParseTree().isIthDaughter()
+                /* extractionstep.getGoToRightWhenGoingDown() */, 0);
                 RRGParseTree nextStepParseTree = rrgParseTree.sisterAdjoin(
                         auxRootItem.getTree(),
                         extractionstep.getGAInParseTree().mother(), position);
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
-                        nextStepParseTree);
+                        nextStepParseTree,
+                        extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisLeftAdjStep.addAll(extract(nextStep));
             }
+            System.out.println("LEFTADJOIN");
+            System.out.println("extractionstep: " + extractionstep);
+            System.out.println("auxroot: " + auxRootItem);
+            System.out.println("targetitem: " + rightSisItem);
+            System.out.println("nextStep: " + nextStep);
+            System.out.println("tmpResult: " + tmpResult);
         }
         return parsesInThisLeftAdjStep;
     }
@@ -375,12 +390,14 @@ public class ParseForestExtractor {
 
             ExtractionStep nextStep = new ExtractionStep(rightItem,
                     extractionstep.getGAInParseTree(),
-                    extractionstep.getCurrentParseTree());
+                    extractionstep.getCurrentParseTree(),
+                    extractionstep.getGoToRightWhenGoingDown());
             Set<RRGParseTree> tmpResult = extract(nextStep);
             for (RRGParseTree rrgParseTree : tmpResult) {
                 nextStep = new ExtractionStep(leftItem,
                         extractionstep.getGAInParseTree().leftSister(),
-                        rrgParseTree);
+                        rrgParseTree,
+                        extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisCombSisStep.addAll(extract(nextStep));
             }
             // old part:
@@ -452,7 +469,7 @@ public class ParseForestExtractor {
                     .getCurrentParseTree().substitute(substTree, GAtoReplaceAt);
             // System.out.println("result: " + nextStepParseTree);
             ExtractionStep nextStep = new ExtractionStep(substAntecedentItem,
-                    extractionstep.getGAInParseTree(), nextStepParseTree);
+                    extractionstep.getGAInParseTree(), nextStepParseTree, 0);
             parsesInThisSUBSTStep.addAll(extract(nextStep));
         }
         return parsesInThisSUBSTStep;
@@ -474,7 +491,7 @@ public class ParseForestExtractor {
                             .isIthDaughter()
                             + extractionstep.getGoToRightWhenGoingDown());
             ExtractionStep nextStep = new ExtractionStep(moveupAntecedentItem,
-                    newMoveUpGA, extractionstep.getCurrentParseTree());
+                    newMoveUpGA, extractionstep.getCurrentParseTree(), 0);
             parsesInThisMoveUpStep.addAll(extract(nextStep));
         }
         return parsesInThisMoveUpStep;

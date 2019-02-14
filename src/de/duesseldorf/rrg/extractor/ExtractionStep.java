@@ -38,17 +38,8 @@ public class ExtractionStep {
     public RRGParseTree currentParseTree;
     public int goToRightWhenGoingDown;
 
-    public ExtractionStep(RRGParseItem currentItem,
-                          GornAddress GAInParseTree, RRGParseTree currentParseTree) {
-        this.GAInParseTree = GAInParseTree;
-        this.currentItem = currentItem;
-        this.currentParseTree = currentParseTree;
-        goToRightWhenGoingDown = 0;
-    }
-
-    public ExtractionStep(RRGParseItem currentItem,
-                          GornAddress GAInParseTree, RRGParseTree currentParseTree,
-                          int goToRightWhenGoingDown) {
+    public ExtractionStep(RRGParseItem currentItem, GornAddress GAInParseTree,
+            RRGParseTree currentParseTree, int goToRightWhenGoingDown) {
         this.GAInParseTree = GAInParseTree;
         this.currentItem = currentItem;
         this.currentParseTree = currentParseTree;
