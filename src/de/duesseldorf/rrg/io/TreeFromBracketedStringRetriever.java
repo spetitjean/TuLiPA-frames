@@ -157,7 +157,9 @@ public class TreeFromBracketedStringRetriever {
     private RRGNode createNodeFromString(String nodeStringFromResource,
             boolean couldBeASubstNode) {
         // note that the lexical element is not handled here
-        List<String> substNodeLabels = Arrays.asList("NP", "N", "RP");
+        List<String> substNodeLabels = Arrays.asList("NP", "NUC_ADV", "NPIP",
+                "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
+                "CLAUSE-PERI", "CORE-PERI", "NP-PERI", "CORE");
         RRGNodeType nodeType = null;
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;
@@ -166,6 +168,9 @@ public class TreeFromBracketedStringRetriever {
         } else if (couldBeASubstNode
                 && substNodeLabels.contains(nodeStringFromResource)) {
             nodeType = RRGNodeType.SUBST;
+        } else if (couldBeASubstNode) {
+            System.out.println(
+                    "unknown subst node label: " + nodeStringFromResource);
         } else {
             nodeType = RRGNodeType.STD;
         }
