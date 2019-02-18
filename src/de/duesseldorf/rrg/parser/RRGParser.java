@@ -50,7 +50,7 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = true;
+    private boolean verbosePrintsToStdOut = false;
 
     public RRGParser() {
         this.requirementFinder = new RequirementFinder();
@@ -66,20 +66,25 @@ public class RRGParser {
         // Axioms through scanning:
         scan(toksentence);
 
-        for (RRGParseItem item : agenda) {
-            System.out.println(RRGTreeTools
-                    .recursivelyPrintNode(item.getTree().getRoot()));
-        }
+        // for (RRGParseItem item : agenda) {
+        // System.out.println(RRGTreeTools
+        // .recursivelyPrintNode(item.getTree().getRoot()));
+        // }
         // Debug:
         this.requirementFinder = new RequirementFinder();
 
-        if (verbosePrintsToStdOut) {
-            System.out.println("Done scanning. ");
-        }
+        // if (verbosePrintsToStdOut) {
+        System.out.println("Done scanning. ");
+        System.out.println(
+                "Found fitting lexical items in thhe following trees: ");
+        agenda.forEach((item) -> System.out.println(
+                RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
+        // }
+
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
-            System.out.println("step: " + i);
+            // System.out.println("step: " + i);
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
@@ -117,8 +122,11 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("next to agenda: " + consequent + "\n\t " + operation
-                + "\n\t antecedents: " + Arrays.asList(antecedents));
+        if (verbosePrintsToStdOut) {
+            System.out.println("next to agenda: " + consequent + "\n\t "
+                    + operation + "\n\t antecedents: "
+                    + Arrays.asList(antecedents));
+        }
     }
 
     private void completewrapping(RRGParseItem currentItem) {
