@@ -58,7 +58,7 @@ public final class Type {
     public Type(Collection<String> elementaryTypes) {
         this.typeConstraints = new HashSet<TypeConstraint>();
         this.elemTypes = new HashSet<String>(elementaryTypes);
-        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.var = new Value(Value.Kind.VAR, new NameFactory().getUniqueName());
         this.truevar = false;
     }
 
@@ -81,7 +81,7 @@ public final class Type {
             Collection<TypeConstraint> typeConstraints) {
         this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
         this.elemTypes = new HashSet<String>(elementaryTypes);
-        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.var = new Value(Value.Kind.VAR, new NameFactory().getUniqueName());
         this.truevar = false;
     }
 

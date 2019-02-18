@@ -261,7 +261,7 @@ public class TreeSelector {
                     try {
                         Fs morphAncFS = new Fs(1);
                         morphAncFS.setFeat("cat",
-                                new Value(Value.VAL, il.getCat()));
+                                new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
                                 new Environment(5),
@@ -269,7 +269,8 @@ public class TreeSelector {
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
                         ((TagNode) head.getAnchor()).getLabel().setFeat("cat",
-                                new Value(Value.VAL, anchorFS.getCategory()));
+                                new Value(Value.Kind.VAL,
+                                        anchorFS.getCategory()));
                         ((TagNode) head.getAnchor()).findCategory();
                         // System.out.print("ts.270: ");
                         // System.out.println(
@@ -295,15 +296,16 @@ public class TreeSelector {
                                     "TODO: create a loop in TreeSelector.546!");
                         }
                         if (situation.getFrameGrammar() != null) {
-			    if(lemmaSem.size() > 0){
-				tlist = situation.getFrameGrammar().getGrammar()
-                                    .get(lemmaSem.get(0).getSemclass());
-			    }
-			    else{
-				System.err.println("No semantics for lemma "+it.getLemma().getName()+"\nCreating empty semantics.");
-				tlist = new LinkedList<Tuple>();
-				tlist.add(new Tuple());
-			    }
+                            if (lemmaSem.size() > 0) {
+                                tlist = situation.getFrameGrammar().getGrammar()
+                                        .get(lemmaSem.get(0).getSemclass());
+                            } else {
+                                System.err.println("No semantics for lemma "
+                                        + it.getLemma().getName()
+                                        + "\nCreating empty semantics.");
+                                tlist = new LinkedList<Tuple>();
+                                tlist.add(new Tuple());
+                            }
                             // System.out.println("Size of the frame list
                             // for this entry: "+tlist.size());
                         }
@@ -440,7 +442,7 @@ public class TreeSelector {
             }
         }
         // System.err.println("Tree "+hd.getId());
-	
+
         Fs ancfs = t.getAnchor().getFilter();
         Fs iface = tt.getIface();
         // the default size of the environment is 10 (trade-off)
@@ -680,7 +682,7 @@ public class TreeSelector {
                 }
                 tt.setFrameSem(new Frame(newFrames, newRelations));
 
-		//System.out.println("treeselector framesem: " + tt+
+                // System.out.println("treeselector framesem: " + tt+
                 // tt.getFrameSem());
                 // END DA
 
@@ -721,7 +723,7 @@ public class TreeSelector {
                         tt.setFrameSem(ElementaryTree
                                 .updateFrameSem(tt.getFrameSem(), env, false));
                         // System.out.println(
-                        //         "Result in FrameSem: " + tt.getFrameSem());
+                        // "Result in FrameSem: " + tt.getFrameSem());
                         // the environment now contains the bindings for
                         // semantic variables
                         // we can update the tree semantics

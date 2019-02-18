@@ -101,11 +101,11 @@ public class FsTools {
         } else
             seen.add(fs2.getCoref());
         for (Value v : fs2.getAVlist().values()) {
-            if (v.is(Value.AVM)
+            if (v.is(Value.Kind.AVM)
                     && v.getAvmVal().getCoref().equals(fs1.getCoref())) {
                 return true;
             } else {
-                if (v.is(Value.AVM)) {
+                if (v.is(Value.Kind.AVM)) {
                     if (included(fs1, v.getAvmVal(), seen)) {
                         return true;
                     }
@@ -167,13 +167,13 @@ public class FsTools {
 
             Value v = fs.getAVlist().get(k);
 
-            if (v.is(Value.AVM)) {
+            if (v.is(Value.Kind.AVM)) {
                 sb.append(printFS(v.getAvmVal(), recursiondepth + k.length(),
                         seen, printTypeConstraints));
-            } else if (v.is(Value.VAL)) {
+            } else if (v.is(Value.Kind.VAL)) {
                 sb.append(v.getSVal());
                 sb.append("</br>");
-            } else if (v.is(Value.VAR)) {
+            } else if (v.is(Value.Kind.VAR)) {
                 sb.append(v.getVarVal());
             } else {
                 ;

@@ -79,7 +79,7 @@ public class Environment {
             // var is bound to something
             Value v = table.get(name);
             // System.out.println("Got deref "+v);
-            if (v.is(Value.VAR)) {
+            if (v.is(Value.Kind.VAR)) {
                 // // var is bound to a variable, we go on dereferencing
                 // // I created a loop here somehow, this must be fixed better
                 // System.out.println("v:"+v.toString());
@@ -132,7 +132,7 @@ public class Environment {
         String key = var.getVarVal();
         if (table.containsKey(key)) { // x is bound to something
             Value x = table.get(key);
-            if (x.is(Value.VAR)) {
+            if (x.is(Value.Kind.VAR)) {
                 trace.add(x.getVarVal());
                 // Same dirty fix here
                 // if(x.toString()!=key){
@@ -189,7 +189,7 @@ public class Environment {
         while (it.hasNext()) {
             // we look if the variable is bound
             String eVar = it.next();
-            Value val = new Value(Value.VAR, eVar);
+            Value val = new Value(Value.Kind.VAR, eVar);
             Value eVal = env.deref(val);
             if (!(eVal.equals(val))) {
                 // if it is, we unify the bound values in the new environment
@@ -227,7 +227,7 @@ public class Environment {
         for (int i = 0; i < eEnv.getSemlabels().size(); i++) {
             String slabel = eEnv.getSemlabels().get(i);
             if (slabel != null)
-                eEnv.bind(slabel, new Value(Value.VAL,
+                eEnv.bind(slabel, new Value(Value.Kind.VAL,
                         "!" + eEnv.getPnf().getName(slabel)));
         }
 
@@ -238,14 +238,14 @@ public class Environment {
         Iterator<String> it = keys.iterator();
         while (it.hasNext()) {
             String name = it.next();
-            Value v = eEnv.deref(new Value(Value.VAR, name));
-            if (v.is(Value.VAR)) {
+            Value v = eEnv.deref(new Value(Value.Kind.VAR, name));
+            if (v.is(Value.Kind.VAR)) {
                 bounded.add(v);
             }
         }
         for (Value v : bounded)
-            eEnv.bind(v.getVarVal(),
-                    new Value(Value.VAR, eEnv.getPnf().getName(v.getVarVal())));
+            eEnv.bind(v.getVarVal(), new Value(Value.Kind.VAR,
+                    eEnv.getPnf().getName(v.getVarVal())));
 
     }
 

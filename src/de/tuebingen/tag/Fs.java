@@ -45,6 +45,7 @@ import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.tag.Value.Kind;
 
 /**
  * Represents an attribute value matrix.
@@ -192,9 +193,9 @@ public class Fs {
 
     public Value getConstFeat(String key) {
         Value res = null;
-        if (AVlist.containsKey(key) && AVlist.get(key).is(Value.VAL))
+        if (AVlist.containsKey(key) && AVlist.get(key).is(Value.Kind.VAL))
             res = AVlist.get(key);
-        else if (AVlist.containsKey(key) && AVlist.get(key).is(Value.INT))
+        else if (AVlist.containsKey(key) && AVlist.get(key).is(Value.Kind.INT))
             res = AVlist.get(key);
         return res;
     }
@@ -209,9 +210,9 @@ public class Fs {
 
     public String getCategory() {
         if (AVlist.containsKey("cat")) {
-            if (AVlist.get("cat").is(Value.VAL))
+            if (AVlist.get("cat").is(Value.Kind.VAL))
                 return AVlist.get("cat").getSVal();
-            else if (AVlist.get("cat").is(Value.ADISJ))
+            else if (AVlist.get("cat").is(Value.Kind.ADISJ))
                 return AVlist.get("cat").getAdisj().get(1).toString(); // arbitrary
                                                                        // for
                                                                        // now
@@ -230,20 +231,20 @@ public class Fs {
         while (feats.hasNext()) {
             String f = feats.next();
             Value v = AVlist.get(f);
-            if (v.is(Value.AVM))
+            if (v.is(Value.Kind.AVM))
                 v.getAvmVal().removeCategory();
         }
     }
 
     public void propagateCategory(String cat) {
         if (!AVlist.containsKey("cat")) {
-            this.setFeat("cat", new Value(Value.VAL, cat));
+            this.setFeat("cat", new Value(Value.Kind.VAL, cat));
         }
         Iterator<String> feats = AVlist.keySet().iterator();
         while (feats.hasNext()) {
             String f = feats.next();
             Value v = AVlist.get(f);
-            if (v.is(Value.AVM))
+            if (v.is(Value.Kind.AVM))
                 v.getAvmVal().propagateCategory(cat);
         }
     }
@@ -300,11 +301,11 @@ public class Fs {
             if (AVlist.containsKey("top")
                     && AVlist.get("top").getAvmVal().getFeat(f) != null) {
                 switch (AVlist.get("top").getAvmVal().getFeat(f).getType()) {
-                case Value.INT:
+                case INT:
                     res = AVlist.get("top").getAvmVal().getFeat(f).getIVal()
                             + "";
                     break;
-                case Value.VAL:
+                case VAL:
                     res = AVlist.get("top").getAvmVal().getFeat(f).getSVal();
                     break;
                 default:// skip
@@ -315,11 +316,11 @@ public class Fs {
             if (AVlist.containsKey("bot")
                     && AVlist.get("bot").getAvmVal().getFeat(f) != null) {
                 switch (AVlist.get("bot").getAvmVal().getFeat(f).getType()) {
-                case Value.INT:
+                case INT:
                     res = AVlist.get("bot").getAvmVal().getFeat(f).getIVal()
                             + "";
                     break;
-                case Value.VAL:
+                case VAL:
                     res = AVlist.get("bot").getAvmVal().getFeat(f).getSVal();
                     break;
                 default:// skip
@@ -379,7 +380,7 @@ public class Fs {
         while (i.hasNext()) {
             String k = (String) i.next();
             // System.out.println(seen);
-            if (AVlist.get(k).getType() == Value.AVM)
+            if (AVlist.get(k).getType() == Value.Kind.AVM)
                 res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen)
                         + "\n ";
             else
@@ -520,7 +521,7 @@ public class Fs {
         while (i.hasNext()) {
             String k = (String) i.next();
             Value v = todo.get(k);
-            if (v.is(Value.VAR)) { // if it is a variable
+            if (v.is(Value.Kind.VAR)) { // if it is a variable
                 Value w = env.deref(v);
                 if (w == null) { // v is not bound
                     res.put(k, v);
@@ -623,7 +624,7 @@ public class Fs {
             Value typevar = fs.getType().getVar();
             Type newType = fs.getType();
             switch (typevar.getType()) {
-            case Value.VAL:
+            case VAL:
                 // here we should unify the value with the type of the fs (after
                 // converting it to a type)
 
@@ -637,7 +638,7 @@ public class Fs {
                 typevar = new Value(new Fs(0));
                 newType.setVar(typevar);
                 break;
-            case Value.VAR:
+            case VAR:
                 // System.out.println("Trying deref on: " + typevar + " ("
                 // + typevar.getType() + ")");
                 Value typevarderef = env.deref(typevar);
@@ -682,11 +683,11 @@ public class Fs {
             // k+":"+fval.toString());
 
             switch (fval.getType()) {
-            case Value.VAL: // for semantic labels
+            case VAL: // for semantic labels
                 fval.update(env, finalUpdate);
                 res.setFeat(k, fval);
                 break;
-            case Value.VAR:
+            case VAR:
                 // if the feature value is a variable,
                 // we look if it is bound to something in the environment
                 Value v = env.deref(fval);
@@ -702,12 +703,12 @@ public class Fs {
                     // env.bind(k,fval);
                 }
                 break;
-            case Value.AVM: // the value is an avm, we go on updating
+            case AVM: // the value is an avm, we go on updating
                 // System.out.println("Updating FS [rec] ");
                 res.setFeat(k, new Value(
                         updateFS(fval.getAvmVal(), env, finalUpdate, seen)));
                 break;
-            case Value.ADISJ:
+            case ADISJ:
                 fval.update(env, finalUpdate);
                 res.setFeat(k, fval);
                 break;
@@ -836,7 +837,7 @@ public class Fs {
         while (i.hasNext()) {
             String f = i.next();
             Value v = this.AVlist.get(f);
-            if (v.is(Value.AVM)) {
+            if (v.is(Value.Kind.AVM)) {
                 Fs fs1 = v.getAvmVal();
                 if (seen.contains(fs1.getCoref())) {
                     this.AVlist.put(f, new Value(fs1.getCoref()));
@@ -860,7 +861,7 @@ public class Fs {
             String newVar = nf.getUniqueName();
             // System.out.println("New name: "+newVar);
             // env.deref(New.coref).setVarVal(newVar);
-            Value newVarVal = new Value(5, newVar);
+            Value newVarVal = new Value(Value.Kind.VAR, newVar);
             New.coref = newVarVal;
             env.bind(oldVar, newVarVal);
             seen.add(newVarVal);
@@ -870,7 +871,7 @@ public class Fs {
         // for each coref X found, we put it in the environment
 
         String atCoref = "$" + env.deref(this.coref);
-        Value valCoref = new Value(5, atCoref);
+        Value valCoref = new Value(Value.Kind.VAR, atCoref);
 
         // System.out.println("coref: "+atCoref);
         // System.out.println("$: "+env.deref(valCoref));
@@ -891,7 +892,7 @@ public class Fs {
         while (i.hasNext()) {
             String f = i.next();
             Value v = New.AVlist.get(f);
-            if (v.is(Value.AVM)) {
+            if (v.is(Value.Kind.AVM)) {
                 // System.out.println("l.822: "+v.getAvmVal());
                 // System.out.println("Seen: "+seen);
                 // if(!seen.contains(v.getAvmVal().getCoref()))
@@ -906,11 +907,11 @@ public class Fs {
         // System.out.println("Seen: "+seen);
         Fs result = this;
         String atCoref = "$" + env.deref(this.coref);
-        Value valCoref = new Value(5, atCoref);
+        Value valCoref = new Value(Value.Kind.VAR, atCoref);
 
         // System.out.println("Seen "+ seen);
 
-        if (env.deref(valCoref).getType() == Value.AVM) {
+        if (env.deref(valCoref).is(Value.Kind.AVM)) {
             // System.out.println("Trying to unify: "+this);
             // System.out.println("With : "+env.deref(valCoref).getAvmVal());
             try {
@@ -942,7 +943,7 @@ public class Fs {
             // System.out.println("New while loop");
             String f = i.next();
             Value v = this.AVlist.get(f);
-            if (v.is(Value.AVM)) {
+            if (v.is(Value.Kind.AVM)) {
                 // System.out.println("AVM, coref: "+v.getAvmVal().getCoref());
                 // System.out.println("Seen: "+seen);
                 // if(!seen.contains(v.getAvmVal().getCoref()))
@@ -960,13 +961,13 @@ public class Fs {
 
             }
             // System.out.println("Here l.809");
-            if (v.is(Value.VAR)) {
+            if (v.is(Value.Kind.VAR)) {
                 // System.out.println("Have a variable");
                 String atVar = "$" + env.deref(v);
-                Value valVar = new Value(5, atVar);
+                Value valVar = new Value(Kind.VAR, atVar);
                 // System.out.println("Var: "+v);
                 // var is a coreference, get the FS
-                if (env.deref(valVar).getType() == Value.AVM) {
+                if (env.deref(valVar).getType() == Value.Kind.AVM) {
                     result.AVlist.put(f,
                             new Value(env.deref(valVar).getAvmVal()));
                 }

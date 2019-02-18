@@ -47,11 +47,9 @@ import de.tuebingen.anchoring.NameFactory;
  */
 public class Value implements SemLit {
 
-    public static final int VAL = 1;
-    public static final int INT = 2;
-    public static final int AVM = 3;
-    public static final int ADISJ = 4;
-    public static final int VAR = 5;
+    public enum Kind {
+        VAL, INT, AVM, ADISJ, VAR;
+    }
 
     // the value is atomic (String):
     private String sVal;
@@ -65,7 +63,7 @@ public class Value implements SemLit {
     private String varVal;
     // For facilitating checking, we give it a type:
     // sVal:=1 .... varVal:=5
-    private int type;
+    private Kind type;
 
     /**
      * Create a new Integer Value
@@ -79,7 +77,7 @@ public class Value implements SemLit {
         avmVal = null;
         adisj = null;
         varVal = null;
-        type = INT;
+        type = Kind.INT;
     }
 
     /**
@@ -91,15 +89,15 @@ public class Value implements SemLit {
      *            is either the variable stored in this value, or the atomic
      *            (String)
      */
-    public Value(int stype, String s) {
-        if (stype == VAR) {
+    public Value(Kind stype, String s) {
+        if (stype == Kind.VAR) {
             sVal = null;
             varVal = s;
-            type = VAR;
-        } else if (stype == VAL) {
+            type = Kind.VAR;
+        } else if (stype == Kind.VAL) {
             sVal = s;
             varVal = null;
-            type = VAL;
+            type = Kind.VAL;
         }
         iVal = null;
         avmVal = null;
@@ -118,7 +116,7 @@ public class Value implements SemLit {
         avmVal = fs;
         adisj = null;
         varVal = null;
-        type = AVM;
+        type = Kind.AVM;
     }
 
     /**
@@ -133,7 +131,7 @@ public class Value implements SemLit {
         avmVal = null;
         adisj = ad;
         varVal = null;
-        type = ADISJ;
+        type = Kind.ADISJ;
     }
 
     /**
@@ -148,8 +146,8 @@ public class Value implements SemLit {
         avmVal = null;
         adisj = ad;
         varVal = null;
-        type = ADISJ;
-        adisj.add(0, new Value(VAR, coref)); // we bind the adisj to a var
+        type = Kind.ADISJ;
+        adisj.add(0, new Value(Kind.VAR, coref)); // we bind the adisj to a var
     }
 
     public Value(Value v) {
@@ -203,8 +201,8 @@ public class Value implements SemLit {
 
     }
 
-    public boolean is(int whatType) {
-        return (whatType == type);
+    public boolean is(Kind whatKind) {
+        return (whatKind == type);
     }
 
     public boolean equals(Object v) {
@@ -318,12 +316,12 @@ public class Value implements SemLit {
         this.varVal = varVal;
     }
 
-    public int getType() {
+    public Kind getType() {
         return type;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setType(Kind kind) {
+        this.type = kind;
     }
 
     public static Value unify(Value a, Value b, Environment env)
@@ -363,7 +361,7 @@ public class Value implements SemLit {
                 if (!(a.getSVal().equals(b.getSVal()))) {
                     throw new UnifyException(a.toString(), b.toString());
                 } else {
-                    res = new Value(VAL, a.getSVal());
+                    res = new Value(Kind.VAL, a.getSVal());
                 }
                 break;
             case VAR: // b is a variable, we dereference it
@@ -399,7 +397,7 @@ public class Value implements SemLit {
                     env.bind(b.getVarVal(), a);
                     res = a;
                 } else { // b is already bound, the values must match !
-                    if (bb.is(INT) && (a.getIVal() == bb.getIVal())) {
+                    if (bb.is(Kind.INT) && (a.getIVal() == bb.getIVal())) {
                         // they do match:
                         res = new Value(a.getIVal());
                     } else {
@@ -463,13 +461,14 @@ public class Value implements SemLit {
                             // Value(5,"@"+bb.getVarVal())).getType());
                             // env.bind("@"+bb.getVarVal(),new
                             // Value(a.getAvmVal()));
-                            if (env.deref(new Value(5, "@" + bb.getVarVal()))
-                                    .getType() == AVM) {
+                            if (env.deref(
+                                    new Value(Kind.VAR, "@" + bb.getVarVal()))
+                                    .getType() == Kind.AVM) {
                                 // System.out.println("Unifying AVM with bound
                                 // AVM");
                                 env.bind("$" + bb.getVarVal(),
                                         new Value(Fs.unify(a.getAvmVal(),
-                                                env.deref(new Value(5,
+                                                env.deref(new Value(Kind.VAR,
                                                         "$" + bb.getVarVal()))
                                                         .getAvmVal(),
                                                 env, tyHi, seen)));
@@ -487,7 +486,7 @@ public class Value implements SemLit {
                     }
                     res = a;
                 } else { // b is already bound, the values must match !
-                    if (bb.is(AVM)) { // let us see if they do:
+                    if (bb.is(Kind.AVM)) { // let us see if they do:
                         res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(),
                                 env, tyHi, seen));
                         /*
@@ -499,7 +498,7 @@ public class Value implements SemLit {
                          * the calling method }
                          */
                     } else {
-                        if (bb.is(VAR)) {
+                        if (bb.is(Kind.VAR)) {
                             res = new Value(unify(a, bb, env, tyHi, seen));
                         } else {// they do not:
                             throw new UnifyException(a.toString(),
@@ -519,7 +518,7 @@ public class Value implements SemLit {
 
             // we check whether a is currently bound with some variable
             Value aMaybeVar = (a.getAdisj().size() > 0
-                    && a.getAdisj().getFirst().is(VAR))
+                    && a.getAdisj().getFirst().is(Kind.VAR))
                             ? a.getAdisj().getFirst() : null;
             if (aMaybeVar != null) {
                 Value v = env.deref(aMaybeVar);
@@ -556,7 +555,7 @@ public class Value implements SemLit {
                 // variable
                 LinkedList<Value> bdisj = b.getAdisj();
                 Value bMaybeVar = (b.getAdisj().size() > 0
-                        && b.getAdisj().getFirst().is(VAR))
+                        && b.getAdisj().getFirst().is(Kind.VAR))
                                 ? b.getAdisj().getFirst() : null;
                 if (bMaybeVar != null) {
                     Value w = env.deref(bMaybeVar);
@@ -573,7 +572,7 @@ public class Value implements SemLit {
                 LinkedList<Value> intersec = new LinkedList<Value>();
                 for (int i = 0; i < bdisj.size(); i++) {
                     Value z = bdisj.get(i);
-                    if (!(z.is(VAR)) && a.getAdisj().contains(z)) {
+                    if (!(z.is(Kind.VAR)) && a.getAdisj().contains(z)) {
                         intersec.add(z);
                     }
                 }
@@ -643,7 +642,7 @@ public class Value implements SemLit {
                 // System.out.println("Deref "+b);
                 Value bb = env.deref(b);
                 // System.out.println("is "+bb);
-                if (aa.is(Value.VAR) && bb.is(Value.VAR)) {
+                if (aa.is(Kind.VAR) && bb.is(Kind.VAR)) {
                     if (aa.equals(a) && bb.equals(b)) {
                         // if both variables are unbound
                         env.bind(a.getVarVal(), b);
@@ -684,12 +683,12 @@ public class Value implements SemLit {
      * @param finalUpdate
      */
     public void update(Environment env, boolean finalUpdate) {
-        if (this.is(Value.VAR)) {
+        if (this.is(Kind.VAR)) {
             // lookup in the environment
             Value val = env.deref(this);
             // value update (substitution)
             if (finalUpdate && val.getAdisj() != null
-                    && val.getAdisj().getFirst().is(VAR)) {
+                    && val.getAdisj().getFirst().is(Kind.VAR)) {
                 val.getAdisj().remove();
             }
             this.adisj = val.getAdisj();
@@ -698,7 +697,7 @@ public class Value implements SemLit {
             this.sVal = val.getSVal();
             this.type = val.getType();
             this.varVal = val.getVarVal();
-        } else if (this.is(Value.VAL)) {
+        } else if (this.is(Kind.VAL)) {
             // for semantic labels (which are stored in the environment before
             // display):
             Value val = env.get(this.getSVal());
@@ -710,9 +709,9 @@ public class Value implements SemLit {
                 this.type = val.getType();
                 this.varVal = val.getVarVal();
             }
-        } else if (this.is(ADISJ)) {
+        } else if (this.is(Kind.ADISJ)) {
             // for bound atomic disjunctions
-            if (this.getAdisj().getFirst().is(VAR)) {
+            if (this.getAdisj().getFirst().is(Kind.VAR)) {
                 Value aVar = this.getAdisj().getFirst();
                 Value val = env.deref(aVar);
                 // if the variable is unbound
@@ -723,7 +722,7 @@ public class Value implements SemLit {
                     val = this;
                 }
                 if (finalUpdate && val.getAdisj() != null
-                        && val.getAdisj().getFirst().is(VAR)) {
+                        && val.getAdisj().getFirst().is(Kind.VAR)) {
                     val.getAdisj().remove();
                 }
                 this.adisj = val.getAdisj();

@@ -51,7 +51,7 @@ public class ConstraintChecker {
         Map<String, Fs> avPairsToAdd = new HashMap<String, Fs>();
         for (Entry<String, Value> fsAVPair : fsToCheckWithConstraints
                 .getAVlist().entrySet()) {
-            if (fsAVPair.getValue().is(Value.AVM)) {
+            if (fsAVPair.getValue().is(Value.Kind.AVM)) {
                 Fs valFromAVPair = fsAVPair.getValue().getAvmVal();
                 Set<TypeConstraint> constraintsForNewVal = valFromAVPair
                         .getType().getTypeConstraints();

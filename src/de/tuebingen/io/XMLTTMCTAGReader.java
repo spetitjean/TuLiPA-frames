@@ -314,7 +314,7 @@ public class XMLTTMCTAGReader extends FileReader {
             // System.out.println(
             // "frameSem in XMLTTMCTAGREADER:\n" + frameSem.toString());
             res.setFrameSem(frameSem);
-	    //System.out.println("Frame from XMLTTMCTAGReader: " + frameSem);
+            // System.out.println("Frame from XMLTTMCTAGReader: " + frameSem);
         }
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
@@ -634,7 +634,7 @@ public class XMLTTMCTAGReader extends FileReader {
         // NB: an fs XML element has f element as children
         Fs res = null;
         String coref = e.getAttribute("coref");
-        Value corefval = new Value(Value.VAR, nf.getName(coref));
+        Value corefval = new Value(Value.Kind.VAR, nf.getName(coref));
 
         NodeList etypes = null;
         Value typevar = null;
@@ -647,7 +647,7 @@ public class XMLTTMCTAGReader extends FileReader {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
                     etypes = el.getElementsByTagName("type");
-                    typevar = new Value(Value.VAR,
+                    typevar = new Value(Value.Kind.VAR,
                             nf.getName(el.getAttribute("coref")));
                 }
             }
@@ -782,13 +782,13 @@ public class XMLTTMCTAGReader extends FileReader {
         Value res = null;
 
         if (e.hasAttribute("value")) {
-            res = new Value(Value.VAL, e.getAttribute("value"));
+            res = new Value(Value.Kind.VAL, e.getAttribute("value"));
         } else {
             // the variable is renamed to be sure there is no variable name
             // conflict
             // with the lexicon
             String newName = nf.getName(e.getAttribute("varname"));
-            res = new Value(Value.VAR, newName);
+            res = new Value(Value.Kind.VAR, newName);
         }
         return res;
     }

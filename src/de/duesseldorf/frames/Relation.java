@@ -36,7 +36,7 @@ public class Relation {
         List<Value> newArgs = new LinkedList<Value>();
         for (Value oldNamedVal : this.arguments) {
             String newVarName = nf.getName(oldNamedVal.getVarVal());
-            Value newVal = new Value(Value.VAR, newVarName);
+            Value newVal = new Value(Value.Kind.VAR, newVarName);
             newArgs.add(newVal);
             // System.out.println("renamed " + oldNamedVal.getVarVal() + " to "
             // + newVal.getVarVal());

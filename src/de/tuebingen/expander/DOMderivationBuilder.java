@@ -410,21 +410,21 @@ public class DOMderivationBuilder {
             Element e;
             switch (fval.getType()) {
             // case VAL
-            case 1:
+            case VAL:
                 // System.out.println("case VAL");
                 e = derivDoc.createElement("sym");
                 e.setAttribute("value", fval.getSVal());
                 f.appendChild(e);
                 break;
             // case VAR
-            case 5:
+            case VAR:
                 // System.out.println("case VAR");
                 e = derivDoc.createElement("sym");
                 e.setAttribute("varname", fval.getVarVal());
                 f.appendChild(e);
                 break;
             // case AVM
-            case 3:
+            case AVM:
                 // System.out.println("case AVM");
                 buildFrame(f, fval.getAvmVal());
                 break;

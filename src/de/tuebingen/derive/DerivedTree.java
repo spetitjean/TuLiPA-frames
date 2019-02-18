@@ -34,10 +34,10 @@
 package de.tuebingen.derive;
 
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.w3c.dom.Node;
 
@@ -79,8 +79,12 @@ public class DerivedTree {
         bottomFeatures = new HashMap<Node, Fs>();
         semantics = iniTree.semantics;
         // frames = iniTree.frames;
-	// Here, copies are need, otherwise semantics of elementary trees are displayed wrong 
-        frameSem = new Frame(new LinkedList(iniTree.getFrameSem().getFeatureStructures()), new HashSet(iniTree.getFrameSem().getRelations()));
+        // Here, copies are need, otherwise semantics of elementary trees are
+        // displayed wrong
+        frameSem = new Frame(
+                new LinkedList<Fs>(
+                        iniTree.getFrameSem().getFeatureStructures()),
+                new HashSet(iniTree.getFrameSem().getRelations()));
         env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);
         addMissingTopFeatures(iniTree.topFeatures);
@@ -110,9 +114,9 @@ public class DerivedTree {
                 if ((topValue.equals(feat1) && botValue.equals(feat2))
                         || (topValue.equals(feat2) && botValue.equals(feat1))) {
                     jointFs.put("top:" + key,
-                            new Value(Value.VAL, "#" + topValue));
+                            new Value(Value.Kind.VAL, "#" + topValue));
                     jointFs.put("bot:" + key,
-                            new Value(Value.VAL, "#" + botValue));
+                            new Value(Value.Kind.VAL, "#" + botValue));
                 } else {
                     jointFs.put("top:" + key, topFs.getAVlist().get(key));
                     jointFs.put("bot:" + key, botFs.getAVlist().get(key));
@@ -163,7 +167,7 @@ public class DerivedTree {
                     features.put(n, topFeatures.get(n));
                 }
                 if (verbose)
-                    topFeatures.get(n).setFeat("hash", new Value(Value.VAL,
+                    topFeatures.get(n).setFeat("hash", new Value(Value.Kind.VAL,
                             Integer.toString(n.hashCode())));
             } else if (botFs != null) {
                 features.put(n, bottomFeatures.get(n));

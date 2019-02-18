@@ -171,13 +171,15 @@ public class XMLTypeHierarchyReader extends FileReader {
             // find the val
             String valString = ((Element) constraint.getElementsByTagName("val")
                     .item(0)).getAttribute("val");
-            int valType = valString.startsWith("@") ? Value.VAR : Value.VAL;
+            Value.Kind valType = valString.startsWith("@") ? Value.Kind.VAR
+                    : Value.Kind.VAL;
             Value val = new Value(valType, nf.getName(valString));
 
             // find the type
             String typeString = ((Element) constraint
                     .getElementsByTagName("type").item(0)).getAttribute("val");
-            int typeType = typeString.startsWith("@") ? Value.VAR : Value.VAL;
+            Value.Kind typeType = typeString.startsWith("@") ? Value.Kind.VAR
+                    : Value.Kind.VAL;
             Value typeVal = typeString.startsWith("@")
                     ? new Value(typeType, nf.getName(typeString))
                     : new Value(typeType, nf.getUniqueName());

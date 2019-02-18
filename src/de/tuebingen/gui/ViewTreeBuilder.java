@@ -48,6 +48,7 @@ import de.tuebingen.gui.tree.view.TreeViewNode;
 import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.TagTree;
+import de.tuebingen.tag.Value;
 
 public class ViewTreeBuilder {
     /*
@@ -453,7 +454,7 @@ public class ViewTreeBuilder {
             // we want to remember when we see variables (not only the ones
             // starting with X...). This is necessary in case of XML export
             // (varname vs value)
-            if (features.getFeat(key).getType() == 5) {
+            if (features.getFeat(key).is(Value.Kind.VAR)) {
                 value = "_V_" + features.getFeat(key).toString();
             } else {
                 value = features.getFeat(key).toString();
