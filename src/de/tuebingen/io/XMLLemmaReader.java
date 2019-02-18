@@ -201,7 +201,7 @@ public class XMLLemmaReader extends FileReader {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) n;
                 if (el.getTagName().equals("args")) {
-                    fs = XMLTTMCTAGReader.getFeats(el,
+                    fs = XMLGrammarReadingTools.getFeats(el,
                             XMLTTMCTAGReader.FROM_OTHER,
                             new Hashtable<String, Value>(), new NameFactory());
                 }

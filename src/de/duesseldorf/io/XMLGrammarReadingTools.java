@@ -1,5 +1,6 @@
 package de.duesseldorf.io;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -8,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Type;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.io.XMLTTMCTAGReader;
 import de.tuebingen.tag.Fs;
@@ -35,7 +37,7 @@ public class XMLGrammarReadingTools {
                 if (n.getNodeType() == Node.ELEMENT_NODE) {
                     Element el = (Element) n;
                     if (el.getTagName().equals("fs")) {
-                        res = XMLTTMCTAGReader.getFeats(el, XMLTTMCTAGReader.NOFS, toAdd, nf);
+                        res = XMLGrammarReadingTools.getFeats(el, XMLTTMCTAGReader.NOFS, toAdd, nf);
                     }
                 }
             }
@@ -66,6 +68,69 @@ public class XMLGrammarReadingTools {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Process a fs XML tag to extract a TagNode label (class Fs)
+     * 
+     * @param e
+     *            the DOM Element corresponding to the fs feature structure
+     * 
+     */
+    public static Fs getFeats(Element e, int type,
+            Hashtable<String, Value> toAdd, NameFactory nf) {
+        // NB: an fs XML element has f element as children
+        Fs res = null;
+        String coref = e.getAttribute("coref");
+        Value corefval = new Value(Value.VAR, nf.getName(coref));
+    
+        NodeList etypes = null;
+        NodeList l = e.getChildNodes();
+    
+        // NodeList etypes = e.getElementsByTagName("type");
+        for (int i = 0; i < l.getLength(); i++) {
+            Node n = l.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) n;
+                if (el.getTagName().equals("ctype")) {
+                    etypes = el.getElementsByTagName("type");
+                }
+            }
+        }
+    
+        Set<String> types = new HashSet<String>();
+        if (etypes != null) {
+            for (int i = 0; i < etypes.getLength(); i++) {
+                Node n = etypes.item(i);
+                Element el = (Element) n;
+                // System.out.println("Type " + el.getAttribute("val"));
+                types.add(el.getAttribute("val"));
+            }
+        }
+        Type frame_type = new Type(types);
+        // System.out.println("Found a type: "+frame_type);
+    
+        res = new Fs(l.getLength(), frame_type, corefval);
+    
+        for (int i = 0; i < l.getLength(); i++) {
+            Node n = l.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) n;
+                if (el.getTagName().equals("f")) {
+                    String key = el.getAttribute("name");
+                    Value val = null;
+                    if (type == XMLTTMCTAGReader.TOP || key.equals("top")) {
+                        val = XMLTTMCTAGReader.getVal(el, XMLTTMCTAGReader.TOP, toAdd, key, nf);
+                    } else if (type == XMLTTMCTAGReader.BOT || key.equals("bot")) {
+                        val = XMLTTMCTAGReader.getVal(el, XMLTTMCTAGReader.BOT, toAdd, key, nf);
+                    } else {
+                        val = XMLTTMCTAGReader.getVal(el, XMLTTMCTAGReader.NOFS, toAdd, key, nf);
+                    }
+                    res.setFeat(key, val);
+                }
+            }
         }
         return res;
     }
