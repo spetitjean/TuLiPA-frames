@@ -48,7 +48,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.duesseldorf.frames.FsTools;
+import de.duesseldorf.frames.FSPrintingTools;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.derive.TreeDeriver;
@@ -140,7 +140,7 @@ public class DerivedTreeViewer {
                     if (dTree.getFrameSem() != null) {
                         de.duesseldorf.frames.Frame frameSem = dTree
                                 .getFrameSem();
-                        semanticsString += FsTools.printFrame(frameSem,
+                        semanticsString += FSPrintingTools.printFrame(frameSem,
                                 debugMode);
                     }
                     // if (dTree.frames == null && dTree.getFrameSem() != null)

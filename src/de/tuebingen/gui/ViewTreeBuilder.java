@@ -41,8 +41,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.FSPrintingTools;
 import de.duesseldorf.frames.Fs;
-import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Value;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
@@ -370,7 +370,7 @@ public class ViewTreeBuilder {
         // }
         // }
         if (eTree.getFrameSem() != null) {
-            semanticsString += FsTools.printFrame(eTree.getFrameSem(), false);
+            semanticsString += FSPrintingTools.printFrame(eTree.getFrameSem(), false);
         }
         xvt.prettySem = semanticsString;
         return xvt;
