@@ -346,23 +346,13 @@ public class Value implements SemLit {
                     && val.getAdisj().getFirst().is(Kind.VAR)) {
                 val.getAdisj().remove();
             }
-            this.adisj = val.getAdisj();
-            this.avmVal = val.getAvmVal();
-            this.iVal = val.getIVal();
-            this.sVal = val.getSVal();
-            this.type = val.getType();
-            this.varVal = val.getVarVal();
+            copyImportantFields(val);
         } else if (this.is(Kind.VAL)) {
             // for semantic labels (which are stored in the environment before
             // display):
             Value val = env.get(this.getSVal());
             if (val != null) {
-                this.adisj = val.getAdisj();
-                this.avmVal = val.getAvmVal();
-                this.iVal = val.getIVal();
-                this.sVal = val.getSVal();
-                this.type = val.getType();
-                this.varVal = val.getVarVal();
+                copyImportantFields(val);
             }
         } else if (this.is(Kind.ADISJ)) {
             // for bound atomic disjunctions
@@ -380,14 +370,17 @@ public class Value implements SemLit {
                         && val.getAdisj().getFirst().is(Kind.VAR)) {
                     val.getAdisj().remove();
                 }
-                this.adisj = val.getAdisj();
-                this.avmVal = val.getAvmVal();
-                this.iVal = val.getIVal();
-                this.sVal = val.getSVal();
-                this.type = val.getType();
-                this.varVal = val.getVarVal();
+                copyImportantFields(val);
             }
         }
     }
 
+    private void copyImportantFields(Value val) {
+        this.type = val.getType();
+        this.adisj = val.getAdisj();
+        this.avmVal = val.getAvmVal();
+        this.iVal = val.getIVal();
+        this.sVal = val.getSVal();
+        this.varVal = val.getVarVal();
+    }
 }
