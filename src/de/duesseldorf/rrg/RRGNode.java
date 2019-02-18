@@ -2,6 +2,7 @@ package de.duesseldorf.rrg;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
@@ -68,6 +69,15 @@ public class RRGNode implements Node {
         this.name = name;
         this.setCategory(category);
         this.gornaddress = new GornAddress();
+    }
+
+    public RRGNode(RRGNodeType type, String name, String category,
+            GornAddress gornaddress) {
+        children = new LinkedList<Node>();
+        this.type = type;
+        this.name = name;
+        this.setCategory(category);
+        this.gornaddress = gornaddress;
     }
 
     /**
@@ -137,7 +147,7 @@ public class RRGNode implements Node {
         return category;
     }
 
-    public void setCategory(String category) {
+    private void setCategory(String category) {
         this.category = category;
     }
 
@@ -147,11 +157,16 @@ public class RRGNode implements Node {
 
     // not yet implemented
     public String getName() {
-        return null;
+        return this.name;
     }
 
     // not yet implemented
     public void setName(String name) {
+        System.out
+                .println("RRGNode.setName was called but is not implemented. ");
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            System.out.println(ste);
+        }
     }
 
     public GornAddress getGornaddress() {
@@ -160,6 +175,47 @@ public class RRGNode implements Node {
 
     public void setGornAddress(GornAddress gornaddress) {
         this.gornaddress = gornaddress;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(gornaddress, children, type, name, category);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this != null && obj != null && obj instanceof RRGNode) {
+            return this.hashCode() == obj.hashCode();
+        }
+        return false;
+    }
+
+    /**
+     * returns true iff the node category and node type is the same
+     * and weakEquals is true for all children of this
+     * 
+     * @param other
+     * @return
+     */
+    public boolean weakEquals(RRGNode other) {
+        boolean baseCase = this.getCategory().equals(other.getCategory())
+                && this.getType().equals(other.getType());
+        if (!baseCase) {
+            // System.out.println("no basecase: " + this + " VS " + other);
+            return false;
+        }
+        // look at the children
+        if (this.getChildren().size() != other.getChildren().size()) {
+            return false;
+        }
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            RRGNode thisChild = (RRGNode) getChildren().get(i);
+            RRGNode otherChild = (RRGNode) other.getChildren().get(i);
+            if (!thisChild.weakEquals(otherChild)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

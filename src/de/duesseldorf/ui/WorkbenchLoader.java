@@ -44,8 +44,9 @@ import java.util.Map;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.TypeHierarchy;
-import de.duesseldorf.io.XMLRRGReader;
 import de.duesseldorf.io.XMLTypeHierarchyReader;
+import de.duesseldorf.rrg.io.BracketedRRGReader;
+import de.duesseldorf.rrg.io.XMLRRGReader;
 import de.tuebingen.anchoring.InstantiatedTagTree;
 import de.tuebingen.anchoring.LexicalSelection;
 import de.tuebingen.io.RCGReader;
@@ -164,11 +165,14 @@ public class WorkbenchLoader {
             System.err.println("RCG grammar loading time: "
                     + (loadedTime) / (Math.pow(10, 9)) + " sec.");
         } else if (op.check("rrg")) { // RRG-parsing
-            // TODO load everything for RRG
-            XMLRRGReader rrgreader = new XMLRRGReader(grammar);
-            g = rrgreader.retrieveRRG();
-            rrgreader.close();
-            // g = new RRG();
+            if (op.check("rrgbrin")) {
+                BracketedRRGReader brReader = new BracketedRRGReader(grammar);
+                g = brReader.parseRRG();
+            } else {
+                XMLRRGReader rrgreader = new XMLRRGReader(grammar);
+                g = rrgreader.retrieveRRG();
+                rrgreader.close();
+            }
 
         } else { // TAG/TT-MCTAG parsing
             // if the tag option is enabled (SAX-based loading with extended

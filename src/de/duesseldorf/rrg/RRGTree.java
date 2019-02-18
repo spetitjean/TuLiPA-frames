@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
@@ -107,7 +108,6 @@ public class RRGTree {
                                 + toString());
             }
         }
-
         for (Node daughter : root.getChildren()) {
             retrieveSpecialNodes((RRGNode) daughter);
         }
@@ -182,6 +182,10 @@ public class RRGTree {
         return this.id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 
      * @return <code>true</code> if the root node of this tree is a
@@ -191,6 +195,23 @@ public class RRGTree {
      */
     public boolean isSisAdjTree() {
         return ((RRGNode) root).getType().equals(RRGNodeType.STAR);
+    }
+
+    /**
+     * hashCode does not use the special node maps: If they are different, the
+     * root with its daughters are different too.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this != null && obj != null && obj instanceof RRGTree) {
+            return this.hashCode() == obj.hashCode();
+        }
+        return false;
     }
 
     /**

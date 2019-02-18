@@ -38,6 +38,7 @@ package de.duesseldorf.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -47,11 +48,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.io.RRGXMLBuilder;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
+import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
@@ -780,17 +787,47 @@ public class ParsingInterface {
         boolean verbose = op.check("v");
 
         // Tokenizing
-        List<String> toksentence = tokenize(op, sentence, verbose);
-
+        // tokenizer is a piece of crap, deletes full stops.
+        // List<String> toksentence = tokenize(op, sentence, verbose);
+        List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
         long startParsingTime = System.nanoTime();
+
         RRGParser rrgparser = new RRGParser();
-        rrgparser.parseSentence(toksentence);
+        Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
+
+        System.out.println("result: ");
+        for (RRGParseTree rrgParseTree : result) {
+            // System.out.println("Extraction steps for " +
+            // SrrgParseTree.getId());
+            // System.out.println(rrgParseTree.extractionstepsPrinted());
+            System.out.println("result for " + rrgParseTree.getId());
+            System.out.println(RRGTreeTools
+                    .asStringWithNodeLabelsAndNodeType(rrgParseTree));
+        }
+
+        // XML Output
+        if (op.check("xg")) {
+            StreamResult resultStream = (op.check("o"))
+                    ? new StreamResult(op.getVal("o"))
+                    : new StreamResult(System.out);
+
+            try {
+                RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(resultStream,
+                        result);
+                rrgXMLBuilder.buildAndWrite();
+            } catch (ParserConfigurationException e) {
+                System.err.println(
+                        "could not build parse results due to ParserConfigurationException");
+            }
+        } else {
+            System.out.println("no output file specified with option -o");
+        }
+
         long parsingTime = System.nanoTime() - startParsingTime;
 
         System.err.println(
                 "Total time : " + (parsingTime) / (Math.pow(10, 9)) + " sec.");
-
-        return true;
+        return result.isEmpty();
     }
 
     /**

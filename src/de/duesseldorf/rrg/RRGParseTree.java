@@ -5,10 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.rrg.extractor.GAShiftHandler;
-import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
+import de.duesseldorf.rrg.extractor.ExtractionStep;
+import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
@@ -42,27 +43,28 @@ import de.tuebingen.tree.Node;
  */
 public class RRGParseTree extends RRGTree {
 
+    private List<ExtractionStep> extractionsteps;
     private Map<GornAddress, String> idMap;
     /**
      * A stack of the subtrees of wrapping trees from a ddaughter downwards. A
      * subtree is to be pushed on here during completeWrapping, and taken again
      * and substituted when doing predictWrapping
      */
-    private Map<SimpleRRGParseItem, RRGNode> wrappingSubTrees;
-
-    private GAShiftHandler addressShiftHandler;
+    private Map<RRGParseItem, RRGNode> wrappingSubTrees;
 
     public RRGParseTree(Node root, String id) {
         super(root, id);
         this.idMap = new HashMap<GornAddress, String>();
         idMap.put(((RRGNode) root).getGornaddress(), id);
-        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+        this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
+        this.extractionsteps = new LinkedList<ExtractionStep>();
     }
 
     public RRGParseTree(RRGParseTree tree) {
         super(tree);
         this.idMap = new HashMap<GornAddress, String>(tree.getIdMap());
         initDeepCopyOfWrappingSubtrees(tree);
+        this.extractionsteps = tree.getExtractionsteps();
     }
 
     public RRGParseTree(RRGTree tree) {
@@ -70,17 +72,19 @@ public class RRGParseTree extends RRGTree {
         if (tree instanceof RRGParseTree) {
             this.idMap = new HashMap<GornAddress, String>(
                     ((RRGParseTree) tree).getIdMap());
+            this.extractionsteps = ((RRGParseTree) tree).getExtractionsteps();
         } else {
             this.idMap = new HashMap<GornAddress, String>();
             this.idMap.put(new GornAddress(), tree.getId());
-            this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+            this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
+            this.extractionsteps = new LinkedList<ExtractionStep>();
         }
     }
 
     private void initDeepCopyOfWrappingSubtrees(RRGTree tree) {
-        this.wrappingSubTrees = new HashMap<SimpleRRGParseItem, RRGNode>();
+        this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
         if (tree instanceof RRGParseTree) {
-            for (Entry<SimpleRRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
+            for (Entry<RRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
                     .getWrappingSubTrees().entrySet()) {
                 this.wrappingSubTrees.put(entry.getKey(),
                         new RRGNode(entry.getValue()));
@@ -97,7 +101,7 @@ public class RRGParseTree extends RRGTree {
         this.id = newId;
     }
 
-    public Map<SimpleRRGParseItem, RRGNode> getWrappingSubTrees() {
+    public Map<RRGParseItem, RRGNode> getWrappingSubTrees() {
         return wrappingSubTrees;
     }
 
@@ -183,13 +187,10 @@ public class RRGParseTree extends RRGTree {
      * GornAddressees of all
      * dmother's children further right might be affected, and are updated.
      * 
-     * @param wrappedTree
-     * @param dmother
-     * @param position
      * @return
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
-            GornAddress ddaughterAddress, SimpleRRGParseItem ddaughterItem) {
+            GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
         int position = ddaughterAddress.isIthDaughter();
@@ -213,6 +214,7 @@ public class RRGParseTree extends RRGTree {
                 targetNode.addXchild(rootChildren.get(i), position);
             }
             // update GornAddress shifts
+            resultingTree.idMap.put(ddaughterAddress, wrappedTree.getId());
         } else {
             System.out.println(
                     "could not complete a wrapping of target tree into wrapping tree at node "
@@ -229,12 +231,15 @@ public class RRGParseTree extends RRGTree {
      * the ddaughter in that parseTree, add the subtree of the wrapping tree
      * below the ddaughter.
      * 
+     * TODO change the wrappingsubtrees stack from Nodes to trees, so that the
+     * idMap can properly work.
+     * 
      * @param ddaughterAbsAddress
      * @param ddaughterItem
      * @return
      */
     public RRGParseTree addWrappingSubTree(GornAddress ddaughterAbsAddress,
-            SimpleRRGParseItem ddaughterItem) {
+            RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
 
@@ -259,7 +264,8 @@ public class RRGParseTree extends RRGTree {
             System.out.println(
                     "adding a subtree at extracting predict wrapping was not possible");
         }
-
+        // TODO see comment
+        resultingTree.idMap.put(ddaughterAbsAddress, subTreeRoot.getCategory());
         return resultingTree;
     }
 
@@ -287,7 +293,21 @@ public class RRGParseTree extends RRGTree {
                 .nodeUnificationPossible(targetNode)) {
             targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
                     position);
+            result.idMap.put(targetAddress.ithDaughter(position),
+                    adjoiningTree.getId());
+        } else {
+            System.out.println(
+                    "node unification not possible during sister adjunction");
         }
+        // for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+        // System.out.println(e.toString());
+        // }
+        // System.out.println(
+        // "Sister adjunction at GA" + targetAddress + "pos: " + position);
+        // System.out.println("in tree: " + this.toString());
+        // System.out.println("resultingTree: " + result);
+        // System.out.println("adjoining tree: " + adjoiningTree);
+
         return result;
     }
 
@@ -299,8 +319,15 @@ public class RRGParseTree extends RRGTree {
         if (((RRGNode) substitutionTree.getRoot())
                 .nodeUnificationPossible(targetNode)) {
             result.setNode(address, (RRGNode) substitutionTree.getRoot());
+        } else {
+            System.out.println(
+                    "NU not possible on tree with id: " + this.getId());
+            System.out.println("at GA " + address);
+            System.out.println("target tree: " + this);
+            System.out.println("subst tree: " + substitutionTree);
+            System.exit(0);
         }
-        // TODO add things to idmap
+        result.idMap.put(address, substitutionTree.getId());
         return result;
     }
 
@@ -322,4 +349,49 @@ public class RRGParseTree extends RRGTree {
         return resultingTree;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode() * Objects.hash(idMap);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this != null && obj != null && obj instanceof RRGParseTree) {
+            return this.hashCode() == obj.hashCode();
+        }
+        return false;
+    }
+
+    public String idMap2string() {
+        String idMap2str = "";
+
+        for (GornAddress key : idMap.keySet()) {
+            idMap2str += key + " -> " + idMap.get(key) + "\n";
+        }
+        return idMap2str;
+    }
+
+    @Override
+    public String toString() {
+
+        return id + idMap2string() + super.toString();
+    }
+
+    public List<ExtractionStep> getExtractionsteps() {
+        return extractionsteps;
+    }
+
+    public boolean addExtractionStep(ExtractionStep e) {
+        this.extractionsteps.add(0, e);
+        return true;
+    }
+
+    public String extractionstepsPrinted() {
+        StringBuffer sb = new StringBuffer();
+        for (ExtractionStep e : extractionsteps) {
+            sb.append(e);
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }

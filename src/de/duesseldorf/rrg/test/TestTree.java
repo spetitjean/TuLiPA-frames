@@ -4,12 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.duesseldorf.io.XMLRRGTag;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
-import de.duesseldorf.rrg.extractor.NaiveGAShiftHandler;
+import de.duesseldorf.rrg.io.XMLRRGTag;
 import de.duesseldorf.util.GornAddress;
 
 /**
@@ -47,8 +46,7 @@ public class TestTree {
         // printXMLEnums();
         // testGornAddresses();
         // testTreeCloning();
-        // testGAcomparison();
-        testGAshifting();
+        testGAcomparison();
         // testSortedMaps();
     }
 
@@ -83,30 +81,6 @@ public class TestTree {
             System.out.println(
                     "Key : " + entry.getKey() + " Value : " + entry.getValue());
         }
-    }
-
-    private static void testGAshifting() {
-        // try using a list? Comparators?
-        NaiveGAShiftHandler shiftHandler = new NaiveGAShiftHandler();
-        GornAddress root = new GornAddress();
-        GornAddress one = root.ithDaughter(0);
-        GornAddress two = one.rightSister();
-        GornAddress oneone = one.ithDaughter(0);
-        GornAddress onetwo = oneone.rightSister();
-
-        shiftHandler.addShift(onetwo, 3);
-        shiftHandler.addShift(oneone, 2);
-        shiftHandler.addShift(one, 1);
-        shiftHandler.addShift(two, 4);
-        System.out.println("got the following shifts:\n" + shiftHandler);
-        GornAddress toShift = one.ithDaughter(1);
-        System.out.println("compute shift for " + toShift + ":\n"
-                + shiftHandler.computeShift(toShift));
-        System.out.println("compute shift for " + root + ":\n"
-                + shiftHandler.computeShift(root));
-        System.out.println("compute shift for " + oneone + ":\n"
-                + shiftHandler.computeShift(oneone));
-
     }
 
     private static void testGAcomparison() {

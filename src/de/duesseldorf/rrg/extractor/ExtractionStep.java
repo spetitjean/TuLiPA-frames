@@ -1,7 +1,7 @@
 package de.duesseldorf.rrg.extractor;
 
 import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.parser.SimpleRRGParseItem;
+import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
 
 /**
@@ -34,21 +34,12 @@ import de.duesseldorf.util.GornAddress;
  */
 public class ExtractionStep {
     public GornAddress GAInParseTree;
-    public SimpleRRGParseItem currentItem;
+    public RRGParseItem currentItem;
     public RRGParseTree currentParseTree;
     public int goToRightWhenGoingDown;
 
-    public ExtractionStep(SimpleRRGParseItem currentItem,
-            GornAddress GAInParseTree, RRGParseTree currentParseTree) {
-        this.GAInParseTree = GAInParseTree;
-        this.currentItem = currentItem;
-        this.currentParseTree = currentParseTree;
-        goToRightWhenGoingDown = 0;
-    }
-
-    public ExtractionStep(SimpleRRGParseItem currentItem,
-            GornAddress GAInParseTree, RRGParseTree currentParseTree,
-            int goToRightWhenGoingDown) {
+    public ExtractionStep(RRGParseItem currentItem, GornAddress GAInParseTree,
+            RRGParseTree currentParseTree, int goToRightWhenGoingDown) {
         this.GAInParseTree = GAInParseTree;
         this.currentItem = currentItem;
         this.currentParseTree = currentParseTree;
@@ -63,7 +54,7 @@ public class ExtractionStep {
         return this.GAInParseTree;
     }
 
-    public SimpleRRGParseItem getCurrentItem() {
+    public RRGParseItem getCurrentItem() {
         return this.currentItem;
     }
 

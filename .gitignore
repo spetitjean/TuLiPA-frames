@@ -3,6 +3,9 @@
 .project
 bin/.*
 
+# intellij
+.idea
+
 # jar file: don't commit it all the time, just build it after downloading src code
 bin/TuLiPA.jar
 
@@ -19,3 +22,4 @@ run/
 # ignore class files 
 bin/**
 !TuLiPA-frames.jar
+
