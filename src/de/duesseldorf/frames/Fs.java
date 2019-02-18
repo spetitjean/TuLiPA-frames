@@ -492,7 +492,7 @@ public class Fs {
                     // message
                     // System.out.println("Unifying "+avm1.get(k)+" and
                     // "+avm2.get(k));
-                    nval = Value.unify(avm1.get(k), avm2.get(k), env, tyHi,
+                    nval = ValueTools.unify(avm1.get(k), avm2.get(k), env, tyHi,
                             seen);
                 } catch (UnifyException e) {
                     throw new UnifyException(
@@ -583,7 +583,7 @@ public class Fs {
             if (fs2.isTyped()) {
                 // System.out.println("Unifying coreferences: "+fs1.getCoref()+"
                 // and "+fs2.getCoref());
-                resCoref = Value.unify(fs1.getCoref(), fs2.getCoref(), env,
+                resCoref = ValueTools.unify(fs1.getCoref(), fs2.getCoref(), env,
                         tyHi, seen);
                 // System.out.println("Done unify");
             } else {
@@ -642,7 +642,7 @@ public class Fs {
                 Value typevarderef = env.deref(typevar);
                 if (!typevarderef.equals(typevar)) {
                     newType = new Type(fs.getType().getElementaryTypes(),
-                            Value.unify(typevarderef, typevar, env),
+                            ValueTools.unify(typevarderef, typevar, env),
                             fs.getType().getTypeConstraints());
                 } else {
                     newType = new Type(fs.getType().getElementaryTypes(),
@@ -651,7 +651,7 @@ public class Fs {
             }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
                 res = new Fs(fs.getSize(), newType,
-                        Value.unify(vderef, coref, env));
+                        ValueTools.unify(vderef, coref, env));
             } else { // it is not:
                 res = new Fs(fs.getSize(), newType, vderef);
                 // This was added for testing
@@ -691,7 +691,7 @@ public class Fs {
                 Value v = env.deref(fval);
 
                 if (!(v.equals(fval))) { // it is bound:
-                    res.setFeat(k, Value.unify(fval, v, env));
+                    res.setFeat(k, ValueTools.unify(fval, v, env));
                 } else { // it is not:
                     // System.err.println("Variable not bound ... " + k +
                     // ":"

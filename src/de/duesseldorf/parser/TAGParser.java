@@ -34,6 +34,7 @@ import java.lang.Math;
 import de.tuebingen.tag.*;
 import de.tuebingen.tokenizer.*;
 import de.duesseldorf.frames.Value;
+import de.duesseldorf.frames.ValueTools;
 import de.tuebingen.forest.*;
 import de.tuebingen.tree.*;
 import de.tuebingen.rcg.PredComplexLabel;
@@ -321,7 +322,7 @@ public class TAGParser {
 	boolean allowed = true;
 	try {
 	    
-	    Value v = Value.unify(top1,top2,new Environment(0));
+	    Value v = ValueTools.unify(top1,top2,new Environment(0));
 	    if (v == null)
 		allowed = false;
 	    
@@ -349,7 +350,7 @@ public class TAGParser {
 	boolean allowed1 = true;
 	try {
 	    
-	    Value v = Value.unify(top1,top2,new Environment(0));
+	    Value v = ValueTools.unify(top1,top2,new Environment(0));
 	    if (v == null)
 		allowed1 = false;
 	    
@@ -360,7 +361,7 @@ public class TAGParser {
 	boolean allowed2 = true;
 	try {
 	    
-	    Value v = Value.unify(bottom1,bottom2,new Environment(0));
+	    Value v = ValueTools.unify(bottom1,bottom2,new Environment(0));
 	    if (v == null)
 		allowed2 = false;
 	    

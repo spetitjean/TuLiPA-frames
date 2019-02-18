@@ -39,6 +39,7 @@ import java.util.Set;
 
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
+import de.duesseldorf.frames.ValueTools;
 import de.tuebingen.derive.PrettyNameFactory;
 
 /**
@@ -195,7 +196,7 @@ public class Environment {
             Value eVal = env.deref(val);
             if (!(eVal.equals(val))) {
                 // if it is, we unify the bound values in the new environment
-                Value.unify(val, eVal, nenv);
+                ValueTools.unify(val, eVal, nenv);
             }
         }
     }

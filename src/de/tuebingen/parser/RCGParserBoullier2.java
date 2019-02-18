@@ -43,6 +43,7 @@ import java.util.Map;
 
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
+import de.duesseldorf.frames.ValueTools;
 import de.tuebingen.io.RCGReader;
 import de.tuebingen.rcg.*;
 import de.tuebingen.tokenizer.BuiltinTokenizer;
@@ -292,7 +293,7 @@ public class RCGParserBoullier2 extends RCGParser {
 								Value bot = tn.getLabel().getFeat("bot");
 								if (top != null && bot != null) {
 									//System.err.println("Unifying " + top.toString() + " and " + bot.toString());
-									Value.unify(top, bot, new Environment(0));
+									ValueTools.unify(top, bot, new Environment(0));
 								}
 							}
 							catch (UnifyException e) {
