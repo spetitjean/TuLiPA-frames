@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +58,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.Type;
+import de.duesseldorf.io.XMLGrammarReadingTools;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemDom;
@@ -273,7 +273,7 @@ public class XMLTTMCTAGReader extends FileReader {
         res.setTrace((List<String>) trace);
         // 3. Processing of the interface
         l = e.getElementsByTagName("interface");
-        Fs iface = getNarg((Element) l.item(0), FROM_OTHER, nf);
+        Fs iface = XMLGrammarReadingTools.getNarg((Element) l.item(0), FROM_OTHER, nf);
         res.setIface(iface);
         // 4. Processing of the family name
         l = e.getElementsByTagName("family");
@@ -288,7 +288,7 @@ public class XMLTTMCTAGReader extends FileReader {
         List<Fs> framereprs = new ArrayList<Fs>();
 
         if (l.getLength() > 0) {
-            Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
+            Fs framerepr = XMLGrammarReadingTools.getNarg((Element) l.item(0), FROM_OTHER, nf);
             framereprs.add(framerepr);
             res.concatFrames(framerepr);
         } else {
@@ -344,7 +344,7 @@ public class XMLTTMCTAGReader extends FileReader {
         }
         // added this part to try and get fs in frames
         else if (e.getTagName().equals("fs")) {
-            Fs feats = getNarg(e, FROM_OTHER, nf);
+            Fs feats = XMLGrammarReadingTools.getNarg(e, FROM_OTHER, nf);
             sem = new Value(feats);
         }
         // originally no else -> only 3 types of tags allowed
@@ -389,7 +389,7 @@ public class XMLTTMCTAGReader extends FileReader {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) n;
                 if (el.getTagName().equals("fs")) {
-                    Fs feats = getNarg(el, FROM_OTHER, nf);
+                    Fs feats = XMLGrammarReadingTools.getNarg(el, FROM_OTHER, nf);
                     semval = new Value(feats);
                 } else if (el.getTagName().equals("sym")) {
                     semval = getSingleValue(el, nf);
@@ -512,7 +512,7 @@ public class XMLTTMCTAGReader extends FileReader {
                 if (el.getTagName().equals("node")) {
                     children.addLast(getNode(el, na, nf));
                 } else if (el.getTagName().equals("narg")) {
-                    Fs fs = getNarg(el, FROM_NODE, nf);
+                    Fs fs = XMLGrammarReadingTools.getNarg(el, FROM_NODE, nf);
                     res.setLabel(fs);
                 }
             }
@@ -522,61 +522,6 @@ public class XMLTTMCTAGReader extends FileReader {
         }
         // after building the node, we can find her category
         res.findCategory();
-        return res;
-    }
-
-    /**
-     * Process a narg XML tag to extract a TagNode label
-     * 
-     * @param e
-     *            the DOM Element corresponding to the feature structure
-     * 
-     */
-    public static Fs getNarg(Element e, int from, NameFactory nf) {
-        Fs res = null;
-        try {
-            NodeList l = e.getChildNodes();
-
-            // we declare the hash that will be used for features
-            // that have to be added to both top and bot
-            Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
-            for (int i = 0; i < l.getLength(); i++) {
-                Node n = l.item(i);
-                if (n.getNodeType() == Node.ELEMENT_NODE) {
-                    Element el = (Element) n;
-                    if (el.getTagName().equals("fs")) {
-                        res = getFeats(el, NOFS, toAdd, nf);
-                    }
-                }
-            }
-            if (from == FROM_NODE && toAdd.size() > 0) {
-                // we post-process the features to add
-                Value top = res.getFeat("top");
-                if (top == null) {
-                    top = new Value(new Fs(5));
-                    res.setFeat("top", top);
-                }
-                Value bot = res.getFeat("bot");
-                if (bot == null) {
-                    bot = new Value(new Fs(5));
-                    res.setFeat("bot", bot);
-                }
-
-                Set<String> keys = toAdd.keySet();
-                Iterator<String> it = keys.iterator();
-                while (it.hasNext()) {
-                    String f = it.next();
-                    if (!(top.getAvmVal().hasFeat(f))) {
-                        top.getAvmVal().setFeat(f, toAdd.get(f));
-                    }
-                    if (!(bot.getAvmVal().hasFeat(f))) {
-                        bot.getAvmVal().setFeat(f, toAdd.get(f));
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         return res;
     }
 

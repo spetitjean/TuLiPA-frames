@@ -50,6 +50,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.io.XMLGrammarReadingTools;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.lexicon.Anchor;
 import de.tuebingen.lexicon.CoAnchor;
@@ -220,7 +221,7 @@ public class XMLLemmaReader extends FileReader {
             if (n.getNodeType() == Node.ELEMENT_NODE) {
                 Element el = (Element) n;
                 if (el.getTagName().equals("filter")) {
-                    fs = XMLTTMCTAGReader.getNarg(el,
+                    fs = XMLGrammarReadingTools.getNarg(el,
                             XMLTTMCTAGReader.FROM_OTHER, new NameFactory());
                 }
             }
@@ -263,7 +264,7 @@ public class XMLLemmaReader extends FileReader {
                     String t = el.getAttribute("type");
                     String nid = el.getAttribute("node_id");
                     Equation eq = new Equation(t, nid);
-                    eq.setFeatures(XMLTTMCTAGReader.getNarg(el,
+                    eq.setFeatures(XMLGrammarReadingTools.getNarg(el,
                             XMLTTMCTAGReader.FROM_OTHER, new NameFactory()));
                     equas.add(eq);
                 }
