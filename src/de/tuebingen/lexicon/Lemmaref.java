@@ -29,7 +29,7 @@
  */
 package de.tuebingen.lexicon;
 
-import de.tuebingen.tag.Fs;
+import de.duesseldorf.frames.Fs;
 
 public class Lemmaref {
 	

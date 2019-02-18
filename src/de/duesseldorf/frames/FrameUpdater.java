@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tag.Fs;
 
 public class FrameUpdater {
 

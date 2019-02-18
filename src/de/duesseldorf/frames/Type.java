@@ -37,7 +37,6 @@ import java.util.Set;
 
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Value;
 
 /**
  * 

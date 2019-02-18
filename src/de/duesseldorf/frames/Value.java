@@ -27,7 +27,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package de.tuebingen.tag;
+package de.duesseldorf.frames;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -35,8 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.SemLit;
 
 /**
  * Class referring to Values within AVMs A value can be a String, an integer, an

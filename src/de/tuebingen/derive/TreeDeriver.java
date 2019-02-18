@@ -45,9 +45,9 @@ import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.ConstraintChecker;
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.UnifyException;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.UnifyException;
 
 public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,

@@ -39,11 +39,11 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.LocatorImpl;
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.lexicon.Lemmaref;
 import de.tuebingen.lexicon.MorphEntry;
-import de.tuebingen.tag.Fs;
-import de.tuebingen.tag.Value;
 
 public class MorphContentHandler implements ContentHandler {
 

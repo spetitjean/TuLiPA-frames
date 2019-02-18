@@ -42,14 +42,14 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.LocatorImpl;
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.lexicon.Anchor;
 import de.tuebingen.lexicon.CoAnchor;
 import de.tuebingen.lexicon.Equation;
 import de.tuebingen.lexicon.Lemma;
 import de.tuebingen.lexicon.LexSem;
-import de.tuebingen.tag.Fs;
-import de.tuebingen.tag.Value;
 
 public class LemmaContentHandler implements ContentHandler {
 

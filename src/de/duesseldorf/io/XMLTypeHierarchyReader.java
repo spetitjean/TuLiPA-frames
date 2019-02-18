@@ -45,10 +45,10 @@ import org.w3c.dom.NodeList;
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeConstraint;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 import de.tuebingen.util.XMLUtilities;
 
 /**

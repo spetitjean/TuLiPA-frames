@@ -42,11 +42,11 @@ import java.util.List;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 
 public class DerivedTree {
     public Node root;

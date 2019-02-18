@@ -39,14 +39,14 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.LocatorImpl;
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemDom;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
 import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.Value;
 
 public class TagTreeContentHandler implements ContentHandler {
 

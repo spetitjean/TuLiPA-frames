@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.tuebingen.tag.Fs;
-
 /**
  * @author david
  *         The frame serves as a holder for feature structures (Fs) and a set

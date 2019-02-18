@@ -47,18 +47,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Relation;
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemDom;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
 import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 
 public class ElementaryTree {
     // id of the tree

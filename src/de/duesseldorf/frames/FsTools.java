@@ -35,9 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.tuebingen.tag.Fs;
-import de.tuebingen.tag.Value;
-
 /**
  * 
  * @author david

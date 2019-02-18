@@ -35,8 +35,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 
 /**
  * 

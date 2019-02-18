@@ -59,17 +59,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Type;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemDom;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
 import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
-import de.tuebingen.tag.Value;
 import de.tuebingen.util.XMLUtilities;
 
 public class XMLTTMCTAGReader extends FileReader {

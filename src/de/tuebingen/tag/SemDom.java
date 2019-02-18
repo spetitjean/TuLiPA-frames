@@ -29,6 +29,7 @@
  */
 package de.tuebingen.tag;
 
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 
 public class SemDom implements SemLit {

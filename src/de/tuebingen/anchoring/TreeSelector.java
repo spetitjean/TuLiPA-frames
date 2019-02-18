@@ -45,8 +45,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
 import de.tuebingen.disambiguate.PolarizedLemma;
@@ -60,14 +63,11 @@ import de.tuebingen.lexicon.Lemmaref;
 import de.tuebingen.lexicon.LexSem;
 import de.tuebingen.lexicon.MorphEntry;
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
 import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 import de.tuebingen.tokenizer.Word;
 import de.tuebingen.tree.Node;
 

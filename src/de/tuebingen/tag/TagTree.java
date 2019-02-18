@@ -42,6 +42,9 @@ import java.util.Map;
 
 import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.FrameUpdater;
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.converter.AdjunctionSets;
 import de.tuebingen.converter.CatPairs;

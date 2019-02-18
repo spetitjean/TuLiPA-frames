@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.tuebingen.tag.Fs;
-import de.tuebingen.tag.Value;
-
 public class TypeConstraint {
 
     private Set<String> attributes;

@@ -41,14 +41,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.FsTools;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.gui.tree.view.TreeViewNode;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.Value;
 
 public class ViewTreeBuilder {
     /*

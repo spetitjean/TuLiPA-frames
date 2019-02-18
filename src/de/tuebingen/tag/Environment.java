@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import de.duesseldorf.frames.UnifyException;
+import de.duesseldorf.frames.Value;
 import de.tuebingen.derive.PrettyNameFactory;
 
 /**

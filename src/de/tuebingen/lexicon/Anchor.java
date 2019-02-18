@@ -32,7 +32,7 @@ package de.tuebingen.lexicon;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.tuebingen.tag.Fs;
+import de.duesseldorf.frames.Fs;
 
 public class Anchor {
 

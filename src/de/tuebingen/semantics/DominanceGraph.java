@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import de.duesseldorf.frames.Value;
 import de.tuebingen.tag.SemDom;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
-import de.tuebingen.tag.Value;
 
 public class DominanceGraph {
     public static boolean verbose = false;

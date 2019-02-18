@@ -40,7 +40,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import de.duesseldorf.frames.Situation;
-
+import de.duesseldorf.frames.Value;
 import de.tuebingen.forest.Rule;
 import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.forest.TreeOp;
@@ -49,7 +49,6 @@ import de.tuebingen.rcg.PredComplexLabel;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagNode;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.Value;
 import de.tuebingen.tokenizer.Word;
 import de.tuebingen.tree.Node;
 

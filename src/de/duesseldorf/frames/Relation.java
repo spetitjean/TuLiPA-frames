@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tag.Value;
 
 public class Relation {
 

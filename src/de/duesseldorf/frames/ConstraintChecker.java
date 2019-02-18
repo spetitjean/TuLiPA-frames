@@ -6,9 +6,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.tuebingen.tag.Environment;
-import de.tuebingen.tag.Fs;
-import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Value;
 
 public class ConstraintChecker {
 

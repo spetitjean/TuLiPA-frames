@@ -31,7 +31,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package de.tuebingen.tag;
+package de.duesseldorf.frames;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -41,11 +41,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import de.duesseldorf.frames.Situation;
-import de.duesseldorf.frames.Type;
-import de.duesseldorf.frames.TypeHierarchy;
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tag.Value.Kind;
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.TagNode;
 
 /**
  * Represents an attribute value matrix.
@@ -964,7 +962,7 @@ public class Fs {
             if (v.is(Value.Kind.VAR)) {
                 // System.out.println("Have a variable");
                 String atVar = "$" + env.deref(v);
-                Value valVar = new Value(Kind.VAR, atVar);
+                Value valVar = new Value(Value.Kind.VAR, atVar);
                 // System.out.println("Var: "+v);
                 // var is a coreference, get the FS
                 if (env.deref(valVar).getType() == Value.Kind.AVM) {

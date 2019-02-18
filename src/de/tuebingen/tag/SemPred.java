@@ -32,6 +32,7 @@ package de.tuebingen.tag;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
 
 public class SemPred implements SemLit {
