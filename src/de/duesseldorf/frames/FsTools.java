@@ -95,19 +95,18 @@ public class FsTools {
     }
 
     public static boolean included(Fs fs1, Fs fs2, HashSet<Value> seen) {
-	if(seen.contains(fs2.getCoref())){
-	    //System.out.println("Included fail because of recursion");
-	    return false;
-	}
-	else
-	    seen.add(fs2.getCoref());
+        if (seen.contains(fs2.getCoref())) {
+            // System.out.println("Included fail because of recursion");
+            return false;
+        } else
+            seen.add(fs2.getCoref());
         for (Value v : fs2.getAVlist().values()) {
             if (v.is(Value.AVM)
                     && v.getAvmVal().getCoref().equals(fs1.getCoref())) {
                 return true;
             } else {
                 if (v.is(Value.AVM)) {
-                    if (included(fs1, v.getAvmVal(),seen)) {
+                    if (included(fs1, v.getAvmVal(), seen)) {
                         return true;
                     }
                 }
@@ -130,7 +129,8 @@ public class FsTools {
         return res;
     }
 
-    private static String printFS(Fs fs, int recursiondepth, HashSet<Value> seen) {
+    private static String printFS(Fs fs, int recursiondepth,
+            HashSet<Value> seen) {
         StringBuffer sb = new StringBuffer();
         recursiondepth++;
         if (fs.isTyped()) {
@@ -141,13 +141,12 @@ public class FsTools {
             sb.append(fs.getType().toStringWithoutVariable());
             sb.append("</br>");
         }
-	
-	if(seen.contains(fs.getCoref())){
-	    //System.out.println("Printing stopped because of recursion");
-	    return sb.toString();
-	}
-	else
-	    seen.add(fs.getCoref());
+
+        if (seen.contains(fs.getCoref())) {
+            // System.out.println("Printing stopped because of recursion");
+            return sb.toString();
+        } else
+            seen.add(fs.getCoref());
 
         Set<String> keys = fs.getAVlist().keySet();
         Iterator<String> i = keys.iterator();
@@ -162,15 +161,16 @@ public class FsTools {
             Value v = fs.getAVlist().get(k);
 
             if (v.is(Value.AVM)) {
-                sb.append(printFS(v.getAvmVal(), recursiondepth + k.length(), seen));
+                sb.append(printFS(v.getAvmVal(), recursiondepth + k.length(),
+                        seen));
             } else if (v.is(Value.VAL)) {
                 sb.append(v.getSVal());
                 sb.append("</br>");
             } else if (v.is(Value.VAR)) {
                 sb.append(v.getVarVal());
             } else {
-		;
-                //sb.append("minor FSPrinter fuckup: " + v.toString());
+                ;
+                // sb.append("minor FSPrinter fuckup: " + v.toString());
             }
         }
         return sb.toString();
