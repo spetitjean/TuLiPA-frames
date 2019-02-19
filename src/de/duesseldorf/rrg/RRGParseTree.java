@@ -291,6 +291,11 @@ public class RRGParseTree extends RRGTree {
         RRGNode targetNode = result.findNode(targetAddress);
         if (((RRGNode) adjoiningTree.getRoot())
                 .nodeUnificationPossible(targetNode)) {
+            // unify root of aux tree and target node
+            RRGNode newTargetNode = RRGTreeTools.unifyNodes(targetNode,
+                    (RRGNode) adjoiningTree.getRoot());
+            // put new target node in resulting tree
+            result.setNode(targetAddress, newTargetNode);
             targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
                     position);
             result.idMap.put(targetAddress.ithDaughter(position),
@@ -318,13 +323,16 @@ public class RRGParseTree extends RRGTree {
         RRGNode targetNode = result.findNode(address);
         if (((RRGNode) substitutionTree.getRoot())
                 .nodeUnificationPossible(targetNode)) {
-            result.setNode(address, (RRGNode) substitutionTree.getRoot());
+
+            RRGNode substNodeWithFs = RRGTreeTools.unifyNodes(
+                    (RRGNode) substitutionTree.getRoot(), targetNode);
+            result.setNode(address, substNodeWithFs);
         } else {
-            System.out.println(
+            System.err.println(
                     "NU not possible on tree with id: " + this.getId());
-            System.out.println("at GA " + address);
-            System.out.println("target tree: " + this);
-            System.out.println("subst tree: " + substitutionTree);
+            System.err.println("at GA " + address);
+            System.err.println("target tree: " + this);
+            System.err.println("subst tree: " + substitutionTree);
             System.exit(0);
         }
         result.idMap.put(address, substitutionTree.getId());

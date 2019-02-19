@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Fs;
 import de.tuebingen.tree.Node;
 
 /*
@@ -49,6 +50,7 @@ public class RRGNode implements Node {
     private String name; // the name of the node
     private String category; // the cat of a node, or its terminal label
     private GornAddress gornaddress; // the gorn address
+    private Fs nodeFs;
 
     public RRGNode(RRGNode other) {
         this.type = other.getType();
@@ -72,7 +74,8 @@ public class RRGNode implements Node {
     }
 
     public RRGNode(RRGNodeType type, String name, String category,
-            GornAddress gornaddress) {
+            GornAddress gornaddress, Fs nodeFs) {
+        this.setNodeFs(nodeFs);
         children = new LinkedList<Node>();
         this.type = type;
         this.name = name;
@@ -223,12 +226,31 @@ public class RRGNode implements Node {
      */
     @Override
     public String toString() {
-        return this.gornaddress.toString() + " " + this.category + " "
-                + this.name + " (" + this.type.name() + ")";
+        StringBuffer sb = new StringBuffer();
+        sb.append(this.gornaddress.toString());
+        sb.append(" ");
+        sb.append(this.category);
+        sb.append(" ");
+        sb.append(this.name);
+        sb.append(" (");
+        sb.append(this.type.name());
+        sb.append(")");
+        if (nodeFs != null) {
+            sb.append(nodeFs.toString());
+        }
+        return sb.toString();
     }
 
     public void setType(RRGNodeType type) {
         this.type = type;
+    }
+
+    public Fs getNodeFs() {
+        return nodeFs;
+    }
+
+    public void setNodeFs(Fs nodeFs) {
+        this.nodeFs = nodeFs;
     }
 
 }

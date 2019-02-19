@@ -1,6 +1,9 @@
 package de.duesseldorf.rrg;
 
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.Fs;
+import de.tuebingen.tag.UnifyException;
 import de.tuebingen.tree.Node;
 
 /*
@@ -115,8 +118,33 @@ public class RRGTreeTools {
         sb.append(" ");
         sb.append(((RRGNode) root).getType());
         sb.append("\n");
+        if (((RRGNode) root).getNodeFs() != null) {
+            sb.append(((RRGNode) root).getNodeFs().toString());
+        }
         for (Node node : root.getChildren()) {
             asStringWithNodeLabelsAndNodeType(node, sb, sep + 1);
         }
+    }
+
+    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
+        RRGNode result = new RRGNode(node1);
+        if (!node1.nodeUnificationPossible(node2)) {
+            System.err.println("node unification not possible! ");
+            System.err.println(node1);
+            System.err.println(node2);
+            return null;
+        }
+        try {
+            Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(),
+                    new Environment(2));
+            result = new RRGNode(node1.getType(), node1.getName(),
+                    node1.getCategory(), node1.getGornaddress(), fsForResult);
+            result.setChildren(node1.getChildren());
+        } catch (UnifyException e) {
+            System.err.println("could not unify node feature structures: ");
+            System.err.println(node1);
+            System.err.println(node2);
+        }
+        return result;
     }
 }
