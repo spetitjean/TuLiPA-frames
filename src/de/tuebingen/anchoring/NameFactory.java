@@ -73,6 +73,7 @@ public class NameFactory {
      */
 
     public String getUniqueName() {
+
         String out = "X" + this.hashCode() + "_" + index;
         index++;
         return out;
@@ -108,4 +109,10 @@ public class NameFactory {
         }
         return res;
     }
+
+    // @Override
+    // public int hashCode() {
+    // return Objects.hash(dictionary);
+    // }
+
 }

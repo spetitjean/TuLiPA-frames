@@ -163,15 +163,16 @@ public class TreeDeriver {
             // System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
-                    derivedTree.getFrameSem(), derivedTree.env, false);
-            // TODO put this call in the right place
-            newFrameSem = new ConstraintChecker(newFrameSem, derivedTree.env,
-                    returnIncompleteTrees).checkConstraints();
-            newFrameSem = ElementaryTree.updateFrameSemWithMerge(newFrameSem,
-                    derivedTree.env, true);
+                    derivedTree.getFrameSem(), derivedTree.env, true);
+
             if (newFrameSem == null) {
                 failed = true;
             } else {
+                newFrameSem = new ConstraintChecker(newFrameSem,
+                        derivedTree.env, returnIncompleteTrees)
+                                .checkConstraints();
+                // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+                // newFrameSem, derivedTree.env, false);
                 derivedTree.setFrameSem(newFrameSem);
                 // System.out.println("Derived tree env after:
                 // "+derivedTree.env);

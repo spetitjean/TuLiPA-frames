@@ -104,8 +104,10 @@ public class TestTree {
 
     private static void testTreeCloning() {
         // 1. build root tree - we later substitute to the daughter of the root
-        RRGNode root = new RRGNode(RRGNodeType.STD, "ptree1_root", "RP");
-        RRGNode daughter = new RRGNode(RRGNodeType.SUBST, "substnode1", "RP");
+        RRGNode root = new RRGNode.Builder().type(RRGNodeType.STD)
+                .name("ptree1_root").cat("RP").build();
+        RRGNode daughter = new RRGNode.Builder().type(RRGNodeType.SUBST)
+                .name("substnode1").cat("RP").build();
         // System.out.println(root);
         // System.out.println(daughter);
         root.addRightmostChild(daughter);
@@ -117,10 +119,13 @@ public class TestTree {
         ptree2.setId("shouldntbe ptree1_id");
         // System.out.println(ptree2);
 
-        // 2. build substitution tree
-        RRGNode substroot = new RRGNode(RRGNodeType.STD, "namer", "RP");
-        RRGNode child = new RRGNode(RRGNodeType.STD, "namec", "ccat");
-        RRGNode grandchild = new RRGNode(RRGNodeType.SUBST, "namegc", "gccat");
+        // 2. build substitution tree7
+        RRGNode substroot = new RRGNode.Builder().type(RRGNodeType.STD)
+                .name("namer").cat("RP").build();
+        RRGNode child = new RRGNode.Builder().type(RRGNodeType.STD)
+                .name("namec").cat("ccat").build();
+        RRGNode grandchild = new RRGNode.Builder().type(RRGNodeType.SUBST)
+                .name("namegc").cat("gccat").build();
         ((RRGNode) child).addRightmostChild(grandchild);
         ((RRGNode) substroot).addRightmostChild(child);
         RRGTree substtree = new RRGTree(substroot, "great_treeeeeeee");
@@ -185,9 +190,12 @@ public class TestTree {
     }
 
     public static void testTreePrinting() {
-        RRGNode root = new RRGNode(RRGNodeType.STD, "namer", "rcat");
-        RRGNode child = new RRGNode(RRGNodeType.STD, "namec", "ccat");
-        RRGNode grandchild = new RRGNode(RRGNodeType.SUBST, "namegc", "gccat");
+        RRGNode root = new RRGNode.Builder().type(RRGNodeType.STD).name("name")
+                .cat("rcat").build();
+        RRGNode child = new RRGNode.Builder().type(RRGNodeType.STD)
+                .name("namec").cat("ccat").build();
+        RRGNode grandchild = new RRGNode.Builder().type(RRGNodeType.SUBST)
+                .name("namegc").cat("gccat").build();
         RRGTree tree = new RRGTree(root, "great_treeeeeeee");
         System.out.println(tree.toString());
 

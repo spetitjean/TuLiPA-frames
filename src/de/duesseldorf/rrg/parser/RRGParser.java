@@ -44,7 +44,6 @@ import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class RRGParser {
-
     private RRGParseChart chart;
     private ConcurrentSkipListSet<RRGParseItem> agenda;
     private RequirementFinder requirementFinder;
@@ -336,7 +335,7 @@ public class RRGParser {
     private void scan(List<String> sentence) {
         // Look at all trees
         for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
-            // System.out.println("looking at tree: " + tree.getLexNodes());
+
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

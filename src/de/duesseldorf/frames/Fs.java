@@ -1,3 +1,4 @@
+
 /*
  *  File Fs.java
  *
@@ -737,6 +738,8 @@ public class Fs {
 
         Set<String> keys = AVlist.keySet();
         Iterator<String> it = keys.iterator();
+        if (this.getCoref() == ((Fs) fs).getCoref())
+            return true;
         boolean res = true;
         while (it.hasNext()) {
             String f = it.next();
@@ -780,7 +783,7 @@ public class Fs {
                 // System.out.println("Updating FS [0] ");
                 updateFS(fs, env, true);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Exception during update of " + fs);
             }
         }
         // We do as many update rounds as there are FS in our solution
@@ -816,7 +819,8 @@ public class Fs {
                 cleanFrame.cleanCorefs();
                 // System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("error during updateFs");
+                return newFrames;
             }
         }
 
@@ -893,11 +897,13 @@ public class Fs {
             if (v.is(Value.Kind.AVM)) {
                 // System.out.println("l.822: "+v.getAvmVal());
                 // System.out.println("Seen: "+seen);
-                // if(!seen.contains(v.getAvmVal().getCoref()))
-                v.getAvmVal().collect_corefs(env, nf, new HashSet<Value>());
+                // if (!seen.contains(v.getAvmVal().getCoref())) {
+                v.getAvmVal().collect_corefs(env, nf, seen);
+
             }
         }
         return true;
+
     }
 
     public Fs update_corefs(Environment env, Set<Value> seen) {
@@ -923,7 +929,7 @@ public class Fs {
                 // System.out.println("Done unify");
 
             } catch (Exception e) {
-                e.printStackTrace();
+                // e.printStackTrace();
                 return null;
             }
         }

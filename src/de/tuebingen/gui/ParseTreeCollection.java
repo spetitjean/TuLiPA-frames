@@ -50,22 +50,17 @@ public class ParseTreeCollection {
     String semantics;
     List<SemLit> realSemantics;
     String[] specifiedSemantics;
-    // List<Fs> frames;
     Frame frameSem;
 
-    // public ParseTreeCollection(XMLViewTree derivationTree,
-    // XMLViewTree derivedTree, String semantics, List<SemLit> lsl,
-    // List<Fs> frames, Frame frameSem, boolean noUtool) {
     public ParseTreeCollection(XMLViewTree derivationTree,
             XMLViewTree derivedTree, String semantics, List<SemLit> lsl,
             Frame frameSem, boolean noUtool) {
-
         this.derivationTree = derivationTree;
         this.derivedTree = derivedTree;
         elementaryTrees = null;
         derivationSteps = null;
         this.semantics = semantics;
-        // this.frames = frames;
+
         this.frameSem = frameSem;
 
         // System.out.print("noUTool is: ");

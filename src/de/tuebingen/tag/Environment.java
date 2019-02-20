@@ -87,7 +87,7 @@ public class Environment {
                 // // I created a loop here somehow, this must be fixed better
                 // System.out.println("v:"+v.toString());
                 // System.out.println("name:"+name);
-                // if(v.toString()!=name){
+                // if (v.toString() != name) {
                 // res = deref(v);
                 // }
                 // else{

@@ -95,7 +95,8 @@ public class XMLRRGTreeRetriever {
         // do we need this name?
         String name = root.getAttribute(XMLRRGTag.NAME.StringVal());
 
-        Node treeRoot = new RRGNode(type, name, category);
+        Node treeRoot = new RRGNode.Builder().type(type).name(name)
+                .cat(category).build();
         return treeRoot;
     }
 

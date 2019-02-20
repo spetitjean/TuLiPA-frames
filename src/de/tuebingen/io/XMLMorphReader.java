@@ -30,6 +30,7 @@
 package de.tuebingen.io;
 
 import de.tuebingen.util.XMLUtilities;
+import de.duesseldorf.io.XMLGrammarReadingTools;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.lexicon.Lemmaref;
 import de.tuebingen.lexicon.MorphEntry;
@@ -109,7 +110,7 @@ public class XMLMorphReader extends FileReader {
 					String name = el.getAttribute("name");
 					String cat  = el.getAttribute("cat");
 					Lemmaref lref = new Lemmaref(name, cat);
-					lref.setFeatures(XMLTTMCTAGReader.getNarg(el, XMLTTMCTAGReader.FROM_OTHER, new NameFactory()));
+					lref.setFeatures(XMLGrammarReadingTools.getNarg(el, XMLTTMCTAGReader.FROM_OTHER, new NameFactory()));
 					lrefs.add(lref);
 				}
 			}					
