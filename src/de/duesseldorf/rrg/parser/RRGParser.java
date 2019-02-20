@@ -53,8 +53,7 @@ public class RRGParser {
 
     private boolean verbosePrintsToStdOut = true;
 
-    public RRGParser(Situation sit) {
-        this.situation = sit;
+    public RRGParser() {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
     }
@@ -62,7 +61,7 @@ public class RRGParser {
     public Set<RRGParseTree> parseSentence(List<String> toksentence) {
         System.out.println("start parsing sentence " + toksentence);
         System.out.println("number of trees: "
-                + ((RRG) situation.getGrammar()).getTrees().size());
+                + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size());
         // Axioms through scanning:
@@ -160,7 +159,7 @@ public class RRGParser {
             // look at the whole grammar and find fitting substitution nodes
             String cat = currentItem.getNode().getCategory();
             // System.out.println("got to predict: " + currentItem);
-            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
                 Set<RRGNode> substNodes = tree.getSubstNodes().get(cat);
                 if (substNodes != null) {
                     HashSet<Gap> gaps = new HashSet<Gap>();
@@ -251,7 +250,7 @@ public class RRGParser {
 
     private void substitute(RRGParseItem currentItem) {
         if (requirementFinder.substituteReq(currentItem)) {
-            for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
                 Set<RRGNode> substNodes = tree.getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
@@ -329,8 +328,7 @@ public class RRGParser {
      */
     private void scan(List<String> sentence) {
         // Look at all trees
-        for (RRGTree tree : ((RRG) situation.getGrammar()).getTrees()) {
-            // System.out.println("looking at tree: " + tree.getLexNodes());
+        for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

@@ -49,16 +49,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.duesseldorf.frames.FsTools;
-import de.duesseldorf.frames.Situation;
 import de.tuebingen.derive.DerivedTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.derive.TreeDeriver;
 import de.tuebingen.expander.ParseTreeHandler;
-import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.TagTree;
-import de.tuebingen.tag.Environment;
-
 
 public class DerivedTreeViewer {
 
@@ -66,20 +62,13 @@ public class DerivedTreeViewer {
             Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
             boolean derivationStepOutput, boolean debugMode,
             boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
-        return getViewTreesFromDOM(d, null, treeDict, elementaryTreeOutput,
-                derivationStepOutput, debugMode, needsAnchoring, semlabels,
-                noUtool);
-    }
 
-    public static ArrayList<ParseTreeCollection> getViewTreesFromDOM(Document d,
-            Situation situation, Map<String, TagTree> treeDict,
-            boolean elementaryTreeOutput, boolean derivationStepOutput,
-            boolean debugMode, boolean needsAnchoring, List<String> semlabels,
-            boolean noUtool) {
         try {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
+            // System.out.println("GETTING VIEW TREES");
             Document derivationTrees = ParseTreeHandler
                     .extractDerivationTrees(d);
+
             // XMLTreeViewer.displayTree(derivationTrees.getDocumentElement());
             NodeList startNodes = derivationTrees.getElementsByTagName("start");
             // Simon: added this for debugging
@@ -95,6 +84,12 @@ public class DerivedTreeViewer {
             }
 
             ArrayList<ParseTreeCollection> viewTrees = new ArrayList<ParseTreeCollection>();
+            for (ParseTreeCollection parseTreeCollection : viewTrees) {
+                System.out.println(
+                        "DTV.97: frameSem" + parseTreeCollection.getFrameSem());
+                // System.out.println(
+                // "DTV.97: frames" + parseTreeCollection.getFrames());
+            }
             for (int i = 0; i < startNodes.getLength(); i++) {
                 if (toRemove.contains(i)) {
                     continue;
@@ -110,7 +105,7 @@ public class DerivedTreeViewer {
                 if (derivationStepOutput)
                     steps = new ArrayList<ElementaryTree>();
                 DerivedTree dTree = TreeDeriver.deriveTree(startNode, treeDict,
-							   eTrees, steps, debugMode, semlabels, needsAnchoring, situation);
+                        eTrees, steps, debugMode, semlabels, needsAnchoring);
                 if (dTree != null) {
                     if (!dTree.success) {
                         viewTree.description = "*" + viewTree.description;
@@ -121,32 +116,44 @@ public class DerivedTreeViewer {
                     for (SemLit sl : dTree.semantics) {
                         semanticsString += sl.toString() + "<br>";
                     }
-                    if (dTree.frames != null) {
-			// All of this should be done in TreeDeriver
-			// Environment env= new Environment(0);
-                        // List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
-			// 				   situation,env);
-			// if(mergedFrames==null){
-			//     continue;
-			// }
-                        // // clean up the list here
-                        // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-			// dTree.updateFeatures(dTree.root, env,
-			// 			   false);
-			// // This is only because it's not done in TreeDeriver:
-			// derivedTree = ViewTreeBuilder
-                        //     .makeViewableDerivedTree(dTree);
-			// That is the only thing which should be here:
-                        //for (Fs fs : cleanFrames) {
-                        for (Fs fs : dTree.frames) {
-                            semanticsString += FsTools.printFS(fs);
-                        }
-                    } else {
-                        semanticsString += "frame null";
+                    // if (dTree.frames != null) {
+                    // All of this should be done in TreeDeriver
+                    // Environment env= new Environment(0);
+                    // List<Fs> mergedFrames = Fs.mergeFS(dTree.frames,
+                    // situation,env);
+                    // if(mergedFrames==null){
+                    // continue;
+                    // }
+                    // // clean up the list here
+                    // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+                    // dTree.updateFeatures(dTree.root, env,
+                    // false);
+                    // // This is only because it's not done in TreeDeriver:
+                    // derivedTree = ViewTreeBuilder
+                    // .makeViewableDerivedTree(dTree);
+                    // That is the only thing which should be here:
+                    // for (Fs fs : cleanFrames) {
+                    // for (Fs fs : dTree.frames) {
+                    // semanticsString += FsTools.printFS(fs);
+                    // }
+                    // }
+                    if (dTree.getFrameSem() != null) {
+                        de.duesseldorf.frames.Frame frameSem = dTree
+                                .getFrameSem();
+                        semanticsString += FsTools.printFrame(frameSem,
+                                debugMode);
                     }
+                    // if (dTree.frames == null && dTree.getFrameSem() != null)
+                    // {
+                    // semanticsString += "frame null";
+                    // }
+                    // ParseTreeCollection trees = new ParseTreeCollection(
+                    // viewTree, derivedTree, semanticsString,
+                    // dTree.semantics, dTree.frames, dTree.getFrameSem(),
+                    // noUtool);
                     ParseTreeCollection trees = new ParseTreeCollection(
                             viewTree, derivedTree, semanticsString,
-                            dTree.semantics, dTree.frames, noUtool);
+                            dTree.semantics, dTree.getFrameSem(), noUtool);
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
                         for (ElementaryTree eTree : eTrees) {
@@ -154,12 +161,12 @@ public class DerivedTreeViewer {
                             // but doesnt care about frames:
                             // eTree.updateTBFeatures(eTree.root, dTree.env,
                             // false);
-                            //List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
-                            //        situation);
+                            // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames,
+                            // situation);
                             // clean up the list here7
-                            //List<Fs> cleanFrames = FsTools
-                            //        .cleanup(mergedFrames);
-                            //eTree.frames = cleanFrames;
+                            // List<Fs> cleanFrames = FsTools
+                            // .cleanup(mergedFrames);
+                            // eTree.frames = cleanFrames;
                             XMLViewTree elemTree = ViewTreeBuilder
                                     .makeViewableElementaryTree(eTree);
                             viewElemTrees.add(elemTree);
@@ -179,7 +186,9 @@ public class DerivedTreeViewer {
                 }
             }
             return viewTrees;
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             System.err.println("Error while reading XML File:");
             System.err.println(e.toString());
             StackTraceElement[] stack = e.getStackTrace();
@@ -195,19 +204,10 @@ public class DerivedTreeViewer {
             Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
             boolean derivationStepOutput, boolean debugMode,
             boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
-        displayTreesfromDOM(s, d, null, treeDict, elementaryTreeOutput,
-                derivationStepOutput, debugMode, needsAnchoring, semlabels,
-                noUtool);
-    }
 
-    public static void displayTreesfromDOM(final String s, Document d,
-            Situation situation, Map<String, TagTree> treeDict,
-            boolean elementaryTreeOutput, boolean derivationStepOutput,
-            boolean debugMode, boolean needsAnchoring, List<String> semlabels,
-            boolean noUtool) {
         ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
-                situation, treeDict, elementaryTreeOutput, derivationStepOutput,
-                debugMode, needsAnchoring, semlabels, noUtool);
+                treeDict, elementaryTreeOutput, derivationStepOutput, debugMode,
+                needsAnchoring, semlabels, noUtool);
         // final ArrayList<ParseTreeCollection> viewTrees =
         // getViewTreesFromDOM(d,
         // situation, treeDict, elementaryTreeOutput, derivationStepOutput,

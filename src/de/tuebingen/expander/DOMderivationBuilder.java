@@ -32,10 +32,10 @@
 package de.tuebingen.expander;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,15 +48,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
+import de.duesseldorf.frames.Type;
 import de.tuebingen.gui.ParseTreeCollection;
+import de.tuebingen.tag.Fs;
 import de.tuebingen.tag.SemDom;
 import de.tuebingen.tag.SemLit;
 import de.tuebingen.tag.SemPred;
 import de.tuebingen.tag.Value;
-
-import de.tuebingen.tag.Fs;
-import de.duesseldorf.frames.Type;
-
 
 public class DOMderivationBuilder {
 
@@ -95,8 +95,8 @@ public class DOMderivationBuilder {
             buildOneGrammarFormat(root,
                     ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
-		    ptc.getSemantics(), ptc.getSpecifiedSemantics(),
-		    ptc.getFrames());
+                    ptc.getSemantics(), ptc.getSpecifiedSemantics(),
+                    ptc.getFrameSem());
         }
         derivDoc.appendChild(root);
         return derivDoc;
@@ -116,8 +116,8 @@ public class DOMderivationBuilder {
         for (ParseTreeCollection ptc : all) {
             buildOne(root, ptc.getDerivationTree().getDomNodes().get(0),
                     ptc.getDerivedTree().getDomNodes().get(0),
-		    ptc.getSemantics(), ptc.getSpecifiedSemantics(),
-		     ptc.getFrames());
+                    ptc.getSemantics(), ptc.getSpecifiedSemantics(),
+                    ptc.getFrameSem());
         }
         // finally we do not forget the root
         derivDoc.appendChild(root);
@@ -126,49 +126,55 @@ public class DOMderivationBuilder {
     }
 
     public void buildOneGrammarFormat(Element mother, Node derivation,
-				      Node derived, List<SemLit> semantics, String[] specifiedSemantics, List<Fs> frames) {
-        Element parseDerivedEntry = derivDoc.createElement("entry"); // the entry with the derived tree
-        //Element parseDerivationEntry = derivDoc.createElement("entry"); // the entry with the derivation tree
-        
-        parseDerivedEntry.setAttribute("name", sentence + "_" + parsecounter+"_derivedTree");
-        //parseDerivationEntry.setAttribute("name", sentence + "_" + parsecounter+"_derivationTree");
-        
+            Node derived, List<SemLit> semantics, String[] specifiedSemantics,
+            Frame frameSem) {
+        // the entry with the derived tree
+        Element parseDerivedEntry = derivDoc.createElement("entry");
+        // Element parseDerivationEntry = derivDoc.createElement("entry"); //
+        // the entry with the derivation tree
+
+        parseDerivedEntry.setAttribute("name",
+                sentence + "_" + parsecounter + "_derivedTree");
+        // parseDerivationEntry.setAttribute("name", sentence + "_" +
+        // parsecounter+"_derivationTree");
+
         parsecounter++;
-        Element derivationTree = derivDoc.createElement("tree"); //you need
+        Element derivationTree = derivDoc.createElement("tree"); // you need
         // separate entries in the document for every tree
         Element derivedTree = derivDoc.createElement("tree");
         Element semElem = derivDoc.createElement("semantics");
         Element specSemElem = derivDoc.createElement("specified_semantics");
         Element family = derivDoc.createElement("family");
         Element f = derivDoc.createElement("frame");
-	
+
         buildDerivationTree(derivationTree, derivation);
-       // parseDerivationEntry.appendChild(derivationTree);
+        // parseDerivationEntry.appendChild(derivationTree);
 
         buildFamily(family);
         parseDerivedEntry.appendChild(family);
-       // parseDerivationEntry.appendChild(family);
+        // parseDerivationEntry.appendChild(family);
 
         buildDerivedTree(derivedTree, derived);
         parseDerivedEntry.appendChild(derivedTree);
 
         buildSemantics(semElem, semantics);
         parseDerivedEntry.appendChild(semElem);
-      // parseDerivationEntry.appendChild(semElem);
+        // parseDerivationEntry.appendChild(semElem);
 
         buildSpecifiedSemantics(specSemElem, specifiedSemantics);
         parseDerivedEntry.appendChild(specSemElem);
-     //   parseDerivationEntry.appendChild(specSemElem);
+        // parseDerivationEntry.appendChild(specSemElem);
 
-	buildFrames(f, frames);
-	parseDerivedEntry.appendChild(f);
+        buildFrames(f, frameSem);
+        parseDerivedEntry.appendChild(f);
 
         mother.appendChild(parseDerivedEntry);
-       // mother.appendChild(parseDerivationEntry);
+        // mother.appendChild(parseDerivationEntry);
     }
 
     public static void buildOne(Element mother, Node derivation, Node derived,
-				List<SemLit> semantics, String[] specifiedSemantics, List<Fs> frames) {
+            List<SemLit> semantics, String[] specifiedSemantics,
+            Frame frameSem) {
         Element p = derivDoc.createElement("parse");
         Element d1 = derivDoc.createElement("derivationTree");
         Element d2 = derivDoc.createElement("derivedTree");
@@ -176,7 +182,6 @@ public class DOMderivationBuilder {
         Element s2 = derivDoc.createElement("specified_semantics");
         Element f = derivDoc.createElement("frame");
 
-	
         buildDerivationTree(d1, derivation);
         p.appendChild(d1);
 
@@ -189,14 +194,14 @@ public class DOMderivationBuilder {
         buildSpecifiedSemantics(s2, specifiedSemantics);
         p.appendChild(s2);
 
-	buildFrames(f, frames);
-	p.appendChild(f);
+        buildFrames(f, frameSem);
+        p.appendChild(f);
 
         mother.appendChild(p);
     }
-    
-    public static void buildFamily(Element family){
-    
+
+    public static void buildFamily(Element family) {
+
     }
 
     public static void buildDerivationTree(Element mother, Node derivation) {
@@ -250,7 +255,7 @@ public class DOMderivationBuilder {
             // lex node
             t.setAttribute("type", "lex");
             t.setAttribute("value", derived.getNodeName());
-                        
+
             // for display in the XMG webgui
             Element f = derivDoc.createElement("f");
             f.setAttribute("name", "cat");
@@ -261,13 +266,14 @@ public class DOMderivationBuilder {
         } else {
             t.setAttribute("type", "std");
         }
-            
-            
-/*goal: 
- * <node type="lex">
- *     <narg><fs>
- *        <f name="cat">
- *            <sym value="John"/>*/
+
+        /*
+         * goal:
+         * <node type="lex">
+         * <narg><fs>
+         * <f name="cat">
+         * <sym value="John"/>
+         */
         narg.appendChild(fs);
         t.appendChild(narg);
         mother.appendChild(t);
@@ -314,10 +320,10 @@ public class DOMderivationBuilder {
             e.setAttribute("varname", val);
             mother.appendChild(e);
         }
-	// should replace the previous case
-	  else if (val.startsWith("_V_")) {  
+        // should replace the previous case
+        else if (val.startsWith("_V_")) {
             e = derivDoc.createElement("sym");
-            e.setAttribute("varname", val.substring(3,val.length()));
+            e.setAttribute("varname", val.substring(3, val.length()));
             mother.appendChild(e);
         } else if (val.startsWith("?")) {
             e = derivDoc.createElement("sym");
@@ -353,63 +359,79 @@ public class DOMderivationBuilder {
         }
     }
 
-    public static void buildFrames(Element mother, List<Fs> frames){
-	for(Fs frame : frames){
-	    buildFrame(mother,frame);
-	}
+    public static void buildFrames(Element mother, Frame frameSem) {
+        for (Fs frame : frameSem.getFeatureStructures()) {
+            buildFrame(mother, frame);
+        }
+        buildRelations(mother, frameSem.getRelations());
     }
 
-    public static void buildFrame(Element mother, Fs frame){
-	//System.out.println("Build frame: "+frame);
-	Element fs = derivDoc.createElement("fs");
-	fs.setAttribute("coref",frame.getCoref().toString());
-	
-	// get the type
-	Type type = frame.getType();
-	Element t = derivDoc.createElement("ctype");
-	for(String etype: type.getElementaryTypes()){
-	    Element tt = derivDoc.createElement("type");
-	    tt.setAttribute("val",etype);
-	    t.appendChild(tt);
-	}
-	fs.appendChild(t);
-	// get the features
-	Hashtable<String, Value> avm = frame.getAVlist();
-	Set<String> keys = avm.keySet();
-	Iterator<String> i = keys.iterator();
-	while (i.hasNext()) {
-	    String k= (String) i.next();
-	    Value fval = avm.get(k);
-	    
-	    Element f = derivDoc.createElement("f");
-	    f.setAttribute("name", k);
-	    
-	    // fval can be a variable, a constant, or a fs (we ignore int and adisj for now)
-	    Element e;			
-	    switch (fval.getType()){
-	    //case VAL
-	    case 1:
-		//System.out.println("case VAL");
-	    	e = derivDoc.createElement("sym");
-	    	e.setAttribute("value", fval.getSVal());
-	    	f.appendChild(e);
-		break;
-	    // case VAR
-	    case 5:
-		//System.out.println("case VAR");
-	    	e = derivDoc.createElement("sym");
-	    	e.setAttribute("varname", fval.getVarVal());
-	    	f.appendChild(e);
-		break;
-	    // case AVM
-	    case 3:
-		//System.out.println("case AVM");
-	    	buildFrame(f,fval.getAvmVal());
-		break;
-	    }
-	    fs.appendChild(f);
-	}
-	mother.appendChild(fs);
+    private static void buildRelations(Element mother,
+            Set<Relation> relations) {
+        // go through all the relations
+        for (Relation properRelation : relations) {
+            // create the element
+            Element relationEl = derivDoc.createElement("relation");
+            relationEl.setAttribute("name", properRelation.getName());
+
+            for (Value properVal : properRelation.getArguments()) {
+                buildVal(relationEl, properVal.getVarVal());
+            }
+            mother.appendChild(relationEl);
+        }
     }
-    
+
+    public static void buildFrame(Element mother, Fs frame) {
+        Element fs = derivDoc.createElement("fs");
+        fs.setAttribute("coref", frame.getCoref().toString());
+
+        // get the type
+        Type type = frame.getType();
+        Element t = derivDoc.createElement("ctype");
+        for (String etype : type.getElementaryTypes()) {
+            Element tt = derivDoc.createElement("type");
+            tt.setAttribute("val", etype);
+            t.appendChild(tt);
+        }
+        fs.appendChild(t);
+        // get the features
+        Hashtable<String, Value> avm = frame.getAVlist();
+        Set<String> keys = avm.keySet();
+        Iterator<String> i = keys.iterator();
+        while (i.hasNext()) {
+            String k = (String) i.next();
+            Value fval = avm.get(k);
+
+            Element f = derivDoc.createElement("f");
+            f.setAttribute("name", k);
+
+            // fval can be a variable, a constant, or a fs (we ignore int and
+            // adisj for now)
+            Element e;
+            switch (fval.getType()) {
+            // case VAL
+            case 1:
+                // System.out.println("case VAL");
+                e = derivDoc.createElement("sym");
+                e.setAttribute("value", fval.getSVal());
+                f.appendChild(e);
+                break;
+            // case VAR
+            case 5:
+                // System.out.println("case VAR");
+                e = derivDoc.createElement("sym");
+                e.setAttribute("varname", fval.getVarVal());
+                f.appendChild(e);
+                break;
+            // case AVM
+            case 3:
+                // System.out.println("case AVM");
+                buildFrame(f, fval.getAvmVal());
+                break;
+            }
+            fs.appendChild(f);
+        }
+        mother.appendChild(fs);
+    }
+
 }

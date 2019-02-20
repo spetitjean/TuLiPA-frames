@@ -43,20 +43,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import de.duesseldorf.frames.ConstraintChecker;
+import de.duesseldorf.frames.Frame;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.UnifyException;
-import de.tuebingen.tag.Fs;
-
-import de.duesseldorf.frames.Situation;
-import de.duesseldorf.frames.FsTools;
 
 public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
-					 List<String> semlabels, boolean needsAnchoring, Situation situation) {
-	//System.out.println("\n\nDeriving new tree");
+            List<String> semlabels, boolean needsAnchoring) {
+        System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
         try {
@@ -74,10 +72,18 @@ public class TreeDeriver {
                 if (steps != null) {
                     derivedTree.updateTopDownFeatures(derivedTree.root, false,
                             false);
+                    // ElementaryTree newStep = (new ElementaryTree(
+                    // derivedTree.root, "", "", derivedTree.topFeatures,
+                    // derivedTree.bottomFeatures, derivedTree.semantics,
+                    // derivedTree.frames, derivedTree.getFrameSem()))
+                    // .createDumpingInstance(D);
                     ElementaryTree newStep = (new ElementaryTree(
                             derivedTree.root, "", "", derivedTree.topFeatures,
                             derivedTree.bottomFeatures, derivedTree.semantics,
-                            derivedTree.frames)).createDumpingInstance(D);
+                            derivedTree.getFrameSem()))
+                                    .createDumpingInstance(D);
+                    System.out.println(
+                            "frameSem in newStep: " + newStep.getFrameSem());
                     newStep.setID("Step " + steps.size());
                     steps.add(newStep);
                 }
@@ -100,14 +106,14 @@ public class TreeDeriver {
             // System.err.println("Pre-final environment: " + derivedTree.env);
             // System.err.println("Pre-final sem: " +
             // derivedTree.semantics.toString());
-	    //System.out.println("\n\nUpdating top-down features");
+            // System.out.println("\n\nUpdating top-down features");
             derivedTree.updateTopDownFeatures(derivedTree.root, true, false);
-	    //System.out.println("*****Updated top-down features******");
+            // System.out.println("*****Updated top-down features******");
             // System.err.println("Environment after TOP-BOT: " +
             // derivedTree.env);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     false);
-	    //System.out.println("Environment: "+derivedTree.env);
+            // System.out.println("Environment: "+derivedTree.env);
             // System.err.println("Sem after TOP-BOT: " +
             // derivedTree.semantics.toString());
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
@@ -118,44 +124,76 @@ public class TreeDeriver {
             // for variables and semantic labels renaming:
             // System.err.println("Sem labels:\n" + semlabels);
             derivedTree.env.setSemlabels(semlabels);
-     	    	    
-            Environment.rename(derivedTree.env);
-	    //System.out.println("Ended rename ");
+
+            // Environment.rename(derivedTree.env);
+            // System.out.println("Ended rename ");
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     true);
-            //Environment.rename(derivedTree.env);
+            // Environment.rename(derivedTree.env);
 
-            // System.out.println("Environment: "+derivedTree.env);
-            // System.out.println("Update frames in TreeDeriver");
-            derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
-                    derivedTree.env, true);
+            // derivedTree.frames =
+            // ElementaryTree.updateFrames(derivedTree.frames,
+            // derivedTree.env, true);
             // System.out.println("Updated frames: " + derivedTree.frames);
             // System.out.println("Another round");
-            //derivedTree.frames = ElementaryTree.updateFrames(derivedTree.frames,
-            //        derivedTree.env, true);
-	    //Environment.rename(derivedTree.env);
-            //System.out.println("Environment: "+derivedTree.env);
+            // derivedTree.frames =
+            // ElementaryTree.updateFrames(derivedTree.frames,
+            // derivedTree.env, true);
+            // Environment.rename(derivedTree.env);
+            // System.out.println("Environment: "+derivedTree.env);
 
-	    List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames,
-							   situation,derivedTree.env);
-	    derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+            // derivedTree.frames =
+            // ElementaryTree.updateFrames(derivedTree.frames,
+            // derivedTree.env, true);
 
-	    if(mergedFrames==null){
-	        System.err.println("Frame unification failed, tree discarded!\n");
-	        failed = true;
-	    }	    else{
-		List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-		derivedTree.frames = cleanFrames;
-	    }
+            // List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames, situation,
+            // derivedTree.env);
+            // List<Fs> mergedFrames = derivedTree.frames;
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+
+            // if (mergedFrames == null) {
+            // System.err
+            // .println("Frame unification failed, tree discarded!\n");
+            // failed = true;
+            // } else {
+            // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+            // derivedTree.frames = cleanFrames;
+            // }
+            // System.out.println("Derived tree env before: "+derivedTree.env);
+            // DA addRelations
+            Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+                    derivedTree.getFrameSem(), derivedTree.env, true);
+
+            if (newFrameSem == null) {
+                failed = true;
+            } else {
+                newFrameSem = new ConstraintChecker(newFrameSem,
+                        derivedTree.env, returnIncompleteTrees)
+                                .checkConstraints();
+                // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+                // newFrameSem, derivedTree.env, false);
+                derivedTree.setFrameSem(newFrameSem);
+                // System.out.println("Derived tree env after:
+                // "+derivedTree.env);
+                Environment.rename(derivedTree.env);
+                derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
+                        true);
+                derivedTree.setFrameSem(ElementaryTree
+                        .updateFrameSem(newFrameSem, derivedTree.env, true));
+                // System.out.println("env: " + derivedTree.env);
+            }
+            // End DA addRelations
         } catch (UnifyException e) {
-            System.err.println("Unify Exception (derived tree building): "+ e.getMessage());
+            System.err.println("Unify Exception (derived tree building): "
+                    + e.getMessage());
             failed = true;
         } catch (Exception e) {
             System.err.println("Error while deriving tree:");
             System.err.println(e.getMessage());
             e.printStackTrace();
             // System.exit(1);
+            failed = true;
         }
         // TODO: find threshold here by taking input size into consideration
         if (needsAnchoring && derivedTree.numTerminals < Integer.MIN_VALUE) {
@@ -167,9 +205,9 @@ public class TreeDeriver {
                 return null;
             derivedTree.success = false;
         }
-	//System.out.println("\n\n\nFrames at the end: ");
-	// for(Fs a_frame:derivedTree.frames)
-	//     System.out.println(a_frame);
+        // System.out.println("\n\n\nFrames at the end: ");
+        // for(Fs a_frame:derivedTree.frames)
+        // System.out.println(a_frame);
         return derivedTree;
     }
 
@@ -186,7 +224,7 @@ public class TreeDeriver {
         for (Object[] operation : operations) {
             recursivelyDeriveTree((Node) operation[4],
                     (ElementaryTree) operation[2], treeDict, D, t, eTrees,
-				  steps, needsAnchoring);
+                    steps, needsAnchoring);
         }
     }
 
@@ -210,21 +248,24 @@ public class TreeDeriver {
         // tree dict entries are accessed without disambiguation IDs
         // if (id.indexOf("__") >= 0) id = id.substring(0,id.indexOf("__"));
         ElementaryTree tree = new ElementaryTree(treeDict.get(id));
+
         // ----------------------------
         // added tree renaming (c.f. lexical ambiguity)
         tree.setID(treeDict.get(id).getOriginalId());
         // ----------------------------
         if (eTrees != null)
             eTrees.add(tree);
-        if (needsAnchoring)
-            return tree.createDumpingInstance(D);
-        else
+        if (needsAnchoring) {
+            ElementaryTree dump = tree.createDumpingInstance(D);
+            return dump;
+        } else {
             return tree.instantiate(D);
+        }
     }
 
     public static ArrayList<Object[]> prepareOperations(Node treeNode,
             Map<String, TagTree> treeDict, Document D,
-							ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
+            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
         // System.out.println(treeNode);
         ArrayList<Object[]> operations = new ArrayList<Object[]>();
         for (int i = 0; i < treeNode.getChildNodes().getLength(); i++) {
@@ -233,7 +274,7 @@ public class TreeDeriver {
                 Object[] operation = new Object[5];
                 operation[0] = getOpId(op);
                 operation[1] = "adj";
-		
+
                 for (int j = 0; j < op.getChildNodes().getLength(); j++) {
 
                     Node child = op.getChildNodes().item(j);
@@ -244,7 +285,7 @@ public class TreeDeriver {
                                 .getNamedItem("id").getNodeValue();
                         // System.err.println(adjoinedTreeId);
                         String address = op.getAttributes().getNamedItem("node")
-			    .getNodeValue();
+                                .getNodeValue();
                         ElementaryTree adjoinedTree = getTreeInstance(
                                 adjoinedTreeId, treeDict, D, eTrees,
                                 needsAnchoring);
@@ -260,7 +301,7 @@ public class TreeDeriver {
                         }
                     }
 
-                }	
+                }
                 operations.add(operation);
             } else if (op.getNodeName().equals("subst")) {
                 Object[] operation = new Object[5];

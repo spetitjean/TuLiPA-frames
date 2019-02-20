@@ -36,11 +36,9 @@ package de.tuebingen.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.duesseldorf.frames.Frame;
 import de.tuebingen.expander.DOMWriter;
 import de.tuebingen.tag.SemLit;
-
-import de.tuebingen.tag.Fs;
-
 
 public class ParseTreeCollection {
     XMLViewTree derivationTree;
@@ -52,15 +50,20 @@ public class ParseTreeCollection {
     String semantics;
     List<SemLit> realSemantics;
     String[] specifiedSemantics;
-    List<Fs> frames;
+    // List<Fs> frames;
+    Frame frameSem;
 
-    public ParseTreeCollection(XMLViewTree derivationTree, XMLViewTree derivedTree, String semantics, List<SemLit> lsl, List<Fs> frames, boolean noUtool) {
+    public ParseTreeCollection(XMLViewTree derivationTree,
+            XMLViewTree derivedTree, String semantics, List<SemLit> lsl,
+            Frame frameSem, boolean noUtool) {
         this.derivationTree = derivationTree;
         this.derivedTree = derivedTree;
         elementaryTrees = null;
         derivationSteps = null;
         this.semantics = semantics;
-     	this.frames = frames;
+
+        // this.frames = frames;
+        this.frameSem = frameSem;
         // System.out.print("noUTool is: ");
         // System.out.println(noUtool);
         // System.out.println("semantics: " + semantics);
@@ -115,8 +118,12 @@ public class ParseTreeCollection {
         return specifiedSemantics;
     }
 
-    public List<Fs> getFrames() {
-        return frames;
+    // public List<Fs> getFrames() {
+    // return frames;
+    // }
+
+    public Frame getFrameSem() {
+        return frameSem;
     }
 
 }

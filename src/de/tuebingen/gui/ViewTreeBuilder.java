@@ -241,7 +241,12 @@ public class ViewTreeBuilder {
             for (int j = 0; j < xmlNode.getAttributes().getLength(); j++) {
                 XMLViewTreeAttribute attr = new XMLViewTreeAttribute();
                 attr.name = xmlNode.getAttributes().item(j).getNodeName();
-                attr.value = xmlNode.getAttributes().item(j).getNodeValue();
+                String val = xmlNode.getAttributes().item(j).getNodeValue();
+                if (val.startsWith("_V_")) {
+                    attr.value = val.substring(3);
+                } else {
+                    attr.value = val;
+                }
                 tree.addAttr(nodeID, attr);
             }
         }
@@ -279,6 +284,7 @@ public class ViewTreeBuilder {
             if (feature instanceof Element) {
                 String name = feature.getAttributes().getNamedItem("name")
                         .getNodeValue();
+                name = "abc";
                 String value = extractFeatureValue(feature);
                 Node attr = D.createAttribute(type + ":" + name);
                 attr.setNodeValue(value);
@@ -352,15 +358,18 @@ public class ViewTreeBuilder {
             semanticsString += sl.toString() + "<br>";
         }
         // add frames to Elementary trees
-        if (eTree.frames != null) {
-            // try doing this here by adding situation as parameter. Also see
-            // DTV
-            // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames, situation);
-            // // clean up the list here
-            // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
-            for (Fs fs : eTree.frames) {
-                semanticsString += FsTools.printFS(fs);
-            }
+        // if (eTree.frames != null) {
+        // try doing this here by adding situation as parameter. Also see
+        // DTV
+        // List<Fs> mergedFrames = Fs.mergeFS(eTree.frames, situation);
+        // // clean up the list here
+        // List<Fs> cleanFrames = FsTools.cleanup(mergedFrames);
+        // for (Fs fs : eTree.frames) {
+        // semanticsString += FsTools.printFS(fs);
+        // }
+        // }
+        if (eTree.getFrameSem() != null) {
+            semanticsString += FsTools.printFrame(eTree.getFrameSem(), false);
         }
         xvt.prettySem = semanticsString;
         return xvt;
@@ -440,14 +449,15 @@ public class ViewTreeBuilder {
             String prefix) {
         ArrayList<Node> atts = new ArrayList<Node>();
         for (String key : features.getKeys()) {
-	    String value;
-	    // we want to remember when we see variables (not only the ones starting with X...)
-	    if(features.getFeat(key).getType()==5){
-		value = "_V_"+features.getFeat(key).toString();
-	    }
-	    else{
-		value = features.getFeat(key).toString();
-	    }
+            String value;
+            // we want to remember when we see variables (not only the ones
+            // starting with X...). This is necessary in case of XML export
+            // (varname vs value)
+            if (features.getFeat(key).getType() == 5) {
+                value = "_V_" + features.getFeat(key).toString();
+            } else {
+                value = features.getFeat(key).toString();
+            }
             Attr att = D.createAttribute(prefix + key);
             att.setNodeValue(value);
             atts.add(att);

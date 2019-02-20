@@ -35,8 +35,10 @@ package de.tuebingen.derive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -44,6 +46,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.FsTools;
+import de.duesseldorf.frames.Relation;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
@@ -77,7 +82,13 @@ public class ElementaryTree {
 
     boolean verbose = false;
 
-    public List<Fs> frames;
+    // public List<Fs> frames;
+
+    private Frame frameSem = new Frame();
+
+    public Frame getFrameSem() {
+        return frameSem;
+    }
 
     public ElementaryTree(Node root, String foot, String anchor,
             HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
@@ -91,9 +102,25 @@ public class ElementaryTree {
         this.semantics = semantics;
     }
 
+    // public ElementaryTree(Node root, String foot, String anchor,
+    // HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
+    // List<SemLit> semantics, List<Fs> frames) {
+    // this.id = "";
+    // this.root = root;
+    // this.foot = foot;
+    // this.anchor = anchor;
+    // this.topFeatures = topFeatures;
+    // this.bottomFeatures = bottomFeatures;
+    // this.semantics = semantics;
+    // this.frames = frames;
+    // }
+
+    // public ElementaryTree(Node root, String foot, String anchor,
+    // HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
+    // List<SemLit> semantics, List<Fs> oldframes, Frame frameSem) {
     public ElementaryTree(Node root, String foot, String anchor,
             HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
-            List<SemLit> semantics, List<Fs> frames) {
+            List<SemLit> semantics, Frame frameSem) {
         this.id = "";
         this.root = root;
         this.foot = foot;
@@ -101,7 +128,8 @@ public class ElementaryTree {
         this.topFeatures = topFeatures;
         this.bottomFeatures = bottomFeatures;
         this.semantics = semantics;
-        this.frames = frames;
+        // this.frames = oldframes;
+        this.frameSem = frameSem;
     }
 
     public ElementaryTree(TagTree tree) {
@@ -115,7 +143,8 @@ public class ElementaryTree {
             topFeatures = new HashMap<Node, Fs>();
             bottomFeatures = new HashMap<Node, Fs>();
             semantics = tree.getSem();
-            frames = tree.getFrames();
+            // frames = tree.getFrames();
+            frameSem = tree.getFrameSem();
 
             root = convertTAGNodeToXML("0", tree.getRoot(), D);
             // id = tree.getId();
@@ -213,12 +242,22 @@ public class ElementaryTree {
             else if (sl instanceof Value)
                 newSemantics.add(new Value((Value) sl, nf));
         }
-        List<Fs> newFrames = frames;
+        // List<Fs> newFrames = frames;
+        // DA addRelations
+
+        Frame newFrameSem = getFrameSem();
+        // END DA addRelations
+        // called different constructor for new frame:
+        // return new ElementaryTree(
+        // copyNodeStructure(nf, root, D, newTopFeatures,
+        // newBottomFeatures),
+        // foot, anchor, newTopFeatures, newBottomFeatures, newSemantics,
+        // newFrames, newFrameSem);
         return new ElementaryTree(
                 copyNodeStructure(nf, root, D, newTopFeatures,
                         newBottomFeatures),
                 foot, anchor, newTopFeatures, newBottomFeatures, newSemantics,
-                newFrames);
+                newFrameSem);
     }
 
     public ElementaryTree createDumpingInstance(Document D) {
@@ -233,12 +272,17 @@ public class ElementaryTree {
             else if (sl instanceof Value)
                 newSemantics.add(new Value((Value) sl));
         }
-        List<Fs> newFrames = frames;
+        // List<Fs> newFrames = frames;
+        // return new ElementaryTree(
+        // copyNodeStructureWithoutNameFactory(root, D, newTopFeatures,
+        // newBottomFeatures),
+        // foot, anchor, newTopFeatures, newBottomFeatures, newSemantics,
+        // newFrames, frameSem);
         return new ElementaryTree(
                 copyNodeStructureWithoutNameFactory(root, D, newTopFeatures,
                         newBottomFeatures),
                 foot, anchor, newTopFeatures, newBottomFeatures, newSemantics,
-                newFrames);
+                frameSem);
     }
 
     public Node copyNodeStructureWithoutNameFactory(Node n, Document D,
@@ -299,7 +343,8 @@ public class ElementaryTree {
         // first store the nodes to operate on (addresses will be misled by
         // adjunctions)
         for (Object[] op : operations) {
-            // System.err.print("Looking for node at address: " + op[3] + " --> ");
+            // System.err.print("Looking for node at address: " + op[3] + " -->
+            // ");
             op[3] = getNodeByAddress((String) op[3]);
             // System.err.println(op[3]);
         }
@@ -308,7 +353,7 @@ public class ElementaryTree {
                 dTree.numTerminals++;
             }
             if (((String) op[1]).equals("adj")) {
-                if (adjoin((ElementaryTree) op[2], (Node) op[3], dTree)) {		    
+                if (adjoin((ElementaryTree) op[2], (Node) op[3], dTree)) {
                     dTree.topFeatures.put(root,
                             Fs.unify(dTree.topFeatures.get(root),
                                     dTree.topFeatures.get(dTree.root),
@@ -326,19 +371,41 @@ public class ElementaryTree {
             }
             dTree.semantics.addAll(((ElementaryTree) op[2]).semantics);
             updateSem(dTree.semantics, dTree.env, false);
-            dTree.frames.addAll(((ElementaryTree) op[2]).frames);
-            dTree.frames = updateFrames(dTree.frames, dTree.env, false);
+            // dTree.frames.addAll(((ElementaryTree) op[2]).frames);
+            // dTree.frames = updateFrames(dTree.frames, dTree.env, false);
+
+            Frame newFrameSem = dTree.getFrameSem();
+            newFrameSem.addOtherFrame(((ElementaryTree) op[2]).getFrameSem());
+            dTree.setFrameSem(updateFrameSem(newFrameSem, dTree.env, false));
 
             // for verbose output of the steps
+            // OLD:
+            // if (steps != null) {
+            // dTree.updateTopDownFeatures(dTree.root, false, false);
+            // ElementaryTree newStep = (new ElementaryTree(dTree.root, "", "",
+            // dTree.topFeatures, dTree.bottomFeatures,
+            // dTree.semantics, dTree.frames))
+            // .createDumpingInstance(root.getOwnerDocument());
+            // newStep.setID("Step " + steps.size());
+            // steps.add(newStep);
+            // }
+            // END OLD
+            // NEW
             if (steps != null) {
                 dTree.updateTopDownFeatures(dTree.root, false, false);
+                // ElementaryTree newStep = (new ElementaryTree(dTree.root, "",
+                // "",
+                // dTree.topFeatures, dTree.bottomFeatures,
+                // dTree.semantics, dTree.frames, dTree.getFrameSem()))
+                // .createDumpingInstance(root.getOwnerDocument());
                 ElementaryTree newStep = (new ElementaryTree(dTree.root, "", "",
                         dTree.topFeatures, dTree.bottomFeatures,
-                        dTree.semantics, dTree.frames))
+                        dTree.semantics, dTree.getFrameSem()))
                                 .createDumpingInstance(root.getOwnerDocument());
                 newStep.setID("Step " + steps.size());
                 steps.add(newStep);
             }
+            // END NEW
         }
     }
 
@@ -500,11 +567,94 @@ public class ElementaryTree {
         return newFrames;
     }
 
-    public void concatFrames(Fs frame) {
-        if (this.frames == null) {
-            frames = new LinkedList<Fs>();
+    // public void concatFrames(Fs frame) {
+    // if (this.frames == null) {
+    // frames = new LinkedList<Fs>();
+    // }
+    // frames.add(frame);
+    // }
+
+    /**
+     * similar to the old updateFs method. changes the variables in the frameSem
+     * (AS OF OCT 18, 2018: Only changes feature structures, not relations)
+     * 
+     * @param frameSem
+     * @param env
+     * @param finalUpdate
+     * @return
+     * @throws UnifyException
+     */
+    public static Frame updateFrameSem(Frame frameSem, Environment env,
+            boolean finalUpdate) throws UnifyException {
+
+        List<Fs> newFs = new LinkedList<Fs>();
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null)
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
         }
-        frames.add(frame);
+
+        Set<Relation> newRelations = new HashSet<Relation>();
+        for (Relation oldRel : frameSem.getRelations()) {
+            List<Value> newArgs = new LinkedList<Value>();
+            for (Value oldVal : oldRel.getArguments()) {
+                Value oldCopy = new Value(oldVal);
+                oldCopy.update(env, finalUpdate);
+                // Value newVal = env.deref(oldVal);
+                newArgs.add(oldCopy);
+            }
+            newRelations.add(new Relation(oldRel.getName(), newArgs));
+        }
+
+        return new Frame(newFs, newRelations);
+    }
+
+    /**
+     * Like updateFrameSem, but merging the frames in the end
+     * 
+     * @param frameSem
+     * @param env
+     * @param finalUpdate
+     * @return
+     * @throws UnifyException
+     */
+    public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
+            boolean finalUpdate) throws UnifyException {
+        NameFactory nf = new NameFactory();
+        List<Fs> newFs = new LinkedList<Fs>();
+        // System.out.println("Environment before update: "+env);
+
+        for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null)
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
+        }
+        // do not know why 2 merges are now necessary...
+        List<Fs> mergedFrames = Fs.mergeFS(newFs, env, nf);
+        if (mergedFrames != null)
+            mergedFrames = Fs.mergeFS(newFs, env, nf);
+        List<Fs> cleanedFrames = new LinkedList<Fs>();
+        if (mergedFrames == null) {
+            System.err.println("Frame unification failed, tree discarded!\n");
+            return null;
+        } else {
+            cleanedFrames = FsTools.cleanup(mergedFrames);
+        }
+
+        Set<Relation> newRelations = new HashSet<Relation>();
+        // System.out.println("Old relations: "+frameSem.getRelations());
+
+        for (Relation oldRel : frameSem.getRelations()) {
+            List<Value> newArgs = new LinkedList<Value>();
+            for (Value oldVal : oldRel.getArguments()) {
+                Value oldCopy = new Value(oldVal);
+                oldCopy.update(env, finalUpdate);
+                // Value newVal = env.deref(oldVal);
+                newArgs.add(oldCopy);
+            }
+            newRelations.add(new Relation(oldRel.getName(), newArgs));
+        }
+        // System.out.println("Environment: "+env);
+        // System.out.println("New relations: "+newRelations);
+        return new Frame(cleanedFrames, newRelations);
     }
 
     public void updateTBFeatures(Node n, Environment env, boolean finalUpdate)

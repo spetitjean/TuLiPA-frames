@@ -78,19 +78,19 @@ public class Environment {
         if (table.containsKey(name)) {
             // var is bound to something
             Value v = table.get(name);
-	    //System.out.println("Got deref "+v);
+            // System.out.println("Got deref "+v);
             if (v.is(Value.VAR)) {
                 // // var is bound to a variable, we go on dereferencing
                 // // I created a loop here somehow, this must be fixed better
                 // System.out.println("v:"+v.toString());
                 // System.out.println("name:"+name);
-                // if(v.toString()!=name){
+                // if (v.toString() != name) {
                 // res = deref(v);
                 // }
                 // else{
                 // res=v;
                 // }
-		res = deref(v);
+                res = deref(v);
             } else {
                 // var is bound to the constant v!
                 res = v;
@@ -151,6 +151,7 @@ public class Environment {
             String k = i.next();
             res += " " + k + " <-> " + table.get(k).toString() + "\n";
         }
+        res += "\n";
         res += "\n";
         return res;
     }
@@ -221,7 +222,7 @@ public class Environment {
      * renamed
      */
     public static void rename(Environment eEnv) {
-	eEnv.setPnf(new PrettyNameFactory());
+        eEnv.setPnf(new PrettyNameFactory());
         // 1. We rename (with pretty names) the semantic labels
         for (int i = 0; i < eEnv.getSemlabels().size(); i++) {
             String slabel = eEnv.getSemlabels().get(i);
@@ -243,10 +244,9 @@ public class Environment {
             }
         }
         for (Value v : bounded)
-            eEnv.bind(v.getVarVal(), new Value(Value.VAR,
-                    "?" + eEnv.getPnf().getName(v.getVarVal())));
+            eEnv.bind(v.getVarVal(),
+                    new Value(Value.VAR, eEnv.getPnf().getName(v.getVarVal())));
 
     }
 
 }
-  

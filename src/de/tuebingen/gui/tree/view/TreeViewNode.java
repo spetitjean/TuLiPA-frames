@@ -56,7 +56,8 @@ public class TreeViewNode
         this.modelNode = modelNode;
         this.id = modelNode.id;
         this.setParent(parent);
-        this.children = children;
+        //this.children = children;
+        this.children = new ArrayList<Integer>();
         this.tag = modelNode.content;
         this.color = null;
         this.edgeTagColor = null;
@@ -80,6 +81,7 @@ public class TreeViewNode
         this.id = id;
         this.setParent(parent);
         this.children = children;
+	this.children = new ArrayList<Integer>();
         this.tag = tag;
         this.color = null;
         this.edgeTagColor = null;

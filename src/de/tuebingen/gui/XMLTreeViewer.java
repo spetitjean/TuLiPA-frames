@@ -82,5 +82,4 @@ public class XMLTreeViewer {
         display.setLocation(0, 0);
         display.setVisible(true);
     }
-
 }

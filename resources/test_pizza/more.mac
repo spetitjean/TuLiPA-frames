@@ -2,12 +2,35 @@
   <hierarchy>
     <entry>
       <ctype>
+        <type val="activity"/>
+        <type val="eat"/>
+        <type val="event"/>
+        <type val="psych-state"/>
       </ctype>
       <constraints>
       </constraints>
     </entry>
     <entry>
       <ctype>
+        <type val="activity"/>
+        <type val="eat"/>
+        <type val="event"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="activity"/>
+        <type val="event"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="activity"/>
         <type val="event"/>
       </ctype>
       <constraints>
@@ -16,22 +39,9 @@
     <entry>
       <ctype>
         <type val="entity"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
-        <type val="person"/>
-      </ctype>
-      <constraints>
-      </constraints>
-    </entry>
-    <entry>
-      <ctype>
-        <type val="entity"/>
         <type val="food"/>
+        <type val="pizza"/>
+        <type val="psych-state"/>
       </ctype>
       <constraints>
       </constraints>
@@ -47,7 +57,63 @@
     </entry>
     <entry>
       <ctype>
-        <type val="activity"/>
+        <type val="entity"/>
+        <type val="food"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="food"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="person"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="person"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="entity"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
+        <type val="event"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
         <type val="event"/>
       </ctype>
       <constraints>
@@ -55,9 +121,13 @@
     </entry>
     <entry>
       <ctype>
-        <type val="activity"/>
-        <type val="eat"/>
-        <type val="event"/>
+        <type val="psych-state"/>
+      </ctype>
+      <constraints>
+      </constraints>
+    </entry>
+    <entry>
+      <ctype>
       </ctype>
       <constraints>
       </constraints>

@@ -90,9 +90,9 @@ public class WorkbenchLoader {
      * @return Ideally A ready to go Grammar
      * @throws Exception
      */
-    public static Situation loadSituation(CommandLineOptions op, String gram,
+    public static void loadSituation(CommandLineOptions op, String gram,
             String lem, String mo) throws Exception {
-        return loadSituation(op, gram, null, lem, mo, null);
+        loadSituation(op, gram, null, lem, mo, null);
     }
 
     /**
@@ -113,7 +113,7 @@ public class WorkbenchLoader {
      * @return Ideally A ready to go Grammar
      * @throws Exception
      */
-    public static Situation loadSituation(CommandLineOptions op, String gram,
+    public static void loadSituation(CommandLineOptions op, String gram,
             String fram, String lem, String mo, String tyHi) throws Exception {
         Grammar g;
         Grammar frameG = null;
@@ -251,7 +251,8 @@ public class WorkbenchLoader {
             }
             // System.err.println(g.toString());
         }
-        return new Situation(g, frameG, tHi);
+        Situation.instantiate(g, frameG, tHi);
+        return;
     }
 
     public static String buildPolarities(CommandLineOptions op) {

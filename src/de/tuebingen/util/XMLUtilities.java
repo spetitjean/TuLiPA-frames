@@ -93,6 +93,15 @@ public class XMLUtilities {
         return null;
     }
 
+    /**
+     * 
+     * If outfile is "stdout", print to stdout.
+     * 
+     * @param document
+     * @param outfile
+     * @param dtd
+     * @param system
+     */
     public static void writeXML(Document document, String outfile, String dtd,
             boolean system) {
         try {

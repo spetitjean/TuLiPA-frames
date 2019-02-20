@@ -35,12 +35,13 @@
  */
 package de.tuebingen.tag;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.FrameUpdater;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.converter.AdjunctionSets;
 import de.tuebingen.converter.CatPairs;
@@ -95,7 +96,8 @@ public class TagTree implements Tree {
     // semantics
     private List<SemLit> sem;
     // frames
-    private List<Fs> frames;
+    // private List<Fs> frames = new LinkedList<Fs>();
+    private Frame frameSem;
     // substitution nodes (for lexical disambiguation)
     private List<Node> subst;
     // lexical items (hard-coded, i.e. lexical nodes, for lexical
@@ -103,9 +105,10 @@ public class TagTree implements Tree {
     private List<Node> lexNodes;
     // co-anchors (for lexical disambiguation)
     private List<Node> coAnchors;
-    // the position in the sentence where this tree should be anchored (to avoid duplicates)
+    // the position in the sentence where this tree should be anchored (to avoid
+    // duplicates)
     private int position;
-    
+
     /**
      * 
      * @param i
@@ -124,7 +127,7 @@ public class TagTree implements Tree {
         id = new String(t.getId());
         originalId = t.getOriginalId();
         isHead = t.getIsHead();
-	position = t.getPosition();
+        position = t.getPosition();
         trace = new LinkedList<String>();
         for (int i = 0; i < t.getTrace().size(); i++) {
             trace.add(t.getTrace().get(i));
@@ -149,19 +152,28 @@ public class TagTree implements Tree {
         }
 
         // instantiate frames
-        if (t.getFrames() != null) {
-            List<Fs> oldFrames = t.getFrames();
-            List<Fs> newFrames = new ArrayList<Fs>();
-            for (Fs oldFrame : oldFrames) {
-                // System.err.println("Recreating frame, before: " + oldFrame);
-
-                Fs newFrame = new Fs(oldFrame, nf);
-                newFrames.add(newFrame);
-                // System.err.println("After: " + newFrame);
-
-            }
-            this.frames = newFrames;
+        // if (t.getFrames() != null) {
+        // List<Fs> oldFrames = t.getFrames();
+        // List<Fs> newFrames = new ArrayList<Fs>();
+        // for (Fs oldFrame : oldFrames) {
+        // // System.out.println(
+        // // "Recreating frame with old frame, before: " + oldFrame);
+        // Fs newFrame = new Fs(oldFrame, nf);
+        // newFrames.add(newFrame);
+        // // System.out.println("After: " + newFrame);
+        // }
+        // this.frames = newFrames;
+        // }
+        // DA addRelations
+        if (t.getFrameSem() != null) {
+            Frame oldFrameSem = t.getFrameSem();
+            // System.out.println("Recreating frameSem, before: " +
+            // oldFrameSem);
+            Frame newFrameSem = new FrameUpdater(oldFrameSem, nf).rename();
+            // System.out.println("Recreating frameSem, after: " + newFrameSem);
+            this.frameSem = newFrameSem;
         }
+        // END DA addRelations
 
         // to update subst, foot and anchor:
         subst = new LinkedList<Node>();
@@ -310,12 +322,12 @@ public class TagTree implements Tree {
         List<Node> ln = n.getChildren();
         if (ln == null) {
             if (((TagNode) n).getType() == TagNode.COANCHOR) {
-		//System.out.println("Processing coanchor: "+n);
-		//System.out.println("Name: "+n.getName());
-		//System.out.println("Other: "+ca.getNode_id());
+                // System.out.println("Processing coanchor: "+n);
+                // System.out.println("Name: "+n.getName());
+                // System.out.println("Other: "+ca.getNode_id());
                 if (n.getName() != null) { // it has a name
                     if (n.getName().equals(ca.getNode_id())) {
-			//System.out.println("Adding the lex node");
+                        // System.out.println("Adding the lex node");
                         TagNode tn = (TagNode) n;
                         List<Node> ch = new LinkedList<Node>();
                         TagNode coanc = new TagNode();
@@ -419,19 +431,20 @@ public class TagTree implements Tree {
      * Method used to modify a node according to its Gorn address
      */
 
-    public void updateNode(Node n, String address){
-	//System.out.println("Starting update");
-	updateNodeRec(root, n, address);
-	//System.out.println("Finished update");
+    public void updateNode(Node n, String address) {
+        // System.out.println("Starting update");
+        updateNodeRec(root, n, address);
+        // System.out.println("Finished update");
     }
-    
+
     public void updateNodeRec(Node current, Node n, String address) {
-	TagNode tagCurrent = (TagNode) current;
+        TagNode tagCurrent = (TagNode) current;
         if (tagCurrent.getAddress().equals(address)) {
-	    //System.out.println("Adresses: "+tagCurrent.getAddress()+" and "+address);
-	    //System.out.println("Updating node: "+tagCurrent);
-            tagCurrent=(TagNode) n;
-	    //System.out.println("Node updated: "+tagCurrent);
+            // System.out.println("Adresses: "+tagCurrent.getAddress()+" and
+            // "+address);
+            // System.out.println("Updating node: "+tagCurrent);
+            tagCurrent = (TagNode) n;
+            // System.out.println("Node updated: "+tagCurrent);
         } else {
             if (current.getChildren() != null) {
                 LinkedList<Node> l = (LinkedList<Node>) current.getChildren();
@@ -937,25 +950,24 @@ public class TagTree implements Tree {
         this.sem = sem;
     }
 
-    public void setFrames(List<Fs> framerepr) {
-        this.frames = framerepr;
+    // public void setFrames(List<Fs> framerepr) {
+    // this.frames = framerepr;
+    // }
+    //
+    // public void concatFrames(Fs frame) {
+    // frames.add(frame);
+    // }
+    //
+    // public List<Fs> getFrames() {
+    // return frames;
+    // }
+
+    public Frame getFrameSem() {
+        return this.frameSem;
     }
 
-    public void concatFrames(Fs frame) {
-        if (this.frames == null) {
-            frames = new LinkedList<Fs>();
-        }
-        frames.add(frame);
-    }
-
-    public void initFrames() {
-        if (this.frames == null) {
-            frames = new LinkedList<Fs>();
-        }
-    }
-
-    public List<Fs> getFrames() {
-        return frames;
+    public void setFrameSem(Frame frame) {
+        this.frameSem = frame;
     }
 
     public List<Node> getSubst() {
@@ -1007,12 +1019,17 @@ public class TagTree implements Tree {
         return coac;
     }
 
-    public int getPosition(){
-	return position;
+    public int getPosition() {
+        return position;
     }
 
-    public void setPosition(int p){
-	position=p;
+    public void setPosition(int p) {
+        position = p;
+    }
+
+    @Override
+    public String toString() {
+        return toString("");
     }
 
     public String toString(String space) {
@@ -1025,12 +1042,21 @@ public class TagTree implements Tree {
         for (int i = 0; i < sem.size(); i++) {
             semantics += "  " + sem.get(i).toString() + "\n";
         }
+
+        // String frameString = frames.toString();
+        String frameSemString = frameSem.toString();
+        // return ("\n Tree " + id + "\n Original Id : " + originalId
+        // + "\n Family : " + family + "\n Tuple id : " + tupleId
+        // + "\n Trace : " + s + "\n Interface : [" + iface.toString()
+        // + "]\n Syn : \n" + space
+        // + ((TagNode) root).toString(space + " ") + "\n Sem : \n"
+        // + semantics + "\n Frames : \n" + frameString
+        // + "\n FrameSem : \n" + frameSemString);
         return ("\n Tree " + id + "\n  Original Id : " + originalId
                 + "\n  Family : " + family + "\n  Tuple id : " + tupleId
                 + "\n  Trace : " + s + "\n  Interface : [" + iface.toString()
                 + "]\n  Syn : \n" + space
                 + ((TagNode) root).toString(space + "  ") + "\n  Sem : \n"
-                + semantics);
+                + semantics + "\n FrameSem : \n" + frameSemString);
     }
-
 }

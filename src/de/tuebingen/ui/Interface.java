@@ -117,17 +117,15 @@ public class Interface {
 
         // if we are not in graphical mode
         // we load the grammar (and potentially lexicons)
-        Situation sit = null;
         if (op.check("s") || op.check("i")
                 || (op.check("b") && !op.check("tag"))) { // NB: batch mode may
                                                           // require grammar
                                                           // reloading if option
                                                           // tag is used
             try {
-                sit = WorkbenchLoader.loadSituation(op, gram, fram, lem, mo,
-                        th);
-                g = sit.getGrammar();
-                frameG = sit.getFrameGrammar();
+                WorkbenchLoader.loadSituation(op, gram, fram, lem, mo, th);
+                g = Situation.getGrammar();
+                frameG = Situation.getFrameGrammar();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,9 +146,9 @@ public class Interface {
                     if (!op.check("cyktag") && !op.check("tag2rcg")) {
                         op.setVal("cyktag", "");
                     }
-                    ParsingInterface.parseTAG(op, sit, sentence);
+                    ParsingInterface.parseTAG(op, (TTMCTAG) g, sentence);
                 } else if (g instanceof RRG) {
-                    ParsingInterface.parseRRG(op, sit, sentence);
+                    ParsingInterface.parseRRG(op, sentence);
                 } else {
                     // RCG/CFG/simple RCG parse
                     ParsingInterface.parseNonTAG(op, g, sentence);
@@ -175,9 +173,10 @@ public class Interface {
                             // if (op.check("tag2rcg")) {
                             // ParsingInterface.parseSentence(op, g, sentence);}
                             if (g instanceof TTMCTAG) {
-                                ParsingInterface.parseTAG(op, sit, sentence);
+                                ParsingInterface.parseTAG(op, (TTMCTAG) g,
+                                        sentence);
                             } else if (g instanceof RRG) {
-                                ParsingInterface.parseRRG(op, sit, sentence);
+                                ParsingInterface.parseRRG(op, sentence);
                             } else {
                                 // RCG/CFG/simple RCG parse
                                 ParsingInterface.parseNonTAG(op, g, sentence);
@@ -199,7 +198,7 @@ public class Interface {
             int i = 0;
             String out = op.check("o") ? op.getVal("o") : "a.out"; // for RCG
                                                                    // output
-            if (!op.check("x"))
+            if (!(op.check("x") || op.check("xg")))
                 op.setVal("x", "true"); // to deactivate graphical output
                                         // interface
             // parse the input
@@ -224,10 +223,10 @@ public class Interface {
                                                                   // parse for
                                                                   // the grammar
                                                                   // filtering
-                                sit = WorkbenchLoader.loadSituation(op, gram,
-                                        lem, mo);
-                                g = sit.getGrammar();
-                                frameG = sit.getFrameGrammar();
+                                WorkbenchLoader.loadSituation(op, gram, lem,
+                                        mo);
+                                g = Situation.getGrammar();
+                                frameG = Situation.getFrameGrammar();
                                 op.removeVal("s"); // reinit once the filtering
                                 // is done
                             } catch (Exception e) {
@@ -240,7 +239,8 @@ public class Interface {
                             // since the extended one has been performed:
                             op.setVal("nofiltering", "true");
                         }
-                        ParsingInterface.parseTAG(op, sit, is);
+                        ParsingInterface.parseTAG(op,
+                                (TTMCTAG) Situation.getGrammar(), is);
                     }
                 } catch (Exception e) {
                     System.err.println(

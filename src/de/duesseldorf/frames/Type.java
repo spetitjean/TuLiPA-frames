@@ -30,27 +30,80 @@
 
 package de.duesseldorf.frames;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.tag.Environment;
+import de.tuebingen.tag.Value;
 
 /**
  * 
  * @author david
  * 
  * 
- *         A class representing a type as a set of elementary type.
+ *         A class representing a type as a set of elementary type or a
+ *         Variable.
  *
  */
 public final class Type {
 
     private Set<String> elemTypes;
+    private Value var;
+    private Set<TypeConstraint> typeConstraints;
+    private Boolean truevar;
 
-    public Type(Set<String> elementaryTypes) {
-        this.elemTypes = elementaryTypes;
+    public Type(Collection<String> elementaryTypes) {
+        this.typeConstraints = new HashSet<TypeConstraint>();
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.truevar = false;
     }
 
+    public Type(Collection<String> elementaryTypes, Value variable) {
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = variable;
+        this.typeConstraints = new HashSet<TypeConstraint>();
+        this.truevar = true;
+    }
+
+    public Type(Collection<String> elementaryTypes, Value variable,
+            Collection<TypeConstraint> typeConstraints) {
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = variable;
+        this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
+        this.truevar = true;
+    }
+
+    public Type(Collection<String> elementaryTypes,
+            Collection<TypeConstraint> typeConstraints) {
+        this.typeConstraints = new HashSet<TypeConstraint>(typeConstraints);
+        this.elemTypes = new HashSet<String>(elementaryTypes);
+        this.var = new Value(Value.VAR, new NameFactory().getUniqueName());
+        this.truevar = false;
+    }
+
+    /**
+     * Attention: If t is of Kind Variable, then the same variable String is
+     * assigned to the new type. Or is it?
+     * 
+     * @param t
+     */
     public Type(Type t) {
         this.elemTypes = t.getElementaryTypes();
+        this.var = new Value(t.getVar(), new NameFactory());
+        this.typeConstraints = t.getTypeConstraints();
+        this.truevar = false;
+    }
+
+    public Value getVar() {
+        return var;
+    }
+
+    public void setVar(Value v) {
+        this.var = v;
     }
 
     /**
@@ -58,10 +111,16 @@ public final class Type {
      * @param t
      * @return this type unified with t
      */
-    public Type union(Type t) {
-        Set<String> s = t.getElementaryTypes();
-        s.addAll(elemTypes);
-        return new Type(s);
+    public Type union(Type t, Environment env) {
+        Type result = null;
+        // if (kind == Kind.ELTYPES && t.getKind() == Kind.ELTYPES) {
+        Set<String> resultingElementaryTypes = t.getElementaryTypes();
+        resultingElementaryTypes.addAll(elemTypes);
+
+        Set<TypeConstraint> resultingTypeConstraints = t.getTypeConstraints();
+        resultingTypeConstraints.addAll(typeConstraints);
+        result = new Type(resultingElementaryTypes, resultingTypeConstraints);
+        return result;
     }
 
     /**
@@ -69,7 +128,7 @@ public final class Type {
      * @return Is this a type containing no elementary types?
      */
     public boolean isEmpty() {
-        return this.elemTypes.isEmpty();
+        return this.elemTypes.isEmpty() && !this.truevar;
     }
 
     /**
@@ -83,6 +142,10 @@ public final class Type {
     public boolean subsumes(Type t) {
         Set<String> ttypes = t.getElementaryTypes();
         return ttypes.containsAll(elemTypes);
+    }
+
+    public Set<TypeConstraint> getTypeConstraints() {
+        return this.typeConstraints;
     }
 
     public Set<String> getElementaryTypes() {
@@ -99,31 +162,27 @@ public final class Type {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object o) {
         boolean res = false;
-        if (obj instanceof Type) {
-            Type that = (Type) obj;
-            if (this.subsumes(that) && that.subsumes(this)) {
-                res = true;
-            }
+        if (o instanceof Type) {
+            // old version:
+            // Type that = (Type) o;
+            // if (this.subsumes(that) && that.subsumes(this)) {
+            // res = true;
+            // }
+            res = o.hashCode() == this.hashCode();
         }
         return res;
     }
 
     @Override
     public int hashCode() {
-        return (41 * (41 + this.elemTypes.hashCode()));
+        return Objects.hash(elemTypes, var, typeConstraints);
     }
 
-    /**
-     * @return A string representation of this type in the format
-     *         [elemtype1-elemtype2-...]
-     *         Example:
-     *         [sleep-activity-event]
-     */
-    @Override
-    public String toString() {
-        String s = "[";
+    public String toStringWithoutVariable() {
+        String s = "";
+        s = "[";
         for (String string : elemTypes) {
             s = s + string + "-";
         }
@@ -133,6 +192,26 @@ public final class Type {
         if (last > 0) {
             s = s.substring(0, last);
         }
-        return s + "]";
+        s += "]";
+        return s;
+    }
+
+    /**
+     * @return A string representation of this type in the format
+     *         [elemtype1-elemtype2-...] Value
+     *         Example:
+     *         [sleep-activity-event] Value
+     */
+    @Override
+    public String toString() {
+        String s = toStringWithoutVariable();
+        s += " " + var.toString();
+        if (!typeConstraints.isEmpty()) {
+            s += "\nConstraints:";
+            for (TypeConstraint constraint : typeConstraints) {
+                s += "\n" + constraint;
+            }
+        }
+        return s;
     }
 }

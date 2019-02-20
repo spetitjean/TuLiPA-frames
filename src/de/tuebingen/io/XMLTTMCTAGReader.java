@@ -58,6 +58,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Type;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Fs;
@@ -122,6 +124,8 @@ public class XMLTTMCTAGReader extends FileReader {
                     ttree.setIsHead(true);
                     t.setHead(ttree);
                     updateHash(sets, t.getHead().getFamily(), t);
+                    // System.out.println("TTREE: "+ttree.getFrameSem());
+                    // System.out.println("IFACE: "+ttree.getIface());
                 } else if (e.getTagName().equals("mcset")) {
                     id = e.getAttribute("id");
                     t = new Tuple(id);
@@ -285,17 +289,33 @@ public class XMLTTMCTAGReader extends FileReader {
         // System.err.println("Frame part ");
 
         l = e.getElementsByTagName("frame");
-        List<Fs> framereprs = new ArrayList<Fs>();
 
         if (l.getLength() > 0) {
-            Fs framerepr = getNarg((Element) l.item(0), FROM_OTHER, nf);
-            framereprs.add(framerepr);
-            res.concatFrames(framerepr);
-        } else {
-            res.initFrames();
-        }
+            List<Fs> framefss = new ArrayList<Fs>();
+            Set<Relation> framerels = new HashSet<Relation>();
 
-        // System.out.println("Frame from XMLTTMCTAGReader: " + framerepr);
+            Element frameEl = (Element) l.item(0);
+            NodeList frameEls = frameEl.getChildNodes();
+            for (int i = 0; i < frameEls.getLength(); i++) {
+                if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    Element ithFrameEl = (Element) frameEls.item(i);
+                    Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
+                    if (ithFrameEl.getTagName().equals("fs")) {
+                        Fs framefs = getFeats(ithFrameEl, NOFS, toAdd, nf);
+                        framefss.add(framefs);
+                        // res.concatFrames(framefs);
+                    } else if (ithFrameEl.getTagName().equals("relation")) {
+                        Relation rel = getRelation(ithFrameEl, toAdd, nf);
+                        framerels.add(rel);
+                    }
+                }
+            }
+            Frame frameSem = new Frame(framefss, framerels);
+            // System.out.println(
+            // "frameSem in XMLTTMCTAGREADER:\n" + frameSem.toString());
+            res.setFrameSem(frameSem);
+	    //System.out.println("Frame from XMLTTMCTAGReader: " + frameSem);
+        }
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
         // get replaced with the contents of the frames
@@ -311,6 +331,28 @@ public class XMLTTMCTAGReader extends FileReader {
         res.setSem(semrepr);
 
         return res;
+    }
+
+    /**
+     * A relation element has an attribute with the relation name and daughters
+     * for each of the arguments
+     * 
+     * @param n
+     * @return
+     */
+    private static Relation getRelation(Element n,
+            Hashtable<String, Value> toAdd, NameFactory nf) {
+        String name = n.getAttribute("name");
+        List<Value> arguments = new LinkedList<Value>();
+
+        NodeList syms = n.getElementsByTagName("sym");
+        for (int i = 0; i < syms.getLength(); i++) {
+            Element sym = (Element) syms.item(i);
+            String varname = sym.getAttribute("varname");
+            Value val = getSingleValue(sym, nf);
+            arguments.add(val);
+        }
+        return new Relation(name, arguments);
     }
 
     /**
@@ -595,6 +637,7 @@ public class XMLTTMCTAGReader extends FileReader {
         Value corefval = new Value(Value.VAR, nf.getName(coref));
 
         NodeList etypes = null;
+        Value typevar = null;
         NodeList l = e.getChildNodes();
 
         // NodeList etypes = e.getElementsByTagName("type");
@@ -604,6 +647,8 @@ public class XMLTTMCTAGReader extends FileReader {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
                     etypes = el.getElementsByTagName("type");
+                    typevar = new Value(Value.VAR,
+                            nf.getName(el.getAttribute("coref")));
                 }
             }
         }
@@ -617,7 +662,11 @@ public class XMLTTMCTAGReader extends FileReader {
                 types.add(el.getAttribute("val"));
             }
         }
-        Type frame_type = new Type(types);
+        Type frame_type;
+        if (typevar == null)
+            frame_type = new Type(types);
+        else
+            frame_type = new Type(types, typevar);
         // System.out.println("Found a type: "+frame_type);
 
         res = new Fs(l.getLength(), frame_type, corefval);

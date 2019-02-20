@@ -77,13 +77,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.UIManager.*;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
@@ -219,19 +218,19 @@ public class InputGUI implements ActionListener {
         System.setErr(errs);
         pt = new Thread();
 
-	try {
-	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-		if ("Nimbus".equals(info.getName())) {
-		    UIManager.setLookAndFeel(info.getClassName());
-		    break;
-		}
-	    }
-	} catch (Exception e) {
-	    // If Nimbus is not available, you can set the GUI to another look and feel.
-	}
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look
+            // and feel.
+        }
 
-	
-	guiFrame = new JFrame();
+        guiFrame = new JFrame();
         guiFrame.setTitle("TuLiPA " + InputGUI.VERSION);
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setJMenuBar(getMenuBar());
@@ -881,11 +880,11 @@ public class InputGUI implements ActionListener {
             Grammar frameG = null;
             Situation sit = null;
             try {
-                sit = WorkbenchLoader.loadSituation(ops, gramF.getText(),
+                WorkbenchLoader.loadSituation(ops, gramF.getText(),
                         fgramF.getText(), lemmaF.getText(), morphF.getText(),
                         tyHiF.getText());
-                g = sit.getGrammar();
-                frameG = sit.getFrameGrammar();
+                g = Situation.getGrammar();
+                frameG = Situation.getFrameGrammar();
             } catch (Exception e) {
                 e.printStackTrace();
                 String msg = e.getMessage();
@@ -900,9 +899,10 @@ public class InputGUI implements ActionListener {
                 // sentence);
                 // } else if (g instanceof TTMCTAG) {
                 if (g instanceof TTMCTAG) {
-                    parseres = ParsingInterface.parseTAG(ops, sit, sentence);
+                    parseres = ParsingInterface.parseTAG(ops, (TTMCTAG) g,
+                            sentence);
                 } else if (g instanceof RRG) {
-                    parseres = ParsingInterface.parseRRG(ops, sit, sentence);
+                    parseres = ParsingInterface.parseRRG(ops, sentence);
                 } else {
                     parseres = ParsingInterface.parseNonTAG(ops, g, sentence);
                 }
