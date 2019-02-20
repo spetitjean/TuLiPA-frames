@@ -38,6 +38,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import de.duesseldorf.frames.Situation;
@@ -163,6 +164,19 @@ public class Fs {
         } else {
             AVlist.put(key, val);
         }
+    }
+
+    /**
+     * like setFeat, but if the val is already in there, the new val is stored
+     * 
+     * @param key
+     * @param val
+     */
+    public void replaceFeat(String key, Value val) {
+        if (AVlist.containsKey(key)) {
+            AVlist.remove(key);
+        }
+        AVlist.put(key, val);
     }
 
     /**
@@ -530,8 +544,8 @@ public class Fs {
             // // } else if (fs1.isTyped() && fs2.isTyped()) {
             // // resType =
             // }
-            // System.out.println("Unification of "+fs1.getType()+" and
-            // "+fs2.getType());
+            // System.out.println("Unification of " + fs1.getType() + " and "
+            // + fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
                     // System.out.println("Unify types: " + fs1.getType() + "
@@ -601,6 +615,7 @@ public class Fs {
         // System.out.println("Updating FS: "+fs);
         // System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave
         // "+fs.getCoref());
+
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
@@ -615,7 +630,8 @@ public class Fs {
                 // convert the value to a type
                 Set<String> elementaryTypes = new HashSet<String>();
                 elementaryTypes.add(typevar.getSVal());
-                Type otherType = new Type(elementaryTypes, typevar);
+                Type otherType = new Type(elementaryTypes, typevar,
+                        fs.getType().getTypeConstraints());
                 newType = Situation.getTypeHierarchy()
                         .leastSpecificSubtype(fs.getType(), otherType, env);
                 typevar = new Value(new Fs(0));
@@ -627,10 +643,11 @@ public class Fs {
                 Value typevarderef = env.deref(typevar);
                 if (!typevarderef.equals(typevar)) {
                     newType = new Type(fs.getType().getElementaryTypes(),
-                            Value.unify(typevarderef, typevar, env));
+                            Value.unify(typevarderef, typevar, env),
+                            fs.getType().getTypeConstraints());
                 } else {
                     newType = new Type(fs.getType().getElementaryTypes(),
-                            typevarderef);
+                            typevarderef, fs.getType().getTypeConstraints());
                 }
             }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
@@ -710,11 +727,20 @@ public class Fs {
     }
 
     public boolean equals(Object fs) {
-        boolean res = true;
+
+        if (!(fs instanceof Fs)) {
+            return false;
+        }
+
+        if (this.getCoref() == ((Fs) fs).getCoref()) {
+            return true;
+        }
+
         Set<String> keys = AVlist.keySet();
         Iterator<String> it = keys.iterator();
         if (this.getCoref() == ((Fs) fs).getCoref())
             return true;
+        boolean res = true;
         while (it.hasNext()) {
             String f = it.next();
             if (!(((Fs) fs).hasFeat(f))) {
@@ -725,6 +751,11 @@ public class Fs {
             }
         }
         return res;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(AVlist, type, is_typed, coref);
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Environment env,
@@ -769,6 +800,7 @@ public class Fs {
                     // If the result of update_corefs is null, it is
                     // because unification failed somewhere, so we
                     // need to discard the solution
+
                     // System.out.println("Failed to update corefs");
                     return null;
                 }
@@ -787,7 +819,8 @@ public class Fs {
                 cleanFrame.cleanCorefs();
                 // System.out.println("Updated : " + cleanFrame);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("error during updateFs");
+                return newFrames;
             }
         }
 
@@ -864,11 +897,13 @@ public class Fs {
             if (v.is(Value.AVM)) {
                 // System.out.println("l.822: "+v.getAvmVal());
                 // System.out.println("Seen: "+seen);
-                // if(!seen.contains(v.getAvmVal().getCoref()))
-                v.getAvmVal().collect_corefs(env, nf, new HashSet<Value>());
+                // if (!seen.contains(v.getAvmVal().getCoref())) {
+                v.getAvmVal().collect_corefs(env, nf, seen);
+
             }
         }
         return true;
+
     }
 
     public Fs update_corefs(Environment env, Set<Value> seen) {

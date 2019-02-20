@@ -369,7 +369,7 @@ public class ViewTreeBuilder {
         // }
         // }
         if (eTree.getFrameSem() != null) {
-            semanticsString += FsTools.printFrame(eTree.getFrameSem());
+            semanticsString += FsTools.printFrame(eTree.getFrameSem(), false);
         }
         xvt.prettySem = semanticsString;
         return xvt;
