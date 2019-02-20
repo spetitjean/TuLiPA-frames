@@ -303,12 +303,12 @@ public class ParseForestExtractor {
                         extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisRightAdjStep.addAll(extract(nextStep));
             }
-            System.out.println("RIGHTADJOIN");
-            System.out.println("extractionstep: " + extractionstep);
-            System.out.println("auxroot: " + auxRootItem);
-            System.out.println("targetitem: " + targetItem);
-            System.out.println("nextStep: " + nextStep);
-            System.out.println("tmpResult: " + tmpResult);
+            // System.out.println("RIGHTADJOIN");
+            // System.out.println("extractionstep: " + extractionstep);
+            // System.out.println("auxroot: " + auxRootItem);
+            // System.out.println("targetitem: " + targetItem);
+            // System.out.println("nextStep: " + nextStep);
+            // System.out.println("tmpResult: " + tmpResult);
         }
         return parsesInThisRightAdjStep;
     }
@@ -356,12 +356,12 @@ public class ParseForestExtractor {
                         nextStepParseTree, position);
                 parsesInThisLeftAdjStep.addAll(extract(nextStep));
             }
-            System.out.println("LEFTADJOIN");
-            System.out.println("extractionstep: " + extractionstep);
-            System.out.println("auxroot: " + auxRootItem);
-            System.out.println("targetitem: " + rightSisItem);
-            System.out.println("nextStep: " + nextStep);
-            System.out.println("tmpResult: " + tmpResult);
+            // System.out.println("LEFTADJOIN");
+            // System.out.println("extractionstep: " + extractionstep);
+            // System.out.println("auxroot: " + auxRootItem);
+            // System.out.println("targetitem: " + rightSisItem);
+            // System.out.println("nextStep: " + nextStep);
+            // System.out.println("tmpResult: " + tmpResult);
         }
         return parsesInThisLeftAdjStep;
     }

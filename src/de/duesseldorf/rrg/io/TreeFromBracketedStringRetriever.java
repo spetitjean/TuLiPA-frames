@@ -8,6 +8,8 @@ import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Fs;
+import de.tuebingen.tag.Value;
 
 /**
  * This class takes a tab-separated pair of lexical element and bracketed tree
@@ -62,8 +64,8 @@ public class TreeFromBracketedStringRetriever {
         } else {
             // init variables needed for the whole process
             currentGA = new GornAddress();
-            this.lexicalElement = new RRGNode(RRGNodeType.LEX, split[0],
-                    split[0]);
+            this.lexicalElement = new RRGNode.Builder().type(RRGNodeType.LEX)
+                    .cat(split[0]).name(split[0]).build();
             log.info("created lexical node " + lexicalElement);
 
             // creat the root (needed to append to tree recursively later
@@ -156,11 +158,20 @@ public class TreeFromBracketedStringRetriever {
      */
     private RRGNode createNodeFromString(String nodeStringFromResource,
             boolean couldBeASubstNode) {
+        Fs nodeFs = new Fs(1);
         // note that the lexical element is not handled here
         List<String> substNodeLabels = Arrays.asList("NP", "NUC_ADV", "NPIP",
                 "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
                 "CLAUSE-PERI", "CORE-PERI", "NP-PERI", "CORE");
         RRGNodeType nodeType = null;
+        // find feature structures
+        if (nodeStringFromResource.contains("[")) {
+            int fsStartingPoint = nodeStringFromResource.indexOf("[");
+            String fsString = nodeStringFromResource.substring(fsStartingPoint);
+            nodeFs = createFsFromString(fsString);
+            nodeStringFromResource = nodeStringFromResource.substring(0,
+                    fsStartingPoint);
+        }
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;
             nodeStringFromResource = nodeStringFromResource.substring(0,
@@ -174,7 +185,39 @@ public class TreeFromBracketedStringRetriever {
         } else {
             nodeType = RRGNodeType.STD;
         }
-        return new RRGNode(nodeType, nodeStringFromResource,
-                nodeStringFromResource, currentGA);
+        return new RRGNode.Builder().type(nodeType).cat(nodeStringFromResource)
+                .name(nodeStringFromResource).gornaddress(currentGA).fs(nodeFs)
+                .build();
+    }
+
+    /**
+     * format: Core*[OP=CLAUSE,OTHER=[SOMEATTR=SOMEVAL]]
+     * This doess not capture fs of a "depth" > 1 at the momemnt
+     * possibly going recursive, though in practice the fs will be rather small
+     * 
+     * @param fsString
+     * @return
+     */
+    private Fs createFsFromString(String fsString) {
+        int startindex = fsString.startsWith("[") ? 1 : 0;
+        int endindex = fsString.endsWith("[") ? fsString.length() - 1
+                : fsString.length() - 1;
+        fsString = fsString.substring(startindex, endindex);
+        Fs result = new Fs(1);
+
+        String[] fsStringSplit = fsString.split(",");
+        for (String avPair : fsStringSplit) {
+            String[] avPairSplit = avPair.split("=");
+            Value val = new Value(Value.VAL, avPairSplit[1]);
+            result.setFeat(avPairSplit[0], val);
+        }
+        // find out the string for the first val, may be an fs or a simple value
+        // if (fsStringSplit[1].startsWith("[")) {
+        // find the string for the fs, retrieve recursively and setFeat
+        // }
+
+        // go recursive until the whole fs is done
+        System.out.println("new Fs: " + result);
+        return result;
     }
 }

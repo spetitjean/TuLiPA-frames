@@ -51,7 +51,7 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = true;
+    private boolean verbosePrintsToStdOut = false;
 
     public RRGParser() {
         this.requirementFinder = new RequirementFinder();
@@ -80,7 +80,7 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
-            System.out.println("step: " + i);
+            // System.out.println("step: " + i);
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
@@ -118,8 +118,11 @@ public class RRGParser {
             agenda.add(consequent);
         }
         // Debug
-        System.out.println("next to agenda: " + consequent + "\n\t " + operation
-                + "\n\t antecedents: " + Arrays.asList(antecedents));
+        if (verbosePrintsToStdOut) {
+            System.out.println("next to agenda: " + consequent + "\n\t "
+                    + operation + "\n\t antecedents: "
+                    + Arrays.asList(antecedents));
+        }
     }
 
     private void completewrapping(RRGParseItem currentItem) {
