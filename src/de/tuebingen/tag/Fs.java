@@ -601,7 +601,6 @@ public class Fs {
         // System.out.println("Updating FS: "+fs);
         // System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave
         // "+fs.getCoref());
-
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
