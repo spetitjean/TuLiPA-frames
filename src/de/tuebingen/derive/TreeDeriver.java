@@ -163,7 +163,7 @@ public class TreeDeriver {
             // System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
-                    derivedTree.getFrameSem(), derivedTree.env, false);
+                    derivedTree.getFrameSem(), derivedTree.env, true);
 
             if (newFrameSem == null) {
                 failed = true;
@@ -171,8 +171,8 @@ public class TreeDeriver {
                 newFrameSem = new ConstraintChecker(newFrameSem,
                         derivedTree.env, returnIncompleteTrees)
                                 .checkConstraints();
-                newFrameSem = ElementaryTree.updateFrameSemWithMerge(
-                        newFrameSem, derivedTree.env, true);
+                // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+                // newFrameSem, derivedTree.env, false);
                 derivedTree.setFrameSem(newFrameSem);
                 // System.out.println("Derived tree env after:
                 // "+derivedTree.env);
