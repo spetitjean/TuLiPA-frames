@@ -36,15 +36,6 @@ import de.tuebingen.tree.Node;
  */
 public class RRGNode implements Node {
 
-    public enum RRGNodeType {
-        STD, // not another type
-        ANCHOR, // anchor node
-        LEX, // lexical node
-        STAR, // root node of a tree used for sister-adjunction
-        SUBST, // substitution leaf node
-        DDAUGHTER // d-daughter for wrapping substitution, marks the d-edge
-    }
-
     private List<Node> children; // all children of the Node, in order
     private RRGNodeType type; // the type of this node
     private String name; // the name of the node
@@ -52,39 +43,19 @@ public class RRGNode implements Node {
     private GornAddress gornaddress; // the gorn address
     private Fs nodeFs;
 
-    public RRGNode(RRGNode other) {
-        this.type = other.getType();
-        this.name = other.name;
-        this.category = other.category;
-
-        // deep processing of children
-        this.children = new LinkedList<Node>();
-        for (Node child : other.getChildren()) {
-            children.add(new RRGNode((RRGNode) child));
-        }
-        this.gornaddress = new GornAddress(other.getGornaddress());
-    }
-
-    public RRGNode(RRGNodeType type, String name, String category) {
-        children = new LinkedList<Node>();
+    private RRGNode(RRGNodeType type, String name, String category,
+            GornAddress ga, List<Node> children, Fs nodeFs) {
+        this.children = children;
         this.type = type;
         this.name = name;
         this.setCategory(category);
-        this.gornaddress = new GornAddress();
-    }
-
-    public RRGNode(RRGNodeType type, String name, String category,
-            GornAddress gornaddress, Fs nodeFs) {
-        this.setNodeFs(nodeFs);
-        children = new LinkedList<Node>();
-        this.type = type;
-        this.name = name;
-        this.setCategory(category);
-        this.gornaddress = gornaddress;
+        this.gornaddress = ga;
+        this.nodeFs = nodeFs;
     }
 
     /**
-     * unifies this node and the other node by replacing (!) this nodes children
+     * unifies this node and the other node by replacing (!) this nodes
+     * children
      * with {@code other}s chilren, if the categories of both nodes
      * match.
      * 
@@ -101,7 +72,8 @@ public class RRGNode implements Node {
     }
 
     /**
-     * returns true iff unification of this node and the other node is possible,
+     * returns true iff unification of this node and the other node is
+     * possible,
      * i.e. iff the categories of both nodes
      * match.
      * 
@@ -236,7 +208,7 @@ public class RRGNode implements Node {
         sb.append(this.type.name());
         sb.append(")");
         if (nodeFs != null) {
-            sb.append(nodeFs.toString());
+            sb.append(" " + nodeFs.toString());
         }
         return sb.toString();
     }
@@ -251,6 +223,76 @@ public class RRGNode implements Node {
 
     public void setNodeFs(Fs nodeFs) {
         this.nodeFs = nodeFs;
+    }
+
+    public enum RRGNodeType {
+        STD, // not another type
+        ANCHOR, // anchor node
+        LEX, // lexical node
+        STAR, // root node of a tree used for sister-adjunction
+        SUBST, // substitution leaf node
+        DDAUGHTER // d-daughter for wrapping substitution, marks the d-edge
+    }
+
+    public static class Builder {
+        private List<Node> children = new LinkedList<Node>();
+        private RRGNodeType type;
+        private String name;
+        private String category;
+        private GornAddress gornaddress = new GornAddress();
+        private Fs nodeFs = new Fs(1);
+
+        public Builder() {
+        }
+
+        public Builder(RRGNode other) {
+            // deep processing of children
+            this.children = new LinkedList<Node>();
+            for (Node child : other.getChildren()) {
+                children.add(new RRGNode.Builder((RRGNode) child).build());
+            }
+            type = other.getType() != null ? other.getType() : RRGNodeType.STD;
+            name = other.getName() != null ? other.getName() : "";
+            category = other.getCategory() != null ? other.getCategory() : "";
+            gornaddress = other.getGornaddress() != null
+                    ? other.getGornaddress() : new GornAddress();
+            nodeFs = other.getNodeFs() != null ? other.getNodeFs() : new Fs(1);
+        }
+
+        public Builder children(List<Node> children) {
+            this.children = children;
+            return this;
+        }
+
+        public Builder type(RRGNodeType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder cat(String cat) {
+            this.category = cat;
+            return this;
+        }
+
+        public Builder gornaddress(GornAddress ga) {
+            this.gornaddress = ga;
+            return this;
+        }
+
+        public Builder fs(Fs fs) {
+            this.nodeFs = fs;
+            return this;
+        }
+
+        public RRGNode build() {
+            return new RRGNode(type, name, category, gornaddress, children,
+                    nodeFs);
+        }
     }
 
 }

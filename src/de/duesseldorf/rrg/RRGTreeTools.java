@@ -1,5 +1,6 @@
 package de.duesseldorf.rrg;
 
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.Fs;
@@ -126,8 +127,22 @@ public class RRGTreeTools {
         }
     }
 
+    /**
+     * if both nodes don't have the same type, the type of the resulting node is
+     * STD.
+     * NOT symmetrical! The resulting node is built based on node1. The only
+     * thing thats added are fetures tructures. The resulging nodes has the
+     * childre from node1.
+     * 
+     * @param node1
+     * @param node2
+     * @return
+     */
     public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
-        RRGNode result = new RRGNode(node1);
+        RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
+        if (!node1.getType().equals(node2.getType())) {
+            resultBuilder.type(RRGNodeType.STD);
+        }
         if (!node1.nodeUnificationPossible(node2)) {
             System.err.println("node unification not possible! ");
             System.err.println(node1);
@@ -137,14 +152,13 @@ public class RRGTreeTools {
         try {
             Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(),
                     new Environment(2));
-            result = new RRGNode(node1.getType(), node1.getName(),
-                    node1.getCategory(), node1.getGornaddress(), fsForResult);
-            result.setChildren(node1.getChildren());
+
+            resultBuilder = resultBuilder.fs(fsForResult);
         } catch (UnifyException e) {
             System.err.println("could not unify node feature structures: ");
             System.err.println(node1);
             System.err.println(node2);
         }
-        return result;
+        return resultBuilder.build();
     }
 }

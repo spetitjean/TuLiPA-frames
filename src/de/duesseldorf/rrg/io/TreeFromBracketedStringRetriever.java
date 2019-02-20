@@ -64,8 +64,8 @@ public class TreeFromBracketedStringRetriever {
         } else {
             // init variables needed for the whole process
             currentGA = new GornAddress();
-            this.lexicalElement = new RRGNode(RRGNodeType.LEX, split[0],
-                    split[0]);
+            this.lexicalElement = new RRGNode.Builder().type(RRGNodeType.LEX)
+                    .cat(split[0]).name(split[0]).build();
             log.info("created lexical node " + lexicalElement);
 
             // creat the root (needed to append to tree recursively later
@@ -185,8 +185,9 @@ public class TreeFromBracketedStringRetriever {
         } else {
             nodeType = RRGNodeType.STD;
         }
-        return new RRGNode(nodeType, nodeStringFromResource,
-                nodeStringFromResource, currentGA, nodeFs);
+        return new RRGNode.Builder().type(nodeType).cat(nodeStringFromResource)
+                .name(nodeStringFromResource).gornaddress(currentGA).fs(nodeFs)
+                .build();
     }
 
     /**
@@ -205,7 +206,6 @@ public class TreeFromBracketedStringRetriever {
         Fs result = new Fs(1);
 
         String[] fsStringSplit = fsString.split(",");
-        String firstAttribute = fsStringSplit[0];
         for (String avPair : fsStringSplit) {
             String[] avPairSplit = avPair.split("=");
             Value val = new Value(Value.VAL, avPairSplit[1]);

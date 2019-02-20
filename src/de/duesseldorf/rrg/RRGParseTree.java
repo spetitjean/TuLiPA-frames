@@ -87,7 +87,7 @@ public class RRGParseTree extends RRGTree {
             for (Entry<RRGParseItem, RRGNode> entry : ((RRGParseTree) tree)
                     .getWrappingSubTrees().entrySet()) {
                 this.wrappingSubTrees.put(entry.getKey(),
-                        new RRGNode(entry.getValue()));
+                        new RRGNode.Builder(entry.getValue()).build());
             }
         }
     }
@@ -131,8 +131,12 @@ public class RRGParseTree extends RRGTree {
     }
 
     public void setNode(GornAddress address, RRGNode newNode) {
-        this.findNode(address.mother()).getChildren()
-                .set(address.isIthDaughter(), newNode);
+        if (address.mother() == null) {
+            root = newNode;
+        } else {
+            this.findNode(address.mother()).getChildren()
+                    .set(address.isIthDaughter(), newNode);
+        }
     }
 
     /**
@@ -149,7 +153,8 @@ public class RRGParseTree extends RRGTree {
         RRGParseTree resultingTree = new RRGParseTree(this);
         System.out.println(resultingTree);
         RRGNode resTreeNode = resultingTree.findNode(address);
-        RRGNode subTreeRoot = new RRGNode((RRGNode) subtree.getRoot());
+        RRGNode subTreeRoot = new RRGNode.Builder((RRGNode) subtree.getRoot())
+                .build();
 
         // System.out.println("whos null?");
         // System.out.println(resTreeNode);
@@ -200,6 +205,9 @@ public class RRGParseTree extends RRGTree {
         boolean wrappingPossible = targetNode
                 .nodeUnificationPossible((RRGNode) wrappedTree.getRoot());
         if (wrappingPossible) {
+            RRGNode newTargetNode = RRGTreeTools.unifyNodes(targetNode,
+                    (RRGNode) wrappedTree.getRoot());
+            resultingTree.setNode(dmother, newTargetNode);
             // put the subtree from the ddaughter downwards somewhere safe, in
             // order to take it again when doing predictWrapping
             RRGNode wrappingSubTreeRoot = resultingTree
@@ -211,12 +219,11 @@ public class RRGParseTree extends RRGTree {
             List<Node> rootChildren = new LinkedList<Node>(
                     wrappedTree.getRoot().getChildren());
             for (int i = rootChildren.size() - 1; i >= 0; i--) {
-                targetNode.addXchild(rootChildren.get(i), position);
+                newTargetNode.addXchild(rootChildren.get(i), position);
             }
-            // update GornAddress shifts
             resultingTree.idMap.put(ddaughterAddress, wrappedTree.getId());
         } else {
-            System.out.println(
+            System.err.println(
                     "could not complete a wrapping of target tree into wrapping tree at node "
                             + dmother.toString() + "\nwrapped tree:\n"
                             + wrappedTree.toString() + "\ntarget tree:\n"
@@ -249,13 +256,14 @@ public class RRGParseTree extends RRGTree {
         // + resultingTree.findNode(ddaughterAbsAddress));
         // System.out.println(
         // "subtree: " + RRGTreeTools.recursivelyPrintNode(subTreeRoot));
-        if (resultingTree.findNode(ddaughterAbsAddress)
-                .nodeUnificationPossible(subTreeRoot)) {
+        RRGNode ddaughter = resultingTree.findNode(ddaughterAbsAddress);
+        if (ddaughter.nodeUnificationPossible(subTreeRoot)) {
             // try improvement: setting the node type to STD as wrapping is
             // finished. No parse tree should have ddaughters in them now
             subTreeRoot.setType(RRGNodeType.STD);
-            // old version, one liner, works but results in several ddaughters
-            resultingTree.setNode(ddaughterAbsAddress, subTreeRoot);
+            RRGNode newSubTreeRoot = RRGTreeTools.unifyNodes(subTreeRoot,
+                    ddaughter);
+            resultingTree.setNode(ddaughterAbsAddress, newSubTreeRoot);
 
             // when wrapping several times, the subtree we just added is
             // "forgotten" in this step.
@@ -287,6 +295,10 @@ public class RRGParseTree extends RRGTree {
      */
     public RRGParseTree sisterAdjoin(RRGTree adjoiningTree,
             GornAddress targetAddress, int position) {
+        // System.out.println(
+        // "Sister adjunction at GA" + targetAddress + "pos: " + position);
+        // System.out.println("in tree: " + this.toString());
+        // System.out.println("adjoining tree: " + adjoiningTree);
         RRGParseTree result = new RRGParseTree(this);
         RRGNode targetNode = result.findNode(targetAddress);
         if (((RRGNode) adjoiningTree.getRoot())
@@ -294,10 +306,15 @@ public class RRGParseTree extends RRGTree {
             // unify root of aux tree and target node
             RRGNode newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) adjoiningTree.getRoot());
-            // put new target node in resulting tree
+            // // put new target node in resulting tree
+            // System.out.println(newTargetNode + " newtarget");
+            // System.out.println("result tree: " + result.toString());
+            // System.out.println("targetAddress: " + targetAddress);
+            // Da kann irgendwas nicht stimmen. Nochmal überdenken, was wo hin
+            // muss, bevor sich allees verknotet.
             result.setNode(targetAddress, newTargetNode);
-            targetNode.addXchild(adjoiningTree.getRoot().getChildren().get(0),
-                    position);
+            newTargetNode.addXchild(
+                    adjoiningTree.getRoot().getChildren().get(0), position);
             result.idMap.put(targetAddress.ithDaughter(position),
                     adjoiningTree.getId());
         } else {
@@ -307,11 +324,8 @@ public class RRGParseTree extends RRGTree {
         // for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
         // System.out.println(e.toString());
         // }
-        // System.out.println(
-        // "Sister adjunction at GA" + targetAddress + "pos: " + position);
-        // System.out.println("in tree: " + this.toString());
+
         // System.out.println("resultingTree: " + result);
-        // System.out.println("adjoining tree: " + adjoiningTree);
 
         return result;
     }
@@ -320,7 +334,10 @@ public class RRGParseTree extends RRGTree {
             GornAddress address) {
         RRGParseTree result = new RRGParseTree(this);
         // can we substitute?
+        // System.out.println("address: " + address);
+        // System.out.println("this tr: " + this.toString());
         RRGNode targetNode = result.findNode(address);
+        // System.out.println("targetNode: " + targetNode);
         if (((RRGNode) substitutionTree.getRoot())
                 .nodeUnificationPossible(targetNode)) {
 

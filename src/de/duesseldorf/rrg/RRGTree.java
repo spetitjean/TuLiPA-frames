@@ -49,13 +49,13 @@ public class RRGTree {
     protected String id;
 
     public RRGTree(Node root, String id) {
-        this.root = new RRGNode((RRGNode) root);
+        this.root = new RRGNode.Builder((RRGNode) root).build();
         this.id = id;
         retrieveSpecialNodes();
     }
 
     public RRGTree(RRGTree tree) {
-        this.root = new RRGNode((RRGNode) tree.getRoot());
+        this.root = new RRGNode.Builder((RRGNode) tree.getRoot()).build();
         this.id = tree.id;
         retrieveSpecialNodes();
     }
@@ -121,7 +121,6 @@ public class RRGTree {
      *         is not in the tree.
      */
     public RRGNode findNode(GornAddress address) {
-
         try {
             // System.out.println("addi: " + address);
             Iterator<Integer> it = address.addressIterator();

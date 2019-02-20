@@ -196,7 +196,7 @@ public class RRGParseChart {
      */
     public boolean addItem(RRGParseItem consequent, Operation operation,
             RRGParseItem... antecedents) {
-        System.out.println("chart.addItem: " + consequent);
+        // System.out.println("chart.addItem: " + consequent);
         List<RRGParseItem> antes;
         if (antecedents.length > 0) {
             antes = new LinkedList<RRGParseItem>(Arrays.asList(antecedents));
@@ -209,11 +209,11 @@ public class RRGParseChart {
         boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
-            System.out.println("item already there, just put backpointers");
+            // System.out.println("item already there, just put backpointers");
             chart.get(startpos).get(consequent).addToBackpointer(operation,
                     antes);
         } else {
-            System.out.println("item not there yet");
+            // System.out.println("item not there yet");
             // add the consequent and a fresh set of backpointers
             Backpointer backpointer = new Backpointer();
             backpointer.addToBackpointer(operation, antes);
