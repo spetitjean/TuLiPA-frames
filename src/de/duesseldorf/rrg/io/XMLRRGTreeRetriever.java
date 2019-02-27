@@ -1,12 +1,19 @@
 package de.duesseldorf.rrg.io;
 
+import java.util.Hashtable;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Value;
+import de.duesseldorf.io.XMLGrammarReadingTools;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
+import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.io.XMLTTMCTAGReader;
 import de.tuebingen.tree.Node;
 
 /*
@@ -95,6 +102,11 @@ public class XMLRRGTreeRetriever {
         // do we need this name?
         String name = root.getAttribute(XMLRRGTag.NAME.StringVal());
 
+        // find the fs for the node
+        // TODO
+        Fs fs = XMLGrammarReadingTools.getFeats(root,
+                XMLTTMCTAGReader.FROM_NODE, new Hashtable<String, Value>(),
+                new NameFactory());
         Node treeRoot = new RRGNode.Builder().type(type).name(name)
                 .cat(category).build();
         return treeRoot;
