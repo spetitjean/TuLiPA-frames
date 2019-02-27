@@ -158,7 +158,7 @@ public class TreeFromBracketedStringRetriever {
      */
     private RRGNode createNodeFromString(String nodeStringFromResource,
             boolean couldBeASubstNode) {
-        Fs nodeFs = new Fs(1);
+        Fs nodeFs = new Fs();
         // note that the lexical element is not handled here
         List<String> substNodeLabels = Arrays.asList("NP", "NUC_ADV", "NPIP",
                 "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
@@ -203,7 +203,7 @@ public class TreeFromBracketedStringRetriever {
         int endindex = fsString.endsWith("[") ? fsString.length() - 1
                 : fsString.length() - 1;
         fsString = fsString.substring(startindex, endindex);
-        Fs result = new Fs(1);
+        Fs result = new Fs();
 
         String[] fsStringSplit = fsString.split(",");
         for (String avPair : fsStringSplit) {

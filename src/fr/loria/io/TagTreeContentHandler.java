@@ -190,7 +190,7 @@ public class TagTreeContentHandler implements ContentHandler {
         } else if (localName.equals("narg")) {
             // nothing to do
         } else if (localName.equals("fs")) {
-            Fs fs = new Fs(10);
+            Fs fs = new Fs();
             currentAVM.add(fs);
         } else if (localName.equals("f")) {
             String name = attributs.getValue("name");
@@ -288,12 +288,12 @@ public class TagTreeContentHandler implements ContentHandler {
             Fs res = currentNode.get(currentNode.size() - 1).getLabel();
             Value top = res.getFeat("top");
             if (top == null) {
-                top = new Value(new Fs(5));
+                top = new Value(new Fs());
                 res.setFeat("top", top);
             }
             Value bot = res.getFeat("bot");
             if (bot == null) {
-                bot = new Value(new Fs(5));
+                bot = new Value(new Fs());
                 res.setFeat("bot", bot);
             }
             currentNode.get(currentNode.size() - 1).findCategory(); // also

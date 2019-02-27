@@ -149,7 +149,7 @@ public class MorphContentHandler implements ContentHandler {
             currentFeats = new LinkedList<Fs>();
             currentFeat = new LinkedList<String>();
         } else if (localName.equals("fs")) {
-            Fs fs = new Fs(10);
+            Fs fs = new Fs();
             currentFeats.add(fs);
         } else if (localName.equals("f")) {
             String name = attributs.getValue("name");

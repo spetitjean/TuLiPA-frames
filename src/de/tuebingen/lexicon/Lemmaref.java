@@ -32,49 +32,50 @@ package de.tuebingen.lexicon;
 import de.duesseldorf.frames.Fs;
 
 public class Lemmaref {
-	
-	private String name;
-	private String cat;
-	private Fs features;
-	
-	public Lemmaref(String n, String c){
-		name = n;
-		cat  = c;
-		features = new Fs(0);
-	}
-	
-	public Lemmaref(Lemmaref other) {
-		name     = other.getName();
-		cat      = other.getCat();
-		features = new Fs(other.getFeatures());
-	}
 
-	public String getName() {
-		return name;
-	}
+    private String name;
+    private String cat;
+    private Fs features;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Lemmaref(String n, String c) {
+        name = n;
+        cat = c;
+        features = new Fs();
+    }
 
-	public String getCat() {
-		return cat;
-	}
+    public Lemmaref(Lemmaref other) {
+        name = other.getName();
+        cat = other.getCat();
+        features = new Fs(other.getFeatures());
+    }
 
-	public void setCat(String cat) {
-		this.cat = cat;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Fs getFeatures() {
-		return features;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setFeatures(Fs features) {
-		this.features = features;
-	}
-	
-	public String toString(){
-		return "  lemmaref : "+name+" - cat : "+cat+" - features : ["+features.toString()+"]\n";
-	}
+    public String getCat() {
+        return cat;
+    }
+
+    public void setCat(String cat) {
+        this.cat = cat;
+    }
+
+    public Fs getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(Fs features) {
+        this.features = features;
+    }
+
+    public String toString() {
+        return "  lemmaref : " + name + " - cat : " + cat + " - features : ["
+                + features.toString() + "]\n";
+    }
 
 }

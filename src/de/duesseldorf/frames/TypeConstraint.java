@@ -29,7 +29,7 @@ public class TypeConstraint {
     }
 
     public Fs asFs() {
-        Fs result = new Fs(1);
+        Fs result = new Fs();
         result.setType(getType());
         for (String attr : attributes) {
             result.setFeat(attr, getVal());

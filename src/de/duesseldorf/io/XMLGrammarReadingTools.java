@@ -46,12 +46,12 @@ public class XMLGrammarReadingTools {
                 // we post-process the features to add
                 Value top = res.getFeat("top");
                 if (top == null) {
-                    top = new Value(new Fs(5));
+                    top = new Value(new Fs());
                     res.setFeat("top", top);
                 }
                 Value bot = res.getFeat("bot");
                 if (bot == null) {
-                    bot = new Value(new Fs(5));
+                    bot = new Value(new Fs());
                     res.setFeat("bot", bot);
                 }
 
@@ -113,7 +113,7 @@ public class XMLGrammarReadingTools {
         Type frame_type = new Type(types);
         // System.out.println("Found a type: "+frame_type);
 
-        res = new Fs(l.getLength(), frame_type, corefval);
+        res = new Fs(frame_type, corefval);
 
         for (int i = 0; i < l.getLength(); i++) {
             Node n = l.item(i);

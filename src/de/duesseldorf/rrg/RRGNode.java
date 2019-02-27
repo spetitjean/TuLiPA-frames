@@ -240,7 +240,7 @@ public class RRGNode implements Node {
         private String name;
         private String category;
         private GornAddress gornaddress = new GornAddress();
-        private Fs nodeFs = new Fs(1);
+        private Fs nodeFs = new Fs();
 
         public Builder() {
         }
@@ -256,7 +256,7 @@ public class RRGNode implements Node {
             category = other.getCategory() != null ? other.getCategory() : "";
             gornaddress = other.getGornaddress() != null
                     ? other.getGornaddress() : new GornAddress();
-            nodeFs = other.getNodeFs() != null ? other.getNodeFs() : new Fs(1);
+            nodeFs = other.getNodeFs() != null ? other.getNodeFs() : new Fs();
         }
 
         public Builder children(List<Node> children) {

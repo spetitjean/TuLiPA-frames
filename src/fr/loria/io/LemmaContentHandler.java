@@ -195,13 +195,13 @@ public class LemmaContentHandler implements ContentHandler {
             currentSem = new LexSem(name);
             currentAnchor.addSem(currentSem);
         } else if (localName.equals("args")) {
-            Fs fs = new Fs(10);
+            Fs fs = new Fs();
             currentFeats.add(fs);
         } else if (localName.equals("coanchor")) {
             String nid = attributs.getValue("node_id");
             coanchor = new CoAnchor(nid);
         } else if (localName.equals("fs")) {
-            Fs fs = new Fs(10);
+            Fs fs = new Fs();
             currentFeats.add(fs);
         } else if (localName.equals("f")) {
             String name = attributs.getValue("name");

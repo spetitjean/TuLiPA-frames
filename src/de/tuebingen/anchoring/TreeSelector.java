@@ -259,7 +259,7 @@ public class TreeSelector {
                     // UNIFICATION:
                     boolean match = true;
                     try {
-                        Fs morphAncFS = new Fs(1);
+                        Fs morphAncFS = new Fs();
                         morphAncFS.setFeat("cat",
                                 new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
@@ -574,7 +574,7 @@ public class TreeSelector {
             List<Tuple> tlist = Situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
 
-            Fs frameInterface = new Fs(0);
+            Fs frameInterface = new Fs();
 
             // if (tt.getFrames() != null) {
             // List<Fs> frames = tt.getFrames();

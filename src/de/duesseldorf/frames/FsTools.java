@@ -150,9 +150,6 @@ public class FsTools {
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
-        // unifyTypesAndCoref()
-        // unifyFeatures()
-
         if (fs1.getCoref() != null && seen.contains(fs1.getCoref())) {
             // System.out.println("Stopping unification because of recursion:
             // "+fs1);

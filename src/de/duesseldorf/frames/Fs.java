@@ -61,25 +61,20 @@ public class Fs {
     private Value coref;
 
     /**
-     * @param capacity
-     *            an int referring to the max capacity of the AVM
+     * setting the AVlist to a fresh HashTable and everything else to null/false
      */
-    public Fs(int capacity) {
-        AVlist = new Hashtable<String, Value>(capacity);
+    public Fs() {
+        AVlist = new Hashtable<String, Value>();
         type = null;
         coref = null;
         is_typed = false;
     }
 
-    public Fs(int capacity, Type type, Value coref) {
-        AVlist = new Hashtable<String, Value>(capacity);
+    public Fs(Type type, Value coref) {
+        AVlist = new Hashtable<String, Value>();
         this.type = type;
         this.coref = coref;
-        if (type != null) {
-            is_typed = true;
-        } else {
-            is_typed = false;
-        }
+        is_typed = type != null;
     }
 
     public Fs(Hashtable<String, Value> avm) {
@@ -447,7 +442,7 @@ public class Fs {
                         fs.getType().getTypeConstraints());
                 newType = Situation.getTypeHierarchy()
                         .leastSpecificSubtype(fs.getType(), otherType, env);
-                Value newtypevar = new Value(new Fs(0));
+                Value newtypevar = new Value(new Fs());
                 newType.setVar(newtypevar);
                 break;
             case VAR:
@@ -464,17 +459,16 @@ public class Fs {
                 }
             }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
-                res = new Fs(fs.getSize(), newType,
-                        ValueTools.unify(vderef, coref, env));
+                res = new Fs(newType, ValueTools.unify(vderef, coref, env));
             } else { // it is not:
-                res = new Fs(fs.getSize(), newType, vderef);
+                res = new Fs(newType, vderef);
                 // This was added for testing
                 // env.bind(vderef,coref);
             }
             // System.out.println("Deref of "+fs.getCoref()+":
             // "+env.deref(fs.getCoref()));
         } else { // not typed
-            res = new Fs(fs.getSize());
+            res = new Fs();
         }
 
         if (fs.getCoref() != null && seen.contains(fs.getCoref())) {
@@ -732,7 +726,8 @@ public class Fs {
             // System.out.println("With : "+env.deref(valCoref).getAvmVal());
             try {
                 if (this != env.deref(valCoref).getAvmVal()) {
-                    result = FsTools.unify(this, env.deref(valCoref).getAvmVal(), env,
+                    result = FsTools.unify(this,
+                            env.deref(valCoref).getAvmVal(), env,
                             new HashSet<Value>());
                 } else
                     result = this;

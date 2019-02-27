@@ -435,7 +435,7 @@ public class ElementaryTree {
 
             // Why is this feature structure null?
             if (adjoinedTree.topFeatures.get(rootNode) == null) {
-                adjoinedTree.topFeatures.put(rootNode, new Fs(5));
+                adjoinedTree.topFeatures.put(rootNode, new Fs());
             }
 
             // System.err.println("adjunction top: ");
