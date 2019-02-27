@@ -449,7 +449,7 @@ public class ElementaryTree {
              * }
              */
             addedTopFs = Fs.unify(addedTopFs,
-                    adjoinedTree.topFeatures.get(rootNode), dTree.env, null);
+                    adjoinedTree.topFeatures.get(rootNode), dTree.env);
         }
         dTree.topFeatures.put(rootNode, addedTopFs);
         if (adjoinedTree.bottomFeatures.get(rootNode) != null) {

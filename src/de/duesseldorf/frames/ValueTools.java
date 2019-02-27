@@ -8,6 +8,11 @@ import de.tuebingen.tag.Environment;
 
 public class ValueTools {
 
+    public static Value unify(Value a, Value b, Environment env)
+            throws UnifyException {
+        return unify(a, b, env, new HashSet<Value>());
+    }
+
     /**
      * Performs unification between values and returns a value
      * 
@@ -18,8 +23,8 @@ public class ValueTools {
      * @param env
      *            is an Environment object where to interpret a and b
      */
-    public static Value unify(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen) throws UnifyException {
+    static Value unify(Value a, Value b, Environment env, Set<Value> seen)
+            throws UnifyException {
 
         // System.err.println("Unification: " + a.toString() + " and " +
         // b.toString());
@@ -35,10 +40,10 @@ public class ValueTools {
                 res = unifyVALandVAL(a, b, res);
                 break;
             case ADISJ:
-                res = unify(b, a, env, tyHi, seen);
+                res = unify(b, a, env, seen);
                 break;
             case VAR: // b is a variable, we dereference it
-                res = unifyVALandVAR(a, b, env, tyHi, seen);
+                res = unifyVALandVAR(a, b, env, seen);
                 break;
             default:
                 throw new UnifyException(a.toString(), b.toString());
@@ -60,11 +65,11 @@ public class ValueTools {
             // System.out.println("A is an AVM");
             switch (b.getType()) {
             case AVM: // b is an avm
-                res = new Value(Fs.unify(a.getAvmVal(), b.getAvmVal(), env,
-                        tyHi, seen));
+                res = new Value(
+                        Fs.unify(a.getAvmVal(), b.getAvmVal(), env, seen));
                 break;
             case VAR: // b is a variable
-                res = unifyAVMandVAR(a, b, env, tyHi, seen, res);
+                res = unifyAVMandVAR(a, b, env, seen);
                 break;
             default:
                 throw new UnifyException(a.toString(), b.toString());
@@ -88,7 +93,7 @@ public class ValueTools {
                     v = a;
                 }
                 if (!(v.equals(a))) {
-                    return unify(v, b, env, tyHi, seen);
+                    return unify(v, b, env, seen);
                 }
             }
             // if a is either not bound or bound to a free variable:
@@ -97,10 +102,10 @@ public class ValueTools {
                 res = extractADISJandVAL(a, b, env, res, aMaybeVar);
                 break;
             case ADISJ: // b is an atomic disjunction
-                res = unifyADISJandADISJ(a, b, env, tyHi, seen, res, aMaybeVar);
+                res = unifyADISJandADISJ(a, b, env, seen, res, aMaybeVar);
                 break;
             case VAR: // b is a variable
-                res = unifyADISJandVAR(a, b, env, tyHi, seen, aMaybeVar);
+                res = unifyADISJandVAR(a, b, env, seen, aMaybeVar);
                 break;
             default:
                 throw new UnifyException("Unification failure (value) between "
@@ -110,11 +115,11 @@ public class ValueTools {
         case VAR: // a is a variable
             switch (b.getType()) {
             case VAR: // if a and b are both variables
-                res = unifyVARandVAR(a, b, env, tyHi, seen);
+                res = unifyVARandVAR(a, b, env, seen);
                 break;
             default: // the case has been defined above
                 Value aa = env.deref(a);
-                res = ValueTools.unify(b, aa, env, tyHi, seen);
+                res = ValueTools.unify(b, aa, env, seen);
             }
             break;
         }
@@ -145,13 +150,12 @@ public class ValueTools {
      * @param a
      * @param b
      * @param env
-     * @param tyHi
      * @param seen
      * @return
      * @throws UnifyException
      */
     private static Value unifyVALandVAR(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen) throws UnifyException {
+            Set<Value> seen) throws UnifyException {
         Value res;
         Value bb = env.deref(b);
         // if b is unbound, we bind it to a
@@ -159,7 +163,7 @@ public class ValueTools {
             env.bind(b.getVarVal(), a);
             res = a;
         } else { // b is already bound, the values must unify !
-            res = ValueTools.unify(a, bb, env, tyHi, seen);
+            res = ValueTools.unify(a, bb, env, seen);
         }
         return res;
     }
@@ -219,13 +223,13 @@ public class ValueTools {
      * @throws UnifyException
      */
     private static Value unifyAVMandVAR(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen, Value res)
-            throws UnifyException {
+            Set<Value> seen) throws UnifyException {
+        Value res = null;
         // System.out.println("B is a variable");
-        Value bb = env.deref(b);
+        Value bderefed = env.deref(b);
         // System.out.println(bb);
         // if b is unbound, we bind it to a
-        if (bb.equals(b)) {
+        if (bderefed.equals(b)) {
             // System.out.println("B is unbound");
             // Simon: I added this
             // This might lead to problems when 2 bound variables refer
@@ -242,9 +246,9 @@ public class ValueTools {
                 // System.out.println("Deref
                 // "+a.getAvmVal().getCoref()+" is
                 // "+env.deref(a.getAvmVal().getCoref()));
-                if (bb.getVarVal() != env.deref(a.getAvmVal().getCoref())
+                if (bderefed.getVarVal() != env.deref(a.getAvmVal().getCoref())
                         .getVarVal()) {
-                    env.bind(bb.getVarVal(),
+                    env.bind(bderefed.getVarVal(),
                             env.deref(a.getAvmVal().getCoref()));
                 } else {
                     // System.out.println("Not binding");
@@ -255,19 +259,23 @@ public class ValueTools {
                     // Value(5,"@"+bb.getVarVal())).getType());
                     // env.bind("@"+bb.getVarVal(),new
                     // Value(a.getAvmVal()));
-                    if (env.deref(
-                            new Value(Value.Kind.VAR, "@" + bb.getVarVal()))
+                    if (env.deref(new Value(Value.Kind.VAR,
+                            "@" + bderefed.getVarVal()))
                             .getType() == Value.Kind.AVM) {
                         // System.out.println("Unifying AVM with bound
                         // AVM");
-                        env.bind("$" + bb.getVarVal(), new Value(Fs.unify(
-                                a.getAvmVal(),
-                                env.deref(new Value(Value.Kind.VAR,
-                                        "$" + bb.getVarVal())).getAvmVal(),
-                                env, tyHi, seen)));
+                        env.bind("$"
+                                + bderefed.getVarVal(),
+                                new Value(Fs.unify(
+                                        a.getAvmVal(), env
+                                                .deref(new Value(Value.Kind.VAR,
+                                                        "$" + bderefed
+                                                                .getVarVal()))
+                                                .getAvmVal(),
+                                        env, seen)));
                     } else {
                         // System.out.println("Binding a new AVM");
-                        env.bind("$" + bb.getVarVal(),
+                        env.bind("$" + bderefed.getVarVal(),
                                 new Value(a.getAvmVal()));
                     }
                     // System.out.println("Environment: "+env);
@@ -275,13 +283,13 @@ public class ValueTools {
                 // env.bind(a.getAvmVal().getCoref().getVarVal(),a);
             } else {
                 // End
-                env.bind(bb.getVarVal(), a);
+                env.bind(bderefed.getVarVal(), a);
             }
             res = a;
         } else { // b is already bound, the values must match !
-            if (bb.is(Value.Kind.AVM)) { // let us see if they do:
-                res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(), env,
-                        tyHi, seen));
+            if (bderefed.is(Value.Kind.AVM)) { // let us see if they do:
+                res = new Value(Fs.unify(a.getAvmVal(), bderefed.getAvmVal(),
+                        env, seen));
                 /*
                  * // Uncaught exception (caught in Fs' unify method)
                  * try { res = new Value(Fs.unify(a.getAvmVal(),
@@ -290,12 +298,10 @@ public class ValueTools {
                  * caught here for now // but it will later be given to
                  * the calling method }
                  */
-            } else {
-                if (bb.is(Value.Kind.VAR)) {
-                    res = new Value(unify(a, bb, env, tyHi, seen));
-                } else {// they do not:
-                    throw new UnifyException(a.toString(), b.toString());
-                }
+            } else if (bderefed.is(Value.Kind.VAR)) {
+                res = unifyAVMandVAR(a, bderefed, env, seen);
+            } else {// they do not:
+                throw new UnifyException(a.toString(), b.toString());
             }
         }
         return res;
@@ -327,7 +333,6 @@ public class ValueTools {
      * @param a
      * @param b
      * @param env
-     * @param tyHi
      * @param seen
      * @param res
      * @param aMaybeVar
@@ -335,8 +340,7 @@ public class ValueTools {
      * @throws UnifyException
      */
     private static Value unifyADISJandADISJ(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen, Value res, Value aMaybeVar)
-            throws UnifyException {
+            Set<Value> seen, Value res, Value aMaybeVar) throws UnifyException {
         // before looking for the intersection,
         // we check whether the atomic disjunction is bound to a
         // variable
@@ -353,7 +357,7 @@ public class ValueTools {
                 w = b;
             }
             if (!(w.equals(b))) {
-                return unify(a, w, env, tyHi, seen);
+                return unify(a, w, env, seen);
             }
         }
         // here, b is either not bound or bound to a free variable!
@@ -401,15 +405,13 @@ public class ValueTools {
      * @param a
      * @param b
      * @param env
-     * @param tyHi
      * @param seen
      * @param aMaybeVar
      * @return
      * @throws UnifyException
      */
     private static Value unifyADISJandVAR(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen, Value aMaybeVar)
-            throws UnifyException {
+            Set<Value> seen, Value aMaybeVar) throws UnifyException {
         Value res;
         Value bb = env.deref(b);
         // if b is unbound, we either bind it to a or a's variable
@@ -425,7 +427,7 @@ public class ValueTools {
             // System.err.println(" adisj + var ... ==> " +
             // res.toString());
         } else { // b is already bound, the values must unify !
-            res = unify(a, bb, env, tyHi, seen);
+            res = unify(a, bb, env, seen);
         }
         return res;
     }
@@ -434,14 +436,13 @@ public class ValueTools {
      * @param a
      * @param b
      * @param env
-     * @param tyHi
      * @param seen
      * @param aa
      * @return
      * @throws UnifyException
      */
     private static Value unifyVARandVAR(Value a, Value b, Environment env,
-            TypeHierarchy tyHi, Set<Value> seen) throws UnifyException {
+            Set<Value> seen) throws UnifyException {
         Value res;
         Value aa = env.deref(a);
         // System.out.println("Deref "+b);
@@ -454,25 +455,15 @@ public class ValueTools {
                 res = a;
             } else {
                 if (!(bb.hasCycle(aa.getVarVal(), env))) {
-                    res = ValueTools.unify(aa, bb, env, tyHi, seen);
+                    res = ValueTools.unify(aa, bb, env, seen);
                 } else {
                     res = aa;
                 }
             }
         } else {
-            res = ValueTools.unify(aa, bb, env, tyHi, seen);
+            res = ValueTools.unify(aa, bb, env, seen);
         }
         return res;
-    }
-
-    public static Value unify(Value a, Value b, Environment env,
-            TypeHierarchy tyHi) throws UnifyException {
-        return unify(a, b, env, tyHi, new HashSet<Value>());
-    }
-
-    public static Value unify(Value a, Value b, Environment env)
-            throws UnifyException {
-        return unify(a, b, env, null, new HashSet<Value>());
     }
 
 }

@@ -89,8 +89,7 @@ public class ConstraintChecker {
         Fs constraintAsFs = constraint.asFs();
         Fs testUnify = null;
         try {
-            testUnify = Fs.unify(constraintAsFs, fs, env,
-                    Situation.getTypeHierarchy());
+            testUnify = Fs.unify(constraintAsFs, fs, env);
         } catch (UnifyException e) {
             return null;
         }

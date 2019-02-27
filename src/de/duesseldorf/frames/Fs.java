@@ -423,22 +423,7 @@ public class Fs {
      */
     public static Fs unify(Fs fs1, Fs fs2, Environment env)
             throws UnifyException {
-        return unify(fs1, fs2, env, null, new HashSet<Value>());
-    }
-
-    /**
-     * Temporary method so that nothing breaks
-     * 
-     * @param fs1
-     * @param fs2
-     * @param env
-     * @param tyHi
-     * @return
-     * @throws UnifyException
-     */
-    public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi)
-            throws UnifyException {
-        return unify(fs1, fs2, env, tyHi, new HashSet<Value>());
+        return unify(fs1, fs2, env, new HashSet<Value>());
     }
 
     /**
@@ -461,12 +446,15 @@ public class Fs {
      *            the type hierarchy with respect to which fs1 and fs2 are
      *            unified inn case they are typed
      */
-    public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi,
-            Set<Value> seen) throws UnifyException {
+    static Fs unify(Fs fs1, Fs fs2, Environment env, Set<Value> seen)
+            throws UnifyException {
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
-        if (seen.contains(fs1.getCoref()) && fs1.getCoref() != null) {
+        // unifyTypesAndCoref()
+        // unifyFeatures()
+
+        if (fs1.getCoref() != null && seen.contains(fs1.getCoref())) {
             // System.out.println("Stopping unification because of recursion:
             // "+fs1);
             return fs1;
@@ -475,16 +463,12 @@ public class Fs {
             // seen.add(fs2.getCoref());
         }
         // the resulting avm:
-        Hashtable<String, Value> res = new Hashtable<String, Value>(
-                avm1.size() + avm2.size());
+        Hashtable<String, Value> res = new Hashtable<String, Value>();
         // a temporary avm used to store non-common features:
         Hashtable<String, Value> todo = new Hashtable<String, Value>();
 
         // 1. loop through avm1
-        Set<String> keys = avm1.keySet();
-        Iterator<String> i = keys.iterator();
-        while (i.hasNext()) {
-            String k = (String) i.next();
+        for (String k : avm1.keySet()) {
             if (avm2.containsKey(k)) { // k is a common feature, we unify its
                                        // values
                 Value nval = null;
@@ -493,7 +477,7 @@ public class Fs {
                     // message
                     // System.out.println("Unifying "+avm1.get(k)+" and
                     // "+avm2.get(k));
-                    nval = ValueTools.unify(avm1.get(k), avm2.get(k), env, tyHi,
+                    nval = ValueTools.unify(avm1.get(k), avm2.get(k), env,
                             seen);
                 } catch (UnifyException e) {
                     throw new UnifyException(
@@ -505,20 +489,16 @@ public class Fs {
             }
         }
         // 2. loop through avm2
-        keys = avm2.keySet();
-        i = keys.iterator();
-        while (i.hasNext()) {
-            String k = (String) i.next();
+
+        for (String k : avm2.keySet()) {
+
             if (!(avm1.containsKey(k))) {
                 todo.put(k, avm2.get(k));
             } // no else since the common features have already been processed
         }
         // 3. loop through delayed features
         // that is, features that appear only in one avm
-        keys = todo.keySet();
-        i = keys.iterator();
-        while (i.hasNext()) {
-            String k = (String) i.next();
+        for (String k : todo.keySet()) {
             Value v = todo.get(k);
             if (v.is(Value.Kind.VAR)) { // if it is a variable
                 Value w = env.deref(v);
@@ -533,19 +513,9 @@ public class Fs {
         }
 
         // 4. set the type of the resulting FS
-        // TODO sth useful for the types
         Type resType = null;
+        TypeHierarchy tyHi = Situation.getTypeHierarchy();
         if (tyHi != null) {
-            // baseline algo: delete when sth better works
-            // if (fs1.isTyped() && !fs2.isTyped()) {
-            // resType = fs1.getType();
-            // } else if (!fs1.isTyped() && fs2.isTyped()) {
-            // resType = fs2.getType();
-            // // } else if (fs1.isTyped() && fs2.isTyped()) {
-            // // resType =
-            // }
-            // System.out.println("Unification of " + fs1.getType() + " and "
-            // + fs2.getType());
             if (fs1.isTyped() && fs2.isTyped()) {
                 try {
                     // System.out.println("Unify types: " + fs1.getType() + "
@@ -569,7 +539,7 @@ public class Fs {
             }
         } else {
             if (fs1.isTyped() && fs2.isTyped()) {
-                resType = fs1.getType();
+                resType = fs1.getType().union(fs2.getType(), env);
             } else if (fs1.isTyped()) {
                 resType = fs1.getType();
             } else if (fs2.isTyped()) {
@@ -585,7 +555,7 @@ public class Fs {
                 // System.out.println("Unifying coreferences: "+fs1.getCoref()+"
                 // and "+fs2.getCoref());
                 resCoref = ValueTools.unify(fs1.getCoref(), fs2.getCoref(), env,
-                        tyHi, seen);
+                        seen);
                 // System.out.println("Done unify");
             } else {
                 resCoref = fs1.getCoref();
@@ -608,7 +578,7 @@ public class Fs {
      * This method update some FS according to an environment (ie a list of
      * bindings)
      */
-    public static Fs updateFS(Fs fs, Environment env, boolean finalUpdate,
+    private static Fs updateFS(Fs fs, Environment env, boolean finalUpdate,
             Set<Value> seen) throws UnifyException {
         // System.err.println("updating [" + fs.toString() + "] env: " +
         // env.toString());
@@ -634,8 +604,8 @@ public class Fs {
                         fs.getType().getTypeConstraints());
                 newType = Situation.getTypeHierarchy()
                         .leastSpecificSubtype(fs.getType(), otherType, env);
-                typevar = new Value(new Fs(0));
-                newType.setVar(typevar);
+                Value newtypevar = new Value(new Fs(0));
+                newType.setVar(newtypevar);
                 break;
             case VAR:
                 // System.out.println("Trying deref on: " + typevar + " ("
@@ -660,7 +630,7 @@ public class Fs {
             }
             // System.out.println("Deref of "+fs.getCoref()+":
             // "+env.deref(fs.getCoref()));
-        } else {
+        } else { // not typed
             res = new Fs(fs.getSize());
         }
 
@@ -880,8 +850,7 @@ public class Fs {
 
         if (env.deref(valCoref) != valCoref) {
             try {
-                New = unify(env.deref(valCoref).getAvmVal(), New, env,
-                        Situation.getTypeHierarchy(), new HashSet<Value>());
+                New = unify(env.deref(valCoref).getAvmVal(), New, env);
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -921,7 +890,7 @@ public class Fs {
             try {
                 if (this != env.deref(valCoref).getAvmVal()) {
                     result = unify(this, env.deref(valCoref).getAvmVal(), env,
-                            Situation.getTypeHierarchy(), new HashSet<Value>());
+                            new HashSet<Value>());
                 } else
                     result = this;
                 // System.out.println("Binding ");

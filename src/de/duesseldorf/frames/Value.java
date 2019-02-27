@@ -336,6 +336,8 @@ public class Value implements SemLit {
 
     /**
      * @param finalUpdate
+     *            only plays a role when the value is an ADISJ or is bound to an
+     *            ADISJ in the environment
      */
     public void update(Environment env, boolean finalUpdate) {
         if (this.is(Kind.VAR)) {

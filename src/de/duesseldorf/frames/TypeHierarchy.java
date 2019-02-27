@@ -76,7 +76,7 @@ public class TypeHierarchy {
         // System.out.println(a);
         // System.out.println(b);
         Type union = a.union(b, env);
-        Value resvar = ValueTools.unify(a.getVar(), b.getVar(), env, this);
+        Value resvar = ValueTools.unify(a.getVar(), b.getVar(), env);
         int max = Collections.max(tyHi.keySet());
         if (union.getSpec() <= max) {
             for (int i = union.getSpec(); i <= max; i++) {

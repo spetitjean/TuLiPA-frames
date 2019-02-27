@@ -87,7 +87,6 @@ public class TreeSelector {
     private Map<String, List<String>> coancNodes; // coanchors in the trees (for
                                                   // polarity computation)
     private Map<String, Integer> ambiguity;
-    private Situation situation;
 
     /**
      * 
@@ -264,8 +263,7 @@ public class TreeSelector {
                                 new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
-                                new Environment(5),
-                                situation.getTypeHierarchy());
+                                new Environment(5));
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
                         ((TagNode) head.getAnchor()).getLabel().setFeat("cat",
@@ -295,9 +293,9 @@ public class TreeSelector {
                             System.out.println(
                                     "TODO: create a loop in TreeSelector.546!");
                         }
-                        if (situation.getFrameGrammar() != null) {
+                        if (Situation.getFrameGrammar() != null) {
                             if (lemmaSem.size() > 0) {
-                                tlist = situation.getFrameGrammar().getGrammar()
+                                tlist = Situation.getFrameGrammar().getGrammar()
                                         .get(lemmaSem.get(0).getSemclass());
                             } else {
                                 System.err.println("No semantics for lemma "
@@ -452,8 +450,7 @@ public class TreeSelector {
         Fs uniface = null;
         if (ancfs != null && iface != null) {
             try {
-                uniface = Fs.unify(ancfs, iface, env,
-                        situation.getTypeHierarchy());
+                uniface = Fs.unify(ancfs, iface, env);
 
             } catch (UnifyException e) {
                 System.err.println("Interface unification failed on tree "
@@ -569,8 +566,11 @@ public class TreeSelector {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
 
-        if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
-            List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
+        if (Situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
+            ;
+            ;
+            ;
+            List<Tuple> tlist = Situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
 
             Fs frameInterface = new Fs(0);
@@ -627,8 +627,7 @@ public class TreeSelector {
             }
 
             try {
-                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env,
-                        situation.getTypeHierarchy()));
+                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env));
                 // tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
                 // false));
                 // List<Fs> newFrames = tt.getFrames();
@@ -660,8 +659,7 @@ public class TreeSelector {
                         if (newFrames.get(ii).getCoref()
                                 .equals(newFrames.get(jj).getCoref())) {
                             Fs res = Fs.unify(newFrames.get(ii),
-                                    newFrames.get(jj), env,
-                                    situation.getTypeHierarchy());
+                                    newFrames.get(jj), env);
                             // newFrames.set(ii,res);
                             // newFrames.set(jj,res);
                             // System.out.println("Unified frames by
@@ -718,8 +716,7 @@ public class TreeSelector {
                         // System.out.println("Unifying: " + semFs);
                         // System.out.println(" with : " + tt.getIface());
 
-                        tt.setIface(Fs.unify(semFs, tt.getIface(), env,
-                                situation.getTypeHierarchy()));
+                        tt.setIface(Fs.unify(semFs, tt.getIface(), env));
                         tt.setFrameSem(ElementaryTree
                                 .updateFrameSem(tt.getFrameSem(), env, false));
                         // System.out.println(
