@@ -355,7 +355,7 @@ public class ElementaryTree {
             if (((String) op[1]).equals("adj")) {
                 if (adjoin((ElementaryTree) op[2], (Node) op[3], dTree)) {
                     dTree.topFeatures.put(root,
-                            Fs.unify(dTree.topFeatures.get(root),
+                            FsTools.unify(dTree.topFeatures.get(root),
                                     dTree.topFeatures.get(dTree.root),
                                     dTree.env));
                     dTree.root = root;
@@ -363,7 +363,7 @@ public class ElementaryTree {
             } else if (((String) op[1]).equals("subst")) {
                 if (substitute((ElementaryTree) op[2], (Node) op[3], dTree)) {
                     dTree.topFeatures.put(root,
-                            Fs.unify(dTree.topFeatures.get(root),
+                            FsTools.unify(dTree.topFeatures.get(root),
                                     dTree.topFeatures.get(dTree.root),
                                     dTree.env));
                     dTree.root = root;
@@ -448,7 +448,7 @@ public class ElementaryTree {
              * System.err.println(n + "--" + fs.toString());
              * }
              */
-            addedTopFs = Fs.unify(addedTopFs,
+            addedTopFs = FsTools.unify(addedTopFs,
                     adjoinedTree.topFeatures.get(rootNode), dTree.env);
         }
         dTree.topFeatures.put(rootNode, addedTopFs);
@@ -469,7 +469,7 @@ public class ElementaryTree {
             // System.err.println("adjunction bottom: " +
             // adjoinedTree.bottomFeatures.get(footNode));
             // System.err.println("environment: " + dTree.env);
-            addedBotFs = Fs.unify(addedBotFs,
+            addedBotFs = FsTools.unify(addedBotFs,
                     adjoinedTree.bottomFeatures.get(footNode), dTree.env);
         }
         dTree.bottomFeatures.put(footNode, addedBotFs);
@@ -513,7 +513,7 @@ public class ElementaryTree {
         Node rootNode = substTree.root;
         Fs addedTopFs = dTree.topFeatures.get(substNode);
         if (addedTopFs != null) {
-            addedTopFs = Fs.unify(addedTopFs,
+            addedTopFs = FsTools.unify(addedTopFs,
                     substTree.topFeatures.get(rootNode), dTree.env);
         }
         dTree.topFeatures.put(rootNode, addedTopFs);

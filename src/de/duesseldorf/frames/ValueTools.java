@@ -66,7 +66,7 @@ public class ValueTools {
             switch (b.getType()) {
             case AVM: // b is an avm
                 res = new Value(
-                        Fs.unify(a.getAvmVal(), b.getAvmVal(), env, seen));
+                        FsTools.unify(a.getAvmVal(), b.getAvmVal(), env, seen));
                 break;
             case VAR: // b is a variable
                 res = unifyAVMandVAR(a, b, env, seen);
@@ -216,7 +216,6 @@ public class ValueTools {
      * @param a
      * @param b
      * @param env
-     * @param tyHi
      * @param seen
      * @param res
      * @return
@@ -266,7 +265,7 @@ public class ValueTools {
                         // AVM");
                         env.bind("$"
                                 + bderefed.getVarVal(),
-                                new Value(Fs.unify(
+                                new Value(FsTools.unify(
                                         a.getAvmVal(), env
                                                 .deref(new Value(Value.Kind.VAR,
                                                         "$" + bderefed
@@ -288,7 +287,7 @@ public class ValueTools {
             res = a;
         } else { // b is already bound, the values must match !
             if (bderefed.is(Value.Kind.AVM)) { // let us see if they do:
-                res = new Value(Fs.unify(a.getAvmVal(), bderefed.getAvmVal(),
+                res = new Value(FsTools.unify(a.getAvmVal(), bderefed.getAvmVal(),
                         env, seen));
                 /*
                  * // Uncaught exception (caught in Fs' unify method)

@@ -43,6 +43,7 @@ import java.util.Map;
 import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.FrameUpdater;
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
 import de.tuebingen.anchoring.NameFactory;
@@ -268,7 +269,7 @@ public class TagTree implements Tree {
             Fs eqfs = new Fs(1);
             eqfs.setFeat(eq.getType(), new Value(eq.getFeatures()));
             Fs label = ((TagNode) n).getLabel();
-            Fs fs = Fs.unify(label, eqfs, env);
+            Fs fs = FsTools.unify(label, eqfs, env);
             ((TagNode) n).setLabel(fs);
             res = true;
         } else { // node not found
@@ -295,7 +296,7 @@ public class TagTree implements Tree {
             Fs fs = new Fs(ancLabel.getSize() + 1);
             fs.setFeat("bot", new Value(lexfs));
             if (ancLabel != null) {
-                Fs resLabel = Fs.unify(ancLabel, fs, env);
+                Fs resLabel = FsTools.unify(ancLabel, fs, env);
                 ((TagNode) anchor).setLabel(resLabel);
             } else
                 ((TagNode) anchor).setLabel(fs);

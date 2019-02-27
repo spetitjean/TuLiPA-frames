@@ -43,6 +43,7 @@ import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
 import de.tuebingen.tag.Environment;
@@ -155,7 +156,7 @@ public class DerivedTree {
             if (topFs != null) {
                 if (botFs != null) {
                     try {
-                        features.put(n, Fs.unify(topFeatures.get(n),
+                        features.put(n, FsTools.unify(topFeatures.get(n),
                                 bottomFeatures.get(n), env));
                     } catch (UnifyException e) {
                         String feat1 = e.getFeat1();

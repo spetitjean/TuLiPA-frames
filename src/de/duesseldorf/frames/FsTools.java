@@ -30,9 +30,13 @@
 package de.duesseldorf.frames;
 
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import de.duesseldorf.frames.Value.Kind;
+import de.tuebingen.tag.Environment;
 
 /**
  * 
@@ -109,5 +113,162 @@ public class FsTools {
             }
         }
         return false;
+    }
+
+    /**
+     * Temporary method so that nothing breaks
+     * 
+     * @param fs1
+     * @param fs2
+     * @param env
+     * @return
+     * @throws UnifyException
+     */
+    public static Fs unify(Fs fs1, Fs fs2, Environment env)
+            throws UnifyException {
+        return FsTools.unify(fs1, fs2, env, new HashSet<Value>());
+    }
+
+    /**
+     * Unifies two feature structures according to an environment and a Type
+     * Hierarchy. To compute the unification of untyped feature structurs, set
+     * the value of the typehierarchy null.
+     * 
+     * 
+     * 
+     * @param fs1,
+     *            fs2, env
+     *            fs1 is a feature structure containing a hashtable of
+     *            String,Value
+     *            fs2 is a feature structure containing a hashtable of
+     *            String,Value
+     *            env is an environment global to the 2 feature structures,
+     *            and that
+     *            is used to store the variables' bindings.
+     * @param tyHi
+     *            the type hierarchy with respect to which fs1 and fs2 are
+     *            unified inn case they are typed
+     */
+    static Fs unify(Fs fs1, Fs fs2, Environment env, Set<Value> seen)
+            throws UnifyException {
+        Hashtable<String, Value> avm1 = fs1.getAVlist();
+        Hashtable<String, Value> avm2 = fs2.getAVlist();
+    
+        // unifyTypesAndCoref()
+        // unifyFeatures()
+    
+        if (fs1.getCoref() != null && seen.contains(fs1.getCoref())) {
+            // System.out.println("Stopping unification because of recursion:
+            // "+fs1);
+            return fs1;
+        } else {
+            seen.add(fs1.getCoref());
+            // seen.add(fs2.getCoref());
+        }
+        // the resulting avm:
+        Hashtable<String, Value> res = new Hashtable<String, Value>();
+        // a temporary avm used to store non-common features:
+        Hashtable<String, Value> todo = new Hashtable<String, Value>();
+    
+        // 1. loop through avm1
+        for (String k : avm1.keySet()) {
+            if (avm2.containsKey(k)) { // k is a common feature, we unify its
+                                       // values
+                Value nval = null;
+                try {
+                    // exception caught and re-thrown to extend the error
+                    // message
+                    // System.out.println("Unifying "+avm1.get(k)+" and
+                    // "+avm2.get(k));
+                    nval = ValueTools.unify(avm1.get(k), avm2.get(k), env,
+                            seen);
+                } catch (UnifyException e) {
+                    throw new UnifyException(
+                            "feature " + k + ": " + e.getMessage());
+                }
+                res.put(k, nval);
+            } else { // we keep it for later
+                todo.put(k, avm1.get(k));
+            }
+        }
+        // 2. loop through avm2
+    
+        for (String k : avm2.keySet()) {
+    
+            if (!(avm1.containsKey(k))) {
+                todo.put(k, avm2.get(k));
+            } // no else since the common features have already been processed
+        }
+        // 3. loop through delayed features
+        // that is, features that appear only in one avm
+        for (String k : todo.keySet()) {
+            Value v = todo.get(k);
+            if (v.is(Value.Kind.VAR)) { // if it is a variable
+                Value w = env.deref(v);
+                if (w == null) { // v is not bound
+                    res.put(k, v);
+                } else { // v is bound
+                    res.put(k, w);
+                }
+            } else { // v is not a variable
+                res.put(k, v);
+            }
+        }
+    
+        // 4. set the type of the resulting FS
+        Type resType = null;
+        TypeHierarchy tyHi = Situation.getTypeHierarchy();
+        if (tyHi != null) {
+            if (fs1.isTyped() && fs2.isTyped()) {
+                try {
+                    // System.out.println("Unify types: " + fs1.getType() + "
+                    // and "
+                    // + fs2.getType());
+                    resType = tyHi.leastSpecificSubtype(fs1.getType(),
+                            fs2.getType(), env);
+                    // System.out.println("Result: " + resType);
+                    // System.out.println("Env: " + env);
+                } catch (UnifyException e) {
+                    System.err.println("Incompatible types: " + fs1.getType()
+                            + " and " + fs2.getType());
+                    throw new UnifyException();
+                }
+                // System.out.println("Unification of "+fs1.getType()+" and
+                // "+fs2.getType()+" -> "+resType);
+            } else if (fs1.isTyped()) {
+                resType = fs1.getType();
+            } else if (fs2.isTyped()) {
+                resType = fs2.getType();
+            }
+        } else {
+            if (fs1.isTyped() && fs2.isTyped()) {
+                resType = fs1.getType().union(fs2.getType(), env);
+            } else if (fs1.isTyped()) {
+                resType = fs1.getType();
+            } else if (fs2.isTyped()) {
+                resType = fs2.getType();
+            }
+        }
+    
+        // System.out.println("Computed type: "+resType);
+        // 5. set the coref of the resulting FS
+        Value resCoref;
+        if (fs1.isTyped()) {
+            if (fs2.isTyped()) {
+                // System.out.println("Unifying coreferences: "+fs1.getCoref()+"
+                // and "+fs2.getCoref());
+                resCoref = ValueTools.unify(fs1.getCoref(), fs2.getCoref(), env,
+                        seen);
+                // System.out.println("Done unify");
+            } else {
+                resCoref = fs1.getCoref();
+                fs2.setCoref(fs1.getCoref());
+            }
+        } else {
+            resCoref = fs2.getCoref();
+        }
+    
+        // finally, all the features have been processed, we return the avm res:
+        return (new Fs(res, resType, resCoref));
     }
 }

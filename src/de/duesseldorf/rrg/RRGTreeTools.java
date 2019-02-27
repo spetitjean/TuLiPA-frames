@@ -1,6 +1,7 @@
 package de.duesseldorf.rrg;
 
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
@@ -150,7 +151,7 @@ public class RRGTreeTools {
             return null;
         }
         try {
-            Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(),
+            Fs fsForResult = FsTools.unify(node1.getNodeFs(), node2.getNodeFs(),
                     new Environment(2));
 
             resultBuilder = resultBuilder.fs(fsForResult);

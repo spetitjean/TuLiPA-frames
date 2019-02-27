@@ -46,6 +46,7 @@ import java.util.Set;
 
 import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
@@ -262,7 +263,7 @@ public class TreeSelector {
                         morphAncFS.setFeat("cat",
                                 new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
-                        Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
+                        Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
                                 new Environment(5));
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
@@ -450,7 +451,7 @@ public class TreeSelector {
         Fs uniface = null;
         if (ancfs != null && iface != null) {
             try {
-                uniface = Fs.unify(ancfs, iface, env);
+                uniface = FsTools.unify(ancfs, iface, env);
 
             } catch (UnifyException e) {
                 System.err.println("Interface unification failed on tree "
@@ -627,7 +628,7 @@ public class TreeSelector {
             }
 
             try {
-                tt.setIface(Fs.unify(frameInterface, tt.getIface(), env));
+                tt.setIface(FsTools.unify(frameInterface, tt.getIface(), env));
                 // tt.setFrames(ElementaryTree.updateFrames(tt.getFrames(), env,
                 // false));
                 // List<Fs> newFrames = tt.getFrames();
@@ -658,7 +659,7 @@ public class TreeSelector {
                     for (int jj = ii + 1; jj < newFrames.size(); jj++) {
                         if (newFrames.get(ii).getCoref()
                                 .equals(newFrames.get(jj).getCoref())) {
-                            Fs res = Fs.unify(newFrames.get(ii),
+                            Fs res = FsTools.unify(newFrames.get(ii),
                                     newFrames.get(jj), env);
                             // newFrames.set(ii,res);
                             // newFrames.set(jj,res);
@@ -716,7 +717,7 @@ public class TreeSelector {
                         // System.out.println("Unifying: " + semFs);
                         // System.out.println(" with : " + tt.getIface());
 
-                        tt.setIface(Fs.unify(semFs, tt.getIface(), env));
+                        tt.setIface(FsTools.unify(semFs, tt.getIface(), env));
                         tt.setFrameSem(ElementaryTree
                                 .updateFrameSem(tt.getFrameSem(), env, false));
                         // System.out.println(
