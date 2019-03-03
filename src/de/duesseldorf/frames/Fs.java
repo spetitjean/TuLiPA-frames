@@ -570,6 +570,7 @@ public class Fs {
         // System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
+        // put all typed fs in cleanFrames
         for (Fs fs : frames) {
             if (fs.getType() != null) {
                 // System.out.println("Cleaning "+fs);
@@ -709,7 +710,6 @@ public class Fs {
             }
         }
         return true;
-
     }
 
     public Fs update_corefs(Environment env, Set<Value> seen) {
@@ -787,13 +787,7 @@ public class Fs {
                     result.AVlist.put(f, new Value(env.deref(v)));
                 }
             }
-            // System.out.println("Here l.826");
-            // System.out.println(i);
-            // System.out.println(i.hasNext());
         }
-        // System.out.println("Here l.830");
-        // System.out.println("Result: "+result);
-        // System.out.println("Return ");
         return result;
     }
 }
