@@ -364,16 +364,17 @@ public class Fs {
     }
 
     public String toStringRec(Set<Value> seen) {
-        String res = "";
+        String res = "[";
 
         if (isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
+
+            if (seen.contains(coref)) {
+                // System.out.println("Stopping print because of recursion");
+                return res + "]";
+            } else
+                seen.add(coref);
         }
-        if (seen.contains(coref)) {
-            // System.out.println("Stopping print because of recursion");
-            return res;
-        } else
-            seen.add(coref);
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
@@ -389,7 +390,7 @@ public class Fs {
             // we remove the last ", "
             res = res.substring(0, (res.length() - 2));
         }
-        return res;
+        return res + "]";
     }
 
     public Type getType() {
@@ -732,14 +733,16 @@ public class Fs {
             return false;
         }
 
-        if (this.getCoref() == ((Fs) fs).getCoref()) {
+        if (this.getCoref() != null
+                && this.getCoref() == ((Fs) fs).getCoref()) {
             return true;
         }
-
+        if (AVlist.size() != ((Fs) fs).AVlist.size()) {
+            return false;
+        }
         Set<String> keys = AVlist.keySet();
         Iterator<String> it = keys.iterator();
-        if (this.getCoref() == ((Fs) fs).getCoref())
-            return true;
+
         boolean res = true;
         while (it.hasNext()) {
             String f = it.next();
