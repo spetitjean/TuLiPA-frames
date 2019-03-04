@@ -118,10 +118,11 @@ public class RRGTreeTools {
         sb.append(((RRGNode) root).getCategory());
         sb.append(" ");
         sb.append(((RRGNode) root).getType());
-        sb.append("\n");
         if (((RRGNode) root).getNodeFs() != null) {
-            sb.append(((RRGNode) root).getNodeFs().toString());
+            sb.append(" ");
+            sb.append(((RRGNode) root).getNodeFs().toStringOneLiner());
         }
+        sb.append("\n");
         for (Node node : root.getChildren()) {
             asStringWithNodeLabelsAndNodeType(node, sb, sep + 1);
         }

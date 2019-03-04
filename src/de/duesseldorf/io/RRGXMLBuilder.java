@@ -2,6 +2,7 @@ package de.duesseldorf.io;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -113,7 +116,32 @@ public class RRGXMLBuilder {
 
         f.appendChild(sym);
         fs.appendChild(f);
+
+        fs = createFsElement(fs, root.getNodeFs());
+
         resultnargNode.appendChild(fs);
         return resultnargNode;
+    }
+
+    private Element createFsElement(Element fsElement, Fs realfs) {
+        for (Entry<String, Value> avpair : realfs.getAVlist().entrySet()) {
+            Element f = doc.createElement(XMLRRGTag.FEATURE.StringVal());
+            f.setAttribute(XMLRRGTag.NAME.StringVal(), avpair.getKey());
+
+            if (avpair.getValue().is(Value.Kind.VAL)) {
+                Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+                sym.setAttribute(XMLRRGTag.VALUE.StringVal(),
+                        avpair.getValue().getSVal());
+                f.appendChild(sym);
+            } else if (avpair.getValue().is(Value.Kind.AVM)) {
+                Element fsval = createFsElement(
+                        doc.createElement(
+                                XMLRRGTag.FEATURESTRUCTURE.StringVal()),
+                        avpair.getValue().getAvmVal());
+                f.appendChild(fsval);
+            }
+            fsElement.appendChild(f);
+        }
+        return fsElement;
     }
 }
