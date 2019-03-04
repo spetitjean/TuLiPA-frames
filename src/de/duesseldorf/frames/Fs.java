@@ -358,6 +358,10 @@ public class Fs {
         return AVlist.keySet();
     }
 
+    public String toStringOneLiner() {
+        return toString().replaceAll("\n", ", ");
+    }
+
     public String toString() {
         Set<Value> seen = new HashSet<Value>();
         return toStringRec(seen);
