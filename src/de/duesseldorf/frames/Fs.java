@@ -150,7 +150,8 @@ public class Fs {
 
     /**
      * method that stores a new pair (key, val) into the avm.
-     * NB: if the key already is in the AVM, the new entry is not stored
+     * NB: if the key already is in the AVM or if the val is null, the new entry
+     * is not stored
      * 
      * @param key,
      *            val
@@ -161,7 +162,7 @@ public class Fs {
         if (AVlist.containsKey(key)) {
             System.out.println(
                     "Key : " + key + " already used, feature skipped.");
-        } else {
+        } else if (val != null) {
             AVlist.put(key, val);
         }
     }

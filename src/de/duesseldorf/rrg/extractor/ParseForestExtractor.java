@@ -77,8 +77,11 @@ public class ParseForestExtractor {
         }
         Set<RRGParseTree> resultingParsesFiltered = RRGTools.convertTreeSet(
                 RRGTools.removeDoubleTreesByWeakEquals(resultingParses));
-        // .filterDoublesByIdMap(resultingParses);
-        return resultingParsesFiltered;
+
+        Set<RRGParseTree> resultingParsesEdgesUnified = new EdgeFeatureUnifier(
+                resultingParsesFiltered).computeUnUnifiedAndUnifiedTrees();
+
+        return resultingParsesEdgesUnified;
         // return RRGTools.convertTreeSet(resultingParses);
     }
 

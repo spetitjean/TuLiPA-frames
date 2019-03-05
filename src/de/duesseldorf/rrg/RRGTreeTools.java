@@ -142,7 +142,11 @@ public class RRGTreeTools {
     public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
         RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
         if (!node1.getType().equals(node2.getType())) {
-            resultBuilder.type(RRGNodeType.STD);
+            resultBuilder = resultBuilder.type(RRGNodeType.STD);
+        }
+        if (node1.getType().equals(RRGNodeType.SUBST)
+                || node2.getType().equals(RRGNodeType.SUBST)) {
+            resultBuilder = resultBuilder.type(RRGNodeType.SUBST);
         }
         if (!node1.nodeUnificationPossible(node2)) {
             System.err.println("node unification not possible! ");

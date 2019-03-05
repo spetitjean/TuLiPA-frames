@@ -208,7 +208,7 @@ public class RRGNode implements Node {
         sb.append(this.type.name());
         sb.append(")");
         if (nodeFs != null) {
-            sb.append(" " + nodeFs.toString());
+            sb.append(" " + nodeFs.toStringOneLiner());
         }
         return sb.toString();
     }
