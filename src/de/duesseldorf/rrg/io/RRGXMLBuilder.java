@@ -1,4 +1,4 @@
-package de.duesseldorf.io;
+package de.duesseldorf.rrg.io;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,6 @@ import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.io.XMLRRGTag;
 import de.tuebingen.tree.Node;
 
 public class RRGXMLBuilder {

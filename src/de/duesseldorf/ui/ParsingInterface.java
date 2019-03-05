@@ -54,11 +54,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
-import de.duesseldorf.io.RRGXMLBuilder;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTreeTools;
+import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
