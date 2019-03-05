@@ -14,14 +14,14 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
 
-public class BracketedRRGReader {
+public class BracketedRRGFromFileReader {
 
     File grammar = null;
     private SystemLogger log;
     private int treeIdCount;
     private boolean removeDoubleTrees = true;
 
-    public BracketedRRGReader(File grammar) {
+    public BracketedRRGFromFileReader(File grammar) {
         this.grammar = grammar;
         this.log = new SystemLogger(System.err, true);
         this.treeIdCount = 0;
@@ -68,12 +68,17 @@ public class BracketedRRGReader {
                     treeIdCount++;
                     resultingTrees.add(treeFromCurrentLine);
                 }
-                nextLine = tsvFileReader.readLine();
             } catch (Exception e) {
                 log.info("exception while retrieving grammar entry: "
                         + nextLine);
                 e.printStackTrace();
                 System.exit(1);
+            }
+            try {
+                nextLine = tsvFileReader.readLine();
+            } catch (IOException e) {
+                System.err.println(
+                        "error while reading line at or after: " + nextLine);
             }
         }
         try {
