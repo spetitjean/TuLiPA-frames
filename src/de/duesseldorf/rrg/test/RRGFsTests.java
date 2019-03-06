@@ -37,7 +37,6 @@ public class RRGFsTests {
         thePianoHasBeenDrinkingWithNodeFeatures.add("piano\t(NP (N <>))");
         thePianoHasBeenDrinkingWithNodeFeatures
                 .add("has\t(CO*[TENSE=pres] (TNS-OP[OP=CL] <>))");
-        // TODO from here upwards add node Fss
         thePianoHasBeenDrinkingWithNodeFeatures
                 .add("been\t(NUC*[ASP=perf] (ASP-OP[OP=NUC] <>))");
         thePianoHasBeenDrinkingWithNodeFeatures
