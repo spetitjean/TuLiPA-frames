@@ -265,7 +265,7 @@ public class TreeSelector {
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
                                 new Environment(5),
-                                situation.getTypeHierarchy());
+                                Situation.getTypeHierarchy());
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
                         ((TagNode) head.getAnchor()).getLabel().setFeat("cat",
@@ -295,9 +295,9 @@ public class TreeSelector {
                             System.out.println(
                                     "TODO: create a loop in TreeSelector.546!");
                         }
-                        if (situation.getFrameGrammar() != null) {
+                        if (Situation.getFrameGrammar() != null) {
                             if (lemmaSem.size() > 0) {
-                                tlist = situation.getFrameGrammar().getGrammar()
+                                tlist = Situation.getFrameGrammar().getGrammar()
                                         .get(lemmaSem.get(0).getSemclass());
                             } else {
                                 System.err.println("No semantics for lemma "
@@ -308,6 +308,8 @@ public class TreeSelector {
                             }
                             // System.out.println("Size of the frame list
                             // for this entry: "+tlist.size());
+                        } else {
+                            tlist.add(new Tuple());
                         }
                         for (int iframe = 0; iframe < tlist.size(); iframe++) {
                             try {
@@ -569,7 +571,7 @@ public class TreeSelector {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
 
-        if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
+        if (Situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
 
