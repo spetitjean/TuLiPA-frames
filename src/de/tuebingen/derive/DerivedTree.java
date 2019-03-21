@@ -81,11 +81,14 @@ public class DerivedTree {
         // frames = iniTree.frames;
         // Here, copies are need, otherwise semantics of elementary trees are
         // displayed wrong
-        frameSem = new Frame(
-                new LinkedList<Fs>(
-                        iniTree.getFrameSem().getFeatureStructures()),
-                new HashSet(iniTree.getFrameSem().getRelations()));
-        env = new Environment(0);
+	if(iniTree.getFrameSem()!=null && iniTree.getFrameSem().getFeatureStructures()!=null)
+	    frameSem = new Frame(
+				 new LinkedList<Fs>(
+						    iniTree.getFrameSem().getFeatureStructures()),
+				 new HashSet(iniTree.getFrameSem().getRelations()));
+	else
+	    frameSem= new Frame();
+	env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);
         addMissingTopFeatures(iniTree.topFeatures);
     }

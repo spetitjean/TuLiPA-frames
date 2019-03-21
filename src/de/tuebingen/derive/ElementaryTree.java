@@ -100,6 +100,7 @@ public class ElementaryTree {
         this.topFeatures = topFeatures;
         this.bottomFeatures = bottomFeatures;
         this.semantics = semantics;
+	this.frameSem = new Frame();
     }
 
     // public ElementaryTree(Node root, String foot, String anchor,
