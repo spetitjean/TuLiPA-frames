@@ -20,7 +20,7 @@ public class ConstraintChecker {
     }
 
     public Frame checkConstraints() {
-        System.out.println("frame: " + frame);
+        //System.out.println("frame: " + frame);
         for (int i = 0; i < frame.getFeatureStructures().size(); i++) {
             // check the fs itself
             Fs ithFSFromFrameWithConstraints = frame.getFeatureStructures()
