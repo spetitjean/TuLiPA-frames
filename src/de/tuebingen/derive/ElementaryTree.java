@@ -587,24 +587,24 @@ public class ElementaryTree {
             boolean finalUpdate) throws UnifyException {
 
         List<Fs> newFs = new LinkedList<Fs>();
-	if (frameSem!=null && frameSem.getFeatureStructures()!=null)
-	    for (Fs fs : frameSem.getFeatureStructures()) {
-		if (fs != null)
-		    newFs.add(Fs.updateFS(fs, env, finalUpdate));
-	    }
+        if (frameSem != null && frameSem.getFeatureStructures() != null)
+            for (Fs fs : frameSem.getFeatureStructures()) {
+                if (fs != null)
+                    newFs.add(Fs.updateFS(fs, env, finalUpdate));
+            }
 
         Set<Relation> newRelations = new HashSet<Relation>();
-	if (frameSem!=null && frameSem.getRelations()!=null)
-	    for (Relation oldRel : frameSem.getRelations()) {
-		List<Value> newArgs = new LinkedList<Value>();
-		for (Value oldVal : oldRel.getArguments()) {
-		    Value oldCopy = new Value(oldVal);
-		    oldCopy.update(env, finalUpdate);
-		    // Value newVal = env.deref(oldVal);
-		    newArgs.add(oldCopy);
-		}
-		newRelations.add(new Relation(oldRel.getName(), newArgs));
-	    }
+        if (frameSem != null && frameSem.getRelations() != null)
+            for (Relation oldRel : frameSem.getRelations()) {
+                List<Value> newArgs = new LinkedList<Value>();
+                for (Value oldVal : oldRel.getArguments()) {
+                    Value oldCopy = new Value(oldVal);
+                    oldCopy.update(env, finalUpdate);
+                    // Value newVal = env.deref(oldVal);
+                    newArgs.add(oldCopy);
+                }
+                newRelations.add(new Relation(oldRel.getName(), newArgs));
+            }
 
         return new Frame(newFs, newRelations);
     }
