@@ -50,10 +50,12 @@ public class RRGParser {
     private Deducer deducer;
 
     private boolean verbosePrintsToStdOut = false;
+    private Set<RRGTree> treesInvolvedInParsing;
 
     public RRGParser() {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
+        this.treesInvolvedInParsing = new HashSet<>();
     }
 
     public Set<RRGParseTree> parseSentence(List<String> toksentence) {
@@ -75,7 +77,7 @@ public class RRGParser {
         // if (verbosePrintsToStdOut) {
         System.out.println("Done scanning. ");
         System.out.println(
-                "Found fitting lexical items in thhe following trees: ");
+                "Found fitting lexical items in the following trees: ");
         agenda.forEach((item) -> System.out.println(
                 RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
         // }
@@ -165,7 +167,7 @@ public class RRGParser {
             // look at the whole grammar and find fitting substitution nodes
             String cat = currentItem.getNode().getCategory();
             // System.out.println("got to predict: " + currentItem);
-            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : treesInvolvedInParsing) {
                 Set<RRGNode> substNodes = tree.getSubstNodes().get(cat);
                 if (substNodes != null) {
                     HashSet<Gap> gaps = new HashSet<Gap>();
@@ -256,7 +258,7 @@ public class RRGParser {
 
     private void substitute(RRGParseItem currentItem) {
         if (requirementFinder.substituteReq(currentItem)) {
-            for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
+            for (RRGTree tree : treesInvolvedInParsing) {
                 Set<RRGNode> substNodes = tree.getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
@@ -352,6 +354,7 @@ public class RRGParser {
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
+                    treesInvolvedInParsing.add(tree);
                 }
             }
         }

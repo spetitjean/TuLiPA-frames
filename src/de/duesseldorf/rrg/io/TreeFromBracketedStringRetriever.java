@@ -160,8 +160,8 @@ public class TreeFromBracketedStringRetriever {
             boolean couldBeASubstNode) {
         Fs nodeFs = new Fs(1);
         // note that the lexical element is not handled here
-        List<String> substNodeLabels = Arrays.asList("NP", "NUC_ADV", "NPIP",
-                "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
+        List<String> substNodeLabels = Arrays.asList("CL", "NP", "NUC_ADV",
+                "NPIP", "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
                 "CLAUSE-PERI", "CORE-PERI", "NP-PERI", "CORE");
         RRGNodeType nodeType = null;
         // find feature structures
@@ -177,12 +177,17 @@ public class TreeFromBracketedStringRetriever {
             nodeType = RRGNodeType.STAR;
             nodeStringFromResource = nodeStringFromResource.substring(0,
                     nodeStringFromResource.lastIndexOf("*"));
+        } else if (nodeStringFromResource.endsWith("_d")) {
+            nodeType = RRGNodeType.DDAUGHTER;
+            nodeStringFromResource = nodeStringFromResource.substring(0,
+                    nodeStringFromResource.lastIndexOf("_d"));
         } else if (couldBeASubstNode
                 && substNodeLabels.contains(nodeStringFromResource)) {
             nodeType = RRGNodeType.SUBST;
         } else if (couldBeASubstNode) {
             System.out.println(
                     "unknown subst node label: " + nodeStringFromResource);
+            nodeType = RRGNodeType.SUBST;
         } else {
             nodeType = RRGNodeType.STD;
         }
