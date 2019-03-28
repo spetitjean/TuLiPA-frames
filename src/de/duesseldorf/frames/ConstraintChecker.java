@@ -28,8 +28,12 @@ public class ConstraintChecker {
             Set<TypeConstraint> constraintsToCheck = ithFSFromFrameWithConstraints
                     .getType().getTypeConstraints();
 
+	    //System.out.println("\nCheck new FS, of type ");
+	    //System.out.println(ithFSFromFrameWithConstraints
+            //        .getType());
             ithFSFromFrameWithConstraints = checkConstraintsAgainstOneFS(
                     constraintsToCheck, ithFSFromFrameWithConstraints);
+
 
         }
         return frame;
@@ -53,6 +57,9 @@ public class ConstraintChecker {
                 Fs valFromAVPair = fsAVPair.getValue().getAvmVal();
                 Set<TypeConstraint> constraintsForNewVal = valFromAVPair
                         .getType().getTypeConstraints();
+		//System.out.println("\nCheck new FS, of type ");
+		//System.out.println(valFromAVPair
+                //    .getType());
                 Fs newValFromAVPair = checkConstraintsAgainstOneFS(
                         constraintsForNewVal, valFromAVPair);
                 if (newValFromAVPair == null) {
@@ -93,6 +100,7 @@ public class ConstraintChecker {
         try {
             testUnify = Fs.unify(constraintAsFs, fs, env,
                     Situation.getTypeHierarchy());
+	    //System.out.println(env);
         } catch (UnifyException e) {
             return null;
         }
