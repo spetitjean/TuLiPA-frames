@@ -372,7 +372,7 @@ public class Fs {
         if (isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
         }
-        if (seen.contains(coref)) {
+        if (seen.contains(coref) && coref!=null) {
             // System.out.println("Stopping print because of recursion");
             return res;
         } else

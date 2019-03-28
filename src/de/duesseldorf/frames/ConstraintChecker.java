@@ -86,7 +86,9 @@ public class ConstraintChecker {
         // "check constraint: " + constraint + " against fs " + fs);
         // first check the particular constraint, then go recursive on the
         // AVList.
+	//System.out.println("Constraint: "+constraint);
         Fs constraintAsFs = constraint.asFs();
+	//System.out.println("Constraint as FS: "+constraintAsFs);
         Fs testUnify = null;
         try {
             testUnify = Fs.unify(constraintAsFs, fs, env,
