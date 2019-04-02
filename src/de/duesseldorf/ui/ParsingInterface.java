@@ -58,6 +58,7 @@ import de.duesseldorf.io.SentenceListFromFileCreator;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
@@ -814,16 +815,16 @@ public class ParsingInterface {
                 batchparsingResultSizes.add(result.size());
             } else {
                 System.out.println("result: " + result.size() + " trees.");
-                /*
-                 * for (RRGParseTree rrgParseTree : result) {
-                 * // System.out.println("Extraction steps for " +
-                 * // SrrgParseTree.getId());
-                 * // System.out.println(rrgParseTree.extractionstepsPrinted());
-                 * System.out.println("result for " + rrgParseTree.getId());
-                 * System.out.println(RRGTreeTools
-                 * .asStringWithNodeLabelsAndNodeType(rrgParseTree));
-                 * }
-                 */
+
+                for (RRGParseTree rrgParseTree : result) {
+                    // System.out.println("Extraction steps for " +
+                    // SrrgParseTree.getId());
+                    // System.out.println(rrgParseTree.extractionstepsPrinted());
+                    System.out.println("result for " + rrgParseTree.getId());
+                    System.out.println(RRGTreeTools
+                            .asStringWithNodeLabelsAndNodeType(rrgParseTree));
+                }
+
             }
 
             // XML Output

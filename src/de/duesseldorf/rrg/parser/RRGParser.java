@@ -51,6 +51,8 @@ public class RRGParser {
     private boolean verbosePrintsToStdOut = false;
     private Set<RRGTree> treesInvolvedInParsing;
 
+    private boolean noExtractionForBigCharts = false;
+
     public RRGParser() {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
@@ -59,23 +61,17 @@ public class RRGParser {
 
     public Set<RRGParseTree> parseSentence(List<String> toksentence) {
         System.out.println("start parsing sentence " + toksentence);
-        System.out.println("number of trees: "
+        System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size());
         // Axioms through scanning:
         scan(toksentence);
 
-        // for (RRGParseItem item : agenda) {
-        // System.out.println(RRGTreeTools
-        // .recursivelyPrintNode(item.getTree().getRoot()));
-        // }
-        // Debug:
         this.requirementFinder = new RequirementFinder();
 
         // if (verbosePrintsToStdOut) {
-        System.out.println("Done scanning to " + treesInvolvedInParsing.size()
-                + " trees. ");
+
         // System.out.println(
         // "Found fitting lexical items in the following trees: ");
         // agenda.forEach((item) -> System.out.println(
@@ -107,18 +103,17 @@ public class RRGParser {
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
-        if (chart.computeSize() < 3000) {
+        if (noExtractionForBigCharts && chart.computeSize() < 3000) {
+            System.out.println(
+                    "ERROR: abort parse tree extraction because chart is too large: "
+                            + chart.computeSize());
+            return new HashSet<RRGParseTree>();
+        } else {
             // extract parse results from chart
             ParseForestExtractor extractor = new ParseForestExtractor(chart,
                     toksentence);
             Set<RRGParseTree> result = extractor.extractParseTrees();
             return result;
-
-        } else {
-            System.out.println(
-                    "ERROR: abort parse tree extraction because chart is too large: "
-                            + chart.computeSize());
-            return new HashSet<RRGParseTree>();
         }
 
     }
@@ -346,6 +341,7 @@ public class RRGParser {
      * apply the scanning deduction rule
      */
     private void scan(List<String> sentence) {
+        Set<RRGTree> treesInvolvedInScanning = new HashSet<RRGTree>();
         // Look at all trees
         for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
 
@@ -365,9 +361,16 @@ public class RRGParser {
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
-                    treesInvolvedInParsing.add(tree);
+                    treesInvolvedInScanning.add(tree);
                 }
             }
+        }
+        System.out.println("Done scanning to " + treesInvolvedInScanning.size()
+                + " trees. ");
+        if (((RRG) Situation.getGrammar()).isLexicalised()) {
+            treesInvolvedInParsing = treesInvolvedInScanning;
+        } else {
+            treesInvolvedInParsing = ((RRG) Situation.getGrammar()).getTrees();
         }
     }
 }

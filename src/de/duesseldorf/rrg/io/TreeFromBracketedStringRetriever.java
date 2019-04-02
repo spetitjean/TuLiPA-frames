@@ -185,8 +185,8 @@ public class TreeFromBracketedStringRetriever {
                 && substNodeLabels.contains(nodeStringFromResource)) {
             nodeType = RRGNodeType.SUBST;
         } else if (couldBeASubstNode) {
-            System.out.println(
-                    "unknown subst node label: " + nodeStringFromResource);
+            // System.out.println(
+            // "unknown subst node label: " + nodeStringFromResource);
             nodeType = RRGNodeType.SUBST;
         } else {
             nodeType = RRGNodeType.STD;

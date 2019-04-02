@@ -42,13 +42,36 @@ public class RRG implements Grammar {
     // tree, interface
 
     Set<RRGTree> trees;
+    boolean isLexicalised;
 
     public RRG() {
         trees = new HashSet<RRGTree>();
+        isLexicalised = lookForLexicalisation();
     }
 
     public RRG(Set<RRGTree> trees) {
         this.trees = trees;
+        isLexicalised = lookForLexicalisation();
+    }
+
+    /**
+     * 
+     * @return true iff each and every tree in the set of trees has at least one
+     *         lexical node, false otherwise
+     */
+    private boolean lookForLexicalisation() {
+        for (RRGTree tree : trees) {
+            if (tree.getLexNodes().isEmpty()) {
+                System.out.println("creating unlexicalised RRG grammar");
+                return false;
+            }
+        }
+        System.out.println("creating lexicalised RRG grammar");
+        return true;
+    }
+
+    public boolean isLexicalised() {
+        return isLexicalised;
     }
 
     // public void addTree(RRGTree tree) {
