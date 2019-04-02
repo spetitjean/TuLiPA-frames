@@ -167,7 +167,7 @@ public class DerivedTree {
                     features.put(n, topFeatures.get(n));
                 }
                 if (verbose)
-                    topFeatures.get(n).setFeat("hash", new Value(Value.Kind.VAL,
+                    topFeatures.get(n).setFeatWithoutReplace("hash", new Value(Value.Kind.VAL,
                             Integer.toString(n.hashCode())));
             } else if (botFs != null) {
                 features.put(n, bottomFeatures.get(n));

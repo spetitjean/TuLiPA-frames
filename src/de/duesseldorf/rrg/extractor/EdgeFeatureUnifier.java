@@ -27,34 +27,36 @@ public class EdgeFeatureUnifier {
     public Set<RRGParseTree> computeUnUnifiedAndUnifiedTrees() {
         Set<RRGParseTree> unifiedTrees = new HashSet<RRGParseTree>();
         for (RRGParseTree ununifiedTree : parseTreesWithoutUnification) {
-            RRGParseTree unifiedTree = unifyEdgeFeatures(ununifiedTree);
-            unifiedTrees.add(unifiedTree);
+            if (unifyEdgeFeatures(ununifiedTree)) {
+                unifiedTrees.add(result);
+            }
         }
-
-        Set<RRGParseTree> result = new HashSet<RRGParseTree>(unifiedTrees);
-        result.addAll(parseTreesWithoutUnification);
-        return result;
+        //
+        // Set<RRGParseTree> resultingTrees = new HashSet<RRGParseTree>(
+        // unifiedTrees);
+        // resultingTrees.addAll(parseTreesWithoutUnification);
+        return unifiedTrees;
     }
 
-    private RRGParseTree unifyEdgeFeatures(RRGParseTree ununifiedTree) {
+    private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
         this.result = new RRGParseTree(ununifiedTree);
         result.setId(result.getId() + "_edgesUnified");
 
-        unifyEdgeFeatures(new GornAddress());
-
-        return result;
+        return unifyEdgeFeatures(new GornAddress());
     }
 
-    private void unifyEdgeFeatures(GornAddress gornAddress) {
+    private boolean unifyEdgeFeatures(GornAddress gornAddress) {
         RRGNode nodeWithGornAddress = result.findNode(gornAddress);
         if (nodeWithGornAddress == null) {
             System.err.println("node in edgefeatureUnification null, return");
-            return;
+            return false;
         }
 
         // do unification below all children
         for (int i = 0; i < nodeWithGornAddress.getChildren().size(); i++) {
-            unifyEdgeFeatures(gornAddress.ithDaughter(i));
+            if (!unifyEdgeFeatures(gornAddress.ithDaughter(i))) {
+                return false;
+            }
         }
 
         // do unification between two children
@@ -78,14 +80,17 @@ public class EdgeFeatureUnifier {
                     }
 
                 } catch (UnifyException e) {
-                    System.out.println(
-                            "TODO handle: unification exception while unifying edge features");
-                    return;
+                    // System.out.println(
+                    // "TODO handle: unification exception while unifying edge
+                    // features");
+                    return false;
                 }
                 ((RRGNode) nodeWithGornAddress.getChildren().get(i - 1))
-                        .getNodeFs().setFeat("r", newEdgeValueForBoth);
+                        .getNodeFs().setFeatWithReplaceIfValNotNull("r",
+                                newEdgeValueForBoth);
                 ((RRGNode) nodeWithGornAddress.getChildren().get(i)).getNodeFs()
-                        .setFeat("l", newEdgeValueForBoth);
+                        .setFeatWithReplaceIfValNotNull("l",
+                                newEdgeValueForBoth);
             }
         }
 
@@ -113,19 +118,22 @@ public class EdgeFeatureUnifier {
                 // replace if unification was successfull
                 // left
                 ((RRGNode) nodeWithGornAddress.getChildren().get(0)).getNodeFs()
-                        .setFeat("l", newLeftMost);
-                nodeWithGornAddress.getNodeFs().setFeat("l", newLeftMost);
+                        .setFeatWithReplaceIfValNotNull("l", newLeftMost);
+                nodeWithGornAddress.getNodeFs()
+                        .setFeatWithReplaceIfValNotNull("l", newLeftMost);
                 // right
                 ((RRGNode) nodeWithGornAddress.getChildren()
                         .get(nodeWithGornAddress.getChildren().size() - 1))
-                                .getNodeFs().setFeat("r", newRightMost);
-                nodeWithGornAddress.getNodeFs().setFeat("r", newRightMost);
+                                .getNodeFs().setFeatWithReplaceIfValNotNull("r",
+                                        newRightMost);
+                nodeWithGornAddress.getNodeFs()
+                        .setFeatWithReplaceIfValNotNull("r", newRightMost);
             } catch (UnifyException e) {
-                System.err.println(
-                        "ERROR while unifying outermost feature structures");
+                // System.err.println(
+                // "ERROR while unifying outermost feature structures");
+                return false;
             }
-
         }
+        return true;
     }
-
 }

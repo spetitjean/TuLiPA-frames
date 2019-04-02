@@ -47,12 +47,12 @@ public class XMLGrammarReadingTools {
                 Value top = res.getFeat("top");
                 if (top == null) {
                     top = new Value(new Fs(5));
-                    res.setFeat("top", top);
+                    res.setFeatWithoutReplace("top", top);
                 }
                 Value bot = res.getFeat("bot");
                 if (bot == null) {
                     bot = new Value(new Fs(5));
-                    res.setFeat("bot", bot);
+                    res.setFeatWithoutReplace("bot", bot);
                 }
 
                 Set<String> keys = toAdd.keySet();
@@ -60,10 +60,10 @@ public class XMLGrammarReadingTools {
                 while (it.hasNext()) {
                     String f = it.next();
                     if (!(top.getAvmVal().hasFeat(f))) {
-                        top.getAvmVal().setFeat(f, toAdd.get(f));
+                        top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
                     }
                     if (!(bot.getAvmVal().hasFeat(f))) {
-                        bot.getAvmVal().setFeat(f, toAdd.get(f));
+                        bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class XMLGrammarReadingTools {
                         val = XMLTTMCTAGReader.getVal(el, XMLTTMCTAGReader.NOFS,
                                 toAdd, key, nf);
                     }
-                    res.setFeat(key, val);
+                    res.setFeatWithoutReplace(key, val);
                 }
             }
         }

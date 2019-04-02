@@ -20,22 +20,22 @@ public class FsFromBrackStringTests {
         // one simple Stringfeat
         brackStrings.add("[first=BOOM]");
         Fs tmpFs = new Fs(1);
-        tmpFs.setFeat("first", new Value(Kind.VAL, "BOOM"));
+        tmpFs.setFeatWithoutReplace("first", new Value(Kind.VAL, "BOOM"));
         featureStructures.add(tmpFs);
 
         // 2 simple Stringfeats with !
         brackStrings.add("[first=BOOM,sec=ouch!]");
         Fs tmpFs2 = new Fs(2);
-        tmpFs2.setFeat("first", new Value(Kind.VAL, "BOOM"));
-        tmpFs2.setFeat("sec", new Value(Kind.VAL, "ouch!"));
+        tmpFs2.setFeatWithoutReplace("first", new Value(Kind.VAL, "BOOM"));
+        tmpFs2.setFeatWithoutReplace("sec", new Value(Kind.VAL, "ouch!"));
         featureStructures.add(tmpFs2);
 
         // 3 simple rec
         brackStrings.add("[first=[feat=sun]]");
         Fs tmpFs3 = new Fs(1);
         Fs tmpInternalFs = new Fs(1);
-        tmpInternalFs.setFeat("feat", new Value(Kind.VAL, "sun"));
-        tmpFs3.setFeat("first", new Value(tmpInternalFs));
+        tmpInternalFs.setFeatWithoutReplace("feat", new Value(Kind.VAL, "sun"));
+        tmpFs3.setFeatWithoutReplace("first", new Value(tmpInternalFs));
         featureStructures.add(tmpFs3);
 
         // 4 a little more
@@ -43,7 +43,7 @@ public class FsFromBrackStringTests {
         Fs tmpFs4 = new Fs(tmpFs3);
         Fs tmpInternalFs2 = new Fs(tmpInternalFs);
         // tmpFs4.setFeat("first", new Value(tmpInternalFs2));
-        tmpFs4.setFeat("sec", new Value(tmpInternalFs2));
+        tmpFs4.setFeatWithoutReplace("sec", new Value(tmpInternalFs2));
         System.out.println("tmpfs4: " + tmpFs4);
         featureStructures.add(tmpFs4);
 

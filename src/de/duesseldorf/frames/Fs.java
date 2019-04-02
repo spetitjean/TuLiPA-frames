@@ -158,11 +158,18 @@ public class Fs {
      *            key is the key (String) and val the value (Val)
      * 
      */
-    public void setFeat(String key, Value val) {
+    public void setFeatWithoutReplace(String key, Value val) {
         if (AVlist.containsKey(key)) {
-            System.out.println(
-                    "Key : " + key + " already used, feature skipped.");
+            System.out.println("Key : " + key
+                    + " already used, feature skipped. exsisting value: "
+                    + AVlist.get(key) + "new value: " + val);
         } else if (val != null) {
+            AVlist.put(key, val);
+        }
+    }
+
+    public void setFeatWithReplaceIfValNotNull(String key, Value val) {
+        if (val != null) {
             AVlist.put(key, val);
         }
     }
@@ -238,7 +245,7 @@ public class Fs {
 
     public void propagateCategory(String cat) {
         if (!AVlist.containsKey("cat")) {
-            this.setFeat("cat", new Value(Value.Kind.VAL, cat));
+            this.setFeatWithoutReplace("cat", new Value(Value.Kind.VAL, cat));
         }
         Iterator<String> feats = AVlist.keySet().iterator();
         while (feats.hasNext()) {
@@ -690,7 +697,7 @@ public class Fs {
             switch (fval.getType()) {
             case VAL: // for semantic labels
                 fval.update(env, finalUpdate);
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
                 break;
             case VAR:
                 // if the feature value is a variable,
@@ -698,27 +705,28 @@ public class Fs {
                 Value v = env.deref(fval);
 
                 if (!(v.equals(fval))) { // it is bound:
-                    res.setFeat(k, ValueTools.unify(fval, v, env));
+                    res.setFeatWithoutReplace(k,
+                            ValueTools.unify(fval, v, env));
                 } else { // it is not:
                     // System.err.println("Variable not bound ... " + k +
                     // ":"
                     // + fval.toString());
-                    res.setFeat(k, fval);
+                    res.setFeatWithoutReplace(k, fval);
                     // This was added for testing
                     // env.bind(k,fval);
                 }
                 break;
             case AVM: // the value is an avm, we go on updating
                 // System.out.println("Updating FS [rec] ");
-                res.setFeat(k, new Value(
+                res.setFeatWithoutReplace(k, new Value(
                         updateFS(fval.getAvmVal(), env, finalUpdate, seen)));
                 break;
             case ADISJ:
                 fval.update(env, finalUpdate);
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
                 break;
             default:
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
             }
         }
         return res;

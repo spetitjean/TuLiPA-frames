@@ -32,7 +32,7 @@ public class TypeConstraint {
         Fs result = new Fs(1);
         result.setType(getType());
         for (String attr : attributes) {
-            result.setFeat(attr, getVal());
+            result.setFeatWithoutReplace(attr, getVal());
         }
         return result;
     }

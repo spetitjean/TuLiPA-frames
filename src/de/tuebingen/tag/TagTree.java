@@ -266,7 +266,7 @@ public class TagTree implements Tree {
         if (n.getName() != null && n.getName().equals(nodeid)) {
             // node found
             Fs eqfs = new Fs(1);
-            eqfs.setFeat(eq.getType(), new Value(eq.getFeatures()));
+            eqfs.setFeatWithoutReplace(eq.getType(), new Value(eq.getFeatures()));
             Fs label = ((TagNode) n).getLabel();
             Fs fs = Fs.unify(label, eqfs, env);
             ((TagNode) n).setLabel(fs);
@@ -293,7 +293,7 @@ public class TagTree implements Tree {
             // System.out.println("---"+l.toString());
             Fs lexfs = l.getFeatures();
             Fs fs = new Fs(ancLabel.getSize() + 1);
-            fs.setFeat("bot", new Value(lexfs));
+            fs.setFeatWithoutReplace("bot", new Value(lexfs));
             if (ancLabel != null) {
                 Fs resLabel = Fs.unify(ancLabel, fs, env);
                 ((TagNode) anchor).setLabel(resLabel);

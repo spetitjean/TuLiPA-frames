@@ -55,7 +55,7 @@ public class FsFromBracketedStringRetriever {
                 val = new Value(Value.Kind.VAL, simpleValStr);
                 fsString = fsString.substring(endOfSimpleValIndex);
             }
-            result.setFeat(attr, val);
+            result.setFeatWithoutReplace(attr, val);
         }
         if (fsString.length() < 3 || fsString.startsWith("]")) {
             // remove leading "]"

@@ -12,7 +12,6 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
-import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 
@@ -75,11 +74,12 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
 
         // if (verbosePrintsToStdOut) {
-        System.out.println("Done scanning. ");
-        System.out.println(
-                "Found fitting lexical items in the following trees: ");
-        agenda.forEach((item) -> System.out.println(
-                RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
+        System.out.println("Done scanning to " + treesInvolvedInParsing.size()
+                + " trees. ");
+        // System.out.println(
+        // "Found fitting lexical items in the following trees: ");
+        // agenda.forEach((item) -> System.out.println(
+        // RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
         // }
 
         // The real recognition
@@ -105,11 +105,22 @@ public class RRGParser {
         if (verbosePrintsToStdOut) {
             // System.out.println("Done parsing. \n" + chart.toString());
         }
-        // extract parse results from chart
-        ParseForestExtractor extractor = new ParseForestExtractor(chart,
-                toksentence);
-        Set<RRGParseTree> result = extractor.extractParseTrees();
-        return result;
+
+        System.out.println("Done parsing. Chart size: " + chart.computeSize());
+        if (chart.computeSize() < 3000) {
+            // extract parse results from chart
+            ParseForestExtractor extractor = new ParseForestExtractor(chart,
+                    toksentence);
+            Set<RRGParseTree> result = extractor.extractParseTrees();
+            return result;
+
+        } else {
+            System.out.println(
+                    "ERROR: abort parse tree extraction because chart is too large: "
+                            + chart.computeSize());
+            return new HashSet<RRGParseTree>();
+        }
+
     }
 
     /**
