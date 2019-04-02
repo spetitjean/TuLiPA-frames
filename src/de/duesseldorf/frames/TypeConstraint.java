@@ -1,22 +1,27 @@
 package de.duesseldorf.frames;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.tuebingen.anchoring.NameFactory;
+
+
 public class TypeConstraint {
 
-    private Set<String> attributes;
+    private LinkedList<String> attributes;
     private Type type;
     private Value val;
 
     public TypeConstraint(Collection<String> attributes, Type type, Value val) {
-        this.attributes = new HashSet<String>(attributes);
+        this.attributes = new LinkedList<String>(attributes);
         this.type = type;
         this.val = val;
     }
 
-    public Set<String> getAttributes() {
+    public LinkedList<String> getAttributes() {
         return attributes;
     }
 
@@ -28,13 +33,31 @@ public class TypeConstraint {
         return val;
     }
 
-    public Fs asFs() {
-        Fs result = new Fs(1);
+    public Fs asFs(){
+        Fs result = new Fs(0);
         result.setType(getType());
-        for (String attr : attributes) {
-            result.setFeat(attr, getVal());
+	LinkedList newAttributes= new LinkedList(getAttributes());
+	return asFsRec(result,newAttributes);
+    }
+    
+    public Fs asFsRec(Fs result, LinkedList<String> attributes) {
+	String first= attributes.pop();
+	if(attributes.size()==0){
+            result.setFeat(first, getVal());
+	}
+	// attributes should be a path of attributes
+	// the value should be given to att1 -> att2 ... -> attn
+        else{
+	    // No NameFactory is available here, but I guess this is
+	    // safe enough (we only need unique names)
+	    NameFactory nf= new NameFactory();
+	    String newVar = nf.getUniqueName();
+	    Fs in = new Fs(0, new Type(new HashSet<String>()), new Value(Value.Kind.VAR, newVar));
+	    Fs inresult=asFsRec(in,attributes);
+	    Value valResult=new Value(inresult);
+	    result.setFeat(first,valResult);
         }
-        return result;
+	return result;
     }
 
     @Override

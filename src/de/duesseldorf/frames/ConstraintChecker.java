@@ -20,7 +20,7 @@ public class ConstraintChecker {
     }
 
     public Frame checkConstraints() {
-        System.out.println("frame: " + frame);
+        //System.out.println("frame: " + frame);
         for (int i = 0; i < frame.getFeatureStructures().size(); i++) {
             // check the fs itself
             Fs ithFSFromFrameWithConstraints = frame.getFeatureStructures()
@@ -28,8 +28,12 @@ public class ConstraintChecker {
             Set<TypeConstraint> constraintsToCheck = ithFSFromFrameWithConstraints
                     .getType().getTypeConstraints();
 
+	    //System.out.println("\nCheck new FS, of type ");
+	    //System.out.println(ithFSFromFrameWithConstraints
+            //        .getType());
             ithFSFromFrameWithConstraints = checkConstraintsAgainstOneFS(
                     constraintsToCheck, ithFSFromFrameWithConstraints);
+
 
         }
         return frame;
@@ -53,6 +57,9 @@ public class ConstraintChecker {
                 Fs valFromAVPair = fsAVPair.getValue().getAvmVal();
                 Set<TypeConstraint> constraintsForNewVal = valFromAVPair
                         .getType().getTypeConstraints();
+		//System.out.println("\nCheck new FS, of type ");
+		//System.out.println(valFromAVPair
+                //    .getType());
                 Fs newValFromAVPair = checkConstraintsAgainstOneFS(
                         constraintsForNewVal, valFromAVPair);
                 if (newValFromAVPair == null) {
@@ -86,11 +93,14 @@ public class ConstraintChecker {
         // "check constraint: " + constraint + " against fs " + fs);
         // first check the particular constraint, then go recursive on the
         // AVList.
+	//System.out.println("Constraint: "+constraint);
         Fs constraintAsFs = constraint.asFs();
+	//System.out.println("Constraint as FS: "+constraintAsFs);
         Fs testUnify = null;
         try {
             testUnify = Fs.unify(constraintAsFs, fs, env,
                     Situation.getTypeHierarchy());
+	    //System.out.println(env);
         } catch (UnifyException e) {
             return null;
         }

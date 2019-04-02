@@ -128,7 +128,10 @@ public class Fs {
             this.coref = null;
             AVlist = new Hashtable<String, Value>();
         } else {
-            this.type = fs.getType();
+            this.type = new Type(fs.getType());
+	    if(fs.getType()!= null && fs.getType().getVar()!=null){
+		this.type.setVar(new Value(fs.getType().getVar(),nf));
+	    }
             this.is_typed = fs.isTyped();
             if (fs.getCoref() != null) {
                 this.coref = new Value(fs.getCoref(), nf);
@@ -369,7 +372,7 @@ public class Fs {
         if (isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
         }
-        if (seen.contains(coref)) {
+        if (seen.contains(coref) && coref!=null) {
             // System.out.println("Stopping print because of recursion");
             return res;
         } else
@@ -882,10 +885,14 @@ public class Fs {
             try {
                 New = unify(env.deref(valCoref).getAvmVal(), New, env,
                         Situation.getTypeHierarchy(), new HashSet<Value>());
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
+            } // catch (Exception e) {
+            //     e.printStackTrace();
+            //     return false;
+            // }
+	    catch (UnifyException e) {
+		//System.err.println("Exception during update of " + New);
+		    return false;
+	    }
         }
 
         env.bind(atCoref, new Value(New));
@@ -916,8 +923,8 @@ public class Fs {
         // System.out.println("Seen "+ seen);
 
         if (env.deref(valCoref).is(Value.Kind.AVM)) {
-            // System.out.println("Trying to unify: "+this);
-            // System.out.println("With : "+env.deref(valCoref).getAvmVal());
+            //System.out.println("Trying to unify: "+this);
+            //System.out.println("With : "+env.deref(valCoref).getAvmVal());
             try {
                 if (this != env.deref(valCoref).getAvmVal()) {
                     result = unify(this, env.deref(valCoref).getAvmVal(), env,
@@ -929,7 +936,7 @@ public class Fs {
                 // System.out.println("Done unify");
 
             } catch (Exception e) {
-                // e.printStackTrace();
+                e.printStackTrace();
                 return null;
             }
         }
