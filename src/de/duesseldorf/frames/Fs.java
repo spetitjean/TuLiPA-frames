@@ -128,7 +128,10 @@ public class Fs {
             this.coref = null;
             AVlist = new Hashtable<String, Value>();
         } else {
-            this.type = fs.getType();
+            this.type = new Type(fs.getType());
+            if (fs.getType() != null && fs.getType().getVar() != null) {
+                this.type.setVar(new Value(fs.getType().getVar(), nf));
+            }
             this.is_typed = fs.isTyped();
             if (fs.getCoref() != null) {
                 this.coref = new Value(fs.getCoref(), nf);
@@ -381,12 +384,13 @@ public class Fs {
         if (isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
 
-            if (seen.contains(coref)) {
+            if (coref != null && seen.contains(coref)) {
                 // System.out.println("Stopping print because of recursion");
                 return res + "]";
             } else
                 seen.add(coref);
         }
+
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
@@ -898,8 +902,12 @@ public class Fs {
             try {
                 New = unify(env.deref(valCoref).getAvmVal(), New, env,
                         Situation.getTypeHierarchy(), new HashSet<Value>());
-            } catch (Exception e) {
-                e.printStackTrace();
+            } // catch (Exception e) {
+              // e.printStackTrace();
+              // return false;
+              // }
+            catch (UnifyException e) {
+                // System.err.println("Exception during update of " + New);
                 return false;
             }
         }
@@ -945,7 +953,7 @@ public class Fs {
                 // System.out.println("Done unify");
 
             } catch (Exception e) {
-                // e.printStackTrace();
+                e.printStackTrace();
                 return null;
             }
         }

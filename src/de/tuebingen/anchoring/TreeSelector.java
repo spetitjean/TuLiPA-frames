@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.FrameUpdater;
 import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Situation;
@@ -265,7 +266,7 @@ public class TreeSelector {
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
                                 new Environment(5),
-                                situation.getTypeHierarchy());
+                                Situation.getTypeHierarchy());
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
                         ((TagNode) head.getAnchor()).getLabel().setFeatWithoutReplace("cat",
@@ -295,9 +296,9 @@ public class TreeSelector {
                             System.out.println(
                                     "TODO: create a loop in TreeSelector.546!");
                         }
-                        if (situation.getFrameGrammar() != null) {
+                        if (Situation.getFrameGrammar() != null) {
                             if (lemmaSem.size() > 0) {
-                                tlist = situation.getFrameGrammar().getGrammar()
+                                tlist = Situation.getFrameGrammar().getGrammar()
                                         .get(lemmaSem.get(0).getSemclass());
                             } else {
                                 System.err.println("No semantics for lemma "
@@ -308,6 +309,8 @@ public class TreeSelector {
                             }
                             // System.out.println("Size of the frame list
                             // for this entry: "+tlist.size());
+                        } else {
+                            tlist.add(new Tuple());
                         }
                         for (int iframe = 0; iframe < tlist.size(); iframe++) {
                             try {
@@ -569,10 +572,10 @@ public class TreeSelector {
             System.out.println("TODO: create a loop in TreeSelector.546!");
         }
 
-        if (situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
+        if (Situation.getFrameGrammar() != null && lemmaSem.size() > 0) {
             List<Tuple> tlist = situation.getFrameGrammar().getGrammar()
                     .get(lemmaSem.get(0).getSemclass());
-
+	    
             Fs frameInterface = new Fs(0);
 
             // if (tt.getFrames() != null) {
@@ -599,20 +602,39 @@ public class TreeSelector {
             if (tt.getFrameSem() != null) {
                 Frame frameSem = tt.getFrameSem();
                 if (tlist != null && tlist.get(frameid) != null) {
-                    frameInterface = tlist.get(frameid).getHead().getIface();
+		    // We need fresh instances of the interface and the frame (in case the same sem class is used twice)
+                    frameInterface = new Fs(tlist.get(frameid).getHead().getIface(),nf);
+		    //System.out.println("Old interface: "+tlist.get(frameid).getHead().getIface());
+		    //System.out.println("Fresh interface: "+frameInterface);
                     frameSem.addOtherFrame(
-                            tlist.get(frameid).getHead().getFrameSem());
-                    // tt.setFrameSem(frameSem);
-                }
-            }
+					   new FrameUpdater(tlist.get(frameid).getHead().getFrameSem(), nf).rename());
+		    //System.out.println("Old Frame: "+tlist.get(frameid).getHead().getFrameSem());
+		    //System.out.println("Fresh Frame: "+frameSem);
+		    try {
+			tt.updateFS(tt.getRoot(), env, false);
+		    } catch (UnifyException e) {
+			System.err
+			    .println("Interface update failed on tree " + tt.getOriginalId());
+			System.err.println(e);
+			throw new AnchoringException(); // we withdraw the current anchoring
+		    }
+		}
+	    }
             if (tt.getFrameSem() == null) {
                 if (tlist != null) {
                     if (tlist.get(frameid) != null) {
                         // Looking for the interface of the frame
-                        frameInterface = tlist.get(frameid).getHead()
-                                .getIface();
+			frameInterface = new Fs(tlist.get(frameid).getHead().getIface(),nf);
                         tt.setFrameSem(
-                                tlist.get(frameid).getHead().getFrameSem());
+				       new FrameUpdater(tlist.get(frameid).getHead().getFrameSem(), nf).rename());
+			try {
+			    tt.updateFS(tt.getRoot(), env, false);
+			} catch (UnifyException e) {
+			    System.err
+				.println("Interface update failed on tree " + tt.getOriginalId());
+			    System.err.println(e);
+			    throw new AnchoringException(); // we withdraw the current anchoring
+			}
                     }
                 }
             }
@@ -682,8 +704,8 @@ public class TreeSelector {
                 }
                 tt.setFrameSem(new Frame(newFrames, newRelations));
 
-                // System.out.println("treeselector framesem: " + tt+
-                // tt.getFrameSem());
+                //System.out.println("treeselector framesem: " + tt+
+                //tt.getFrameSem());
                 // END DA
 
                 // System.out.println("Frames after processing:");
@@ -910,9 +932,9 @@ public class TreeSelector {
         ptl.setPol(p);
         plm.addTuple(ptl);
         return x;
-    }
+	}
 
-    public void store(Map<String, List<Tuple>> grammar) {
+	public void store(Map<String, List<Tuple>> grammar) {
         /**
          * Method used when no anchoring is needed, the tree selector
          * then only stores the trees to the dictionary and lists.
