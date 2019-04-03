@@ -150,7 +150,7 @@ public class XMLTypeHierarchyReader extends FileReader {
         for (int i = 0; i < constraints.getLength(); i++) {
             Element constraint = (Element) constraints.item(i);
 
-            Set<String> attrsInPathParsed = new HashSet<String>();
+            List<String> attrsInPathParsed = new LinkedList<String>();
             // find the attr or path
             // the path set also holds the single attr at the moment
             if (constraint.getElementsByTagName("path").getLength() > 0) {

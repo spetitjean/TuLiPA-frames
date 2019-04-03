@@ -221,12 +221,14 @@ public class ValueTools {
     private static Value unifyAVMandVAR(Value a, Value b, Environment env,
             TypeHierarchy tyHi, Set<Value> seen, Value res)
             throws UnifyException {
-        // System.out.println("B is a variable");
+        //System.out.println("\n\n\nB is a variable");
+        //System.out.println("a is "+a);
+        //System.out.println("b is "+b);
         Value bb = env.deref(b);
-        // System.out.println(bb);
+        //System.out.println(bb);
         // if b is unbound, we bind it to a
         if (bb.equals(b)) {
-            // System.out.println("B is unbound");
+            //System.out.println("B is unbound");
             // Simon: I added this
             // This might lead to problems when 2 bound variables refer
             // to two different FS
@@ -235,6 +237,7 @@ public class ValueTools {
             // b <-> a.coref
             // @b <-> a
             if (a.getAvmVal().getCoref() != null) {
+		//System.out.println("Coref not null");
                 // System.out.println("Extra binding for coref:
                 // "+bb.getVarVal()+" and "+a.getAvmVal().getCoref());
                 // System.out.println("AVM for
@@ -244,10 +247,11 @@ public class ValueTools {
                 // "+env.deref(a.getAvmVal().getCoref()));
                 if (bb.getVarVal() != env.deref(a.getAvmVal().getCoref())
                         .getVarVal()) {
+		    //System.out.println("Binding variable and coref");
                     env.bind(bb.getVarVal(),
                             env.deref(a.getAvmVal().getCoref()));
                 } else {
-                    // System.out.println("Not binding");
+                    //System.out.println("Not binding");
                     // System.out.println("@"+bb.getVarVal());
                     // System.out.println(env.deref(new
                     // Value(5,"@"+bb.getVarVal())));
@@ -279,6 +283,7 @@ public class ValueTools {
             }
             res = a;
         } else { // b is already bound, the values must match !
+	    //System.out.println("b is bound");
             if (bb.is(Value.Kind.AVM)) { // let us see if they do:
                 res = new Value(Fs.unify(a.getAvmVal(), bb.getAvmVal(), env,
                         tyHi, seen));
@@ -298,6 +303,7 @@ public class ValueTools {
                 }
             }
         }
+	//System.out.println("res: "+res);
         return res;
     }
 
