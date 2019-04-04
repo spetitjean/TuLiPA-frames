@@ -3,12 +3,3 @@ Documentation:
   
 Code:
   * support for more constraints in type hierarchies
-  * problem with type constraints: sometimes coreferences get overwritten
-    example:
-    change_of_state -> prestate=preregion
-    change_of_state -> prestate.theme=theme
-    vs
-    change_of_state -> prestate.theme=theme
-    change_of_state -> prestate=preregion
-    In the second case, we lose the theme coreference
-    -> check unification of feature structures with variables (the coref of the prestate and the free variable of the preregion)

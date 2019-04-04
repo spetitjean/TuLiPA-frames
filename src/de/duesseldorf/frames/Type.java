@@ -210,12 +210,12 @@ public final class Type {
     public String toString() {
         String s = toStringWithoutVariable();
         s += " " + var.toString();
-        if (!typeConstraints.isEmpty()) {
-            s += "\nConstraints:";
-            for (TypeConstraint constraint : typeConstraints) {
-                s += "\n" + constraint;
-            }
-        }
+        // if (!typeConstraints.isEmpty()) {
+        //     s += "\nConstraints:";
+        //     for (TypeConstraint constraint : typeConstraints) {
+        //         s += "\n" + constraint;
+        //     }
+        // }
         return s;
     }
 }

@@ -29,6 +29,10 @@ public class Frame {
         return featureStructures;
     }
 
+    public void setFeatureStructures(List <Fs> featureStructures) {
+        this.featureStructures=featureStructures;
+    }
+
     public void addToFeatureStructures(Fs fs) {
         featureStructures.add(fs);
     }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.tuebingen.tag.Environment;
 
@@ -21,6 +23,7 @@ public class ConstraintChecker {
 
     public Frame checkConstraints() {
         //System.out.println("frame: " + frame);
+	List<Fs> newFrames = new LinkedList<Fs>();
         for (int i = 0; i < frame.getFeatureStructures().size(); i++) {
             // check the fs itself
             Fs ithFSFromFrameWithConstraints = frame.getFeatureStructures()
@@ -33,9 +36,10 @@ public class ConstraintChecker {
             //        .getType());
             ithFSFromFrameWithConstraints = checkConstraintsAgainstOneFS(
                     constraintsToCheck, ithFSFromFrameWithConstraints);
-
+	    newFrames.add(ithFSFromFrameWithConstraints);
 
         }
+	frame.setFeatureStructures(newFrames);
         return frame;
     }
 
@@ -89,13 +93,13 @@ public class ConstraintChecker {
      * @return
      */
     private Fs checkConstraint(TypeConstraint constraint, Fs fs) {
-        // System.out.println(
-        // "check constraint: " + constraint + " against fs " + fs);
+        //System.out.println(
+        //"\n\nCheck constraint: " + constraint + " against fs:\n" + fs);
         // first check the particular constraint, then go recursive on the
         // AVList.
-	//System.out.println("Constraint: "+constraint);
+	//System.out.println("\n\nConstraint: "+constraint);
         Fs constraintAsFs = constraint.asFs();
-	//System.out.println("Constraint as FS: "+constraintAsFs);
+	//System.out.println("\nConstraint as FS: "+constraintAsFs);
         Fs testUnify = null;
         try {
             testUnify = Fs.unify(constraintAsFs, fs, env,
