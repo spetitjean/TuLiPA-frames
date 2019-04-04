@@ -102,9 +102,9 @@ public class RRGTreeTools {
     public static String asStringWithNodeLabelsAndNodeType(RRGTree tree) {
         StringBuffer sb = new StringBuffer();
         sb.append("ID: " + tree.getId() + "\n");
-        if (tree instanceof RRGParseTree) {
-            sb.append(((RRGParseTree) tree).idMap2string());
-        }
+        // if (tree instanceof RRGParseTree) {
+        // sb.append(((RRGParseTree) tree).idMap2string());
+        // }
         asStringWithNodeLabelsAndNodeType(tree.getRoot(), sb, 0);
         return sb.toString();
     }
