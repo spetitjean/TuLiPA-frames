@@ -12,6 +12,7 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 
@@ -72,10 +73,10 @@ public class RRGParser {
 
         // if (verbosePrintsToStdOut) {
 
-        // System.out.println(
-        // "Found fitting lexical items in the following trees: ");
-        // agenda.forEach((item) -> System.out.println(
-        // RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
+        System.out.println(
+                "Found fitting lexical items in the following trees: ");
+        agenda.forEach((item) -> System.out.println(
+                RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
         // }
 
         // The real recognition

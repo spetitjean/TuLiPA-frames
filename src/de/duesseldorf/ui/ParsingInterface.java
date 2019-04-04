@@ -814,8 +814,6 @@ public class ParsingInterface {
             if (op.check("b")) {
                 batchparsingResultSizes.add(result.size());
             } else {
-                System.out.println("result: " + result.size() + " trees.");
-
                 for (RRGParseTree rrgParseTree : result) {
                     // System.out.println("Extraction steps for " +
                     // SrrgParseTree.getId());
@@ -824,7 +822,7 @@ public class ParsingInterface {
                     System.out.println(RRGTreeTools
                             .asStringWithNodeLabelsAndNodeType(rrgParseTree));
                 }
-
+                System.out.println("result: " + result.size() + " trees.");
             }
 
             // XML Output
