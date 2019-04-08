@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.duesseldorf.frames.Fs;
-import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTree;
@@ -27,7 +26,8 @@ import de.duesseldorf.util.GornAddress;
  *
  */
 public class TreeFromBracketedStringRetriever {
-    public SystemLogger log;
+
+    private SystemLogger log;
     private String tabSeparatedLine;
     private RRGNode lexicalElement;
 
@@ -160,15 +160,16 @@ public class TreeFromBracketedStringRetriever {
             boolean couldBeASubstNode) {
         Fs nodeFs = new Fs(1);
         // note that the lexical element is not handled here
-        List<String> substNodeLabels = Arrays.asList("NP", "NUC_ADV", "NPIP",
-                "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
+        List<String> substNodeLabels = Arrays.asList("CL", "NP", "NUC_ADV",
+                "NPIP", "QP", "V", "P", "CD", "POS", "N", "RP", "PP", "CLAUSE",
                 "CLAUSE-PERI", "CORE-PERI", "NP-PERI", "CORE");
         RRGNodeType nodeType = null;
         // find feature structures
         if (nodeStringFromResource.contains("[")) {
             int fsStartingPoint = nodeStringFromResource.indexOf("[");
             String fsString = nodeStringFromResource.substring(fsStartingPoint);
-            nodeFs = createFsFromString(fsString);
+            nodeFs = new FsFromBracketedStringRetriever(fsString)
+                    .createFsFromString();
             nodeStringFromResource = nodeStringFromResource.substring(0,
                     fsStartingPoint);
         }
@@ -176,12 +177,17 @@ public class TreeFromBracketedStringRetriever {
             nodeType = RRGNodeType.STAR;
             nodeStringFromResource = nodeStringFromResource.substring(0,
                     nodeStringFromResource.lastIndexOf("*"));
+        } else if (nodeStringFromResource.endsWith("_d")) {
+            nodeType = RRGNodeType.DDAUGHTER;
+            nodeStringFromResource = nodeStringFromResource.substring(0,
+                    nodeStringFromResource.lastIndexOf("_d"));
         } else if (couldBeASubstNode
                 && substNodeLabels.contains(nodeStringFromResource)) {
             nodeType = RRGNodeType.SUBST;
         } else if (couldBeASubstNode) {
-            System.out.println(
-                    "unknown subst node label: " + nodeStringFromResource);
+            // System.out.println(
+            // "unknown subst node label: " + nodeStringFromResource);
+            nodeType = RRGNodeType.SUBST;
         } else {
             nodeType = RRGNodeType.STD;
         }
@@ -190,34 +196,4 @@ public class TreeFromBracketedStringRetriever {
                 .build();
     }
 
-    /**
-     * format: Core*[OP=CLAUSE,OTHER=[SOMEATTR=SOMEVAL]]
-     * This doess not capture fs of a "depth" > 1 at the momemnt
-     * possibly going recursive, though in practice the fs will be rather small
-     * 
-     * @param fsString
-     * @return
-     */
-    private Fs createFsFromString(String fsString) {
-        int startindex = fsString.startsWith("[") ? 1 : 0;
-        int endindex = fsString.endsWith("[") ? fsString.length() - 1
-                : fsString.length() - 1;
-        fsString = fsString.substring(startindex, endindex);
-        Fs result = new Fs(1);
-
-        String[] fsStringSplit = fsString.split(",");
-        for (String avPair : fsStringSplit) {
-            String[] avPairSplit = avPair.split("=");
-            Value val = new Value(Value.Kind.VAL, avPairSplit[1]);
-            result.setFeat(avPairSplit[0], val);
-        }
-        // find out the string for the first val, may be an fs or a simple value
-        // if (fsStringSplit[1].startsWith("[")) {
-        // find the string for the fs, retrieve recursively and setFeat
-        // }
-
-        // go recursive until the whole fs is done
-        System.out.println("new Fs: " + result);
-        return result;
-    }
 }

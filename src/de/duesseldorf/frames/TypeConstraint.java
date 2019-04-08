@@ -1,13 +1,10 @@
 package de.duesseldorf.frames;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 import de.tuebingen.anchoring.NameFactory;
-
 
 public class TypeConstraint {
 
@@ -33,31 +30,34 @@ public class TypeConstraint {
         return val;
     }
 
-    public Fs asFs(){
+    public Fs asFs() {
         Fs result = new Fs(0);
         result.setType(getType());
-	LinkedList newAttributes= new LinkedList(getAttributes());
-	return asFsRec(result,newAttributes);
+
+        LinkedList<String> newAttributes = new LinkedList<String>(
+                getAttributes());
+        return asFsRec(result, newAttributes);
     }
-    
+
     public Fs asFsRec(Fs result, LinkedList<String> attributes) {
-	String first= attributes.pop();
-	if(attributes.size()==0){
-            result.setFeat(first, getVal());
-	}
-	// attributes should be a path of attributes
-	// the value should be given to att1 -> att2 ... -> attn
-        else{
-	    // No NameFactory is available here, but I guess this is
-	    // safe enough (we only need unique names)
-	    NameFactory nf= new NameFactory();
-	    String newVar = nf.getUniqueName();
-	    Fs in = new Fs(0, new Type(new HashSet<String>()), new Value(Value.Kind.VAR, newVar));
-	    Fs inresult=asFsRec(in,attributes);
-	    Value valResult=new Value(inresult);
-	    result.setFeat(first,valResult);
+        String first = attributes.pop();
+        if (attributes.size() == 0) {
+            result.setFeatWithoutReplace(first, getVal());
         }
-	return result;
+        // attributes should be a path of attributes
+        // the value should be given to att1 -> att2 ... -> attn
+        else {
+            // No NameFactory is available here, but I guess this is
+            // safe enough (we only need unique names)
+            NameFactory nf = new NameFactory();
+            String newVar = nf.getUniqueName();
+            Fs in = new Fs(0, new Type(new HashSet<String>()),
+                    new Value(Value.Kind.VAR, newVar));
+            Fs inresult = asFsRec(in, attributes);
+            Value valResult = new Value(inresult);
+            result.setFeatWithoutReplace(first, valResult);
+        }
+        return result;
     }
 
     @Override

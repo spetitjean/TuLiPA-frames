@@ -81,14 +81,15 @@ public class DerivedTree {
         // frames = iniTree.frames;
         // Here, copies are need, otherwise semantics of elementary trees are
         // displayed wrong
-	if(iniTree.getFrameSem()!=null && iniTree.getFrameSem().getFeatureStructures()!=null)
-	    frameSem = new Frame(
-				 new LinkedList<Fs>(
-						    iniTree.getFrameSem().getFeatureStructures()),
-				 new HashSet(iniTree.getFrameSem().getRelations()));
-	else
-	    frameSem= new Frame();
-	env = new Environment(0);
+        if (iniTree.getFrameSem() != null
+                && iniTree.getFrameSem().getFeatureStructures() != null)
+            frameSem = new Frame(
+                    new LinkedList<Fs>(
+                            iniTree.getFrameSem().getFeatureStructures()),
+                    new HashSet(iniTree.getFrameSem().getRelations()));
+        else
+            frameSem = new Frame();
+        env = new Environment(0);
         addMissingBottomFeatures(iniTree.bottomFeatures);
         addMissingTopFeatures(iniTree.topFeatures);
     }
@@ -170,8 +171,8 @@ public class DerivedTree {
                     features.put(n, topFeatures.get(n));
                 }
                 if (verbose)
-                    topFeatures.get(n).setFeat("hash", new Value(Value.Kind.VAL,
-                            Integer.toString(n.hashCode())));
+                    topFeatures.get(n).setFeatWithoutReplace("hash", new Value(
+                            Value.Kind.VAL, Integer.toString(n.hashCode())));
             } else if (botFs != null) {
                 features.put(n, bottomFeatures.get(n));
             }

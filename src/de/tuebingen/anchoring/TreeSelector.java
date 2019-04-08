@@ -261,7 +261,7 @@ public class TreeSelector {
                     boolean match = true;
                     try {
                         Fs morphAncFS = new Fs(1);
-                        morphAncFS.setFeat("cat",
+                        morphAncFS.setFeatWithoutReplace("cat",
                                 new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = ((TagNode) head.getAnchor()).getLabel();
                         Fs anchorFS = Fs.unify(morphAncFS, treeAncFS,
@@ -269,7 +269,7 @@ public class TreeSelector {
                                 Situation.getTypeHierarchy());
                         ((TagNode) head.getAnchor()).getLabel()
                                 .removeCategory();
-                        ((TagNode) head.getAnchor()).getLabel().setFeat("cat",
+                        ((TagNode) head.getAnchor()).getLabel().setFeatWithoutReplace("cat",
                                 new Value(Value.Kind.VAL,
                                         anchorFS.getCategory()));
                         ((TagNode) head.getAnchor()).findCategory();

@@ -39,6 +39,7 @@ public class RRGTools {
         }
         log.info("number of equal trees that were filtered out: "
                 + (trees.size() - result.size()));
+        log.info("there are " + result.size() + " trees left.");
         return result;
     }
 

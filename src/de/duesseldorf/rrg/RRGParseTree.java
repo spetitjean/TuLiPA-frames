@@ -399,7 +399,7 @@ public class RRGParseTree extends RRGTree {
     @Override
     public String toString() {
 
-        return id + idMap2string() + super.toString();
+        return id + /* idMap2string() + */ super.toString();
     }
 
     public List<ExtractionStep> getExtractionsteps() {

@@ -179,6 +179,10 @@ public class RRGNode implements Node {
             // System.out.println("no basecase: " + this + " VS " + other);
             return false;
         }
+        boolean fsCase = this.getNodeFs().equals(other.getNodeFs());
+        if (!fsCase) {
+            return false;
+        }
         // look at the children
         if (this.getChildren().size() != other.getChildren().size()) {
             return false;
@@ -208,7 +212,7 @@ public class RRGNode implements Node {
         sb.append(this.type.name());
         sb.append(")");
         if (nodeFs != null) {
-            sb.append(" " + nodeFs.toString());
+            sb.append(" " + nodeFs.toStringOneLiner());
         }
         return sb.toString();
     }

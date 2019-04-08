@@ -9,6 +9,34 @@ import de.tuebingen.tag.Environment;
 public class ValueTools {
 
     /**
+     * if a and b are both null, return null
+     * 
+     * if exactly one of them is null, return the one that is not null
+     * 
+     * if both are not null, return the unification of both
+     * 
+     * if unification doesn't work, throw exception
+     * 
+     * @param a
+     * @param b
+     * @param env
+     * @return
+     * @throws UnifyException
+     */
+    public static Value unifyOrReplace(Value a, Value b, Environment env)
+            throws UnifyException {
+        if (a == null && b == null) {
+            return null;
+        } else if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
+
+        return unify(a, b, env);
+    }
+
+    /**
      * Performs unification between values and returns a value
      * 
      * @param a
