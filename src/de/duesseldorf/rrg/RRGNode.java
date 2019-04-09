@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /*
@@ -83,11 +85,15 @@ public class RRGNode implements Node {
     public boolean nodeUnificationPossible(RRGNode other) {
         boolean result = false;
         if (other.getCategory().equals(this.getCategory())) {
-            // this.setChildren(new LinkedList<Node>(other.getChildren()));
             result = true;
-            // System.out.println(
-            // children.get(1).toString() + children.get(1).getChildren());
+            try {
+                result = Fs.unify(this.getNodeFs(), other.getNodeFs(),
+                        new Environment(0)) != null;
+            } catch (UnifyException e) {
+                result = false;
+            }
         }
+
         return result;
     }
 

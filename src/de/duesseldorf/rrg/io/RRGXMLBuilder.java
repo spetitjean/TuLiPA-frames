@@ -128,17 +128,28 @@ public class RRGXMLBuilder {
             f.setAttribute(XMLRRGTag.NAME.StringVal(), avpair.getKey());
 
             if (avpair.getValue().is(Value.Kind.VAL)) {
+                System.out.println("first case with " + avpair.getKey() + "->"
+                        + avpair.getValue());
                 Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
                 sym.setAttribute(XMLRRGTag.VALUE.StringVal(),
                         avpair.getValue().getSVal());
                 f.appendChild(sym);
             } else if (avpair.getValue().is(Value.Kind.AVM)) {
+                System.out.println("snd case with " + avpair.getKey() + "->"
+                        + avpair.getValue());
                 Element fsval = createFsElement(
                         doc.createElement(
                                 XMLRRGTag.FEATURESTRUCTURE.StringVal()),
                         avpair.getValue().getAvmVal());
                 f.appendChild(fsval);
+            } else if (avpair.getValue().is(Value.Kind.VAR)) {
+                Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+                sym.setAttribute("varname", avpair.getValue().getVarVal());
+                f.appendChild(sym);
+            } else {
+                System.out.println("ERROR!!!" + avpair.getValue().getType());
             }
+
             fsElement.appendChild(f);
         }
         return fsElement;

@@ -783,7 +783,7 @@ public class ParsingInterface {
 
     public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
-        System.out.println("yay, go RRG!");
+        // System.out.println("yay, go RRG!");
         boolean returnValue = false;
         boolean verbose = op.check("v");
 

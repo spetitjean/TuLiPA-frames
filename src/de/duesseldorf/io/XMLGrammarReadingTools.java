@@ -88,7 +88,7 @@ public class XMLGrammarReadingTools {
         Value corefval = new Value(Value.Kind.VAR, nf.getName(coref));
 
         NodeList etypes = null;
-	Value typevar = null;
+        Value typevar = null;
         NodeList l = e.getChildNodes();
 
         // NodeList etypes = e.getElementsByTagName("type");
@@ -98,7 +98,8 @@ public class XMLGrammarReadingTools {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
                     etypes = el.getElementsByTagName("type");
-		    typevar = new Value(Value.Kind.VAR,nf.getName(el.getAttribute("coref")));
+                    typevar = new Value(Value.Kind.VAR,
+                            nf.getName(el.getAttribute("coref")));
                 }
             }
         }
@@ -113,14 +114,14 @@ public class XMLGrammarReadingTools {
             }
         }
 
-	Type frame_type;
+        Type frame_type;
         if (typevar == null)
             frame_type = new Type(types);
         else
             frame_type = new Type(types, typevar);
-	
+
         res = new Fs(l.getLength(), frame_type, corefval);
-	
+
         for (int i = 0; i < l.getLength(); i++) {
             Node n = l.item(i);
             if (n.getNodeType() == Node.ELEMENT_NODE) {

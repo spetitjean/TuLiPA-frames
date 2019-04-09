@@ -271,14 +271,21 @@ public class RRGParser {
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
-                        RRGParseItem cons = new RRGParseItem.Builder()
-                                .tree(tree).node(substNode).nodepos(NodePos.BOT)
-                                .start(currentItem.startPos())
-                                .end(currentItem.getEnd())
-                                .gaps(currentItem.getGaps()).ws(false).build();
-                        // System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(cons, Operation.SUBSTITUTE,
-                                currentItem);
+                        boolean checkIfUnificationWorks = substNode
+                                .nodeUnificationPossible(currentItem.getNode());
+
+                        if (checkIfUnificationWorks) {
+                            RRGParseItem cons = new RRGParseItem.Builder()
+                                    .tree(tree).node(substNode)
+                                    .nodepos(NodePos.BOT)
+                                    .start(currentItem.startPos())
+                                    .end(currentItem.getEnd())
+                                    .gaps(currentItem.getGaps()).ws(false)
+                                    .build();
+                            // System.out.println("cons: " + consequent);
+                            addToChartAndAgenda(cons, Operation.SUBSTITUTE,
+                                    currentItem);
+                        }
                     }
                 }
             }

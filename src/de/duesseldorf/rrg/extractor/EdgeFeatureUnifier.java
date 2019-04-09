@@ -9,10 +9,12 @@ import de.duesseldorf.frames.ValueTools;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.io.SystemLogger;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tag.Environment;
 
 public class EdgeFeatureUnifier {
+    private static SystemLogger log = new SystemLogger(System.err, true);
 
     private Set<RRGParseTree> parseTreesWithoutUnification;
     private Set<RRGParseTree> unifiedTrees;
@@ -35,6 +37,10 @@ public class EdgeFeatureUnifier {
         // Set<RRGParseTree> resultingTrees = new HashSet<RRGParseTree>(
         // unifiedTrees);
         // resultingTrees.addAll(parseTreesWithoutUnification);
+        log.info("unifying edge features, removed "
+                + (parseTreesWithoutUnification.size() - unifiedTrees.size())
+                + " trees");
+        log.info("there are " + unifiedTrees.size() + " trees left.");
         return unifiedTrees;
     }
 
