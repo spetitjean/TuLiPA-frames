@@ -204,6 +204,23 @@ public class RRGNode implements Node {
     }
 
     /**
+     * @return a String representation of this node, without children and
+     *         without feature structures
+     */
+    public String toStringWithoutFs() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(this.gornaddress.toString());
+        sb.append(" ");
+        sb.append(this.category);
+        sb.append(" ");
+        sb.append(this.name);
+        sb.append(" (");
+        sb.append(this.type.name());
+        sb.append(")");
+        return sb.toString();
+    }
+
+    /**
      * @return a String representation of this node, without children
      */
     @Override

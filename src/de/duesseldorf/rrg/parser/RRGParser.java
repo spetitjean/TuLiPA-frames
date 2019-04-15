@@ -44,6 +44,7 @@ import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 public class RRGParser {
+
     private RRGParseChart chart;
     private ConcurrentSkipListSet<RRGParseItem> agenda;
     private RequirementFinder requirementFinder;
@@ -189,15 +190,19 @@ public class RRGParser {
                     gaps.add(new Gap(currentItem.startPos(),
                             currentItem.getEnd(), cat));
                     for (RRGNode substNode : substNodes) {
-                        // System.out.println("got to for: " + substNode);
-                        RRGParseItem cons = new RRGParseItem.Builder()
-                                .tree(tree).node(substNode).nodepos(NodePos.BOT)
-                                .start(currentItem.startPos())
-                                .end(currentItem.getEnd()).gaps(gaps).ws(false)
-                                .build();
-                        // System.out.println("cons: " + consequent);
-                        addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
-                                currentItem);
+                        if (substNode.nodeUnificationPossible(
+                                currentItem.getNode())) {
+                            // System.out.println("got to for: " + substNode);
+                            RRGParseItem cons = new RRGParseItem.Builder()
+                                    .tree(tree).node(substNode)
+                                    .nodepos(NodePos.BOT)
+                                    .start(currentItem.startPos())
+                                    .end(currentItem.getEnd()).gaps(gaps)
+                                    .ws(false).build();
+                            // System.out.println("cons: " + consequent);
+                            addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
+                                    currentItem);
+                        }
                     }
                 }
             }
@@ -235,9 +240,6 @@ public class RRGParser {
                         currentItem);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
                         currentItem);
-                // System.out.println(
-                // "you triggered some special case for sister adjunction which
-                // I haven't tested yet. D");
             }
             // System.out.println("rightadjoin: " + currentItem);
             // System.out.println(rightAdjoinAntecedents);

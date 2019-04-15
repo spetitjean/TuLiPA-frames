@@ -75,6 +75,9 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         }
+        // for (RRGTree tree : resultingParses) {
+        // System.out.println(tree);
+        // }
         Set<RRGParseTree> resultingParsesFiltered = RRGTools.convertTreeSet(
                 RRGTools.removeDoubleTreesByWeakEquals(resultingParses));
 
@@ -164,9 +167,14 @@ public class ParseForestExtractor {
         if (parsesInThisStep.isEmpty()) {
             parsesInThisStep.add(extractionstep.getCurrentParseTree());
         }
+        // System.out.println("---------------------------------------------");
+        // System.out.println(parsesInThisStep.size());
+        // System.out.println("---------------------------------------------");
+        // System.out.println(extractionstep);
         // for (RRGParseTree parseInThisStep : parsesInThisStep) {
         // System.out.println(parseInThisStep);
         // }
+        // System.out.println("---------------------------------------------");
 
         Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep = addExtractionStepToAllTrees(
                 parsesInThisStep, extractionstep);
@@ -299,6 +307,7 @@ public class ParseForestExtractor {
                             + 1);
 
             tmpResult = extract(nextStep);
+            // System.out.println("tmpresult size: " + tmpResult.size());
             // extract target:
             for (RRGParseTree rrgParseTree : tmpResult) {
                 nextStep = new ExtractionStep(targetItem,
