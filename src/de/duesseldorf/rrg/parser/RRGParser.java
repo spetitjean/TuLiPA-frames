@@ -72,11 +72,19 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
 
         // if (verbosePrintsToStdOut) {
-
+        System.out.println("--------------------------------");
         System.out.println(
                 "Found fitting lexical items in the following trees: ");
-        agenda.forEach((item) -> System.out.println(
-                RRGTreeTools.recursivelyPrintNode(item.getTree().getRoot())));
+        System.out.println("--------------------------------");
+
+        for (RRGParseItem item : agenda) {
+            System.out.println(item.getTree().getId());
+            System.out.println(RRGTreeTools
+                    .recursivelyPrintNode(item.getTree().getRoot()));
+            System.out.println("--------------------------------");
+        }
+        System.out.println("--------------------------------");
+
         // }
 
         // The real recognition
