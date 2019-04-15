@@ -120,7 +120,8 @@ public class RRGTreeTools {
         sb.append(((RRGNode) root).getType());
         if (((RRGNode) root).getNodeFs() != null) {
             sb.append(" ");
-            sb.append(((RRGNode) root).getNodeFs().toStringOneLiner());
+            sb.append(
+                    ((RRGNode) root).getNodeFs().toStringWithOutTypeOneLiner());
         }
         sb.append("\n");
         for (Node node : root.getChildren()) {

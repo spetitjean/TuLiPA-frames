@@ -375,7 +375,11 @@ public class DOMderivationBuilder {
             relationEl.setAttribute("name", properRelation.getName());
 
             for (Value properVal : properRelation.getArguments()) {
-                buildVal(relationEl, properVal.getVarVal());
+                //buildVal(relationEl, properVal.getVarVal());
+		Element e;
+		e = derivDoc.createElement("sym");
+		e.setAttribute("varname", properVal.getVarVal());
+		relationEl.appendChild(e);
             }
             mother.appendChild(relationEl);
         }

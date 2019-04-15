@@ -373,15 +373,22 @@ public class Fs {
         return toString().replaceAll("\n", ", ");
     }
 
-    public String toString() {
+    public String toStringWithOutTypeOneLiner() {
         Set<Value> seen = new HashSet<Value>();
-        return toStringRec(seen);
+        String res = toStringRec(seen, false);
+        res = res.replaceAll("\n", ", ");
+        return res;
     }
 
-    public String toStringRec(Set<Value> seen) {
+    public String toString() {
+        Set<Value> seen = new HashSet<Value>();
+        return toStringRec(seen, true);
+    }
+
+    public String toStringRec(Set<Value> seen, boolean withType) {
         String res = "[";
 
-        if (isTyped()) {
+        if (withType && isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
 
             if (coref != null && seen.contains(coref)) {
@@ -391,13 +398,26 @@ public class Fs {
                 seen.add(coref);
         }
 
+        res += attrsToString(seen, withType);
+        res += "]";
+        return res;
+    }
+
+    /**
+     * @param seen
+     * @param res
+     * @return
+     */
+    private String attrsToString(Set<Value> seen, boolean withType) {
+        String res = "";
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
             String k = (String) i.next();
             // System.out.println(seen);
             if (AVlist.get(k).getType() == Value.Kind.AVM)
-                res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen)
+                res += k + " = "
+                        + AVlist.get(k).getAvmVal().toStringRec(seen, withType)
                         + "\n ";
             else
                 res += k + " = " + AVlist.get(k).toString() + "\n ";
@@ -406,7 +426,7 @@ public class Fs {
             // we remove the last ", "
             res = res.substring(0, (res.length() - 2));
         }
-        return res + "]";
+        return res;
     }
 
     public Type getType() {
