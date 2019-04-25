@@ -805,7 +805,7 @@ public class ParsingInterface {
         for (String sentence : sentences) {
             List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
 
-            RRGParser rrgparser = new RRGParser();
+            RRGParser rrgparser = new RRGParser(op.getVal("a"));
             Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
 
             if (!result.isEmpty()) {

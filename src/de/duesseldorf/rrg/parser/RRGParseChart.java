@@ -42,9 +42,12 @@ public class RRGParseChart {
     // map start index to Parse Items to their backpointers
     private Map<Integer, Map<RRGParseItem, Backpointer>> chart;
     private int sentencelength;
+    private String axiom;
 
-    public RRGParseChart(int sentencelength) {
+    public RRGParseChart(int sentencelength, String axiom) {
+
         this.sentencelength = sentencelength;
+        this.axiom = (axiom == null) ? "" : axiom;
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
         chart = new HashMap<Integer, Map<RRGParseItem, Backpointer>>();
@@ -66,13 +69,14 @@ public class RRGParseChart {
      *         met:<br>
      *         - start = 0, end = sentencelength<br>
      *         - ws is false<br>
-     *         - in TOP position in a STD root node
+     *         - in TOP position in a STD root node<br>
+     *         - axiom fits
      */
     public Set<RRGParseItem> retrieveGoalItems() {
         Set<RRGParseItem> goals = new HashSet<RRGParseItem>();
         for (RRGParseItem item : chart.get(0).keySet()) {
             RRGParseItem rrgitem = (RRGParseItem) item;
-            boolean goalReq = rrgitem.getEnd() == sentencelength && // end=n
+            boolean goalReqsFromItem = rrgitem.getEnd() == sentencelength && // end=n
             // no more ws
                     rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
                     // TOP position
@@ -81,10 +85,19 @@ public class RRGParseChart {
                     && rrgitem.getNode().getGornaddress().mother() == null
                     // in a STD node
                     && rrgitem.getNode().getType().equals(RRGNodeType.STD);
-            if (goalReq) {
-                goals.add(rrgitem);
+            boolean axiomFits = axiom.equals("")
+                    || rrgitem.getNode().getCategory().equals(axiom);
+            if (goalReqsFromItem) {
+                if (axiomFits) {
+                    goals.add(rrgitem);
+                } else {
+                    System.out.println(
+                            "item not taken as goal item because axiom did not fit: "
+                                    + rrgitem);
+                }
             }
         }
+
         System.out.println("found goal items: " + goals);
         return goals;
     }

@@ -54,8 +54,10 @@ public class RRGParser {
     private Set<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
+    private String axiom;
 
-    public RRGParser() {
+    public RRGParser(String axiom) {
+        this.axiom = (axiom == null) ? "" : axiom;
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         this.treesInvolvedInParsing = new HashSet<>();
@@ -66,7 +68,7 @@ public class RRGParser {
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
-        this.chart = new RRGParseChart(toksentence.size());
+        this.chart = new RRGParseChart(toksentence.size(), axiom);
         // Axioms through scanning:
         scan(toksentence);
 
