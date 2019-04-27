@@ -62,6 +62,10 @@ public class RRGXMLBuilder {
             Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
             entry.appendChild(frame);
 
+            // used elementary trees:
+            Element trace = createTrace(parse);
+            entry.appendChild(trace);
+
             rootGrammar.appendChild(entry);
         }
         doc.appendChild(rootGrammar);
@@ -79,6 +83,16 @@ public class RRGXMLBuilder {
                     "Something went wrong during output transformation");
             e.printStackTrace();
         }
+    }
+
+    private Element createTrace(RRGParseTree parse) {
+        Element trace = doc.createElement(XMLRRGTag.TRACE.StringVal());
+        for (String elemId : parse.getIds()) {
+            Element classElem = doc.createElement(XMLRRGTag.CLASS.StringVal());
+            classElem.setTextContent(elemId);
+            trace.appendChild(classElem);
+        }
+        return trace;
     }
 
     private Element createTree(RRGParseTree parse) {

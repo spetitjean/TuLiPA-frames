@@ -52,8 +52,8 @@ public class RRGTools {
             } else {
                 boolean addCandidate = true;
                 for (RRGParseTree alreadyFilteredTree : result) {
-                    if (alreadyFilteredTree.getIdMap()
-                            .equals(candidate.getIdMap())) {
+                    if (alreadyFilteredTree.getIds()
+                            .equals(candidate.getIds())) {
                         addCandidate = false;
                     }
                 }

@@ -94,6 +94,7 @@ public class RRGParseChart {
                     System.out.println(
                             "item not taken as goal item because axiom did not fit: "
                                     + rrgitem);
+
                 }
             }
         }

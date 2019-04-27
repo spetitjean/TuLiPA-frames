@@ -158,13 +158,22 @@ public class ParseForestExtractor {
                 extractCompleteWrapping(coWrAntecedents, extractionstep));
 
         // Predict-Wrapping
+
         Set<List<RRGParseItem>> prWrAntecedents = backPointers
                 .getAntecedents(Operation.PREDICTWRAPPING);
-        parsesInThisStep.addAll(
-                extractPredictWrapping(prWrAntecedents, extractionstep));
+        boolean wrappingException = false;
+        try {
+            parsesInThisStep.addAll(
+                    extractPredictWrapping(prWrAntecedents, extractionstep));
+        } catch (WrappingException e) {
+            wrappingException = true;
+        }
 
         // if no other rule applied (i.e. if we dealt with a scanned item):
-        if (parsesInThisStep.isEmpty()) {
+        boolean noBackPointersBecauseLexNode = extractionstep.getCurrentItem()
+                .getNode().getType().equals(RRGNodeType.LEX);
+        if (parsesInThisStep.isEmpty() && !wrappingException
+                && noBackPointersBecauseLexNode) {
             parsesInThisStep.add(extractionstep.getCurrentParseTree());
         }
         // System.out.println("---------------------------------------------");
@@ -176,24 +185,15 @@ public class ParseForestExtractor {
         // }
         // System.out.println("---------------------------------------------");
 
-        Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep = addExtractionStepToAllTrees(
-                parsesInThisStep, extractionstep);
+        // Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep =
+        // addExtractionStepToAllTrees(
+        // parsesInThisStep, extractionstep);
         return parsesInThisStep;
-    }
-
-    private Set<RRGParseTree> addExtractionStepToAllTrees(
-            Set<RRGParseTree> parsesInThisStep, ExtractionStep e) {
-        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
-        for (RRGParseTree tree : parsesInThisStep) {
-            tree.addExtractionStep(e);
-            result.add(tree);
-        }
-        return result;
     }
 
     private Set<RRGParseTree> extractPredictWrapping(
             Set<List<RRGParseItem>> predictWrappingAntecedents,
-            ExtractionStep extractionstep) {
+            ExtractionStep extractionstep) throws WrappingException {
 
         Set<RRGParseTree> parsesInThisPWStep = new HashSet<RRGParseTree>();
         for (List<RRGParseItem> predictWrappingantecedentItemsingletonList : predictWrappingAntecedents) {
@@ -212,14 +212,18 @@ public class ParseForestExtractor {
             // insert the subtree stored in the RRGParseTree at the correct GA
             // (seems to work)
             // continue extraction from there with same GA
+
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().addWrappingSubTree(
                             ddaughterAbsAddress, predictWrappingAntecedentItem);
-            ExtractionStep nextStep = new ExtractionStep(
-                    predictWrappingAntecedentItem, ddaughterAbsAddress,
-                    nextStepParseTree,
-                    extractionstep.getGoToRightWhenGoingDown());
-            parsesInThisPWStep.addAll(extract(nextStep));
+            if (nextStepParseTree != null) {
+                ExtractionStep nextStep = new ExtractionStep(
+                        predictWrappingAntecedentItem, ddaughterAbsAddress,
+                        nextStepParseTree,
+                        extractionstep.getGoToRightWhenGoingDown());
+                parsesInThisPWStep.addAll(extract(nextStep));
+            } else
+                throw new WrappingException();
         }
         return parsesInThisPWStep;
     }

@@ -76,8 +76,8 @@ public class RRGParser {
 
         // if (verbosePrintsToStdOut) {
         System.out.println("--------------------------------");
-        System.out.println(
-                "Found fitting lexical items in the following trees: ");
+        System.out.println("Found fitting lexical items in the following "
+                + agenda.size() + " trees: ");
         System.out.println("--------------------------------");
 
         for (RRGParseItem item : agenda) {
@@ -106,7 +106,7 @@ public class RRGParser {
             }
             predictwrapping(currentItem);
             combinesisters(currentItem);
-            completewrapping(currentItem);
+            completeWrapping(currentItem);
 
             // System.out.println("Agenda size: " + agenda.size());
         }
@@ -148,7 +148,7 @@ public class RRGParser {
         }
     }
 
-    private void completewrapping(RRGParseItem currentItem) {
+    private void completeWrapping(RRGParseItem currentItem) {
         // System.out.println("complW with " + currentItem);
         boolean rootItem = requirementFinder
                 .isCompleteWrappingRootItem(currentItem);
@@ -174,6 +174,17 @@ public class RRGParser {
             // Set<RRGParseItem> completeWrappingRootAntecedents =
             // requirementFinder
             // .findCompleteWrappingRoots(currentItem, chart);
+            // for (RRGParseItem rootAntecedent :
+            // completeWrappingRootAntecedents) {
+            // System.out.println("rootantecedent: " + rootAntecedent);
+            // for (Gap gap : rootAntecedent.getGaps()) {
+            // RRGParseItem consequent = deducer.applyCompleteWrapping(
+            // rootAntecedent, rootAntecedent, gap);
+            // System.out.println("cons: " + consequent);
+            // addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
+            // currentItem, rootAntecedent);
+            // }
+            // }
             // System.out.println("untested completeWrapping territory! D");
             // System.out.println("root: " + completeWrappingRootAntecedents);
             // System.out.println("ddaughter: " + currentItem);

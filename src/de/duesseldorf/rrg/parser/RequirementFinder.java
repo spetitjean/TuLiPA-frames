@@ -450,7 +450,6 @@ public class RequirementFinder {
          */
         RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
                 .gaps(modelgaps).ws(false).build();
-
         return chart.findUnderspecifiedItem(model, true);
     }
 }
