@@ -82,13 +82,13 @@ public class RRGNode implements Node {
      * @param other
      * @return {@code true} iff the unification succeeded
      */
-    public boolean nodeUnificationPossible(RRGNode other) {
+    public boolean nodeUnificationPossible(RRGNode other, Environment env) {
         boolean result = false;
         if (other.getCategory().equals(this.getCategory())) {
             result = true;
             try {
                 result = Fs.unify(this.getNodeFs(), other.getNodeFs(),
-                        new Environment(0)) != null;
+                        env) != null;
             } catch (UnifyException e) {
                 result = false;
             }

@@ -143,7 +143,8 @@ public class RRGTreeTools {
      * @param node2
      * @return
      */
-    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
+    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2,
+            Environment env) {
         RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
         if (!node1.getType().equals(node2.getType())) {
             resultBuilder = resultBuilder.type(RRGNodeType.STD);
@@ -152,7 +153,7 @@ public class RRGTreeTools {
                 || node2.getType().equals(RRGNodeType.SUBST)) {
             resultBuilder = resultBuilder.type(RRGNodeType.SUBST);
         }
-        if (!node1.nodeUnificationPossible(node2)) {
+        if (!node1.nodeUnificationPossible(node2, env)) {
             System.err.println("node unification not possible! ");
             System.err.println(node1);
             System.err.println(node2);
@@ -160,7 +161,7 @@ public class RRGTreeTools {
         }
         try {
             Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(),
-                    new Environment(2));
+                    env);
 
             resultBuilder = resultBuilder.fs(fsForResult);
         } catch (UnifyException e) {

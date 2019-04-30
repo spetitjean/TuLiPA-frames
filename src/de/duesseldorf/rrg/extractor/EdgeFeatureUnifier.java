@@ -11,7 +11,6 @@ import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.io.SystemLogger;
 import de.duesseldorf.util.GornAddress;
-import de.tuebingen.tag.Environment;
 
 public class EdgeFeatureUnifier {
     private static SystemLogger log = new SystemLogger(System.err, true);
@@ -47,7 +46,6 @@ public class EdgeFeatureUnifier {
     private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
         this.result = new RRGParseTree(ununifiedTree);
         result.setId(result.getId() + "_edgesUnified");
-
         return unifyEdgeFeatures(new GornAddress());
     }
 
@@ -79,7 +77,7 @@ public class EdgeFeatureUnifier {
                 try {
                     newEdgeValueForBoth = ValueTools.unifyOrReplace(
                             edgeValueFromLeftDaughter,
-                            edgeValueFromRightDaughter, new Environment(0));
+                            edgeValueFromRightDaughter, result.getEnv());
                     if (newEdgeValueForBoth == null) {
                         // no edge fs's at all
                         continue;
@@ -118,9 +116,9 @@ public class EdgeFeatureUnifier {
             try {
                 // unify
                 Value newLeftMost = ValueTools.unifyOrReplace(lowerLeftMost,
-                        upperLeftMost, new Environment(0));
+                        upperLeftMost, result.getEnv());
                 Value newRightMost = ValueTools.unifyOrReplace(lowerRightMost,
-                        upperRightMost, new Environment(0));
+                        upperRightMost, result.getEnv());
                 // replace if unification was successfull
                 // left
                 ((RRGNode) nodeWithGornAddress.getChildren().get(0)).getNodeFs()

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /**
@@ -48,15 +49,21 @@ public class RRGTree {
     private RRGNode ddaughter; // only one ddaughter is allowed!
     protected String id;
 
+    private Environment env;
+
     public RRGTree(Node root, String id) {
         this.root = new RRGNode.Builder((RRGNode) root).build();
         this.id = id;
+        this.setEnv(new Environment(0));
         retrieveSpecialNodes();
+
     }
 
     public RRGTree(RRGTree tree) {
         this.root = new RRGNode.Builder((RRGNode) tree.getRoot()).build();
         this.id = tree.id;
+        this.setEnv(tree.getEnv());
+        // System.out.println("TODO ENVIRONMENT IN RRGTREE");
         retrieveSpecialNodes();
     }
 
@@ -222,4 +229,11 @@ public class RRGTree {
         return beiwerk + RRGTreeTools.recursivelyPrintNode(root);
     }
 
+    public Environment getEnv() {
+        return env;
+    }
+
+    public void setEnv(Environment env) {
+        this.env = env;
+    }
 }

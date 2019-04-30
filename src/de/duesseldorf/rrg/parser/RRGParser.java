@@ -204,7 +204,8 @@ public class RRGParser {
                             currentItem.getEnd(), cat));
                     for (RRGNode substNode : substNodes) {
                         if (substNode.nodeUnificationPossible(
-                                currentItem.getNode())) {
+                                currentItem.getNode(),
+                                currentItem.getTree().getEnv())) {
                             // System.out.println("got to for: " + substNode);
                             RRGParseItem cons = new RRGParseItem.Builder()
                                     .tree(tree).node(substNode)
@@ -295,7 +296,8 @@ public class RRGParser {
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
                         boolean checkIfUnificationWorks = substNode
-                                .nodeUnificationPossible(currentItem.getNode());
+                                .nodeUnificationPossible(currentItem.getNode(),
+                                        currentItem.getTree().getEnv());
 
                         if (checkIfUnificationWorks) {
                             RRGParseItem cons = new RRGParseItem.Builder()

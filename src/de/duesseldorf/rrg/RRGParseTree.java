@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.extractor.ExtractionStep;
 import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /**
@@ -129,48 +131,6 @@ public class RRGParseTree extends RRGTree {
     }
 
     /**
-     * replaces this trees node with gornaddress address with the root node of
-     * the subtree subtree. Returns a new tree (to leave the original one
-     * unchanged)
-     * 
-     * @param address
-     * @param subtree
-     * @return
-     */
-    public RRGParseTree replaceNodeWithSubTree(GornAddress address,
-            RRGTree subtree) {
-        RRGParseTree resultingTree = new RRGParseTree(this);
-        System.out.println(resultingTree);
-        RRGNode resTreeNode = resultingTree.findNode(address);
-        RRGNode subTreeRoot = new RRGNode.Builder((RRGNode) subtree.getRoot())
-                .build();
-
-        // System.out.println("whos null?");
-        // System.out.println(resTreeNode);
-        // System.out.println(subTreeRoot);
-
-        boolean substPossible = resTreeNode
-                .nodeUnificationPossible(subTreeRoot);
-        if (substPossible) {
-            // setNode(address, subTreeRoot);
-            resTreeNode.setChildren(subtree.getRoot().getChildren());
-        } else {
-            System.out.println(
-                    "substitution did not work when replacing at GA in\n" + this
-                            + "\nwith subtree\n" + subtree);
-        }
-
-        System.out.println("a GA that should not exist: " + address
-                .ithDaughter(1).ithDaughter(1).ithDaughter(1).ithDaughter(0));
-        System.out.println("a node: " + "" + resultingTree.findNode(address
-                .ithDaughter(1).ithDaughter(1).ithDaughter(1).ithDaughter(0)));
-        // // System.out.println(
-        // "resulting tree in replacement after: " + resultingTree);
-
-        return resultingTree;
-    }
-
-    /**
      * TODO deal with substitution of the tree below ddaughter. Keep that
      * subtree somewhere?
      * 
@@ -191,11 +151,11 @@ public class RRGParseTree extends RRGTree {
 
         // insert the children
         RRGNode targetNode = resultingTree.findNode(dmother);
-        boolean wrappingPossible = targetNode
-                .nodeUnificationPossible((RRGNode) wrappedTree.getRoot());
+        boolean wrappingPossible = targetNode.nodeUnificationPossible(
+                (RRGNode) wrappedTree.getRoot(), getEnv());
         if (wrappingPossible) {
             RRGNode newTargetNode = RRGTreeTools.unifyNodes(targetNode,
-                    (RRGNode) wrappedTree.getRoot());
+                    (RRGNode) wrappedTree.getRoot(), getEnv());
             resultingTree.setNode(dmother, newTargetNode);
             // put the subtree from the ddaughter downwards somewhere safe, in
             // order to take it again when doing predictWrapping
@@ -211,6 +171,13 @@ public class RRGParseTree extends RRGTree {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
             resultingTree.ids.add("WRAPPING::" + wrappedTree.getId());
+            try {
+                resultingTree.setEnv(Environment.merge(resultingTree.getEnv(),
+                        wrappedTree.getEnv()));
+            } catch (UnifyException e) {
+                System.out.println(
+                        "ERROR: Not able to merge environments during wrapping");
+            }
         } else {
             System.err.println(
                     "could not complete a wrapping of target tree into wrapping tree at node "
@@ -246,12 +213,12 @@ public class RRGParseTree extends RRGTree {
         // "subtree: " + RRGTreeTools.recursivelyPrintNode(subTreeRoot));
         RRGNode ddaughter = resultingTree.findNode(ddaughterAbsAddress);
         if (subTreeRoot != null
-                && ddaughter.nodeUnificationPossible(subTreeRoot)) {
+                && ddaughter.nodeUnificationPossible(subTreeRoot, getEnv())) {
             // try improvement: setting the node type to STD as wrapping is
             // finished. No parse tree should have ddaughters in them now
             subTreeRoot.setType(RRGNodeType.STD);
             RRGNode newSubTreeRoot = RRGTreeTools.unifyNodes(subTreeRoot,
-                    ddaughter);
+                    ddaughter, getEnv());
             resultingTree.setNode(ddaughterAbsAddress, newSubTreeRoot);
 
             // when wrapping several times, the subtree we just added is
@@ -293,20 +260,27 @@ public class RRGParseTree extends RRGTree {
         RRGParseTree result = new RRGParseTree(this);
         RRGNode targetNode = result.findNode(targetAddress);
         if (((RRGNode) adjoiningTree.getRoot())
-                .nodeUnificationPossible(targetNode)) {
+                .nodeUnificationPossible(targetNode, getEnv())) {
             // unify root of aux tree and target node
             RRGNode newTargetNode = RRGTreeTools.unifyNodes(targetNode,
-                    (RRGNode) adjoiningTree.getRoot());
+                    (RRGNode) adjoiningTree.getRoot(), getEnv());
             // // put new target node in resulting tree
             // System.out.println(newTargetNode + " newtarget");
             // System.out.println("result tree: " + result.toString());
-            // System.out.println("targetAddress: " + targetAddress);
+            // System.out.println("targetAddress: " + targetAddress);,env
             // Da kann irgendwas nicht stimmen. Nochmal überdenken, was wo hin
             // muss, bevor sich allees verknotet.
             result.setNode(targetAddress, newTargetNode);
             newTargetNode.addXchild(
                     adjoiningTree.getRoot().getChildren().get(0), position);
             result.ids.add("SISTERADJOIN::" + adjoiningTree.getId());
+            try {
+                result.setEnv(
+                        Environment.merge(getEnv(), adjoiningTree.getEnv()));
+            } catch (UnifyException e) {
+                System.out.println(
+                        "ERROR: Not able to merge environments during sister adjunction");
+            }
         } else {
             System.out.println(
                     "node unification not possible during sister adjunction");
@@ -329,11 +303,18 @@ public class RRGParseTree extends RRGTree {
         RRGNode targetNode = result.findNode(address);
         // System.out.println("targetNode: " + targetNode);
         if (((RRGNode) substitutionTree.getRoot())
-                .nodeUnificationPossible(targetNode)) {
+                .nodeUnificationPossible(targetNode, getEnv())) {
 
             RRGNode substNodeWithFs = RRGTreeTools.unifyNodes(
-                    (RRGNode) substitutionTree.getRoot(), targetNode);
+                    (RRGNode) substitutionTree.getRoot(), targetNode, getEnv());
             result.setNode(address, substNodeWithFs);
+            try {
+                result.setEnv(
+                        Environment.merge(getEnv(), substitutionTree.getEnv()));
+            } catch (UnifyException e) {
+                System.out.println(
+                        "ERROR: Not able to merge environments during substitution");
+            }
         } else {
             System.err.println(
                     "NU not possible on tree with id: " + this.getId());
