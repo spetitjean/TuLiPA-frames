@@ -261,7 +261,8 @@ public class RequirementFinder {
         RRGNode targetMother = target.getTree()
                 .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
-            if (root.getNode().nodeUnificationPossible(targetMother)) {
+            if (root.getNode().nodeUnificationPossible(targetMother,
+                    root.getTree().getEnv())) {
                 // String candidateMotherLabel = targetMother.getCategory();
                 // if
                 // (root.getNode().getCategory().equals(candidateMotherLabel)) {
@@ -413,8 +414,10 @@ public class RequirementFinder {
             boolean gapHasRightLabel = item.getNode().getCategory()
                     .equals(gap.nonterminal);
             boolean targetRootSuitsDMother = targetRootItem.getNode()
-                    .nodeUnificationPossible(item.getTree().findNode(
-                            item.getNode().getGornaddress().mother()));
+                    .nodeUnificationPossible(
+                            item.getTree().findNode(
+                                    item.getNode().getGornaddress().mother()),
+                            item.getTree().getEnv());
             if (gapHasRightLabel && targetRootSuitsDMother) {
                 // && targetRootItem.getNode().getCategory()
                 // .equals(item.getTree()

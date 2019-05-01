@@ -375,18 +375,24 @@ public class Fs {
 
     public String toStringWithOutTypeOneLiner() {
         Set<Value> seen = new HashSet<Value>();
-        String res = toStringRec(seen, false);
+        String res = toStringRec(seen, false, true);
         res = res.replaceAll("\n", ", ");
         return res;
     }
 
     public String toString() {
         Set<Value> seen = new HashSet<Value>();
-        return toStringRec(seen, true);
+        return toStringRec(seen, true, false);
     }
 
-    public String toStringRec(Set<Value> seen, boolean withType) {
-        String res = "[";
+    public String toStringRec(Set<Value> seen, boolean withType,
+            boolean withCoref) {
+        String res = "";
+        if (withCoref && coref.is(Value.Kind.VAR)) {
+            res += "{" + coref.getVarVal() + "}";
+        }
+
+        res += "[";
 
         if (withType && isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
@@ -398,7 +404,7 @@ public class Fs {
                 seen.add(coref);
         }
 
-        res += attrsToString(seen, withType);
+        res += attrsToString(seen, withType, withCoref);
         res += "]";
         return res;
     }
@@ -408,17 +414,18 @@ public class Fs {
      * @param res
      * @return
      */
-    private String attrsToString(Set<Value> seen, boolean withType) {
+    private String attrsToString(Set<Value> seen, boolean withType,
+            boolean withCoref) {
         String res = "";
+
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
             String k = (String) i.next();
             // System.out.println(seen);
             if (AVlist.get(k).getType() == Value.Kind.AVM)
-                res += k + " = "
-                        + AVlist.get(k).getAvmVal().toStringRec(seen, withType)
-                        + "\n ";
+                res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen,
+                        withType, withCoref) + "\n ";
             else
                 res += k + " = " + AVlist.get(k).toString() + "\n ";
         }

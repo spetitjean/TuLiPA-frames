@@ -46,7 +46,12 @@ public class EdgeFeatureUnifier {
     private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
         this.result = new RRGParseTree(ununifiedTree);
         result.setId(result.getId() + "_edgesUnified");
-        return unifyEdgeFeatures(new GornAddress());
+        boolean unificationWorked = unifyEdgeFeatures(new GornAddress());
+        // TODO remove root edge features
+        // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("l");
+        // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("r");
+
+        return unificationWorked;
     }
 
     private boolean unifyEdgeFeatures(GornAddress gornAddress) {

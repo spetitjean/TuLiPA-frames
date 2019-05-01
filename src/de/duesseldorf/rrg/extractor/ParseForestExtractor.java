@@ -84,7 +84,13 @@ public class ParseForestExtractor {
         Set<RRGParseTree> resultingParsesEdgesUnified = new EdgeFeatureUnifier(
                 resultingParsesFiltered).computeUnUnifiedAndUnifiedTrees();
 
-        return resultingParsesEdgesUnified;
+        Set<RRGParseTree> resultingParsesBeautiful = new HashSet<RRGParseTree>();
+        resultingParsesEdgesUnified.parallelStream().forEach((tree) -> {
+            RRGParseTree beautifulTree = (RRGParseTree) new ParseTreePostProcessor(
+                    tree).postProcessNodeFeatures();
+            resultingParsesBeautiful.add(beautifulTree);
+        });
+        return resultingParsesBeautiful;
         // return RRGTools.convertTreeSet(resultingParses);
     }
 

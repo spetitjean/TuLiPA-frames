@@ -168,6 +168,12 @@ public class RRGXMLBuilder {
 
             fsElement.appendChild(f);
         }
+        String corefString = realfs.getCoref().getVarVal();
+        // System.out.println("realfs.getCoref()" +
+        // realfs.getCoref().getVarVal());
+        if (corefString != null) {
+            fsElement.setAttribute("coref", corefString);
+        }
         return fsElement;
     }
 }

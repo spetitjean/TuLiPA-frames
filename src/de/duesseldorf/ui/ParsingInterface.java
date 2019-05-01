@@ -821,6 +821,8 @@ public class ParsingInterface {
                     System.out.println("result for " + rrgParseTree.getId());
                     System.out.println(RRGTreeTools
                             .asStringWithNodeLabelsAndNodeType(rrgParseTree));
+                    // System.out.println(
+                    // "Environment: " + rrgParseTree.getEnv().toString());
                 }
                 System.out.println("result: " + result.size() + " trees.");
             }

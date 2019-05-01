@@ -29,59 +29,67 @@
  */
 package de.tuebingen.util;
 
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class PrettyNameFactory {
-	
-	private int index;
-	private Map<String, String> dictionary;
-	private String[] availableNames = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", "Q1", "R1", "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1"};
-	
-	public PrettyNameFactory(){
-		index = 0;
-		dictionary = new Hashtable<String, String>();
-	}
-	
-	public String getName(String in){
-	    //System.out.println("Getting name (in util) for "+in);
-		String out = "";
-		if (dictionary.containsKey(in)) {
-			out = dictionary.get(in);
-		} else {
-			out = getNextName();
-			dictionary.put(in, out);
-		}
-		return out;
-	}
-	
-	public String getNextName(){
-		String res = "";
-		if (index > availableNames.length) {
-			System.err.println("Debug info: Too many variables for pretty printing (variable names may be wrong)");
-			res = null;
-		} else {
-			res = availableNames[index];
-			index++;
-		}
-		return res;
-	}
 
-	public Map<String, String> getDictionary() {
-		return dictionary;
-	}
+    private int index;
+    private Map<String, String> dictionary;
+    private String[] availableNames = { "A", "B", "C", "D", "E", "F", "G", "H",
+            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+            "V", "W", "X", "Y", "Z", "A1", "B1", "C1", "D1", "E1", "F1", "G1",
+            "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", "Q1", "R1",
+            "S1", "T1", "U1", "V1", "W1", "X1", "Y1", "Z1" };
 
-	public void setDictionary(Map<String, String> dictionary) {
-		this.dictionary = dictionary;
-	}
-	
-	public String toString(){
-		String res = "";
-		Set<String> keys = dictionary.keySet();
-		Iterator<String> it = keys.iterator();
-		while(it.hasNext()){
-			String k = it.next();
-			res += " key: " + k + " - value: " + dictionary.get(k);
-		}
-		return res;
-	}
+    public PrettyNameFactory() {
+        index = 0;
+        dictionary = new Hashtable<String, String>();
+    }
+
+    public String getName(String in) {
+        // System.out.println("Getting name (in util) for "+in);
+        String out = "";
+        if (dictionary.containsKey(in)) {
+            out = dictionary.get(in);
+        } else {
+            out = getNextName();
+            dictionary.put(in, out);
+        }
+        return out;
+    }
+
+    public String getNextName() {
+        String res = "";
+        if (index > availableNames.length) {
+            System.err.println(
+                    "Debug info: Too many variables for pretty printing (variable names may be wrong)");
+            res = null;
+        } else {
+            res = availableNames[index];
+            index++;
+        }
+        return res;
+    }
+
+    public Map<String, String> getDictionary() {
+        return dictionary;
+    }
+
+    public void setDictionary(Map<String, String> dictionary) {
+        this.dictionary = dictionary;
+    }
+
+    public String toString() {
+        String res = "";
+        Set<String> keys = dictionary.keySet();
+        Iterator<String> it = keys.iterator();
+        while (it.hasNext()) {
+            String k = it.next();
+            res += " key: " + k + " - value: " + dictionary.get(k);
+        }
+        return res;
+    }
 }
