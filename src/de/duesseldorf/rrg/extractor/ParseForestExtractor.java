@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -60,7 +61,7 @@ public class ParseForestExtractor {
             List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
-        resultingParses = new HashSet<RRGTree>();
+        this.resultingParses = new ConcurrentSkipListSet<RRGTree>();
     }
 
     public Set<RRGParseTree> extractParseTrees() {
@@ -81,8 +82,9 @@ public class ParseForestExtractor {
         // }
         System.out.println("extracted " + resultingParses.size()
                 + " trees. Now filter out those that are actually equal");
-        Set<RRGParseTree> resultingParsesFiltered = RRGTools.filterRRGParseTrees(
-                RRGTools.removeDoubleTreesByWeakEquals(resultingParses));
+        Set<RRGParseTree> resultingParsesFiltered = RRGTools
+                .filterRRGParseTrees(RRGTools
+                        .removeDoubleTreesByWeakEquals(resultingParses));
 
         Set<RRGParseTree> resultingParsesEdgesUnified = new EdgeFeatureUnifier(
                 resultingParsesFiltered).computeUnUnifiedAndUnifiedTrees();
@@ -121,7 +123,7 @@ public class ParseForestExtractor {
     private Set<RRGParseTree> extract(ExtractionStep extractionstep) {
         Backpointer backPointers = parseChart
                 .getBackPointers(extractionstep.getCurrentItem());
-        Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
+        Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
 
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);

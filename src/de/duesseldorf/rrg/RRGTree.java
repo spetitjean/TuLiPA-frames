@@ -40,7 +40,7 @@ import de.tuebingen.tree.Node;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-public class RRGTree {
+public class RRGTree implements Comparable<RRGTree> {
 
     // representation of the syntactic tree
     protected Node root;
@@ -218,6 +218,20 @@ public class RRGTree {
             return this.hashCode() == obj.hashCode();
         }
         return false;
+    }
+
+    /**
+     * ATTENTION! Really not a good implementation, but probably enough to order
+     * trees in a set
+     */
+    @Override
+    public int compareTo(RRGTree o) {
+        int compIDs = id.compareTo(o.getId());
+        if (compIDs != 0) {
+            return compIDs;
+        }
+
+        return ((RRGNode) root).compareTo(((RRGNode) o.getRoot()));
     }
 
     /**

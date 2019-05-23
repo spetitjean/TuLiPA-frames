@@ -828,7 +828,6 @@ public class ParsingInterface {
             } finally {
                 future.cancel(true);
             }
-
             // hack for converting .tsv grammar to xml grammar: execute the
             // following line, comment the part above that executes the parser
             // result = RRGTools.convertTreeSet(

@@ -36,7 +36,7 @@ import de.tuebingen.tree.Node;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-public class RRGNode implements Node {
+public class RRGNode implements Node, Comparable<RRGNode> {
 
     private List<Node> children; // all children of the Node, in order
     private RRGNodeType type; // the type of this node
@@ -320,6 +320,32 @@ public class RRGNode implements Node {
             return new RRGNode(type, name, category, gornaddress, children,
                     nodeFs);
         }
+    }
+
+    @Override
+    public int compareTo(RRGNode o) {
+        int compareCats = this.category.compareTo(o.category);
+        if (compareCats != 0) {
+            return compareCats;
+        }
+        int compareTypes = this.type.toString().compareTo(o.type.toString());
+        if (compareTypes != 0) {
+            return compareTypes;
+        }
+
+        int childrenSizeDiff = this.children.size() - o.children.size();
+        if (childrenSizeDiff != 0) {
+            return childrenSizeDiff;
+        }
+        for (int i = 0; i < this.children.size(); i++) {
+            RRGNode thisChild = (RRGNode) children.get(i);
+            RRGNode otherChild = (RRGNode) o.children.get(i);
+            int childDiff = thisChild.compareTo(otherChild);
+            if (childDiff != 0) {
+                return childDiff;
+            }
+        }
+        return 0;
     }
 
 }
