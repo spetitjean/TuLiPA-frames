@@ -3,7 +3,6 @@ package de.duesseldorf.rrg.parser;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,10 +34,10 @@ import java.util.Set;
  *
  */
 public class Backpointer {
-    private Map<Operation, Set<List<RRGParseItem>>> store;
+    private Map<Operation, Set<Set<RRGParseItem>>> store;
 
     public Backpointer() {
-        store = new HashMap<Operation, Set<List<RRGParseItem>>>();
+        store = new HashMap<Operation, Set<Set<RRGParseItem>>>();
     }
 
     /**
@@ -49,11 +48,11 @@ public class Backpointer {
      * @param op
      * @param antecedents
      */
-    public void addToBackpointer(Operation op, List<RRGParseItem> antecedents) {
+    public void addToBackpointer(Operation op, Set<RRGParseItem> antecedents) {
         if (store.containsKey(op)) {
             store.get(op).add(antecedents);
         } else {
-            Set<List<RRGParseItem>> value = new HashSet<List<RRGParseItem>>();
+            Set<Set<RRGParseItem>> value = new HashSet<Set<RRGParseItem>>();
             value.add(antecedents);
             store.put(op, value);
         }
@@ -65,14 +64,14 @@ public class Backpointer {
      * @return the set with all sets of antecedents that created the item using
      *         the {@code Operation} {@code op}.
      */
-    public Set<List<RRGParseItem>> getAntecedents(Operation op) {
-        Set<List<RRGParseItem>> res = store.get(op);
+    public Set<Set<RRGParseItem>> getAntecedents(Operation op) {
+        Set<Set<RRGParseItem>> res = store.get(op);
 
-        return (res != null) ? res : new HashSet<List<RRGParseItem>>();
+        return (res != null) ? res : new HashSet<Set<RRGParseItem>>();
     }
 
-    public Set<List<RRGParseItem>> getAntecedents(Collection<Operation> ops) {
-        Set<List<RRGParseItem>> result = new HashSet<List<RRGParseItem>>();
+    public Set<Set<RRGParseItem>> getAntecedents(Collection<Operation> ops) {
+        Set<Set<RRGParseItem>> result = new HashSet<Set<RRGParseItem>>();
         for (Operation op : ops) {
             result.addAll(getAntecedents(op));
         }
@@ -81,7 +80,7 @@ public class Backpointer {
 
     public int size() {
         int size = 0;
-        for (Set<List<RRGParseItem>> e : store.values()) {
+        for (Set<Set<RRGParseItem>> e : store.values()) {
             size += e.size();
         }
         return size;
@@ -90,9 +89,9 @@ public class Backpointer {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        for (Entry<Operation, Set<List<RRGParseItem>>> storeEntry : store
+        for (Entry<Operation, Set<Set<RRGParseItem>>> storeEntry : store
                 .entrySet()) {
-            for (List<RRGParseItem> backpointerSet : storeEntry.getValue()) {
+            for (Set<RRGParseItem> backpointerSet : storeEntry.getValue()) {
                 sb.append(storeEntry.getKey() + " : ");
                 sb.append(backpointerSet);
                 sb.append("\n\t");

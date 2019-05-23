@@ -50,7 +50,11 @@ public class EdgeFeatureUnifier {
         // TODO remove root edge features
         // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("l");
         // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("r");
-
+        // if (!unificationWorked) {
+        // System.out.println("edge unification did not work: ");
+        // System.out.println(
+        // RRGTreeTools.recursivelyPrintNode(ununifiedTree.getRoot()));
+        // }
         return unificationWorked;
     }
 
@@ -92,6 +96,9 @@ public class EdgeFeatureUnifier {
                     // System.out.println(
                     // "TODO handle: unification exception while unifying edge
                     // features");
+                    // System.out.println("feature mismatch right vs. left: ");
+                    // System.out.println(edgeValueFromRightDaughter);
+                    // System.out.println(edgeValueFromLeftDaughter);
                     return false;
                 }
                 ((RRGNode) nodeWithGornAddress.getChildren().get(i - 1))

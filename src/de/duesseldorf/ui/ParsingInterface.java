@@ -47,6 +47,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
@@ -804,16 +809,37 @@ public class ParsingInterface {
         Integer sentenceCounter = 0;
         for (String sentence : sentences) {
             List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
+            Set<RRGParseTree> result = new HashSet<RRGParseTree>();
 
-            RRGParser rrgparser = new RRGParser(op.getVal("a"));
-            Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
+            ExecutorService executor = Executors.newCachedThreadPool();
+            Callable<Set<RRGParseTree>> task = new Callable<Set<RRGParseTree>>() {
+                public Set<RRGParseTree> call() {
+                    RRGParser rrgparser = new RRGParser(op.getVal("a"));
+                    return rrgparser.parseSentence(toksentence);
+                }
+            };
+            Future<Set<RRGParseTree>> future = executor.submit(task);
+            try {
+                result = future.get(1000, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                System.out.println("parsing failed due to exception: " + e);
+                e.printStackTrace();
+                System.exit(1);
+            } finally {
+                future.cancel(true);
+            }
 
+            // hack for converting .tsv grammar to xml grammar: execute the
+            // following line, comment the part above that executes the parser
+            // result = RRGTools.convertTreeSet(
+            // (((RRG) Situation.getGrammar()).getTrees()));
             if (!result.isEmpty()) {
                 returnValue = true;
             }
+            boolean omitPrinting = false;
             if (op.check("b")) {
                 batchparsingResultSizes.add(result.size());
-            } else {
+            } else if (!omitPrinting) {
                 for (RRGParseTree rrgParseTree : result) {
                     // System.out.println("Extraction steps for " +
                     // SrrgParseTree.getId());

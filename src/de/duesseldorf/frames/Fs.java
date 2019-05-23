@@ -388,7 +388,7 @@ public class Fs {
     public String toStringRec(Set<Value> seen, boolean withType,
             boolean withCoref) {
         String res = "";
-        if (withCoref && coref.is(Value.Kind.VAR)) {
+        if (withCoref && coref != null && coref.is(Value.Kind.VAR)) {
             res += "{" + coref.getVarVal() + "}";
         }
 

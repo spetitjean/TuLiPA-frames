@@ -19,7 +19,13 @@ public class RRGTools {
     public static Set<RRGTree> removeDoubleTreesByWeakEquals(
             Set<RRGTree> trees) {
         Set<RRGTree> result = new HashSet<RRGTree>();
+        int i = 0;
         for (RRGTree treeFromResource : trees) {
+            if (i % 10000 == 0 && i > 0) {
+                log.info("filtered the first " + i + " trees and obtained "
+                        + result.size());
+            }
+            i = i + 1;
             if (result.isEmpty()) {
                 result.add(treeFromResource);
                 continue;
@@ -65,12 +71,20 @@ public class RRGTools {
         return result;
     }
 
-    public static Set<RRGParseTree> convertTreeSet(Set<RRGTree> input) {
+    public static Set<RRGParseTree> filterRRGParseTrees(Set<RRGTree> input) {
         Set<RRGParseTree> result = new HashSet<RRGParseTree>();
         for (RRGTree tree : input) {
             if (tree instanceof RRGParseTree) {
                 result.add((RRGParseTree) tree);
             }
+        }
+        return result;
+    }
+
+    public static Set<RRGParseTree> convertTreeSet(Set<RRGTree> input) {
+        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
+        for (RRGTree tree : input) {
+            result.add(new RRGParseTree(tree));
         }
         return result;
     }

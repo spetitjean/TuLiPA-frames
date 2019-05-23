@@ -80,11 +80,14 @@ public class RRGParser {
                 + agenda.size() + " trees: ");
         System.out.println("--------------------------------");
 
-        for (RRGParseItem item : agenda) {
-            System.out.println(item.getTree().getId());
-            System.out.println(RRGTreeTools
-                    .recursivelyPrintNode(item.getTree().getRoot()));
-            System.out.println("--------------------------------");
+        boolean omitPrinting = false;
+        if (!omitPrinting) {
+            for (RRGParseItem item : agenda) {
+                System.out.println(item.getTree().getId());
+                System.out.println(RRGTreeTools
+                        .recursivelyPrintNode(item.getTree().getRoot()));
+                System.out.println("--------------------------------");
+            }
         }
         System.out.println("--------------------------------");
 

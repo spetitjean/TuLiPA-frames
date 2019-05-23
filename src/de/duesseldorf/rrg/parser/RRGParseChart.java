@@ -29,8 +29,6 @@ package de.duesseldorf.rrg.parser;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -211,11 +209,11 @@ public class RRGParseChart {
     public boolean addItem(RRGParseItem consequent, Operation operation,
             RRGParseItem... antecedents) {
         // System.out.println("chart.addItem: " + consequent);
-        List<RRGParseItem> antes;
+        Set<RRGParseItem> antes;
         if (antecedents.length > 0) {
-            antes = new LinkedList<RRGParseItem>(Arrays.asList(antecedents));
+            antes = new HashSet<RRGParseItem>(Arrays.asList(antecedents));
         } else {
-            antes = new LinkedList<RRGParseItem>();
+            antes = new HashSet<RRGParseItem>();
         }
         int startpos = consequent.startPos();
 
@@ -224,8 +222,19 @@ public class RRGParseChart {
         if (alreadythere) {
             // just put the additional backpointers
             // System.out.println("item already there, just put backpointers");
-            chart.get(startpos).get(consequent).addToBackpointer(operation,
-                    antes);
+            boolean antesAlreadyThere = chart.get(startpos)
+                    .get(consequent) != null
+                    && chart.get(startpos).get(consequent)
+                            .getAntecedents(operation).contains(antes);
+            if (!antesAlreadyThere) {
+                chart.get(startpos).get(consequent).addToBackpointer(operation,
+                        antes);
+            } /*
+               * else {
+               * System.out
+               * .println("equality! " + operation + consequent + antes);
+               * }
+               */
         } else {
             // System.out.println("item not there yet");
             // add the consequent and a fresh set of backpointers
