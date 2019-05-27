@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
@@ -64,7 +65,7 @@ public class ParseForestExtractor {
         this.resultingParses = new ConcurrentSkipListSet<RRGTree>();
     }
 
-    public Set<RRGParseTree> extractParseTrees() {
+    public RRGParseResult extractParseTrees() {
         // find goal items in the chart. Extract them all and add the set of
         // parse trees derived from them to the resulting parses
         Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
@@ -95,7 +96,10 @@ public class ParseForestExtractor {
                     tree).postProcessNodeFeatures();
             resultingParsesBeautiful.add(beautifulTree);
         }
-        return resultingParsesBeautiful;
+        RRGParseResult.Builder parseResultBuilder = new RRGParseResult.Builder();
+        parseResultBuilder = parseResultBuilder
+                .successfulParses(resultingParsesBeautiful);
+        return parseResultBuilder.build();
         // return RRGTools.convertTreeSet(resultingParses);
     }
 

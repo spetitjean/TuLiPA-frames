@@ -230,7 +230,6 @@ public class RRGTree implements Comparable<RRGTree> {
         if (compIDs != 0) {
             return compIDs;
         }
-
         return ((RRGNode) root).compareTo(((RRGNode) o.getRoot()));
     }
 

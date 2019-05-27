@@ -3,7 +3,6 @@ package de.duesseldorf.rrg.io;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +19,7 @@ import de.duesseldorf.frames.Fs;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.tuebingen.tree.Node;
 
@@ -36,14 +36,16 @@ public class RRGXMLBuilder {
         nodeTypesToXMLTags.put(RRGNodeType.SUBST, XMLRRGTag.XMLSUBSTNode);
     }
 
-    private Set<RRGParseTree> parseResult;
+    private RRGParseResult parseResult;
     private Document doc;
     private StreamResult resultStream;
+    private boolean printEdgeMismatches;
 
-    public RRGXMLBuilder(StreamResult resultStream,
-            Set<RRGParseTree> parseResult) throws ParserConfigurationException {
+    public RRGXMLBuilder(StreamResult resultStream, RRGParseResult parseResult,
+            boolean printEdgeMismatches) throws ParserConfigurationException {
         this.resultStream = resultStream;
         this.parseResult = parseResult;
+        this.printEdgeMismatches = printEdgeMismatches;
         this.doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .newDocument();
     }
@@ -51,22 +53,17 @@ public class RRGXMLBuilder {
     public void buildAndWrite() {
         // create the root element
         Element rootGrammar = doc.createElement(XMLRRGTag.GRAMMAR.StringVal());
-        for (RRGParseTree parse : parseResult) {
-            Element entry = doc.createElement(XMLRRGTag.ENTRY.StringVal());
-            entry.setAttribute(XMLRRGTag.NAME.StringVal(), parse.getId());
-            Element tree = createTree(parse);
-            entry.appendChild(tree);
-
-            // At the moment, we don't have a frame. But the empty element is
-            // needed to display on the WebGUI properly
-            Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
-            entry.appendChild(frame);
-
-            // used elementary trees:
-            Element trace = createTrace(parse);
-            entry.appendChild(trace);
-
+        for (RRGParseTree parse : parseResult.getSuccessfulParses()) {
+            Element entry = createEntryElement(parse);
             rootGrammar.appendChild(entry);
+        }
+        if (printEdgeMismatches) {
+            for (RRGParseTree parse : parseResult
+                    .getTreesWithEdgeFeatureMismatches()) {
+                parse.setId("mismatch_" + parse.getId());
+                Element entry = createEntryElement(parse);
+                rootGrammar.appendChild(entry);
+            }
         }
         doc.appendChild(rootGrammar);
         try {
@@ -83,6 +80,27 @@ public class RRGXMLBuilder {
                     "Something went wrong during output transformation");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @param parse
+     * @return
+     */
+    private Element createEntryElement(RRGParseTree parse) {
+        Element entry = doc.createElement(XMLRRGTag.ENTRY.StringVal());
+        entry.setAttribute(XMLRRGTag.NAME.StringVal(), parse.getId());
+        Element tree = createTree(parse);
+        entry.appendChild(tree);
+
+        // At the moment, we don't have a frame. But the empty element is
+        // needed to display on the WebGUI properly
+        Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
+        entry.appendChild(frame);
+
+        // used elementary trees:
+        Element trace = createTrace(parse);
+        entry.appendChild(trace);
+        return entry;
     }
 
     private Element createTrace(RRGParseTree parse) {

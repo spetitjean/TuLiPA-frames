@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
-import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
@@ -63,7 +63,7 @@ public class RRGParser {
         this.treesInvolvedInParsing = new HashSet<>();
     }
 
-    public Set<RRGParseTree> parseSentence(List<String> toksentence) {
+    public RRGParseResult parseSentence(List<String> toksentence) {
         System.out.println("start parsing sentence " + toksentence);
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
@@ -122,12 +122,12 @@ public class RRGParser {
             System.out.println(
                     "ERROR: abort parse tree extraction because chart is too large: "
                             + chart.computeSize());
-            return new HashSet<RRGParseTree>();
+            return new RRGParseResult.Builder().build();
         } else {
             // extract parse results from chart
             ParseForestExtractor extractor = new ParseForestExtractor(chart,
                     toksentence);
-            Set<RRGParseTree> result = extractor.extractParseTrees();
+            RRGParseResult result = extractor.extractParseTrees();
             return result;
         }
 
