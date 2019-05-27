@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
 
@@ -261,16 +263,17 @@ public class RequirementFinder {
         RRGNode targetMother = target.getTree()
                 .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
-            if (root.getNode().nodeUnificationPossible(targetMother,
-                    root.getTree().getEnv())) {
-                // String candidateMotherLabel = targetMother.getCategory();
-                // if
-                // (root.getNode().getCategory().equals(candidateMotherLabel)) {
-                return true;
+            boolean nodeUnificationPossible = true;
+            try {
+                RRGTreeTools.unifyNodes(root.getNode(), targetMother,
+                        root.getTree().getEnv());
+            } catch (UnifyException e) {
+                nodeUnificationPossible = false;
             }
+            return nodeUnificationPossible;
         }
-
         return false;
+
     }
 
     /**
@@ -413,11 +416,15 @@ public class RequirementFinder {
 
             boolean gapHasRightLabel = item.getNode().getCategory()
                     .equals(gap.nonterminal);
-            boolean targetRootSuitsDMother = targetRootItem.getNode()
-                    .nodeUnificationPossible(
-                            item.getTree().findNode(
-                                    item.getNode().getGornaddress().mother()),
-                            item.getTree().getEnv());
+            boolean targetRootSuitsDMother = true;
+            try {
+                RRGTreeTools.unifyNodes(targetRootItem.getNode(),
+                        item.getTree().findNode(
+                                item.getNode().getGornaddress().mother()),
+                        item.getTree().getEnv());
+            } catch (UnifyException e) {
+                targetRootSuitsDMother = false;
+            }
             if (gapHasRightLabel && targetRootSuitsDMother) {
                 // && targetRootItem.getNode().getCategory()
                 // .equals(item.getTree()

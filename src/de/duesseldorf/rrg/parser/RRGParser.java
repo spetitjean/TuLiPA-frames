@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseResult;
@@ -206,9 +207,16 @@ public class RRGParser {
                     gaps.add(new Gap(currentItem.startPos(),
                             currentItem.getEnd(), cat));
                     for (RRGNode substNode : substNodes) {
-                        if (substNode.nodeUnificationPossible(
-                                currentItem.getNode(),
-                                currentItem.getTree().getEnv())) {
+                        boolean nodeUnificationPossible = true;
+                        try {
+                            RRGTreeTools.unifyNodes(substNode,
+                                    currentItem.getNode(),
+                                    currentItem.getTree().getEnv());
+                        } catch (UnifyException e) {
+                            nodeUnificationPossible = false;
+                        }
+
+                        if (nodeUnificationPossible) {
                             // System.out.println("got to for: " + substNode);
                             RRGParseItem cons = new RRGParseItem.Builder()
                                     .tree(tree).node(substNode)
@@ -298,10 +306,14 @@ public class RRGParser {
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
-                        boolean checkIfUnificationWorks = substNode
-                                .nodeUnificationPossible(currentItem.getNode(),
-                                        currentItem.getTree().getEnv());
-
+                        boolean checkIfUnificationWorks = true;
+                        try {
+                            RRGTreeTools.unifyNodes(substNode,
+                                    currentItem.getNode(),
+                                    currentItem.getTree().getEnv());
+                        } catch (UnifyException e) {
+                            checkIfUnificationWorks = false;
+                        }
                         if (checkIfUnificationWorks) {
                             RRGParseItem cons = new RRGParseItem.Builder()
                                     .tree(tree).node(substNode)

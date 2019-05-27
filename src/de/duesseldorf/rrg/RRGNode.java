@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.duesseldorf.frames.Fs;
-import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.util.GornAddress;
-import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /*
@@ -53,48 +51,6 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         this.setCategory(category);
         this.gornaddress = ga;
         this.nodeFs = nodeFs;
-    }
-
-    /**
-     * unifies this node and the other node by replacing (!) this nodes
-     * children
-     * with {@code other}s chilren, if the categories of both nodes
-     * match.
-     * 
-     * @param other
-     * @return {@code true} iff the unification succeeded
-     */
-    public boolean nodeUnification(RRGNode other) {
-        boolean result = false;
-        if (other.getCategory().equals(this.getCategory())) {
-            this.setChildren(new LinkedList<Node>(other.getChildren()));
-            result = true;
-        }
-        return result;
-    }
-
-    /**
-     * returns true iff unification of this node and the other node is
-     * possible,
-     * i.e. iff the categories of both nodes
-     * match.
-     * 
-     * @param other
-     * @return {@code true} iff the unification succeeded
-     */
-    public boolean nodeUnificationPossible(RRGNode other, Environment env) {
-        boolean result = false;
-        if (other.getCategory().equals(this.getCategory())) {
-            result = true;
-            try {
-                result = Fs.unify(this.getNodeFs(), other.getNodeFs(),
-                        env) != null;
-            } catch (UnifyException e) {
-                result = false;
-            }
-        }
-
-        return result;
     }
 
     public List<Node> getChildren() {
