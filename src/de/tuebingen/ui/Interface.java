@@ -257,8 +257,10 @@ public class Interface {
                 }
             });
         }
-        System.out.println("Done parsing. Goodbye!");
-        System.exit(0);
+        if (op.check("rrg")) {
+            System.out.println("Done parsing. Goodbye!");
+            System.exit(0);
+        }
     }
 
 }

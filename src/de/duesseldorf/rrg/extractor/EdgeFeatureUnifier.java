@@ -8,6 +8,7 @@ import de.duesseldorf.frames.Value;
 import de.duesseldorf.frames.ValueTools;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.io.SystemLogger;
 import de.duesseldorf.util.GornAddress;
@@ -25,11 +26,14 @@ public class EdgeFeatureUnifier {
 
     }
 
-    public Set<RRGParseTree> computeUnUnifiedAndUnifiedTrees() {
-        Set<RRGParseTree> unifiedTrees = new HashSet<RRGParseTree>();
+    public RRGParseResult computeUnUnifiedAndUnifiedTrees() {
+        Set<RRGParseTree> successFullyUnifiedTrees = new HashSet<RRGParseTree>();
+        Set<RRGParseTree> treesWithMismatches = new HashSet<RRGParseTree>();
         for (RRGParseTree ununifiedTree : parseTreesWithoutUnification) {
             if (unifyEdgeFeatures(ununifiedTree)) {
-                unifiedTrees.add(result);
+                successFullyUnifiedTrees.add(result);
+            } else {
+                treesWithMismatches.add(ununifiedTree);
             }
         }
         //
@@ -37,10 +41,16 @@ public class EdgeFeatureUnifier {
         // unifiedTrees);
         // resultingTrees.addAll(parseTreesWithoutUnification);
         log.info("unifying edge features, removed "
-                + (parseTreesWithoutUnification.size() - unifiedTrees.size())
+                + (parseTreesWithoutUnification.size()
+                        - successFullyUnifiedTrees.size())
                 + " trees");
-        log.info("there are " + unifiedTrees.size() + " trees left.");
-        return unifiedTrees;
+        log.info("there are " + successFullyUnifiedTrees.size()
+                + " trees left.");
+
+        RRGParseResult.Builder resBuilder = new RRGParseResult.Builder();
+        resBuilder.successfulParses(successFullyUnifiedTrees);
+        resBuilder.treesWithEdgeFeatureMismatches(treesWithMismatches);
+        return resBuilder.build();
     }
 
     private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
