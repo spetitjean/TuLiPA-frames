@@ -47,6 +47,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
@@ -54,11 +59,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
-import de.duesseldorf.io.RRGXMLBuilder;
+import de.duesseldorf.io.SentenceListFromFileCreator;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
+import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTreeTools;
+import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.anchoring.TreeSelector;
@@ -780,54 +789,131 @@ public class ParsingInterface {
         return res;
     }
 
-    public static boolean parseRRG(CommandLineOptions op, String sentence)
+    public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
-        System.out.println("yay, go RRG!");
-
+        // System.out.println("yay, go RRG!");
+        boolean returnValue = false;
         boolean verbose = op.check("v");
 
+        // store number of results so we don't need to store actual output
+        List<Integer> batchparsingResultSizes = new LinkedList<>();
         // Tokenizing
         // tokenizer is a piece of crap, deletes full stops.
         // List<String> toksentence = tokenize(op, sentence, verbose);
-        List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
-        long startParsingTime = System.nanoTime();
 
-        RRGParser rrgparser = new RRGParser();
-        Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
-
-        System.out.println("result: ");
-        for (RRGParseTree rrgParseTree : result) {
-            // System.out.println("Extraction steps for " +
-            // SrrgParseTree.getId());
-            // System.out.println(rrgParseTree.extractionstepsPrinted());
-            System.out.println("result for " + rrgParseTree.getId());
-            System.out.println(RRGTreeTools
-                    .asStringWithNodeLabelsAndNodeType(rrgParseTree));
-        }
-
-        // XML Output
-        if (op.check("xg")) {
-            StreamResult resultStream = (op.check("o"))
-                    ? new StreamResult(op.getVal("o"))
-                    : new StreamResult(System.out);
-
-            try {
-                RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(resultStream,
-                        result);
-                rrgXMLBuilder.buildAndWrite();
-            } catch (ParserConfigurationException e) {
-                System.err.println(
-                        "could not build parse results due to ParserConfigurationException");
-            }
+        List<String> sentences = new LinkedList<String>();
+        if (op.check("b")) {
+            sentences.addAll(new SentenceListFromFileCreator(op.getVal("b"))
+                    .getListRepresentation());
         } else {
-            System.out.println("no output file specified with option -o");
+            sentences.add(sent);
         }
+        long startParsingTime = System.nanoTime();
+        Integer sentenceCounter = 0;
+        for (String sentence : sentences) {
+            List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
+            RRGParseResult result = new RRGParseResult.Builder().build();
 
+            if (!op.check("brack2XML")) {
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
+                    public RRGParseResult call() {
+                        RRGParser rrgparser = new RRGParser(op.getVal("a"));
+                        return rrgparser.parseSentence(toksentence);
+                    }
+                };
+                Future<RRGParseResult> future = executor.submit(task);
+                try {
+                    result = future.get(1000, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    System.out.println("parsing failed due to exception: " + e);
+                    e.printStackTrace();
+                    System.exit(1);
+                } finally {
+                    future.cancel(true);
+                }
+            } else { // hack for converting .tsv grammar to xml grammar
+                Set<RRGParseTree> elementaryTreeSet = RRGTools.convertTreeSet(
+                        (((RRG) Situation.getGrammar()).getTrees()));
+                result = new RRGParseResult.Builder()
+                        .successfulParses(elementaryTreeSet).build();
+            }
+            if (!result.getSuccessfulParses().isEmpty()) {
+                returnValue = true;
+            }
+            boolean omitPrinting = false;
+            if (op.check("b")) {
+                batchparsingResultSizes
+                        .add(result.getSuccessfulParses().size());
+            } else if (!omitPrinting) {
+                for (RRGParseTree rrgParseTree : result.getSuccessfulParses()) {
+                    // System.out.println("Extraction steps for " +
+                    // SrrgParseTree.getId());
+                    // System.out.println(rrgParseTree.extractionstepsPrinted());
+                    System.out.println("result for " + rrgParseTree.getId());
+                    System.out.println(RRGTreeTools
+                            .asStringWithNodeLabelsAndNodeType(rrgParseTree));
+                    // System.out.println(
+                    // "Environment: " + rrgParseTree.getEnv().toString());
+                }
+                for (RRGParseTree tree : result
+                        .getTreesWithEdgeFeatureMismatches()) {
+                    System.out.println(
+                            "tree with feature mismatch " + tree.getId());
+                    System.out.println(RRGTreeTools
+                            .asStringWithNodeLabelsAndNodeType(tree));
+                }
+                System.out.println(
+                        "result:\n" + result.getSuccessfulParses().size()
+                                + "\tgood trees.");
+                System.out.println(
+                        result.getTreesWithEdgeFeatureMismatches().size()
+                                + "\ttrees with edge feature mismatches");
+            }
+
+            // XML Output
+            if (op.check("xg")) {
+                StreamResult resultStream;
+                if (op.check("o")) {
+                    String fileName = op.getVal("o");
+                    if (op.check("b")) {
+                        if (fileName.endsWith(".xml")) {
+                            fileName = fileName.substring(0,
+                                    fileName.length() - 4);
+                            fileName = fileName + "_" + sentenceCounter;
+                            fileName += ".xml";
+                        } else {
+                            fileName = "_" + sentenceCounter + fileName;
+                        }
+                    }
+                    resultStream = new StreamResult(fileName);
+                } else {
+                    resultStream = new StreamResult(System.out);
+                }
+                try {
+                    RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(
+                            resultStream, result, op.check("edgemismatch"));
+                    rrgXMLBuilder.buildAndWrite();
+                } catch (ParserConfigurationException e) {
+                    System.err.println(
+                            "could not build parse results due to ParserConfigurationException");
+                }
+            } else {
+                System.out.println("no output file specified with option -o");
+            }
+            sentenceCounter = sentenceCounter + 1;
+        }
+        if (op.check("b")) {
+            System.out.println(
+                    "Batch parsing: sentence and number of resulting parse trees");
+            for (int i = 0; i < batchparsingResultSizes.size(); i++) {
+                System.out.println(i + "\t" + batchparsingResultSizes.get(i));
+            }
+        }
         long parsingTime = System.nanoTime() - startParsingTime;
-
         System.err.println(
                 "Total time : " + (parsingTime) / (Math.pow(10, 9)) + " sec.");
-        return result.isEmpty();
+        return returnValue;
     }
 
     /**

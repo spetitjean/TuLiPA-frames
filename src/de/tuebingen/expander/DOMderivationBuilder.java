@@ -142,13 +142,15 @@ public class DOMderivationBuilder {
         Element derivationTree = derivDoc.createElement("tree"); // you need
         // separate entries in the document for every tree
         Element derivedTree = derivDoc.createElement("tree");
-        Element semElem = derivDoc.createElement("semantics");
-        Element specSemElem = derivDoc.createElement("specified_semantics");
+        //Element semElem = derivDoc.createElement("semantics");
+        //Element specSemElem = derivDoc.createElement("specified_semantics");
         Element family = derivDoc.createElement("family");
         Element f = derivDoc.createElement("frame");
+        Element trace = derivDoc.createElement("trace");
 
         buildDerivationTree(derivationTree, derivation);
-        // parseDerivationEntry.appendChild(derivationTree);
+	buildTrace(trace, derivation);
+        parseDerivedEntry.appendChild(trace);
 
         buildFamily(family);
         parseDerivedEntry.appendChild(family);
@@ -157,12 +159,12 @@ public class DOMderivationBuilder {
         buildDerivedTree(derivedTree, derived);
         parseDerivedEntry.appendChild(derivedTree);
 
-        buildSemantics(semElem, semantics);
-        parseDerivedEntry.appendChild(semElem);
+        //buildSemantics(semElem, semantics);
+        //parseDerivedEntry.appendChild(semElem);
         // parseDerivationEntry.appendChild(semElem);
 
-        buildSpecifiedSemantics(specSemElem, specifiedSemantics);
-        parseDerivedEntry.appendChild(specSemElem);
+        //buildSpecifiedSemantics(specSemElem, specifiedSemantics);
+        //parseDerivedEntry.appendChild(specSemElem);
         // parseDerivationEntry.appendChild(specSemElem);
 
         buildFrames(f, frameSem);
@@ -227,6 +229,31 @@ public class DOMderivationBuilder {
             }
         }
         mother.appendChild(t);
+    }
+
+    public static void buildTrace(Element mother, Node derivation) {
+        Element t = derivDoc.createElement("class");
+        NamedNodeMap atts = derivation.getAttributes();
+        for (int i = 0; i < atts.getLength(); i++) {
+            Attr a = (Attr) atts.item(i);
+            String name = a.getNodeName();
+            String val = a.getNodeValue();
+            if (name.equals("id")) {
+                t.setTextContent(val);
+            } // else if (name.equals("op")) {
+            //     t.setAttribute("op", val);
+            // } else if (name.equals("op-node")) {
+            //     t.setAttribute("node", val);
+            // } // skip the other attributes
+        }
+        NodeList childList = derivation.getChildNodes();
+        for (int i = 0; i < childList.getLength(); i++) {
+            Node child = childList.item(i);
+            if (child instanceof Element) {
+                buildTrace(mother, child);
+            }
+        }
+	mother.appendChild(t);
     }
 
     public static void buildDerivedTree(Element mother, Node derived) {
@@ -375,7 +402,11 @@ public class DOMderivationBuilder {
             relationEl.setAttribute("name", properRelation.getName());
 
             for (Value properVal : properRelation.getArguments()) {
-                buildVal(relationEl, properVal.getVarVal());
+                //buildVal(relationEl, properVal.getVarVal());
+		Element e;
+		e = derivDoc.createElement("sym");
+		e.setAttribute("varname", properVal.getVarVal());
+		relationEl.appendChild(e);
             }
             mother.appendChild(relationEl);
         }

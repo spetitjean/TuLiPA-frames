@@ -2,10 +2,13 @@ package de.duesseldorf.rrg.extractor;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
@@ -47,7 +50,7 @@ import de.tuebingen.util.TextUtilities;
 public class ParseForestExtractor {
 
     private RRGParseChart parseChart;
-    private Set<RRGTree> resultingParses;
+    private Set<RRGParseTree> resultingParses;
 
     public boolean verbosePrintsToStdOut = false;
 
@@ -59,26 +62,49 @@ public class ParseForestExtractor {
             List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
-        resultingParses = new HashSet<RRGTree>();
+        this.resultingParses = new ConcurrentSkipListSet<RRGParseTree>();
     }
 
-    public Set<RRGParseTree> extractParseTrees() {
+    public RRGParseResult extractParseTrees() {
         // find goal items in the chart. Extract them all and add the set of
         // parse trees derived from them to the resulting parses
         Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
         if (verbosePrintsToStdOut) {
             System.out.println("goal items: " + goals);
         }
-        for (RRGParseItem goal : goals) {
+        goals.parallelStream().forEach((goal) -> {
             ExtractionStep initExtrStep = initialExtractionStep(
                     (RRGParseItem) goal);
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
+        });
+        // for (RRGTree tree : resultingParses) {
+        // System.out.println(tree);
+        // }
+
+        RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnifier(
+                resultingParses).computeUnUnifiedAndUnifiedTrees();
+
+        System.out.println("got " + resultingParses.size()
+                + " trees after edge feature unification. Now filter out those that are actually equal");
+        Set<RRGParseTree> resultingParsesFiltered = RRGTools
+                .removeDoubleParseTreesByWeakEqualsWithParseTrees(
+                        resultingParsesEdgesUnified.getSuccessfulParses());
+        System.out.println("unfiltered size: "
+                + resultingParsesEdgesUnified.getSuccessfulParses().size());
+        System.out.println("filtered size: " + resultingParsesFiltered.size());
+        Set<RRGParseTree> resultingParsesBeautiful = new HashSet<RRGParseTree>();
+        for (RRGParseTree tree : resultingParsesFiltered) {
+            RRGParseTree beautifulTree = (RRGParseTree) new ParseTreePostProcessor(
+                    tree).postProcessNodeFeatures();
+            resultingParsesBeautiful.add(beautifulTree);
         }
-        Set<RRGParseTree> resultingParsesFiltered = RRGTools.convertTreeSet(
-                RRGTools.removeDoubleTreesByWeakEquals(resultingParses));
-        // .filterDoublesByIdMap(resultingParses);
-        return resultingParsesFiltered;
+        RRGParseResult.Builder parseResultBuilder = new RRGParseResult.Builder();
+        parseResultBuilder = parseResultBuilder
+                .successfulParses(resultingParsesBeautiful)
+                .treesWithEdgeFeatureMismatches(resultingParsesEdgesUnified
+                        .getTreesWithEdgeFeatureMismatches());
+        return parseResultBuilder.build();
         // return RRGTools.convertTreeSet(resultingParses);
     }
 
@@ -106,7 +132,7 @@ public class ParseForestExtractor {
     private Set<RRGParseTree> extract(ExtractionStep extractionstep) {
         Backpointer backPointers = parseChart
                 .getBackPointers(extractionstep.getCurrentItem());
-        Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
+        Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
 
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
@@ -117,75 +143,80 @@ public class ParseForestExtractor {
                 backPointers.getAntecedents(Operation.NLS), extractionstep));
 
         // Move-Up
-        Set<List<RRGParseItem>> moveupAntecedents = backPointers
+        Set<Set<RRGParseItem>> moveupAntecedents = backPointers
                 .getAntecedents(Operation.MOVEUP);
         parsesInThisStep
                 .addAll(extractMoveUp(moveupAntecedents, extractionstep));
 
         // Combine-Sisters
-        Set<List<RRGParseItem>> combsisAntecedents = backPointers
+        Set<Set<RRGParseItem>> combsisAntecedents = backPointers
                 .getAntecedents(Operation.COMBINESIS);
         parsesInThisStep
                 .addAll(extractCombSis(combsisAntecedents, extractionstep));
 
         // Substitution
-        Set<List<RRGParseItem>> substAntecedents = backPointers
+        Set<Set<RRGParseItem>> substAntecedents = backPointers
                 .getAntecedents(Operation.SUBSTITUTE);
         parsesInThisStep.addAll(extractSubst(substAntecedents, extractionstep));
 
         // Left-Adjoin
-        Set<List<RRGParseItem>> leftAdjAntecedents = backPointers
+        Set<Set<RRGParseItem>> leftAdjAntecedents = backPointers
                 .getAntecedents(Operation.LEFTADJOIN);
         parsesInThisStep
                 .addAll(extractLeftAdjoin(leftAdjAntecedents, extractionstep));
 
         // Right-Adjoin
-        Set<List<RRGParseItem>> rightAdjAntecedents = backPointers
+        Set<Set<RRGParseItem>> rightAdjAntecedents = backPointers
                 .getAntecedents(Operation.RIGHTADJOIN);
         parsesInThisStep.addAll(
                 extractRightAdjoin(rightAdjAntecedents, extractionstep));
 
         // Complete-Wrapping
-        Set<List<RRGParseItem>> coWrAntecedents = backPointers
+        Set<Set<RRGParseItem>> coWrAntecedents = backPointers
                 .getAntecedents(Operation.COMPLETEWRAPPING);
         parsesInThisStep.addAll(
                 extractCompleteWrapping(coWrAntecedents, extractionstep));
 
         // Predict-Wrapping
-        Set<List<RRGParseItem>> prWrAntecedents = backPointers
+
+        Set<Set<RRGParseItem>> prWrAntecedents = backPointers
                 .getAntecedents(Operation.PREDICTWRAPPING);
-        parsesInThisStep.addAll(
-                extractPredictWrapping(prWrAntecedents, extractionstep));
+        boolean wrappingException = false;
+        try {
+            parsesInThisStep.addAll(
+                    extractPredictWrapping(prWrAntecedents, extractionstep));
+        } catch (WrappingException e) {
+            wrappingException = true;
+        }
 
         // if no other rule applied (i.e. if we dealt with a scanned item):
-        if (parsesInThisStep.isEmpty()) {
+        boolean noBackPointersBecauseLexNode = extractionstep.getCurrentItem()
+                .getNode().getType().equals(RRGNodeType.LEX);
+        if (parsesInThisStep.isEmpty() && !wrappingException
+                && noBackPointersBecauseLexNode) {
             parsesInThisStep.add(extractionstep.getCurrentParseTree());
         }
+        // System.out.println("---------------------------------------------");
+        // System.out.println(parsesInThisStep.size());
+        // System.out.println("---------------------------------------------");
+        // System.out.println(extractionstep);
         // for (RRGParseTree parseInThisStep : parsesInThisStep) {
         // System.out.println(parseInThisStep);
         // }
+        // System.out.println("---------------------------------------------");
 
-        Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep = addExtractionStepToAllTrees(
-                parsesInThisStep, extractionstep);
+        // Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep =
+        // addExtractionStepToAllTrees(
+        // parsesInThisStep, extractionstep);
         return parsesInThisStep;
     }
 
-    private Set<RRGParseTree> addExtractionStepToAllTrees(
-            Set<RRGParseTree> parsesInThisStep, ExtractionStep e) {
-        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
-        for (RRGParseTree tree : parsesInThisStep) {
-            tree.addExtractionStep(e);
-            result.add(tree);
-        }
-        return result;
-    }
-
     private Set<RRGParseTree> extractPredictWrapping(
-            Set<List<RRGParseItem>> predictWrappingAntecedents,
-            ExtractionStep extractionstep) {
+            Set<Set<RRGParseItem>> predictWrappingAntecedents,
+            ExtractionStep extractionstep) throws WrappingException {
 
         Set<RRGParseTree> parsesInThisPWStep = new HashSet<RRGParseTree>();
-        for (List<RRGParseItem> predictWrappingantecedentItemsingletonList : predictWrappingAntecedents) {
+        for (Set<RRGParseItem> predictWrappingantecedentItemsingletonList : predictWrappingAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.PREDICTWRAPPING);
             }
@@ -195,29 +226,33 @@ public class ParseForestExtractor {
             // System.out.println("step: " + extractionstep);
 
             RRGParseItem predictWrappingAntecedentItem = (RRGParseItem) predictWrappingantecedentItemsingletonList
-                    .get(0);
+                    .iterator().next();
             GornAddress ddaughterAbsAddress = new GornAddress(
                     extractionstep.getGAInParseTree());
             // insert the subtree stored in the RRGParseTree at the correct GA
             // (seems to work)
             // continue extraction from there with same GA
+
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().addWrappingSubTree(
                             ddaughterAbsAddress, predictWrappingAntecedentItem);
-            ExtractionStep nextStep = new ExtractionStep(
-                    predictWrappingAntecedentItem, ddaughterAbsAddress,
-                    nextStepParseTree,
-                    extractionstep.getGoToRightWhenGoingDown());
-            parsesInThisPWStep.addAll(extract(nextStep));
+            if (nextStepParseTree != null) {
+                ExtractionStep nextStep = new ExtractionStep(
+                        predictWrappingAntecedentItem, ddaughterAbsAddress,
+                        nextStepParseTree,
+                        extractionstep.getGoToRightWhenGoingDown());
+                parsesInThisPWStep.addAll(extract(nextStep));
+            } else
+                throw new WrappingException();
         }
         return parsesInThisPWStep;
     }
 
     private Set<RRGParseTree> extractCompleteWrapping(
-            Set<List<RRGParseItem>> completeWrappingAntecedents,
+            Set<Set<RRGParseItem>> completeWrappingAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisCWStep = new HashSet<RRGParseTree>();
-        for (List<RRGParseItem> CWantecedentItems : completeWrappingAntecedents) {
+        for (Set<RRGParseItem> CWantecedentItems : completeWrappingAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.COMPLETEWRAPPING);
             }
@@ -225,12 +260,16 @@ public class ParseForestExtractor {
             // "do complete Wrapping with\n" + CWantecedentItems.toString()
             // + "\n" + extractionstep.getCurrentItem());
 
-            RRGParseItem dDaughter = (RRGParseItem) (((RRGParseItem) CWantecedentItems
-                    .get(0)).getwsflag() ? CWantecedentItems.get(0)
-                            : CWantecedentItems.get(1));
-            RRGParseItem gapItem = (RRGParseItem) (((RRGParseItem) CWantecedentItems
-                    .get(0)).getwsflag() ? CWantecedentItems.get(1)
-                            : CWantecedentItems.get(0));
+            RRGParseItem dDaughter, gapItem;
+            Iterator<RRGParseItem> it = CWantecedentItems.iterator();
+            RRGParseItem candidate1 = it.next();
+            if (candidate1.getwsflag()) {
+                dDaughter = candidate1;
+                gapItem = it.next();
+            } else {
+                dDaughter = it.next();
+                gapItem = candidate1;
+            }
 
             // extract the d-daughter in the predict-wrapping step
 
@@ -260,10 +299,10 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractRightAdjoin(
-            Set<List<RRGParseItem>> rightAdjAntecedents,
+            Set<Set<RRGParseItem>> rightAdjAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisRightAdjStep = new HashSet<RRGParseTree>();
-        for (List<RRGParseItem> rightAdjAntecedentItems : rightAdjAntecedents) {
+        for (Set<RRGParseItem> rightAdjAntecedentItems : rightAdjAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.RIGHTADJOIN);
             }
@@ -273,13 +312,14 @@ public class ParseForestExtractor {
             // consequent item of this extraction step was the left sister in a
             // ComBSis step and was extracted there first
             RRGParseItem auxRootItem, targetItem;
-            if ((((RRGParseItem) rightAdjAntecedentItems.get(0)).getNode()
-                    .getType().equals(RRGNodeType.STAR))) {
-                auxRootItem = ((RRGParseItem) rightAdjAntecedentItems.get(0));
-                targetItem = ((RRGParseItem) rightAdjAntecedentItems.get(1));
+            Iterator<RRGParseItem> it = rightAdjAntecedentItems.iterator();
+            RRGParseItem candidate1 = it.next();
+            if (candidate1.getNode().getType().equals(RRGNodeType.STAR)) {
+                auxRootItem = candidate1;
+                targetItem = it.next();
             } else {
-                auxRootItem = ((RRGParseItem) rightAdjAntecedentItems.get(1));
-                targetItem = ((RRGParseItem) rightAdjAntecedentItems.get(0));
+                auxRootItem = it.next();
+                targetItem = candidate1;
             }
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().sisterAdjoin(auxRootItem.getTree(),
@@ -296,6 +336,7 @@ public class ParseForestExtractor {
                             + 1);
 
             tmpResult = extract(nextStep);
+            // System.out.println("tmpresult size: " + tmpResult.size());
             // extract target:
             for (RRGParseTree rrgParseTree : tmpResult) {
                 nextStep = new ExtractionStep(targetItem,
@@ -314,11 +355,11 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractLeftAdjoin(
-            Set<List<RRGParseItem>> leftAdjAntecedents,
+            Set<Set<RRGParseItem>> leftAdjAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisLeftAdjStep = new HashSet<RRGParseTree>();
         // for all possible antecedents
-        for (List<RRGParseItem> leftAdjAntecedentItems : leftAdjAntecedents) {
+        for (Set<RRGParseItem> leftAdjAntecedentItems : leftAdjAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.LEFTADJOIN);
             }
@@ -327,13 +368,14 @@ public class ParseForestExtractor {
             // tmpResult.add(extractionstep.getCurrentParseTree());
 
             RRGParseItem auxRootItem, rightSisItem;
-            if ((((RRGParseItem) leftAdjAntecedentItems.get(0)).getNode()
-                    .getType().equals(RRGNodeType.STAR))) {
-                auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
-                rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
+            Iterator<RRGParseItem> it = leftAdjAntecedentItems.iterator();
+            RRGParseItem candidate1 = it.next();
+            if (candidate1.getNode().getType().equals(RRGNodeType.STAR)) {
+                auxRootItem = candidate1;
+                rightSisItem = it.next();
             } else {
-                auxRootItem = (RRGParseItem) leftAdjAntecedentItems.get(1);
-                rightSisItem = (RRGParseItem) leftAdjAntecedentItems.get(0);
+                auxRootItem = it.next();
+                rightSisItem = candidate1;
             }
             // first extract the right sister
             ExtractionStep nextStep = new ExtractionStep(rightSisItem,
@@ -367,24 +409,25 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractCombSis(
-            Set<List<RRGParseItem>> combsisAntecedents,
+            Set<Set<RRGParseItem>> combsisAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisCombSisStep = new HashSet<RRGParseTree>();
         // how many different antecedents are there?
-        for (List<RRGParseItem> combsisantecedentItems : combsisAntecedents) {
+        for (Set<RRGParseItem> combsisantecedentItems : combsisAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.COMBINESIS);
             }
 
             // find out which item is which
             RRGParseItem leftItem, rightItem;
-            if (((RRGParseItem) combsisantecedentItems.get(0)).getNodePos()
-                    .equals(RRGParseItem.NodePos.TOP)) {
-                leftItem = (RRGParseItem) combsisantecedentItems.get(0);
-                rightItem = (RRGParseItem) combsisantecedentItems.get(1);
+            Iterator<RRGParseItem> it = combsisantecedentItems.iterator();
+            RRGParseItem candidate1 = it.next();
+            if (candidate1.getNodePos().equals(RRGParseItem.NodePos.TOP)) {
+                leftItem = candidate1;
+                rightItem = it.next();
             } else {
-                leftItem = (RRGParseItem) combsisantecedentItems.get(1);
-                rightItem = (RRGParseItem) combsisantecedentItems.get(0);
+                leftItem = it.next();
+                rightItem = candidate1;
             }
 
             ExtractionStep nextStep = new ExtractionStep(rightItem,
@@ -446,10 +489,10 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractSubst(
-            Set<List<RRGParseItem>> substAntecedents,
+            Set<Set<RRGParseItem>> substAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisSUBSTStep = new HashSet<RRGParseTree>();
-        for (List<RRGParseItem> substantecedentItemSingletonList : substAntecedents) {
+        for (Set<RRGParseItem> substantecedentItemSingletonList : substAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.SUBSTITUTE);
             }
@@ -457,7 +500,7 @@ public class ParseForestExtractor {
             // + "\n" + extractionstep);
 
             RRGParseItem substAntecedentItem = (RRGParseItem) substantecedentItemSingletonList
-                    .get(0);
+                    .iterator().next();
             GornAddress GAtoReplaceAt = extractionstep.getGAInParseTree();
             RRGTree substTree = substAntecedentItem.getTree();
             // System.out.println("try to subst this tree: " + substTree);
@@ -475,16 +518,16 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractMoveUp(
-            Set<List<RRGParseItem>> moveupAntecedents,
+            Set<Set<RRGParseItem>> moveupAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisMoveUpStep = new HashSet<RRGParseTree>();
 
-        for (List<RRGParseItem> moveupAntecedentItemSingletonList : moveupAntecedents) {
+        for (Set<RRGParseItem> moveupAntecedentItemSingletonList : moveupAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.MOVEUP);
             }
             RRGParseItem moveupAntecedentItem = (RRGParseItem) moveupAntecedentItemSingletonList
-                    .get(0);
+                    .iterator().next();
             GornAddress newMoveUpGA = extractionstep.getGAInParseTree()
                     .ithDaughter(moveupAntecedentItem.getNode().getGornaddress()
                             .isIthDaughter()
@@ -496,15 +539,16 @@ public class ParseForestExtractor {
         return parsesInThisMoveUpStep;
     }
 
-    private Set<RRGParseTree> extractNLS(Set<List<RRGParseItem>> nlsAntecedents,
+    private Set<RRGParseTree> extractNLS(Set<Set<RRGParseItem>> nlsAntecedents,
             ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisNLSStep = new HashSet<RRGParseTree>();
-        for (List<RRGParseItem> antecedentItemSingletonList : nlsAntecedents) {
+        for (Set<RRGParseItem> antecedentItemSingletonList : nlsAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.NLS);
             }
             ExtractionStep nextStep = new ExtractionStep(
-                    (RRGParseItem) antecedentItemSingletonList.get(0),
+                    (RRGParseItem) antecedentItemSingletonList.iterator()
+                            .next(),
                     extractionstep.getGAInParseTree(),
                     extractionstep.getCurrentParseTree(),
                     extractionstep.getGoToRightWhenGoingDown());

@@ -1,0 +1,7 @@
+What	(RP (N <>))
+does	(CO* (TNS-OP <>))
+John	(RP (N <>))
+think	(CL (CO (RP )(NUC (V <>)))(CL ))
+Bill	(RP (N <>))
+smashed	(CL (PrCS (RP ))(CL_d (CO (RP )(NUC (V <>)))))
+	 

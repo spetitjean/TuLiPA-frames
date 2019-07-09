@@ -211,7 +211,8 @@ public class TagTreeContentHandler implements ContentHandler {
                     // we set the current feat of the current avm (stack of avms
                     // and of features)
                     Fs feats = currentAVM.get(currentAVM.size() - 1);
-                    feats.setFeat(currentFeat.get(currentFeat.size() - 1), val);
+                    feats.setFeatWithoutReplace(
+                            currentFeat.get(currentFeat.size() - 1), val);
                 } else // otherwise we update the atomic disjunction
                     currentADisj.add(val);
             } else {
@@ -289,12 +290,13 @@ public class TagTreeContentHandler implements ContentHandler {
             Value top = res.getFeat("top");
             if (top == null) {
                 top = new Value(new Fs());
-                res.setFeat("top", top);
+                res.setFeatWithoutReplace("top", top);
             }
             Value bot = res.getFeat("bot");
             if (bot == null) {
                 bot = new Value(new Fs());
-                res.setFeat("bot", bot);
+                res.setFeatWithoutReplace("bot", bot);
+
             }
             currentNode.get(currentNode.size() - 1).findCategory(); // also
                                                                     // propagates
@@ -306,7 +308,8 @@ public class TagTreeContentHandler implements ContentHandler {
         } else if (localName.equals("vAlt")) {
             Value val = new Value(currentADisj);
             Fs feats = currentAVM.get(currentAVM.size() - 1);
-            feats.setFeat(currentFeat.get(currentFeat.size() - 1), val);
+            feats.setFeatWithoutReplace(currentFeat.get(currentFeat.size() - 1),
+                    val);
             currentADisj = null;
         } else if (localName.equals("fs")) {
             if (!iface) {
@@ -318,8 +321,8 @@ public class TagTreeContentHandler implements ContentHandler {
                     Fs feats = currentAVM.get(currentAVM.size() - 1);
                     String f = currentFeat.get(currentFeat.size() - 1);
                     currentAVM.remove(currentAVM.size() - 1);
-                    currentAVM.get(currentAVM.size() - 1).setFeat(f,
-                            new Value(feats));
+                    currentAVM.get(currentAVM.size() - 1)
+                            .setFeatWithoutReplace(f, new Value(feats));
                 }
             } else {
                 currentTree.setIface(currentAVM.get(currentAVM.size() - 1));

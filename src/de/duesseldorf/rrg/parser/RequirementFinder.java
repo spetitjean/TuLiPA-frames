@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
 
@@ -198,10 +200,10 @@ public class RequirementFinder {
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
         // filter all that have matching labels
-        Set<RRGParseItem> sameMotherLabel = filterByMotherLabel(sisAdjRoot,
+        Set<RRGParseItem> suitableMother = filterByMother(sisAdjRoot,
                 candidates);
         Set<RRGParseItem> result = new HashSet<RRGParseItem>();
-        for (RRGParseItem item : sameMotherLabel) {
+        for (RRGParseItem item : suitableMother) {
             if (!item.getNode().getGornaddress().hasLeftSister()) {
                 result.add(item);
             }
@@ -227,7 +229,7 @@ public class RequirementFinder {
                 .end(sisadjroot.startPos()).ws(false).build();
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
-        return filterByMotherLabel(sisadjroot, candidates);
+        return filterByMother(sisadjroot, candidates);
     }
 
     /**
@@ -237,11 +239,11 @@ public class RequirementFinder {
      *         and the mother of the node has the same label as the mother of
      *         the (sister adjunction) root item sisadjroot.
      */
-    private Set<RRGParseItem> filterByMotherLabel(RRGParseItem sisadjroot,
+    private Set<RRGParseItem> filterByMother(RRGParseItem sisadjroot,
             Set<RRGParseItem> targetCandidates) {
         Set<RRGParseItem> filteredCandidates = new HashSet<RRGParseItem>();
         for (RRGParseItem candidate : targetCandidates) {
-            if (sameMotherLabel(sisadjroot, candidate))
+            if (suitableMother(sisadjroot, candidate))
                 filteredCandidates.add(candidate);
         }
         // System.out.println("fbML called with parameters \n\troot: " +
@@ -257,17 +259,21 @@ public class RequirementFinder {
      * @return true iff the node in root has the same label as the mother of the
      *         node in target
      */
-    private boolean sameMotherLabel(RRGParseItem root, RRGParseItem target) {
+    private boolean suitableMother(RRGParseItem root, RRGParseItem target) {
         RRGNode targetMother = target.getTree()
                 .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
-            String candidateMotherLabel = targetMother.getCategory();
-            if (root.getNode().getCategory().equals(candidateMotherLabel)) {
-                return true;
+            boolean nodeUnificationPossible = true;
+            try {
+                RRGTreeTools.unifyNodes(root.getNode(), targetMother,
+                        root.getTree().getEnv());
+            } catch (UnifyException e) {
+                nodeUnificationPossible = false;
             }
+            return nodeUnificationPossible;
         }
-
         return false;
+
     }
 
     /**
@@ -298,7 +304,7 @@ public class RequirementFinder {
                     .findUnderspecifiedItem(leftAdjModel, false);
 
             for (RRGParseItem item : leftAdj) {
-                if (isSisadjRoot(item) && sameMotherLabel(item, currentItem)) {
+                if (isSisadjRoot(item) && suitableMother(item, currentItem)) {
                     result.get("l").add(item);
                 }
             }
@@ -318,7 +324,7 @@ public class RequirementFinder {
         for (RRGParseItem item : rightAdj) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
-            if (isSisadjRoot(item) && sameMotherLabel(item, currentItem)) {
+            if (isSisadjRoot(item) && suitableMother(item, currentItem)) {
                 result.get("r").add(item);
                 // System.out.println("item added: " + item);
             }
@@ -407,12 +413,23 @@ public class RequirementFinder {
                 false);
         Set<RRGParseItem> candidatesWithFittingCats = new HashSet<RRGParseItem>();
         for (RRGParseItem item : candidates) {
-            if (item.getNode().getCategory().equals(gap.nonterminal)
-                    && targetRootItem.getNode().getCategory()
-                            .equals(item
-                                    .getTree().findNode(item.getNode()
-                                            .getGornaddress().mother())
-                                    .getCategory())) {
+
+            boolean gapHasRightLabel = item.getNode().getCategory()
+                    .equals(gap.nonterminal);
+            boolean targetRootSuitsDMother = true;
+            try {
+                RRGTreeTools.unifyNodes(targetRootItem.getNode(),
+                        item.getTree().findNode(
+                                item.getNode().getGornaddress().mother()),
+                        item.getTree().getEnv());
+            } catch (UnifyException e) {
+                targetRootSuitsDMother = false;
+            }
+            if (gapHasRightLabel && targetRootSuitsDMother) {
+                // && targetRootItem.getNode().getCategory()
+                // .equals(item.getTree()
+                // .findNode(item.getNode().getGornaddress().mother())
+                // .getCategory())) {
                 candidatesWithFittingCats.add(item);
             }
         }

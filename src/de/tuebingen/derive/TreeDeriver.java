@@ -162,6 +162,8 @@ public class TreeDeriver {
             // }
             // System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
+
+	    //System.out.println("\n\nOld sem: "+derivedTree.getFrameSem());
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, true);
 
@@ -174,6 +176,7 @@ public class TreeDeriver {
                 // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                 // newFrameSem, derivedTree.env, false);
                 derivedTree.setFrameSem(newFrameSem);
+		//System.out.println("\n\nNew sem: "+newFrameSem);
                 // System.out.println("Derived tree env after:
                 // "+derivedTree.env);
                 Environment.rename(derivedTree.env);

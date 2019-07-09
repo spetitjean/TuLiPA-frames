@@ -11,15 +11,19 @@ bin/TuLiPA.jar
 
 # put your grammars in resources and keep them private
 resources/**
+!resources/test_rrg/**
 !resources/test_grammar/**
 
 # put your test scripts in run and keep some of them private.
 run/ 
+!run/test_rrg.sh
 !run/test.sh
-
 
 
 # ignore class files 
 bin/**
 !TuLiPA-frames.jar
 
+# backup dirs for experiments
+experiments/**
+tmp/**

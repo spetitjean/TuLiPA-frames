@@ -47,12 +47,12 @@ public class XMLGrammarReadingTools {
                 Value top = res.getFeat("top");
                 if (top == null) {
                     top = new Value(new Fs());
-                    res.setFeat("top", top);
+                    res.setFeatWithoutReplace("top", top);
                 }
                 Value bot = res.getFeat("bot");
                 if (bot == null) {
                     bot = new Value(new Fs());
-                    res.setFeat("bot", bot);
+                    res.setFeatWithoutReplace("bot", bot);
                 }
 
                 Set<String> keys = toAdd.keySet();
@@ -60,10 +60,10 @@ public class XMLGrammarReadingTools {
                 while (it.hasNext()) {
                     String f = it.next();
                     if (!(top.getAvmVal().hasFeat(f))) {
-                        top.getAvmVal().setFeat(f, toAdd.get(f));
+                        top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
                     }
                     if (!(bot.getAvmVal().hasFeat(f))) {
-                        bot.getAvmVal().setFeat(f, toAdd.get(f));
+                        bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
                     }
                 }
             }
@@ -88,6 +88,7 @@ public class XMLGrammarReadingTools {
         Value corefval = new Value(Value.Kind.VAR, nf.getName(coref));
 
         NodeList etypes = null;
+        Value typevar = null;
         NodeList l = e.getChildNodes();
 
         // NodeList etypes = e.getElementsByTagName("type");
@@ -97,6 +98,8 @@ public class XMLGrammarReadingTools {
                 Element el = (Element) n;
                 if (el.getTagName().equals("ctype")) {
                     etypes = el.getElementsByTagName("type");
+                    typevar = new Value(Value.Kind.VAR,
+                            nf.getName(el.getAttribute("coref")));
                 }
             }
         }
@@ -110,8 +113,12 @@ public class XMLGrammarReadingTools {
                 types.add(el.getAttribute("val"));
             }
         }
-        Type frame_type = new Type(types);
-        // System.out.println("Found a type: "+frame_type);
+
+        Type frame_type;
+        if (typevar == null)
+            frame_type = new Type(types);
+        else
+            frame_type = new Type(types, typevar);
 
         res = new Fs(frame_type, corefval);
 
@@ -133,7 +140,7 @@ public class XMLGrammarReadingTools {
                         val = XMLTTMCTAGReader.getVal(el, XMLTTMCTAGReader.NOFS,
                                 toAdd, key, nf);
                     }
-                    res.setFeat(key, val);
+                    res.setFeatWithoutReplace(key, val);
                 }
             }
         }

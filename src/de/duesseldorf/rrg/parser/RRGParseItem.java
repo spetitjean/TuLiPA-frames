@@ -104,9 +104,10 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             gapstr += gap.toString();
         }
         gapstr += "]";
-        String itemstr = "[" + this.tree.getId() + ", " + this.node + ", "
-                + this.nodepos + ", " + this.start + ", " + this.end + ", "
-                + gapstr + ", " + ws + "]";
+        String itemstr = "[" + this.tree.getId() + ", "
+                + this.node.toStringWithoutFs() + ", " + this.nodepos + ", "
+                + this.start + ", " + this.end + ", " + gapstr + ", " + ws
+                + "]";
 
         return itemstr;
     }

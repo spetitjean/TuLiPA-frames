@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<grammar>
+  <entry name="quickly_0">
+    <family>quickly</family>
+    <trace>
+      <class>quickly</class>
+    </trace>
+    <tree id="quickly_0">
+      <node type="star" name="Co">
+        <narg>
+          <fs coref="@AVM1">
+            <f name="cat">
+              <sym value="CO"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="std" name="Adv">
+          <narg>
+            <fs coref="@AVM2">
+              <f name="cat">
+                <sym value="ADV"/>
+              </f>
+            </fs>
+          </narg>
+          <node type="lex" name="Anch">
+            <narg>
+              <fs coref="@AVM3">
+                <f name="cat">
+                  <sym value="quickly"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+        </node>
+      </node>
+    </tree>
+    <semantics>
+    </semantics>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="entered_1">
+    <family>entered</family>
+    <trace>
+      <class>entered</class>
+    </trace>
+    <tree id="entered_1">
+      <node type="std" name="Cl">
+        <narg>
+          <fs coref="@AVM1">
+            <f name="cat">
+              <sym value="CL"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="std" name="Co">
+          <narg>
+            <fs coref="@AVM2">
+              <f name="cat">
+                <sym value="CO"/>
+              </f>
+            </fs>
+          </narg>
+          <node type="subst" name="RPS">
+            <narg>
+              <fs coref="@AVM3">
+                <f name="cat">
+                  <sym value="RP"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+          <node type="std" name="Nuc">
+            <narg>
+              <fs coref="@AVM4">
+                <f name="cat">
+                  <sym value="NUC"/>
+                </f>
+              </fs>
+            </narg>
+            <node type="std" name="Ve">
+              <narg>
+                <fs coref="@AVM5">
+                  <f name="cat">
+                    <sym value="V"/>
+                  </f>
+                </fs>
+              </narg>
+              <node type="lex" name="ANCH">
+                <narg>
+                  <fs coref="@AVM6">
+                    <f name="cat">
+                      <sym value="entered"/>
+                    </f>
+                  </fs>
+                </narg>
+              </node>
+            </node>
+          </node>
+          <node type="subst" name="RPO">
+            <narg>
+              <fs coref="@AVM7">
+                <f name="cat">
+                  <sym value="RP"/>
+                </f>
+              </fs>
+            </narg>
+          </node>
+        </node>
+      </node>
+    </tree>
+    <semantics>
+    </semantics>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="theRoom_2">
+    <family>theRoom</family>
+    <trace>
+      <class>theRoom</class>
+    </trace>
+    <tree id="theRoom_2">
+      <node type="std" name="XMG_VAR_1">
+        <narg>
+          <fs coref="@AVM1">
+            <f name="cat">
+              <sym value="RP"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="lex" name="XMG_VAR_5">
+          <narg>
+            <fs coref="@AVM2">
+              <f name="cat">
+                <sym value="theRoom"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+      </node>
+    </tree>
+    <semantics>
+    </semantics>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+  <entry name="Mary_3">
+    <family>Mary</family>
+    <trace>
+      <class>Mary</class>
+    </trace>
+    <tree id="Mary_3">
+      <node type="std" name="XMG_VAR_1">
+        <narg>
+          <fs coref="@AVM1">
+            <f name="cat">
+              <sym value="RP"/>
+            </f>
+          </fs>
+        </narg>
+        <node type="lex" name="XMG_VAR_5">
+          <narg>
+            <fs coref="@AVM2">
+              <f name="cat">
+                <sym value="Mary"/>
+              </f>
+            </fs>
+          </narg>
+        </node>
+      </node>
+    </tree>
+    <semantics>
+    </semantics>
+    <interface>
+      <fs>
+      </fs>
+    </interface>
+  </entry>
+</grammar>

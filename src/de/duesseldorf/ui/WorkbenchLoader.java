@@ -45,7 +45,7 @@ import java.util.Map;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.TypeHierarchy;
 import de.duesseldorf.io.XMLTypeHierarchyReader;
-import de.duesseldorf.rrg.io.BracketedRRGReader;
+import de.duesseldorf.rrg.io.BracketedRRGFromFileReader;
 import de.duesseldorf.rrg.io.XMLRRGReader;
 import de.tuebingen.anchoring.InstantiatedTagTree;
 import de.tuebingen.anchoring.LexicalSelection;
@@ -166,7 +166,7 @@ public class WorkbenchLoader {
                     + (loadedTime) / (Math.pow(10, 9)) + " sec.");
         } else if (op.check("rrg")) { // RRG-parsing
             if (op.check("rrgbrin")) {
-                BracketedRRGReader brReader = new BracketedRRGReader(grammar);
+                BracketedRRGFromFileReader brReader = new BracketedRRGFromFileReader(grammar);
                 g = brReader.parseRRG();
             } else {
                 XMLRRGReader rrgreader = new XMLRRGReader(grammar);

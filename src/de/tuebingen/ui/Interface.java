@@ -188,10 +188,8 @@ public class Interface {
                     }
                 }
             }
-        } else if (op.check("b"))
-
-        { // batch processing
-          // Load the input from a file
+        } else if (op.check("b")) { // batch processing
+            // Load the input from a file
             File input = new File(op.getVal("b"));
             BufferedReader r = new BufferedReader(new FileReader(input));
             String is = "";
@@ -258,6 +256,10 @@ public class Interface {
                     new InputGUI(ops);
                 }
             });
+        }
+        if (op.check("rrg")) {
+            System.out.println("Done parsing. Goodbye!");
+            System.exit(0);
         }
     }
 

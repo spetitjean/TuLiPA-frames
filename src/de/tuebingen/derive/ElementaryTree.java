@@ -100,6 +100,7 @@ public class ElementaryTree {
         this.topFeatures = topFeatures;
         this.bottomFeatures = bottomFeatures;
         this.semantics = semantics;
+	this.frameSem = new Frame();
     }
 
     // public ElementaryTree(Node root, String foot, String anchor,
@@ -576,7 +577,6 @@ public class ElementaryTree {
 
     /**
      * similar to the old updateFs method. changes the variables in the frameSem
-     * (AS OF OCT 18, 2018: Only changes feature structures, not relations)
      * 
      * @param frameSem
      * @param env
@@ -588,22 +588,24 @@ public class ElementaryTree {
             boolean finalUpdate) throws UnifyException {
 
         List<Fs> newFs = new LinkedList<Fs>();
-        for (Fs fs : frameSem.getFeatureStructures()) {
-            if (fs != null)
-                newFs.add(Fs.updateFS(fs, env, finalUpdate));
-        }
+        if (frameSem != null && frameSem.getFeatureStructures() != null)
+            for (Fs fs : frameSem.getFeatureStructures()) {
+                if (fs != null)
+                    newFs.add(Fs.updateFS(fs, env, finalUpdate));
+            }
 
         Set<Relation> newRelations = new HashSet<Relation>();
-        for (Relation oldRel : frameSem.getRelations()) {
-            List<Value> newArgs = new LinkedList<Value>();
-            for (Value oldVal : oldRel.getArguments()) {
-                Value oldCopy = new Value(oldVal);
-                oldCopy.update(env, finalUpdate);
-                // Value newVal = env.deref(oldVal);
-                newArgs.add(oldCopy);
+        if (frameSem != null && frameSem.getRelations() != null)
+            for (Relation oldRel : frameSem.getRelations()) {
+                List<Value> newArgs = new LinkedList<Value>();
+                for (Value oldVal : oldRel.getArguments()) {
+                    Value oldCopy = new Value(oldVal);
+                    oldCopy.update(env, finalUpdate);
+                    // Value newVal = env.deref(oldVal);
+                    newArgs.add(oldCopy);
+                }
+                newRelations.add(new Relation(oldRel.getName(), newArgs));
             }
-            newRelations.add(new Relation(oldRel.getName(), newArgs));
-        }
 
         return new Frame(newFs, newRelations);
     }

@@ -123,7 +123,10 @@ public class Fs {
             this.coref = null;
             AVlist = new Hashtable<String, Value>();
         } else {
-            this.type = fs.getType();
+            this.type = new Type(fs.getType());
+            if (fs.getType() != null && fs.getType().getVar() != null) {
+                this.type.setVar(new Value(fs.getType().getVar(), nf));
+            }
             this.is_typed = fs.isTyped();
             if (fs.getCoref() != null) {
                 this.coref = new Value(fs.getCoref(), nf);
@@ -145,18 +148,26 @@ public class Fs {
 
     /**
      * method that stores a new pair (key, val) into the avm.
-     * NB: if the key already is in the AVM, the new entry is not stored
+     * NB: if the key already is in the AVM or if the val is null, the new entry
+     * is not stored
      * 
      * @param key,
      *            val
      *            key is the key (String) and val the value (Val)
      * 
      */
-    public void setFeat(String key, Value val) {
+    public void setFeatWithoutReplace(String key, Value val) {
         if (AVlist.containsKey(key)) {
-            System.out.println(
-                    "Key : " + key + " already used, feature skipped.");
-        } else {
+            System.out.println("Key : " + key
+                    + " already used, feature skipped. exsisting value: "
+                    + AVlist.get(key) + "new value: " + val);
+        } else if (val != null) {
+            AVlist.put(key, val);
+        }
+    }
+
+    public void setFeatWithReplaceIfValNotNull(String key, Value val) {
+        if (val != null) {
             AVlist.put(key, val);
         }
     }
@@ -232,7 +243,7 @@ public class Fs {
 
     public void propagateCategory(String cat) {
         if (!AVlist.containsKey("cat")) {
-            this.setFeat("cat", new Value(Value.Kind.VAL, cat));
+            this.setFeatWithoutReplace("cat", new Value(Value.Kind.VAL, cat));
         }
         Iterator<String> feats = AVlist.keySet().iterator();
         while (feats.hasNext()) {
@@ -353,30 +364,63 @@ public class Fs {
         return AVlist.keySet();
     }
 
-    public String toString() {
-        Set<Value> seen = new HashSet<Value>();
-        return toStringRec(seen);
+    public String toStringOneLiner() {
+        return toString().replaceAll("\n", ", ");
     }
 
-    public String toStringRec(Set<Value> seen) {
+    public String toStringWithOutTypeOneLiner() {
+        Set<Value> seen = new HashSet<Value>();
+        String res = toStringRec(seen, false, true);
+        res = res.replaceAll("\n", ", ");
+        return res;
+    }
+
+    public String toString() {
+        Set<Value> seen = new HashSet<Value>();
+        return toStringRec(seen, true, false);
+    }
+
+    public String toStringRec(Set<Value> seen, boolean withType,
+            boolean withCoref) {
+        String res = "";
+        if (withCoref && coref != null && coref.is(Value.Kind.VAR)) {
+            res += "{" + coref.getVarVal() + "}";
+        }
+
+        res += "[";
+
+        if (withType && isTyped()) {
+            res = "(" + coref + ")" + res + type + "\n ";
+
+            if (coref != null && seen.contains(coref)) {
+                // System.out.println("Stopping print because of recursion");
+                return res + "]";
+            } else
+                seen.add(coref);
+        }
+
+        res += attrsToString(seen, withType, withCoref);
+        res += "]";
+        return res;
+    }
+
+    /**
+     * @param seen
+     * @param res
+     * @return
+     */
+    private String attrsToString(Set<Value> seen, boolean withType,
+            boolean withCoref) {
         String res = "";
 
-        if (isTyped()) {
-            res = "(" + coref + ")" + res + type + "\n ";
-        }
-        if (seen.contains(coref)) {
-            // System.out.println("Stopping print because of recursion");
-            return res;
-        } else
-            seen.add(coref);
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
             String k = (String) i.next();
             // System.out.println(seen);
             if (AVlist.get(k).getType() == Value.Kind.AVM)
-                res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen)
-                        + "\n ";
+                res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen,
+                        withType, withCoref) + "\n ";
             else
                 res += k + " = " + AVlist.get(k).toString() + "\n ";
         }
@@ -491,7 +535,7 @@ public class Fs {
             switch (fval.getType()) {
             case VAL: // for semantic labels
                 fval.update(env, finalUpdate);
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
                 break;
             case VAR:
                 // if the feature value is a variable,
@@ -499,27 +543,28 @@ public class Fs {
                 Value v = env.deref(fval);
 
                 if (!(v.equals(fval))) { // it is bound:
-                    res.setFeat(k, ValueTools.unify(fval, v, env));
+                    res.setFeatWithoutReplace(k,
+                            ValueTools.unify(fval, v, env));
                 } else { // it is not:
                     // System.err.println("Variable not bound ... " + k +
                     // ":"
                     // + fval.toString());
-                    res.setFeat(k, fval);
+                    res.setFeatWithoutReplace(k, fval);
                     // This was added for testing
                     // env.bind(k,fval);
                 }
                 break;
             case AVM: // the value is an avm, we go on updating
                 // System.out.println("Updating FS [rec] ");
-                res.setFeat(k, new Value(
+                res.setFeatWithoutReplace(k, new Value(
                         updateFS(fval.getAvmVal(), env, finalUpdate, seen)));
                 break;
             case ADISJ:
                 fval.update(env, finalUpdate);
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
                 break;
             default:
-                res.setFeat(k, fval);
+                res.setFeatWithoutReplace(k, fval);
             }
         }
         return res;
@@ -539,14 +584,16 @@ public class Fs {
             return false;
         }
 
-        if (this.getCoref() == ((Fs) fs).getCoref()) {
+        if (this.getCoref() != null
+                && this.getCoref() == ((Fs) fs).getCoref()) {
             return true;
         }
-
+        if (AVlist.size() != ((Fs) fs).AVlist.size()) {
+            return false;
+        }
         Set<String> keys = AVlist.keySet();
         Iterator<String> it = keys.iterator();
-        if (this.getCoref() == ((Fs) fs).getCoref())
-            return true;
+
         boolean res = true;
         while (it.hasNext()) {
             String f = it.next();
@@ -691,6 +738,7 @@ public class Fs {
                 New = FsTools.unify(env.deref(valCoref).getAvmVal(), New, env);
             } catch (Exception e) {
                 e.printStackTrace();
+
                 return false;
             }
         }
@@ -736,7 +784,7 @@ public class Fs {
                 // System.out.println("Done unify");
 
             } catch (Exception e) {
-                // e.printStackTrace();
+                e.printStackTrace();
                 return null;
             }
         }

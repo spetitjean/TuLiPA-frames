@@ -166,7 +166,7 @@ public class MorphContentHandler implements ContentHandler {
             }
             if (currentADisj == null) {
                 Fs feats = currentFeats.get(currentFeats.size() - 1);
-                feats.setFeat(currentFeat.get(currentFeat.size() - 1), val);
+                feats.setFeatWithoutReplace(currentFeat.get(currentFeat.size() - 1), val);
             } else
                 currentADisj.add(val);
         } else if (localName.equals("vAlt")) {
@@ -189,7 +189,7 @@ public class MorphContentHandler implements ContentHandler {
         if (localName.equals("vAlt")) {
             Value val = new Value(currentADisj);
             Fs feats = currentFeats.get(currentFeats.size() - 1);
-            feats.setFeat(currentFeat.get(currentFeat.size() - 1), val);
+            feats.setFeatWithoutReplace(currentFeat.get(currentFeat.size() - 1), val);
             currentADisj = null;
         } else if (localName.equals("fs")) {
             if (currentFeats.size() == 1) { // extern fs -> attaches to a
@@ -201,7 +201,7 @@ public class MorphContentHandler implements ContentHandler {
                 Fs feats = currentFeats.get(currentFeats.size() - 1);
                 String f = currentFeat.get(currentFeat.size() - 1);
                 currentFeats.remove(currentFeats.size() - 1);
-                currentFeats.get(currentFeats.size() - 1).setFeat(f,
+                currentFeats.get(currentFeats.size() - 1).setFeatWithoutReplace(f,
                         new Value(feats));
             }
         } else if (localName.equals("f")) {

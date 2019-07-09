@@ -14,6 +14,34 @@ public class ValueTools {
     }
 
     /**
+     * if a and b are both null, return null
+     * 
+     * if exactly one of them is null, return the one that is not null
+     * 
+     * if both are not null, return the unification of both
+     * 
+     * if unification doesn't work, throw exception
+     * 
+     * @param a
+     * @param b
+     * @param env
+     * @return
+     * @throws UnifyException
+     */
+    public static Value unifyOrReplace(Value a, Value b, Environment env)
+            throws UnifyException {
+        if (a == null && b == null) {
+            return null;
+        } else if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
+
+        return unify(a, b, env);
+    }
+
+    /**
      * Performs unification between values and returns a value
      * 
      * @param a
@@ -223,8 +251,10 @@ public class ValueTools {
      */
     private static Value unifyAVMandVAR(Value a, Value b, Environment env,
             Set<Value> seen) throws UnifyException {
-        Value res = null;
-        // System.out.println("B is a variable");
+        // System.out.println("\n\n\nB is a variable");
+        // System.out.println("a is "+a);
+        // System.out.println("b is "+b);
+        Value res;
         Value bderefed = env.deref(b);
         // System.out.println(bb);
         // if b is unbound, we bind it to a
@@ -238,6 +268,7 @@ public class ValueTools {
             // b <-> a.coref
             // @b <-> a
             if (a.getAvmVal().getCoref() != null) {
+                // System.out.println("Coref not null");
                 // System.out.println("Extra binding for coref:
                 // "+bb.getVarVal()+" and "+a.getAvmVal().getCoref());
                 // System.out.println("AVM for
@@ -247,6 +278,8 @@ public class ValueTools {
                 // "+env.deref(a.getAvmVal().getCoref()));
                 if (bderefed.getVarVal() != env.deref(a.getAvmVal().getCoref())
                         .getVarVal()) {
+
+                    // System.out.println("Binding variable and coref");
                     env.bind(bderefed.getVarVal(),
                             env.deref(a.getAvmVal().getCoref()));
                 } else {
@@ -287,8 +320,8 @@ public class ValueTools {
             res = a;
         } else { // b is already bound, the values must match !
             if (bderefed.is(Value.Kind.AVM)) { // let us see if they do:
-                res = new Value(FsTools.unify(a.getAvmVal(), bderefed.getAvmVal(),
-                        env, seen));
+                res = new Value(FsTools.unify(a.getAvmVal(),
+                        bderefed.getAvmVal(), env, seen));
                 /*
                  * // Uncaught exception (caught in Fs' unify method)
                  * try { res = new Value(Fs.unify(a.getAvmVal(),
@@ -303,6 +336,7 @@ public class ValueTools {
                 throw new UnifyException(a.toString(), b.toString());
             }
         }
+        // System.out.println("res: "+res);
         return res;
     }
 

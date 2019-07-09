@@ -91,7 +91,12 @@ public final class Type {
      * @param t
      */
     public Type(Type t) {
-        this.elemTypes = t.getElementaryTypes();
+	if(t==null)
+	    return;
+	if(t.getElementaryTypes()!=null) 
+	    this.elemTypes = t.getElementaryTypes();
+	else
+	    this.elemTypes = new HashSet<String>();
         this.var = new Value(t.getVar(), new NameFactory());
         this.typeConstraints = t.getTypeConstraints();
         this.truevar = false;
@@ -205,12 +210,12 @@ public final class Type {
     public String toString() {
         String s = toStringWithoutVariable();
         s += " " + var.toString();
-        if (!typeConstraints.isEmpty()) {
-            s += "\nConstraints:";
-            for (TypeConstraint constraint : typeConstraints) {
-                s += "\n" + constraint;
-            }
-        }
+        // if (!typeConstraints.isEmpty()) {
+        //     s += "\nConstraints:";
+        //     for (TypeConstraint constraint : typeConstraints) {
+        //         s += "\n" + constraint;
+        //     }
+        // }
         return s;
     }
 }

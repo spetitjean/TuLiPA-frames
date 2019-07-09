@@ -10,6 +10,53 @@ public class RRGTools {
     private static SystemLogger log = new SystemLogger(System.err, true);
 
     /**
+     * temporary fix: copied from method below and added idMap
+     * 
+     * @param trees
+     * @return
+     */
+    public static Set<RRGParseTree> removeDoubleParseTreesByWeakEqualsWithParseTrees(
+            Set<RRGParseTree> trees) {
+        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
+        int i = 0;
+        for (RRGParseTree treeFromResource : trees) {
+            if (i % 10000 == 0 && i > 0) {
+                log.info("filtered the first " + i + " trees and obtained "
+                        + result.size());
+            }
+            i = i + 1;
+            if (result.isEmpty()) {
+                result.add(treeFromResource);
+                continue;
+            }
+            boolean treeIsAlreadyIn = false;
+            for (RRGParseTree treeFromResult : result) {
+                boolean traceWeakEquals = treeFromResource.getIds()
+                        .size() == treeFromResult.getIds().size()
+                        && treeFromResource.getIds()
+                                .containsAll(treeFromResult.getIds());
+                if (traceWeakEquals) {
+                    boolean nodesWeakEquals = ((RRGNode) treeFromResult
+                            .getRoot()).weakEquals(
+                                    (RRGNode) treeFromResource.getRoot());
+                    if (nodesWeakEquals) {
+                        treeIsAlreadyIn = true;
+                        // log.info("found double tree: " + treeFromResource);
+                        break;
+                    }
+                }
+            }
+            if (!treeIsAlreadyIn) {
+                result.add(treeFromResource);
+            }
+        }
+        log.info("number of equal trees that were filtered out: "
+                + (trees.size() - result.size()));
+        log.info("there are " + result.size() + " trees left.");
+        return result;
+    }
+
+    /**
      * return the set of trees that is the input set of trees but without
      * lookalikes that are detected by the weakEquals method
      * 
@@ -19,7 +66,13 @@ public class RRGTools {
     public static Set<RRGTree> removeDoubleTreesByWeakEquals(
             Set<RRGTree> trees) {
         Set<RRGTree> result = new HashSet<RRGTree>();
+        int i = 0;
         for (RRGTree treeFromResource : trees) {
+            if (i % 10000 == 0 && i > 0) {
+                log.info("filtered the first " + i + " trees and obtained "
+                        + result.size());
+            }
+            i = i + 1;
             if (result.isEmpty()) {
                 result.add(treeFromResource);
                 continue;
@@ -39,6 +92,7 @@ public class RRGTools {
         }
         log.info("number of equal trees that were filtered out: "
                 + (trees.size() - result.size()));
+        log.info("there are " + result.size() + " trees left.");
         return result;
     }
 
@@ -51,8 +105,8 @@ public class RRGTools {
             } else {
                 boolean addCandidate = true;
                 for (RRGParseTree alreadyFilteredTree : result) {
-                    if (alreadyFilteredTree.getIdMap()
-                            .equals(candidate.getIdMap())) {
+                    if (alreadyFilteredTree.getIds()
+                            .equals(candidate.getIds())) {
                         addCandidate = false;
                     }
                 }
@@ -64,7 +118,7 @@ public class RRGTools {
         return result;
     }
 
-    public static Set<RRGParseTree> convertTreeSet(Set<RRGTree> input) {
+    public static Set<RRGParseTree> filterRRGParseTrees(Set<RRGTree> input) {
         Set<RRGParseTree> result = new HashSet<RRGParseTree>();
         for (RRGTree tree : input) {
             if (tree instanceof RRGParseTree) {
@@ -73,4 +127,22 @@ public class RRGTools {
         }
         return result;
     }
+
+    public static Set<RRGParseTree> convertTreeSet(Set<RRGTree> input) {
+        Set<RRGParseTree> result = new HashSet<RRGParseTree>();
+        for (RRGTree tree : input) {
+            result.add(new RRGParseTree(tree));
+        }
+        return result;
+    }
+
+    public static Set<RRGTree> convertTreeSetParseToGeneral(
+            Set<RRGParseTree> input) {
+        Set<RRGTree> result = new HashSet<RRGTree>();
+        for (RRGTree tree : input) {
+            result.add(new RRGTree(tree));
+        }
+        return result;
+    }
+
 }

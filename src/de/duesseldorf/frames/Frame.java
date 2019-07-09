@@ -16,6 +16,8 @@ public class Frame {
     private Set<Relation> relations = new HashSet<Relation>();
 
     public Frame() {
+	this.featureStructures = new LinkedList<Fs>();
+	this.relations = new HashSet<Relation>();
     }
 
     public Frame(List<Fs> featureStructures, Set<Relation> relations) {
@@ -27,6 +29,10 @@ public class Frame {
         return featureStructures;
     }
 
+    public void setFeatureStructures(List <Fs> featureStructures) {
+        this.featureStructures=featureStructures;
+    }
+
     public void addToFeatureStructures(Fs fs) {
         featureStructures.add(fs);
     }
@@ -36,8 +42,10 @@ public class Frame {
     }
 
     public void addOtherFrame(Frame other) {
-        featureStructures.addAll(other.getFeatureStructures());
-        relations.addAll(other.getRelations());
+	if(other!=null){
+	    featureStructures.addAll(other.getFeatureStructures());
+	    relations.addAll(other.getRelations());
+	}
     }
 
     @Override

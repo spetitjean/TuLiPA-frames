@@ -102,10 +102,15 @@ public class RRGTreeTools {
 
     public static String asStringWithNodeLabelsAndNodeType(RRGTree tree) {
         StringBuffer sb = new StringBuffer();
+        // IDs and trace
         sb.append("ID: " + tree.getId() + "\n");
         if (tree instanceof RRGParseTree) {
-            sb.append(((RRGParseTree) tree).idMap2string());
+            ((RRGParseTree) tree).getIds().forEach((id) -> {
+                sb.append(id);
+                sb.append("\n");
+            });
         }
+        // nodes
         asStringWithNodeLabelsAndNodeType(tree.getRoot(), sb, 0);
         return sb.toString();
     }
@@ -119,10 +124,12 @@ public class RRGTreeTools {
         sb.append(((RRGNode) root).getCategory());
         sb.append(" ");
         sb.append(((RRGNode) root).getType());
-        sb.append("\n");
         if (((RRGNode) root).getNodeFs() != null) {
-            sb.append(((RRGNode) root).getNodeFs().toString());
+            sb.append(" ");
+            sb.append(
+                    ((RRGNode) root).getNodeFs().toStringWithOutTypeOneLiner());
         }
+        sb.append("\n");
         for (Node node : root.getChildren()) {
             asStringWithNodeLabelsAndNodeType(node, sb, sep + 1);
         }
@@ -139,27 +146,29 @@ public class RRGTreeTools {
      * @param node2
      * @return
      */
-    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
+    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2,
+            Environment env) throws UnifyException {
         RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
         if (!node1.getType().equals(node2.getType())) {
-            resultBuilder.type(RRGNodeType.STD);
+            resultBuilder = resultBuilder.type(RRGNodeType.STD);
         }
-        if (!node1.nodeUnificationPossible(node2)) {
-            System.err.println("node unification not possible! ");
-            System.err.println(node1);
-            System.err.println(node2);
-            return null;
+        if (node1.getType().equals(RRGNodeType.SUBST)
+                || node2.getType().equals(RRGNodeType.SUBST)) {
+            resultBuilder = resultBuilder.type(RRGNodeType.SUBST);
         }
-        try {
-            Fs fsForResult = FsTools.unify(node1.getNodeFs(), node2.getNodeFs(),
-                    new Environment(2));
 
-            resultBuilder = resultBuilder.fs(fsForResult);
-        } catch (UnifyException e) {
-            System.err.println("could not unify node feature structures: ");
-            System.err.println(node1);
-            System.err.println(node2);
+        if (!node1.getCategory().equals(node2.getCategory())) {
+            // System.err.println("node unification not possible! ");
+            // System.err.println(node1);
+            // System.err.println(node2);
+            throw new UnifyException();
         }
+        // unify might throw another exception
+        Fs fsForResult = FsTools.unify(node1.getNodeFs(), node2.getNodeFs(),
+                env);
+
+        resultBuilder = resultBuilder.fs(fsForResult);
         return resultBuilder.build();
     }
+
 }

@@ -267,7 +267,8 @@ public class TagTree implements Tree {
         if (n.getName() != null && n.getName().equals(nodeid)) {
             // node found
             Fs eqfs = new Fs();
-            eqfs.setFeat(eq.getType(), new Value(eq.getFeatures()));
+            eqfs.setFeatWithoutReplace(eq.getType(),
+                    new Value(eq.getFeatures()));
             Fs label = ((TagNode) n).getLabel();
             Fs fs = FsTools.unify(label, eqfs, env);
             ((TagNode) n).setLabel(fs);
@@ -294,7 +295,8 @@ public class TagTree implements Tree {
             // System.out.println("---"+l.toString());
             Fs lexfs = l.getFeatures();
             Fs fs = new Fs();
-            fs.setFeat("bot", new Value(lexfs));
+            fs.setFeatWithoutReplace("bot", new Value(lexfs));
+
             if (ancLabel != null) {
                 Fs resLabel = FsTools.unify(ancLabel, fs, env);
                 ((TagNode) anchor).setLabel(resLabel);
@@ -1048,7 +1050,11 @@ public class TagTree implements Tree {
         }
 
         // String frameString = frames.toString();
-        String frameSemString = frameSem.toString();
+        String frameSemString = "";
+        if (frameSem != null) {
+            frameSemString += "\n FrameSem : \n";
+            frameSemString += frameSemString += frameSem.toString();
+        }
         // return ("\n Tree " + id + "\n Original Id : " + originalId
         // + "\n Family : " + family + "\n Tuple id : " + tupleId
         // + "\n Trace : " + s + "\n Interface : [" + iface.toString()
@@ -1061,6 +1067,6 @@ public class TagTree implements Tree {
                 + "\n  Trace : " + s + "\n  Interface : [" + iface.toString()
                 + "]\n  Syn : \n" + space
                 + ((TagNode) root).toString(space + "  ") + "\n  Sem : \n"
-                + semantics + "\n FrameSem : \n" + frameSemString);
+                + semantics + frameSemString);
     }
 }
