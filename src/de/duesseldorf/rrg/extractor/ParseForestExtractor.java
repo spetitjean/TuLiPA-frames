@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.Backpointer;
 import de.duesseldorf.rrg.parser.Operation;
@@ -72,40 +71,15 @@ public class ParseForestExtractor {
         if (verbosePrintsToStdOut) {
             System.out.println("goal items: " + goals);
         }
-        goals.parallelStream().forEach((goal) -> {
+        goals.stream().forEach((goal) -> {
             ExtractionStep initExtrStep = initialExtractionStep(
                     (RRGParseItem) goal);
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         });
-        // for (RRGTree tree : resultingParses) {
-        // System.out.println(tree);
-        // }
 
-        RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnifier(
-                resultingParses).computeUnUnifiedAndUnifiedTrees();
-
-        System.out.println("got " + resultingParses.size()
-                + " trees after edge feature unification. Now filter out those that are actually equal");
-        Set<RRGParseTree> resultingParsesFiltered = RRGTools
-                .removeDoubleParseTreesByWeakEqualsWithParseTrees(
-                        resultingParsesEdgesUnified.getSuccessfulParses());
-        System.out.println("unfiltered size: "
-                + resultingParsesEdgesUnified.getSuccessfulParses().size());
-        System.out.println("filtered size: " + resultingParsesFiltered.size());
-        Set<RRGParseTree> resultingParsesBeautiful = new HashSet<RRGParseTree>();
-        for (RRGParseTree tree : resultingParsesFiltered) {
-            RRGParseTree beautifulTree = (RRGParseTree) new ParseTreePostProcessor(
-                    tree).postProcessNodeFeatures();
-            resultingParsesBeautiful.add(beautifulTree);
-        }
-        RRGParseResult.Builder parseResultBuilder = new RRGParseResult.Builder();
-        parseResultBuilder = parseResultBuilder
-                .successfulParses(resultingParsesBeautiful)
-                .treesWithEdgeFeatureMismatches(resultingParsesEdgesUnified
-                        .getTreesWithEdgeFeatureMismatches());
-        return parseResultBuilder.build();
-        // return RRGTools.convertTreeSet(resultingParses);
+        return ParseForestPostProcessor
+                .postProcessParseTreeSet(resultingParses);
     }
 
     /**
@@ -120,7 +94,8 @@ public class ParseForestExtractor {
         return result;
     }
 
-    private void addToResultingParses(Set<RRGParseTree> resultingTrees) {
+    private synchronized void addToResultingParses(
+            Set<RRGParseTree> resultingTrees) {
         for (RRGParseTree resultingParseTree : resultingTrees) {
             String newId = TextUtilities.appendList(toksentence, "_")
                     + resultingParses.size();

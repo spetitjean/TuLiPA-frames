@@ -141,7 +141,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
             // System.out.println("no basecase: " + this + " VS " + other);
             return false;
         }
-        boolean fsCase = this.getNodeFs().equals(other.getNodeFs());
+        boolean fsCase = this.getNodeFs().equals(other.getNodeFs(), false);
         if (!fsCase) {
             return false;
         }

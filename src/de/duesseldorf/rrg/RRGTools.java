@@ -7,7 +7,7 @@ import de.duesseldorf.rrg.io.SystemLogger;
 
 public class RRGTools {
 
-    private static SystemLogger log = new SystemLogger(System.err, true);
+    private static SystemLogger log = new SystemLogger(System.err, false);
 
     /**
      * temporary fix: copied from method below and added idMap

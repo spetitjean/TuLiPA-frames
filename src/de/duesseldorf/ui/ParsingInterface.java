@@ -106,6 +106,8 @@ import de.tuebingen.util.XMLUtilities;
 
 public class ParsingInterface {
 
+    public static boolean omitPrinting = false;
+
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
         // you might want to check if everything is in order here
@@ -824,7 +826,7 @@ public class ParsingInterface {
                 };
                 Future<RRGParseResult> future = executor.submit(task);
                 try {
-                    result = future.get(1000, TimeUnit.SECONDS);
+                    result = future.get(500, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     System.out.println("parsing failed due to exception: " + e);
                     e.printStackTrace();
@@ -838,10 +840,7 @@ public class ParsingInterface {
                 result = new RRGParseResult.Builder()
                         .successfulParses(elementaryTreeSet).build();
             }
-            if (!result.getSuccessfulParses().isEmpty()) {
-                returnValue = true;
-            }
-            boolean omitPrinting = false;
+            returnValue = !result.getSuccessfulParses().isEmpty();
             if (op.check("b")) {
                 batchparsingResultSizes
                         .add(result.getSuccessfulParses().size());

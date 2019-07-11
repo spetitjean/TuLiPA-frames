@@ -771,13 +771,18 @@ public class Fs {
         AVlist = vlist;
     }
 
-    public boolean equals(Object fs) {
+    @Override
+    public boolean equals(Object obj) {
+        return equals(obj, true);
+    }
+
+    public boolean equals(Object fs, boolean compareCorefs) {
 
         if (!(fs instanceof Fs)) {
             return false;
         }
 
-        if (this.getCoref() != null
+        if (compareCorefs && this.getCoref() != null
                 && this.getCoref() == ((Fs) fs).getCoref()) {
             return true;
         }
