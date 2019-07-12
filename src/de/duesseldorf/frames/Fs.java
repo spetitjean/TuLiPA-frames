@@ -352,16 +352,18 @@ public class Fs {
         if (top != null && bot != null) {
             Fs realTop = top.getAvmVal();
             Fs realBot = bot.getAvmVal();
-            Iterator<String> it = realTop.getAVlist().keySet().iterator();
-            while (it.hasNext()) {
-                String feat = it.next();
-                Value topVal = realTop.getConstFeat(feat);
-                Value botVal = realBot.getConstFeat(feat);
-                if (topVal != null && botVal != null
+	    if(realTop!=null && realBot!=null){
+		Iterator<String> it = realTop.getAVlist().keySet().iterator();
+		while (it.hasNext()) {
+		    String feat = it.next();
+		    Value topVal = realTop.getConstFeat(feat);
+		    Value botVal = realBot.getConstFeat(feat);
+		    if (topVal != null && botVal != null
                         && !(topVal.equals(botVal)))
-                    res = TagNode.NADJ;
-            }
-        }
+			res = TagNode.NADJ;
+		}
+	    }
+	}
         return res;
     }
 
