@@ -87,8 +87,8 @@ public class TreeFromBracketedStringRetriever {
 
     private void createTreeFromBracketedString(
             String remainingBracketedSubTree) {
-        // log.info("create tree from Br String called with "
-        // + remainingBracketedSubTree + " current GA: " + currentGA);
+        log.info("create tree from Br String called with "
+                + remainingBracketedSubTree + " current GA: " + currentGA);
         if (remainingBracketedSubTree.startsWith("(")) {
             remainingBracketedSubTree = remainingBracketedSubTree.substring(1);
             RRGNode motherOfTheNewNode = resultingTree.findNode(currentGA);
