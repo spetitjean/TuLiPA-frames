@@ -439,7 +439,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-                System.err.println("########Starting removing words ");
+                //System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -716,7 +716,7 @@ public class ParsingInterface {
         // /
         // derivation trees
         System.err.println("\nTotal parsing time for sentence \"" + sentence
-                + ": " + totalTime / (Math.pow(10, 9)) + " sec.");
+                + "\": " + totalTime / (Math.pow(10, 9)) + " sec.");
 
         return res;
     }

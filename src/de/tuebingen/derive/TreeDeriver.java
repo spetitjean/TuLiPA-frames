@@ -54,7 +54,7 @@ public class TreeDeriver {
             Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
             ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
             List<String> semlabels, boolean needsAnchoring) {
-        System.out.println("\n\nDeriving new tree");
+        //System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
         try {

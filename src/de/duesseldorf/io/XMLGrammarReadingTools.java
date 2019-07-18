@@ -54,17 +54,18 @@ public class XMLGrammarReadingTools {
                     bot = new Value(new Fs(5));
                     res.setFeatWithoutReplace("bot", bot);
                 }
-
                 Set<String> keys = toAdd.keySet();
                 Iterator<String> it = keys.iterator();
                 while (it.hasNext()) {
                     String f = it.next();
-                    if (!(top.getAvmVal().hasFeat(f))) {
-                        top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-                    }
-                    if (!(bot.getAvmVal().hasFeat(f))) {
-                        bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-                    }
+		    if(top.getAvmVal()!=null)
+			if (!(top.getAvmVal().hasFeat(f))) {
+			    top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+			}
+		    if(bot.getAvmVal()!=null)
+			if (!(bot.getAvmVal().hasFeat(f))) {
+			    bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+			}
                 }
             }
         } catch (Exception ex) {

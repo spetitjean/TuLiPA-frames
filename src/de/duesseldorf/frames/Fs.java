@@ -164,8 +164,8 @@ public class Fs {
     public void setFeatWithoutReplace(String key, Value val) {
         if (AVlist.containsKey(key)) {
             System.out.println("Key : " + key
-                    + " already used, feature skipped. exsisting value: "
-                    + AVlist.get(key) + "new value: " + val);
+                    + " already used, feature skipped. Existing value: "
+                    + AVlist.get(key) + " / New value: " + val);
         } else if (val != null) {
             AVlist.put(key, val);
         }
