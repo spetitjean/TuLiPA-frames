@@ -210,7 +210,16 @@ public class Interface {
                     } else {
                         // in batch mode, there is an xml output, with the file
                         // name defined as follows.
-                        op.setOurVal("o", out + i + ".xml");
+			String newout;
+			if (out.endsWith(".xml")) {
+                            newout = out.substring(0,
+                                    out.length() - 4);
+                            newout = newout + "_" + i;
+                            newout += ".xml";
+                        } else {
+                            newout = out + "_" + i + ".xml";
+                        }
+                        op.setOurVal("o", newout );
                         // if TAG (left context) polarity filtering is
                         // activated, grammar reloading is necessary
                         if (op.check("tag")) {
