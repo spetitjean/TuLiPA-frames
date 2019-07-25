@@ -86,7 +86,11 @@ public class XMLGrammarReadingTools {
         // NB: an fs XML element has f element as children
         Fs res = null;
         String coref = e.getAttribute("coref");
-        Value corefval = new Value(Value.Kind.VAR, nf.getName(coref));
+	Value corefval;
+	if(coref!="")
+	    corefval=new Value(Value.Kind.VAR, nf.getName(coref));
+	else
+	    corefval=new Value(Value.Kind.VAR, nf.getUniqueName());
 
         NodeList etypes = null;
         Value typevar = null;

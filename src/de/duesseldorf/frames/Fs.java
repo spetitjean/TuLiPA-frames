@@ -400,10 +400,11 @@ public class Fs {
             res = "(" + coref + ")" + res + type + "\n ";
 
             if (coref != null && seen.contains(coref)) {
-                // System.out.println("Stopping print because of recursion");
+                //System.out.println("Stopping print because of recursion");
                 return res + "]";
             } else
-                seen.add(coref);
+		if(AVlist.keySet().size()>0)
+		    seen.add(coref);
         }
 
         res += attrsToString(seen, withType, withCoref);
@@ -509,12 +510,12 @@ public class Fs {
      */
     public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi,
             Set<Value> seen) throws UnifyException {
+	//System.out.println("\nUnifying "+fs1+" and "+fs2);
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
         if (seen.contains(fs1.getCoref()) && fs1.getCoref() != null) {
-            // System.out.println("Stopping unification because of recursion:
-            // "+fs1);
+            //System.out.println("Stopping unification because of recursion: "+fs1);
             return fs1;
         } else {
             seen.add(fs1.getCoref());
@@ -656,12 +657,9 @@ public class Fs {
      */
     public static Fs updateFS(Fs fs, Environment env, boolean finalUpdate,
             Set<Value> seen) throws UnifyException {
-        // System.err.println("updating [" + fs.toString() + "] env: " +
-        // env.toString());
-        // System.out.println("Updating FS: "+fs);
-        // System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave
-        // "+fs.getCoref());
-
+        //System.err.println("updating [" + fs.toString() + "] env: " +
+        //env.toString());
+	//System.out.println("\nUpdating "+fs);
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
@@ -711,7 +709,8 @@ public class Fs {
         }
 
         if (fs.getCoref() != null && seen.contains(fs.getCoref())) {
-            // System.out.println("Stopping update because of recursion: "+fs);
+            //System.out.println("Stopping update because of recursion: "+fs);
+            //System.out.println("Returning: "+res);
             // System.out.println(env);
             return res;
         } else
@@ -751,8 +750,9 @@ public class Fs {
                 break;
             case AVM: // the value is an avm, we go on updating
                 // System.out.println("Updating FS [rec] ");
-                res.setFeatWithoutReplace(k, new Value(
-                        updateFS(fval.getAvmVal(), env, finalUpdate, seen)));
+		Value replace=new Value(
+				     updateFS(fval.getAvmVal(), env, finalUpdate, seen));
+                res.setFeatWithoutReplace(k, replace);
                 break;
             case ADISJ:
                 fval.update(env, finalUpdate);
