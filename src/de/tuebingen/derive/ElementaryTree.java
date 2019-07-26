@@ -548,7 +548,7 @@ public class ElementaryTree {
     }
 
     /**
-     * updating the variables in the frames with respect to a vatiable
+     * updating the variables in the frames with respect to a variable
      * 
      * @param frames
      * @param env

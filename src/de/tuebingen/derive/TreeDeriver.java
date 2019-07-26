@@ -48,6 +48,8 @@ import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.UnifyException;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
+import de.tuebingen.anchoring.NameFactory;
+
 
 public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,
@@ -67,6 +69,7 @@ public class TreeDeriver {
                     .getNamedItem("id").getNodeValue();
             ElementaryTree iniTree = getTreeInstance(initialTreeID, treeDict, D,
                     eTrees, needsAnchoring);
+	    NameFactory nf = new NameFactory();
             if (iniTree != null) {
                 derivedTree = new DerivedTree(iniTree);
                 if (steps != null) {
@@ -116,7 +119,7 @@ public class TreeDeriver {
             // System.out.println("Environment: "+derivedTree.env);
             // System.err.println("Sem after TOP-BOT: " +
             // derivedTree.semantics.toString());
-            derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf,
                     false);
             // System.err.println("Environment after TOP-BOT: " +
             // derivedTree.env);
@@ -127,7 +130,7 @@ public class TreeDeriver {
 
             // Environment.rename(derivedTree.env);
             // System.out.println("Ended rename ");
-            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf, true);
             ElementaryTree.updateSem(derivedTree.semantics, derivedTree.env,
                     true);
             // Environment.rename(derivedTree.env);
@@ -150,8 +153,18 @@ public class TreeDeriver {
             // List<Fs> mergedFrames = Fs.mergeFS(derivedTree.frames, situation,
             // derivedTree.env);
             // List<Fs> mergedFrames = derivedTree.frames;
-            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, true);
-
+            derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf, true);
+	    Boolean p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+					   true);
+	    Boolean p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+					   true);
+	    // Seems like we need a second round
+	    p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+					   true);
+	    p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+					   true);
+	    if(!p1||!p2)
+	     	failed=true;
             // if (mergedFrames == null) {
             // System.err
             // .println("Frame unification failed, tree discarded!\n");
@@ -169,10 +182,11 @@ public class TreeDeriver {
 
             if (newFrameSem == null) {
                 failed = true;
-            } else {
-                newFrameSem = new ConstraintChecker(newFrameSem,
-                        derivedTree.env, returnIncompleteTrees)
-                                .checkConstraints();
+	    }
+	    if(!failed){
+		newFrameSem = new ConstraintChecker(newFrameSem,
+						    derivedTree.env, returnIncompleteTrees)
+		    .checkConstraints();
                 // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                 // newFrameSem, derivedTree.env, false);
                 derivedTree.setFrameSem(newFrameSem);
@@ -180,7 +194,7 @@ public class TreeDeriver {
                 // System.out.println("Derived tree env after:
                 // "+derivedTree.env);
                 Environment.rename(derivedTree.env);
-                derivedTree.updateFeatures(derivedTree.root, derivedTree.env,
+                derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf,
                         true);
                 derivedTree.setFrameSem(ElementaryTree
                         .updateFrameSem(newFrameSem, derivedTree.env, true));
@@ -196,7 +210,7 @@ public class TreeDeriver {
             System.err.println(e.getMessage());
             e.printStackTrace();
             // System.exit(1);
-            failed = true;
+	    failed = true;
         }
         // TODO: find threshold here by taking input size into consideration
         if (needsAnchoring && derivedTree.numTerminals < Integer.MIN_VALUE) {
