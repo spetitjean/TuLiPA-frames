@@ -911,15 +911,20 @@ public class Fs {
         Fs New = this;
 
 	if(New.coref!=null){
+	    // This is not optimal
+	    // We complicate the environment creating new variables
+	    // The reason is that without these artificial variables,
+	    // some variables are never bound, and therefore won't
+	    // be renamed with pretty names
 	    if (env.deref(New.coref).getVarVal().charAt(0) != '@') {
-		String oldVar = env.deref(this.coref).getVarVal();
-		// String newVar = env.getPnf().getNextName();
-		String newVar = nf.getUniqueName();
-		// env.deref(New.coref).setVarVal(newVar);
-		Value newVarVal = new Value(Value.Kind.VAR, newVar);
-		New.coref = newVarVal;
-		env.bind(oldVar, newVarVal);
-		seen.add(newVarVal);
+	    	String oldVar = env.deref(this.coref).getVarVal();
+	    	// String newVar = env.getPnf().getNextName();
+	    	String newVar = nf.getUniqueName();
+	    	// env.deref(New.coref).setVarVal(newVar);
+	    	Value newVarVal = new Value(Value.Kind.VAR, newVar);
+	    	New.coref = newVarVal;
+	    	env.bind(oldVar, newVarVal);
+	    	seen.add(newVarVal);
 	    }
 	
 

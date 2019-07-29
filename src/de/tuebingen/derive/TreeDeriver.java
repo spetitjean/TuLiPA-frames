@@ -158,11 +158,11 @@ public class TreeDeriver {
 					   true);
 	    Boolean p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
 					   true);
-	    // Seems like we need a second round
+	    // we need a second round (see comment in Fs:collect_corefs about artificial variables)
 	    p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-					   true);
+	    				   true);
 	    p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-					   true);
+	    				   true);
 	    if(!p1||!p2)
 	     	failed=true;
             // if (mergedFrames == null) {
