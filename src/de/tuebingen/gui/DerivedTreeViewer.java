@@ -95,7 +95,7 @@ public class DerivedTreeViewer {
                     continue;
                 }
                 Node startNode = startNodes.item(i);
-
+		
                 XMLViewTree viewTree = ViewTreeBuilder
                         .makeViewableDerivationTree(startNode, treeDict);
                 ArrayList<ElementaryTree> eTrees = null;
@@ -152,7 +152,7 @@ public class DerivedTreeViewer {
                     // dTree.semantics, dTree.frames, dTree.getFrameSem(),
                     // noUtool);
                     ParseTreeCollection trees = new ParseTreeCollection(
-                            viewTree, derivedTree, semanticsString,
+			    viewTree, derivedTree, dTree, semanticsString,
                             dTree.semantics, dTree.getFrameSem(), noUtool);
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
