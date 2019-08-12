@@ -106,7 +106,7 @@ import de.tuebingen.util.XMLUtilities;
 
 public class ParsingInterface {
 
-    public static boolean omitPrinting = false;
+    public static boolean omitPrinting = true;
 
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
@@ -793,7 +793,7 @@ public class ParsingInterface {
 
     public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
-        // System.out.println("yay, go RRG!");
+        omitPrinting = op.check("omitPrint");
         boolean returnValue = false;
         boolean verbose = op.check("v");
 
