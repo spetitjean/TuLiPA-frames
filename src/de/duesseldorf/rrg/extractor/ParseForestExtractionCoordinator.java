@@ -1,8 +1,8 @@
 package de.duesseldorf.rrg.extractor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -16,13 +16,13 @@ public class ParseForestExtractionCoordinator {
     private RRGParseChart parseChart;
     private List<String> toksentence;
     public boolean verbosePrintsToStdOut = false;
-    private ConcurrentSkipListSet<RRGParseTree> resultingParses;
+    private Set<RRGParseTree> resultingParses;
 
     public ParseForestExtractionCoordinator(RRGParseChart parseChart,
             List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
-        this.resultingParses = new ConcurrentSkipListSet<RRGParseTree>();
+        this.resultingParses = new HashSet<RRGParseTree>();
 
     }
 

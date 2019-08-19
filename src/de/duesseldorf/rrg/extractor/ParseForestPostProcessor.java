@@ -17,7 +17,7 @@ public class ParseForestPostProcessor {
                 resultingParses.size());
         // 1 edge features
         // edge feature unification
-        RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnifier(
+        RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnificationCoordinator(
                 resultingParses).computeUnUnifiedAndUnifiedTrees();
         System.out.printf(
                 "% 12d\tsuccessful trees after edge feature unification%n",

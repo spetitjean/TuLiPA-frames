@@ -1,62 +1,25 @@
 package de.duesseldorf.rrg.extractor;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.frames.ValueTools;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
-import de.duesseldorf.rrg.io.SystemLogger;
 import de.duesseldorf.util.GornAddress;
 
 public class EdgeFeatureUnifier {
-    private static SystemLogger log = new SystemLogger(System.err, false);
 
-    private Set<RRGParseTree> parseTreesWithoutUnification;
-    private Set<RRGParseTree> unifiedTrees;
+    private RRGParseTree ununifiedTree;
     private RRGParseTree result;
 
-    public EdgeFeatureUnifier(Set<RRGParseTree> parseTrees) {
-        this.parseTreesWithoutUnification = parseTrees;
-        this.unifiedTrees = new HashSet<RRGParseTree>();
-
+    public EdgeFeatureUnifier(RRGParseTree ununifiedTree) {
+        this.ununifiedTree = ununifiedTree;
     }
 
-    public RRGParseResult computeUnUnifiedAndUnifiedTrees() {
-        Set<RRGParseTree> successFullyUnifiedTrees = new ConcurrentSkipListSet<RRGParseTree>();
-        Set<RRGParseTree> treesWithMismatches = new ConcurrentSkipListSet<RRGParseTree>();
-        parseTreesWithoutUnification.stream().forEach((ununifiedTree) -> {
-            if (unifyEdgeFeatures(ununifiedTree)) {
-                successFullyUnifiedTrees.add(result);
-            } else {
-                treesWithMismatches.add(ununifiedTree);
-            }
-        });
-        //
-        // Set<RRGParseTree> resultingTrees = new HashSet<RRGParseTree>(
-        // unifiedTrees);
-        // resultingTrees.addAll(parseTreesWithoutUnification);
-        log.info("unifying edge features, removed "
-                + (parseTreesWithoutUnification.size()
-                        - successFullyUnifiedTrees.size())
-                + " trees");
-        log.info("there are " + successFullyUnifiedTrees.size()
-                + " trees left.");
-
-        RRGParseResult.Builder resBuilder = new RRGParseResult.Builder();
-        resBuilder.successfulParses(successFullyUnifiedTrees);
-        resBuilder.treesWithEdgeFeatureMismatches(treesWithMismatches);
-        return resBuilder.build();
-    }
-
-    private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
+    boolean unifyEdgeFeatures() {
         this.result = new RRGParseTree(ununifiedTree);
-        result.setId(result.getId() + "_edgesUnified");
+        getResult().setId(getResult().getId() + "_edgesUnified");
         boolean unificationWorked = unifyEdgeFeatures(new GornAddress());
         // TODO remove root edge features
         // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("l");
@@ -70,7 +33,7 @@ public class EdgeFeatureUnifier {
     }
 
     private boolean unifyEdgeFeatures(GornAddress gornAddress) {
-        RRGNode nodeWithGornAddress = result.findNode(gornAddress);
+        RRGNode nodeWithGornAddress = getResult().findNode(gornAddress);
         if (nodeWithGornAddress == null) {
             // System.err.println("node in edgefeatureUnification null,
             // return");
@@ -98,7 +61,7 @@ public class EdgeFeatureUnifier {
                 try {
                     newEdgeValueForBoth = ValueTools.unifyOrReplace(
                             edgeValueFromLeftDaughter,
-                            edgeValueFromRightDaughter, result.getEnv());
+                            edgeValueFromRightDaughter, getResult().getEnv());
                     if (newEdgeValueForBoth == null) {
                         // no edge fs's at all
                         continue;
@@ -140,9 +103,9 @@ public class EdgeFeatureUnifier {
             try {
                 // unify
                 Value newLeftMost = ValueTools.unifyOrReplace(lowerLeftMost,
-                        upperLeftMost, result.getEnv());
+                        upperLeftMost, getResult().getEnv());
                 Value newRightMost = ValueTools.unifyOrReplace(lowerRightMost,
-                        upperRightMost, result.getEnv());
+                        upperRightMost, getResult().getEnv());
                 // replace if unification was successfull
                 // left
                 ((RRGNode) nodeWithGornAddress.getChildren().get(0)).getNodeFs()
@@ -163,5 +126,9 @@ public class EdgeFeatureUnifier {
             }
         }
         return true;
+    }
+
+    public RRGParseTree getResult() {
+        return result;
     }
 }
