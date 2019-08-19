@@ -14,7 +14,7 @@ import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
-import de.duesseldorf.rrg.extractor.ParseForestExtractor;
+import de.duesseldorf.rrg.extractor.ParseForestExtractionCoordinator;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.ui.ParsingInterface;
 
@@ -120,9 +120,9 @@ public class RRGParser {
             return new RRGParseResult.Builder().build();
         } else {
             // extract parse results from chart
-            ParseForestExtractor extractor = new ParseForestExtractor(chart,
-                    toksentence);
-            RRGParseResult result = extractor.extractParseTrees();
+            ParseForestExtractionCoordinator extractionCoordinator = new ParseForestExtractionCoordinator(
+                    chart, toksentence);
+            RRGParseResult result = extractionCoordinator.extractParseTrees();
             return result;
         }
 

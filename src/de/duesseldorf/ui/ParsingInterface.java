@@ -60,7 +60,6 @@ import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.io.SentenceListFromFileCreator;
-//import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGParseResult;
@@ -107,6 +106,7 @@ import de.tuebingen.util.XMLUtilities;
 public class ParsingInterface {
 
     public static boolean omitPrinting = true;
+    public static long TIMEOUT = 500;
 
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
@@ -439,7 +439,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-                //System.err.println("########Starting removing words ");
+                // System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -826,7 +826,7 @@ public class ParsingInterface {
                 };
                 Future<RRGParseResult> future = executor.submit(task);
                 try {
-                    result = future.get(500, TimeUnit.SECONDS);
+                    result = future.get(TIMEOUT, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     System.out.println("parsing failed due to exception: " + e);
                     e.printStackTrace();
