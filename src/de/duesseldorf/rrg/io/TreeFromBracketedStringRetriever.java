@@ -87,8 +87,8 @@ public class TreeFromBracketedStringRetriever {
 
     private void createTreeFromBracketedString(
             String remainingBracketedSubTree) {
-        // log.info("create tree from Br String called with "
-        // + remainingBracketedSubTree + " current GA: " + currentGA);
+        log.info("create tree from Br String called with "
+                + remainingBracketedSubTree + " current GA: " + currentGA);
         if (remainingBracketedSubTree.startsWith("(")) {
             remainingBracketedSubTree = remainingBracketedSubTree.substring(1);
             RRGNode motherOfTheNewNode = resultingTree.findNode(currentGA);
@@ -168,10 +168,15 @@ public class TreeFromBracketedStringRetriever {
         if (nodeStringFromResource.contains("[")) {
             int fsStartingPoint = nodeStringFromResource.indexOf("[");
             String fsString = nodeStringFromResource.substring(fsStartingPoint);
-            nodeFs = new FsFromBracketedStringRetriever(fsString)
-                    .createFsFromString();
             nodeStringFromResource = nodeStringFromResource.substring(0,
                     fsStartingPoint);
+            if (fsString.endsWith("]*")) {
+                fsString = fsString.substring(0, fsString.length() - 1);
+                nodeStringFromResource += "*";
+            }
+            nodeFs = new FsFromBracketedStringRetriever(fsString)
+                    .createFsFromString();
+
         }
         if (nodeStringFromResource.endsWith("*")) {
             nodeType = RRGNodeType.STAR;

@@ -106,6 +106,8 @@ import de.tuebingen.util.XMLUtilities;
 
 public class ParsingInterface {
 
+    public static boolean omitPrinting = true;
+
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
         // you might want to check if everything is in order here
@@ -437,7 +439,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-                System.err.println("########Starting removing words ");
+                //System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -714,7 +716,7 @@ public class ParsingInterface {
         // /
         // derivation trees
         System.err.println("\nTotal parsing time for sentence \"" + sentence
-                + ": " + totalTime / (Math.pow(10, 9)) + " sec.");
+                + "\": " + totalTime / (Math.pow(10, 9)) + " sec.");
 
         return res;
     }
@@ -791,7 +793,7 @@ public class ParsingInterface {
 
     public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
-        // System.out.println("yay, go RRG!");
+        omitPrinting = op.check("omitPrint");
         boolean returnValue = false;
         boolean verbose = op.check("v");
 
@@ -824,7 +826,7 @@ public class ParsingInterface {
                 };
                 Future<RRGParseResult> future = executor.submit(task);
                 try {
-                    result = future.get(1000, TimeUnit.SECONDS);
+                    result = future.get(500, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     System.out.println("parsing failed due to exception: " + e);
                     e.printStackTrace();
@@ -838,10 +840,7 @@ public class ParsingInterface {
                 result = new RRGParseResult.Builder()
                         .successfulParses(elementaryTreeSet).build();
             }
-            if (!result.getSuccessfulParses().isEmpty()) {
-                returnValue = true;
-            }
-            boolean omitPrinting = false;
+            returnValue = !result.getSuccessfulParses().isEmpty();
             if (op.check("b")) {
                 batchparsingResultSizes
                         .add(result.getSuccessfulParses().size());

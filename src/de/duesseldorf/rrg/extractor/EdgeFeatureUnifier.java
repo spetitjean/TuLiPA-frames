@@ -2,6 +2,7 @@ package de.duesseldorf.rrg.extractor;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
@@ -14,7 +15,7 @@ import de.duesseldorf.rrg.io.SystemLogger;
 import de.duesseldorf.util.GornAddress;
 
 public class EdgeFeatureUnifier {
-    private static SystemLogger log = new SystemLogger(System.err, true);
+    private static SystemLogger log = new SystemLogger(System.err, false);
 
     private Set<RRGParseTree> parseTreesWithoutUnification;
     private Set<RRGParseTree> unifiedTrees;
@@ -27,15 +28,15 @@ public class EdgeFeatureUnifier {
     }
 
     public RRGParseResult computeUnUnifiedAndUnifiedTrees() {
-        Set<RRGParseTree> successFullyUnifiedTrees = new HashSet<RRGParseTree>();
-        Set<RRGParseTree> treesWithMismatches = new HashSet<RRGParseTree>();
-        for (RRGParseTree ununifiedTree : parseTreesWithoutUnification) {
+        Set<RRGParseTree> successFullyUnifiedTrees = new ConcurrentSkipListSet<RRGParseTree>();
+        Set<RRGParseTree> treesWithMismatches = new ConcurrentSkipListSet<RRGParseTree>();
+        parseTreesWithoutUnification.stream().forEach((ununifiedTree) -> {
             if (unifyEdgeFeatures(ununifiedTree)) {
                 successFullyUnifiedTrees.add(result);
             } else {
                 treesWithMismatches.add(ununifiedTree);
             }
-        }
+        });
         //
         // Set<RRGParseTree> resultingTrees = new HashSet<RRGParseTree>(
         // unifiedTrees);
@@ -71,7 +72,8 @@ public class EdgeFeatureUnifier {
     private boolean unifyEdgeFeatures(GornAddress gornAddress) {
         RRGNode nodeWithGornAddress = result.findNode(gornAddress);
         if (nodeWithGornAddress == null) {
-            System.err.println("node in edgefeatureUnification null, return");
+            // System.err.println("node in edgefeatureUnification null,
+            // return");
             return false;
         }
 

@@ -376,7 +376,7 @@ public class TagNode implements Node {
     }
 
     public int getAdjStatus() {
-        return adjStatus;
+	return adjStatus;
     }
 
     public void setAdjStatus(int adjStatus) {

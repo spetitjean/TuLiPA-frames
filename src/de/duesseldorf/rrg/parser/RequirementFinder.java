@@ -148,6 +148,7 @@ public class RequirementFinder {
      * needed:
      * 1. TOP position in a
      * 2. root node
+     * 3. root is no star node
      *
      * @param currentItem
      * @return
@@ -155,7 +156,8 @@ public class RequirementFinder {
     public boolean substituteReq(RRGParseItem currentItem) {
         boolean res = currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP) // 1.
                 // the current node has no mother, i.e. it is a root
-                && currentItem.getNode().getGornaddress().mother() == null;
+                && currentItem.getNode().getGornaddress().mother() == null
+                && currentItem.getNode().getType() != RRGNodeType.STAR;
         return res;
     }
 

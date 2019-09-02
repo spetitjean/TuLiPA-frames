@@ -54,17 +54,18 @@ public class XMLGrammarReadingTools {
                     bot = new Value(new Fs());
                     res.setFeatWithoutReplace("bot", bot);
                 }
-
                 Set<String> keys = toAdd.keySet();
                 Iterator<String> it = keys.iterator();
                 while (it.hasNext()) {
                     String f = it.next();
-                    if (!(top.getAvmVal().hasFeat(f))) {
-                        top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-                    }
-                    if (!(bot.getAvmVal().hasFeat(f))) {
-                        bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-                    }
+		    if(top.getAvmVal()!=null)
+			if (!(top.getAvmVal().hasFeat(f))) {
+			    top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+			}
+		    if(bot.getAvmVal()!=null)
+			if (!(bot.getAvmVal().hasFeat(f))) {
+			    bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+			}
                 }
             }
         } catch (Exception ex) {
@@ -85,7 +86,11 @@ public class XMLGrammarReadingTools {
         // NB: an fs XML element has f element as children
         Fs res = null;
         String coref = e.getAttribute("coref");
-        Value corefval = new Value(Value.Kind.VAR, nf.getName(coref));
+	Value corefval;
+	if(coref!="")
+	    corefval=new Value(Value.Kind.VAR, nf.getName(coref));
+	else
+	    corefval=new Value(Value.Kind.VAR, nf.getUniqueName());
 
         NodeList etypes = null;
         Value typevar = null;

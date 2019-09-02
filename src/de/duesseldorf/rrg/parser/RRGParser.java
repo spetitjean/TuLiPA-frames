@@ -16,6 +16,7 @@ import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
+import de.duesseldorf.ui.ParsingInterface;
 
 /**
  * File RRGParser.java
@@ -75,14 +76,9 @@ public class RRGParser {
 
         this.requirementFinder = new RequirementFinder();
 
-        // if (verbosePrintsToStdOut) {
-        System.out.println("--------------------------------");
         System.out.println("Found fitting lexical items in the following "
                 + agenda.size() + " trees: ");
-        System.out.println("--------------------------------");
-
-        boolean omitPrinting = false;
-        if (!omitPrinting) {
+        if (!ParsingInterface.omitPrinting) {
             for (RRGParseItem item : agenda) {
                 System.out.println(item.getTree().getId());
                 System.out.println(RRGTreeTools
@@ -91,8 +87,6 @@ public class RRGParser {
             }
         }
         System.out.println("--------------------------------");
-
-        // }
 
         // The real recognition
         int i = 0;

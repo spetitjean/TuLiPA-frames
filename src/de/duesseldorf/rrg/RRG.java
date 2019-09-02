@@ -60,14 +60,15 @@ public class RRG implements Grammar {
      *         lexical node, false otherwise
      */
     private boolean lookForLexicalisation() {
-        for (RRGTree tree : trees) {
-            if (tree.getLexNodes().isEmpty()) {
-                System.out.println("creating unlexicalised RRG grammar");
-                return false;
-            }
+        boolean res = trees.parallelStream()
+                .noneMatch(tree -> tree.getLexNodes().isEmpty());
+        if (!res) {
+            System.out.println("creating unlexicalized RRG grammar");
+            return false;
+        } else {
+            System.out.println("creating lexicalized RRG grammar");
+            return true;
         }
-        System.out.println("creating lexicalised RRG grammar");
-        return true;
     }
 
     public boolean isLexicalised() {

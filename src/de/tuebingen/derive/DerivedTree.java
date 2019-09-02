@@ -38,6 +38,9 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.Objects;
+
 
 import org.w3c.dom.Node;
 
@@ -48,6 +51,8 @@ import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.SemLit;
+import de.tuebingen.anchoring.NameFactory;
+
 
 public class DerivedTree {
     public Node root;
@@ -186,7 +191,8 @@ public class DerivedTree {
         // System.out.println("\nFinal features: "+ features);
     }
 
-    public void updateFeatures(Node n, Environment eEnv, boolean finalUpdate)
+
+    public void updateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate)
             throws UnifyException {
         // update vars by environment
         Fs fs = features.get(n);
@@ -196,10 +202,49 @@ public class DerivedTree {
         }
         // update child node features
         for (int i = 0; i < n.getChildNodes().getLength(); i++) {
-            updateFeatures(n.getChildNodes().item(i), eEnv, finalUpdate);
+            updateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate);
         }
+
     }
 
+    public boolean postUpdateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate)
+    {
+        // update vars by environment
+        Fs fs = features.get(n);
+        if (fs != null) {
+            if (fs.collect_corefs(eEnv, nf, new HashSet<Value>()) == false) {
+                return false;
+            }
+            features.put(n, fs);
+        }
+        // update child node features
+        for (int i = 0; i < n.getChildNodes().getLength(); i++) {
+            if(!postUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
+		return false;
+        }
+	return true;
+    }
+
+    public Boolean postPostUpdateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate)
+	throws UnifyException
+    {
+        // update vars by environment
+        Fs fs = features.get(n);
+        if (fs != null) {
+	    Fs newFs=fs.update_corefs(eEnv, new HashSet<Value>());
+	    if(newFs==null){
+		return false;}
+	    features.put(n, fs);
+        }
+        // update child node features
+        for (int i = 0; i < n.getChildNodes().getLength(); i++) {
+            if(!postPostUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
+		return false;
+        }
+	return true;
+	
+    }
+    
     public void addMissingBottomFeatures(HashMap<Node, Fs> botFs) {
         for (Node n : botFs.keySet()) {
             if (bottomFeatures.get(n) == null && botFs.get(n) != null) {
