@@ -1,10 +1,7 @@
 package de.duesseldorf.rrg.extractor;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -23,22 +20,17 @@ public class EdgeFeatureUnificationCoordinator {
     }
 
     public RRGParseResult computeUnUnifiedAndUnifiedTrees() {
-        Map<RRGParseTree, Boolean> unificationResults = new ConcurrentHashMap<>();
-        Set<RRGParseTree> successFullyUnifiedTrees = new ConcurrentSkipListSet<RRGParseTree>();
-        Set<RRGParseTree> treesWithMismatches = new ConcurrentSkipListSet<RRGParseTree>();
-        parseTreesWithoutUnification.parallelStream()
-                .forEach((ununifiedTree) -> {
+        Set<RRGParseTree> successFullyUnifiedTrees = new HashSet<RRGParseTree>();
+        Set<RRGParseTree> treesWithMismatches = new HashSet<RRGParseTree>();
+        parseTreesWithoutUnification.stream().forEach((ununifiedTree) -> {
 
-                    EdgeFeatureUnifier unifier = new EdgeFeatureUnifier(
-                            ununifiedTree);
-                    if (unifier.unifyEdgeFeatures()) {
-                        unificationResults.put(unifier.getResult(), true);
-                        successFullyUnifiedTrees.add(unifier.getResult());
-                    } else {
-                        unificationResults.put(ununifiedTree, false);
-                        treesWithMismatches.add(ununifiedTree);
-                    }
-                });
+            EdgeFeatureUnifier unifier = new EdgeFeatureUnifier(ununifiedTree);
+            if (unifier.unifyEdgeFeatures()) {
+                successFullyUnifiedTrees.add(unifier.getResult());
+            } else {
+                treesWithMismatches.add(ununifiedTree);
+            }
+        });
         // for (Map.Entry<RRGParseTree, Boolean> entry : unificationResults
         // .entrySet()) {
         // if (entry.getValue()) {

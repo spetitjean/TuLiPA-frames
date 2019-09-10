@@ -19,7 +19,7 @@ public class EdgeFeatureUnifier {
 
     boolean unifyEdgeFeatures() {
         this.result = new RRGParseTree(ununifiedTree);
-        getResult().setId(getResult().getId() + "_edgesUnified");
+        result.setId(result.getId() + "_edgesUnified");
         boolean unificationWorked = unifyEdgeFeatures(new GornAddress());
         // TODO remove root edge features
         // ((RRGNode) result.getRoot()).getNodeFs().removeFeat("l");
@@ -33,7 +33,7 @@ public class EdgeFeatureUnifier {
     }
 
     private boolean unifyEdgeFeatures(GornAddress gornAddress) {
-        RRGNode nodeWithGornAddress = getResult().findNode(gornAddress);
+        RRGNode nodeWithGornAddress = result.findNode(gornAddress);
         if (nodeWithGornAddress == null) {
             // System.err.println("node in edgefeatureUnification null,
             // return");
@@ -61,7 +61,7 @@ public class EdgeFeatureUnifier {
                 try {
                     newEdgeValueForBoth = ValueTools.unifyOrReplace(
                             edgeValueFromLeftDaughter,
-                            edgeValueFromRightDaughter, getResult().getEnv());
+                            edgeValueFromRightDaughter, result.getEnv());
                     if (newEdgeValueForBoth == null) {
                         // no edge fs's at all
                         continue;
@@ -103,9 +103,9 @@ public class EdgeFeatureUnifier {
             try {
                 // unify
                 Value newLeftMost = ValueTools.unifyOrReplace(lowerLeftMost,
-                        upperLeftMost, getResult().getEnv());
+                        upperLeftMost, result.getEnv());
                 Value newRightMost = ValueTools.unifyOrReplace(lowerRightMost,
-                        upperRightMost, getResult().getEnv());
+                        upperRightMost, result.getEnv());
                 // replace if unification was successfull
                 // left
                 ((RRGNode) nodeWithGornAddress.getChildren().get(0)).getNodeFs()
