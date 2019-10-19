@@ -164,8 +164,8 @@ public class Fs {
     public void setFeatWithoutReplace(String key, Value val) {
         if (AVlist.containsKey(key)) {
             System.out.println("Key : " + key
-                    + " already used, feature skipped. exsisting value: "
-                    + AVlist.get(key) + "new value: " + val);
+                    + " already used, feature skipped. Existing value: "
+                    + AVlist.get(key) + " / New value: " + val);
         } else if (val != null) {
             AVlist.put(key, val);
         }
@@ -352,16 +352,18 @@ public class Fs {
         if (top != null && bot != null) {
             Fs realTop = top.getAvmVal();
             Fs realBot = bot.getAvmVal();
-            Iterator<String> it = realTop.getAVlist().keySet().iterator();
-            while (it.hasNext()) {
-                String feat = it.next();
-                Value topVal = realTop.getConstFeat(feat);
-                Value botVal = realBot.getConstFeat(feat);
-                if (topVal != null && botVal != null
+	    if(realTop!=null && realBot!=null){
+		Iterator<String> it = realTop.getAVlist().keySet().iterator();
+		while (it.hasNext()) {
+		    String feat = it.next();
+		    Value topVal = realTop.getConstFeat(feat);
+		    Value botVal = realBot.getConstFeat(feat);
+		    if (topVal != null && botVal != null
                         && !(topVal.equals(botVal)))
-                    res = TagNode.NADJ;
-            }
-        }
+			res = TagNode.NADJ;
+		}
+	    }
+	}
         return res;
     }
 
@@ -375,30 +377,38 @@ public class Fs {
 
     public String toStringWithOutTypeOneLiner() {
         Set<Value> seen = new HashSet<Value>();
-        String res = toStringRec(seen, false);
+        String res = toStringRec(seen, false, true);
         res = res.replaceAll("\n", ", ");
         return res;
     }
 
     public String toString() {
+	if(this==null)
+	    return null;
         Set<Value> seen = new HashSet<Value>();
-        return toStringRec(seen, true);
+        return toStringRec(seen, true, false);
     }
 
-    public String toStringRec(Set<Value> seen, boolean withType) {
-        String res = "[";
+    public String toStringRec(Set<Value> seen, boolean withType,
+            boolean withCoref) {
+        String res = "";
+        if (withCoref && coref != null && coref.is(Value.Kind.VAR)) {
+            res += "{" + coref.getVarVal() + "}";
+        }
+
+        res += "[";
 
         if (withType && isTyped()) {
             res = "(" + coref + ")" + res + type + "\n ";
 
             if (coref != null && seen.contains(coref)) {
-                // System.out.println("Stopping print because of recursion");
+                //System.out.println("Stopping print because of recursion");
                 return res + "]";
             } else
-                seen.add(coref);
+		if(AVlist.keySet().size()>0)
+		    seen.add(coref);
         }
-
-        res += attrsToString(seen, withType);
+        res += attrsToString(seen, withType, withCoref);
         res += "]";
         return res;
     }
@@ -408,17 +418,18 @@ public class Fs {
      * @param res
      * @return
      */
-    private String attrsToString(Set<Value> seen, boolean withType) {
+    private String attrsToString(Set<Value> seen, boolean withType,
+            boolean withCoref) {
         String res = "";
+
         Set<String> keys = AVlist.keySet();
         Iterator<String> i = keys.iterator();
         while (i.hasNext()) {
             String k = (String) i.next();
             // System.out.println(seen);
             if (AVlist.get(k).getType() == Value.Kind.AVM)
-                res += k + " = "
-                        + AVlist.get(k).getAvmVal().toStringRec(seen, withType)
-                        + "\n ";
+                res += k + " = " + AVlist.get(k).getAvmVal().toStringRec(seen,
+                        withType, withCoref) + "\n ";
             else
                 res += k + " = " + AVlist.get(k).toString() + "\n ";
         }
@@ -500,12 +511,12 @@ public class Fs {
      */
     public static Fs unify(Fs fs1, Fs fs2, Environment env, TypeHierarchy tyHi,
             Set<Value> seen) throws UnifyException {
+	//System.out.println("\nUnifying "+fs1+" and "+fs2);
         Hashtable<String, Value> avm1 = fs1.getAVlist();
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
         if (seen.contains(fs1.getCoref()) && fs1.getCoref() != null) {
-            // System.out.println("Stopping unification because of recursion:
-            // "+fs1);
+            //System.out.println("Stopping unification because of recursion: "+fs1);
             return fs1;
         } else {
             seen.add(fs1.getCoref());
@@ -647,12 +658,9 @@ public class Fs {
      */
     public static Fs updateFS(Fs fs, Environment env, boolean finalUpdate,
             Set<Value> seen) throws UnifyException {
-        // System.err.println("updating [" + fs.toString() + "] env: " +
-        // env.toString());
-        // System.out.println("Updating FS: "+fs);
-        // System.out.println("\n\n\nUpdating with seen: "+seen+"\nhave
-        // "+fs.getCoref());
-
+        //System.err.println("updating [" + fs.toString() + "] env: " +
+        //env.toString());
+	//System.out.println("\nUpdating "+fs);
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();
@@ -702,7 +710,8 @@ public class Fs {
         }
 
         if (fs.getCoref() != null && seen.contains(fs.getCoref())) {
-            // System.out.println("Stopping update because of recursion: "+fs);
+            //System.out.println("Stopping update because of recursion: "+fs);
+            //System.out.println("Returning: "+res);
             // System.out.println(env);
             return res;
         } else
@@ -742,8 +751,9 @@ public class Fs {
                 break;
             case AVM: // the value is an avm, we go on updating
                 // System.out.println("Updating FS [rec] ");
-                res.setFeatWithoutReplace(k, new Value(
-                        updateFS(fval.getAvmVal(), env, finalUpdate, seen)));
+		Value replace=new Value(
+				     updateFS(fval.getAvmVal(), env, finalUpdate, seen));
+                res.setFeatWithoutReplace(k, replace);
                 break;
             case ADISJ:
                 fval.update(env, finalUpdate);
@@ -764,13 +774,17 @@ public class Fs {
         AVlist = vlist;
     }
 
-    public boolean equals(Object fs) {
+    @Override
+    public boolean equals(Object obj) {
+        return equals(obj, true);
+    }
 
+    public boolean equals(Object fs, boolean compareCorefs) {	
         if (!(fs instanceof Fs)) {
             return false;
         }
 
-        if (this.getCoref() != null
+        if (compareCorefs && this.getCoref() != null
                 && this.getCoref() == ((Fs) fs).getCoref()) {
             return true;
         }
@@ -797,6 +811,7 @@ public class Fs {
     public int hashCode() {
         return Objects.hash(AVlist, type, is_typed, coref);
     }
+    
 
     public static List<Fs> mergeFS(List<Fs> frames, Environment env,
             NameFactory nf) {
@@ -893,47 +908,51 @@ public class Fs {
 
     public boolean collect_corefs(Environment env, NameFactory nf,
             Set<Value> seen) {
-        // If the current coref is not a pretty name, we update it
         Fs New = this;
 
-        // System.out.println("Going on ");
-        if (env.deref(New.coref).getVarVal().charAt(0) != '@') {
-            String oldVar = env.deref(this.coref).getVarVal();
-            // String newVar = env.getPnf().getNextName();
-            String newVar = nf.getUniqueName();
-            // System.out.println("New name: "+newVar);
-            // env.deref(New.coref).setVarVal(newVar);
-            Value newVarVal = new Value(Value.Kind.VAR, newVar);
-            New.coref = newVarVal;
-            env.bind(oldVar, newVarVal);
-            seen.add(newVarVal);
-        }
+	if(New.coref!=null){
+	    // This is not optimal
+	    // We complicate the environment creating new variables
+	    // The reason is that without these artificial variables,
+	    // some variables are never bound, and therefore won't
+	    // be renamed with pretty names
+	    if (env.deref(New.coref).getVarVal().charAt(0) != '@') {
+	    	String oldVar = env.deref(this.coref).getVarVal();
+	    	// String newVar = env.getPnf().getNextName();
+	    	String newVar = nf.getUniqueName();
+	    	// env.deref(New.coref).setVarVal(newVar);
+	    	Value newVarVal = new Value(Value.Kind.VAR, newVar);
+	    	New.coref = newVarVal;
+	    	env.bind(oldVar, newVarVal);
+	    	seen.add(newVarVal);
+	    }
+	
 
-        // Go through all the frames
-        // for each coref X found, we put it in the environment
+	    // Go through all the frames
+	    // for each coref X found, we put it in the environment
 
-        String atCoref = "$" + env.deref(this.coref);
-        Value valCoref = new Value(Value.Kind.VAR, atCoref);
+	    String atCoref = "$" + env.deref(this.coref);
+	    Value valCoref = new Value(Value.Kind.VAR, atCoref);
 
-        // System.out.println("coref: "+atCoref);
-        // System.out.println("$: "+env.deref(valCoref));
+	    //System.out.println("coref: "+atCoref);
+	    //System.out.println("$: "+env.deref(valCoref));
 
-        if (env.deref(valCoref) != valCoref) {
-            try {
-                New = unify(env.deref(valCoref).getAvmVal(), New, env,
-                        Situation.getTypeHierarchy(), new HashSet<Value>());
-            } // catch (Exception e) {
-              // e.printStackTrace();
-              // return false;
-              // }
-            catch (UnifyException e) {
-                // System.err.println("Exception during update of " + New);
-                return false;
-            }
-        }
-
-        env.bind(atCoref, new Value(New));
-
+	    if (env.deref(valCoref) != valCoref) {
+		try {
+		    New = unify(env.deref(valCoref).getAvmVal(), New, env,
+				Situation.getTypeHierarchy(), new HashSet<Value>());
+		} // catch (Exception e) {
+		// e.printStackTrace();
+		// return false;
+		// }
+		catch (UnifyException e) {
+		    // System.err.println("Exception during update of " + New);
+		    return false;
+		}
+	    }
+	    
+	    env.bind(atCoref, new Value(New));
+	}
         Iterator<String> i = New.AVlist.keySet().iterator();
         while (i.hasNext()) {
             String f = i.next();
@@ -951,41 +970,42 @@ public class Fs {
     }
 
     public Fs update_corefs(Environment env, Set<Value> seen) {
-        // System.out.println("Updating corefs in "+ this);
-        // System.out.println("Seen: "+seen);
+        //System.out.println("Updating corefs in "+ this);
+        //System.out.println("Seen: "+seen);
         Fs result = this;
-        String atCoref = "$" + env.deref(this.coref);
-        Value valCoref = new Value(Value.Kind.VAR, atCoref);
+	if(this.coref!=null){
+	    String atCoref = "$" + env.deref(this.coref);
+	    Value valCoref = new Value(Value.Kind.VAR, atCoref);
 
-        // System.out.println("Seen "+ seen);
-
-        if (env.deref(valCoref).is(Value.Kind.AVM)) {
-            // System.out.println("Trying to unify: "+this);
-            // System.out.println("With : "+env.deref(valCoref).getAvmVal());
-            try {
-                if (this != env.deref(valCoref).getAvmVal()) {
-                    result = unify(this, env.deref(valCoref).getAvmVal(), env,
-                            Situation.getTypeHierarchy(), new HashSet<Value>());
-                } else
-                    result = this;
-                // System.out.println("Binding ");
-                env.bind("$" + env.deref(this.coref), new Value(result));
-                // System.out.println("Done unify");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        if (seen.contains(coref)) {
-            // System.out.println("Update corefs stopped by recursion: "+coref);
-            // System.out.println(env.deref(this.coref));
-            return result;
-            // ;
-        } else
-            seen.add(coref);
-
+	    // System.out.println("Seen "+ seen);
+	    
+	    if (env.deref(valCoref).is(Value.Kind.AVM)) {
+		// System.out.println("Trying to unify: "+this);
+		// System.out.println("With : "+env.deref(valCoref).getAvmVal());
+		try {
+		    if (this != env.deref(valCoref).getAvmVal()) {
+			result = unify(this, env.deref(valCoref).getAvmVal(), env,
+				       Situation.getTypeHierarchy(), new HashSet<Value>());
+		    } else
+			result = this;
+		    // System.out.println("Binding ");
+		    env.bind("$" + env.deref(this.coref), new Value(result));
+		    // System.out.println("Done unify");
+		    
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    return null;
+		}
+	    }
+	    
+	    if (seen.contains(coref)) {
+		// System.out.println("Update corefs stopped by recursion: "+coref);
+		// System.out.println(env.deref(this.coref));
+		return result;
+		// ;
+	    } else
+		seen.add(coref);
+	}
         Iterator<String> i = this.AVlist.keySet().iterator();
         while (i.hasNext()) {
             // System.out.println("New while loop");
@@ -1001,8 +1021,13 @@ public class Fs {
 
                 // if(!seen.contains(v.getAvmVal().getCoref()))
                 // seen=new HashSet<Value>();
-                result.AVlist.put(f,
-                        new Value(v.getAvmVal().update_corefs(env, seen)));
+		Value newValue = new Value(v.getAvmVal().update_corefs(env, seen));
+		if(newValue.getAvmVal()==null){
+		    return null;
+		}
+		else{
+		    result.AVlist.put(f,newValue);
+		}
                 // else
                 // result.AVlist.put(f,
                 // new Value(v.getAvmVal()));
@@ -1030,7 +1055,6 @@ public class Fs {
         }
         // System.out.println("Here l.830");
         // System.out.println("Result: "+result);
-        // System.out.println("Return ");
         return result;
     }
 }

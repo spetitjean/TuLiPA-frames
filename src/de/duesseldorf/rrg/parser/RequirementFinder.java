@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
 
@@ -146,6 +148,7 @@ public class RequirementFinder {
      * needed:
      * 1. TOP position in a
      * 2. root node
+     * 3. root is no star node
      *
      * @param currentItem
      * @return
@@ -153,7 +156,8 @@ public class RequirementFinder {
     public boolean substituteReq(RRGParseItem currentItem) {
         boolean res = currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP) // 1.
                 // the current node has no mother, i.e. it is a root
-                && currentItem.getNode().getGornaddress().mother() == null;
+                && currentItem.getNode().getGornaddress().mother() == null
+                && currentItem.getNode().getType() != RRGNodeType.STAR;
         return res;
     }
 
@@ -261,15 +265,17 @@ public class RequirementFinder {
         RRGNode targetMother = target.getTree()
                 .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
-            if (root.getNode().nodeUnificationPossible(targetMother)) {
-                // String candidateMotherLabel = targetMother.getCategory();
-                // if
-                // (root.getNode().getCategory().equals(candidateMotherLabel)) {
-                return true;
+            boolean nodeUnificationPossible = true;
+            try {
+                RRGTreeTools.unifyNodes(root.getNode(), targetMother,
+                        root.getTree().getEnv());
+            } catch (UnifyException e) {
+                nodeUnificationPossible = false;
             }
+            return nodeUnificationPossible;
         }
-
         return false;
+
     }
 
     /**
@@ -412,9 +418,15 @@ public class RequirementFinder {
 
             boolean gapHasRightLabel = item.getNode().getCategory()
                     .equals(gap.nonterminal);
-            boolean targetRootSuitsDMother = targetRootItem.getNode()
-                    .nodeUnificationPossible(item.getTree().findNode(
-                            item.getNode().getGornaddress().mother()));
+            boolean targetRootSuitsDMother = true;
+            try {
+                RRGTreeTools.unifyNodes(targetRootItem.getNode(),
+                        item.getTree().findNode(
+                                item.getNode().getGornaddress().mother()),
+                        item.getTree().getEnv());
+            } catch (UnifyException e) {
+                targetRootSuitsDMother = false;
+            }
             if (gapHasRightLabel && targetRootSuitsDMother) {
                 // && targetRootItem.getNode().getCategory()
                 // .equals(item.getTree()
@@ -450,7 +462,6 @@ public class RequirementFinder {
          */
         RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
                 .gaps(modelgaps).ws(false).build();
-
         return chart.findUnderspecifiedItem(model, true);
     }
 }

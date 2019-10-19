@@ -101,10 +101,15 @@ public class RRGTreeTools {
 
     public static String asStringWithNodeLabelsAndNodeType(RRGTree tree) {
         StringBuffer sb = new StringBuffer();
+        // IDs and trace
         sb.append("ID: " + tree.getId() + "\n");
-        // if (tree instanceof RRGParseTree) {
-        // sb.append(((RRGParseTree) tree).idMap2string());
-        // }
+        if (tree instanceof RRGParseTree) {
+            ((RRGParseTree) tree).getIds().forEach((id) -> {
+                sb.append(id);
+                sb.append("\n");
+            });
+        }
+        // nodes
         asStringWithNodeLabelsAndNodeType(tree.getRoot(), sb, 0);
         return sb.toString();
     }
@@ -140,7 +145,8 @@ public class RRGTreeTools {
      * @param node2
      * @return
      */
-    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2) {
+    public static RRGNode unifyNodes(RRGNode node1, RRGNode node2,
+            Environment env) throws UnifyException {
         RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
         if (!node1.getType().equals(node2.getType())) {
             resultBuilder = resultBuilder.type(RRGNodeType.STD);
@@ -149,22 +155,17 @@ public class RRGTreeTools {
                 || node2.getType().equals(RRGNodeType.SUBST)) {
             resultBuilder = resultBuilder.type(RRGNodeType.SUBST);
         }
-        if (!node1.nodeUnificationPossible(node2)) {
-            System.err.println("node unification not possible! ");
-            System.err.println(node1);
-            System.err.println(node2);
-            return null;
+        if (!node1.getCategory().equals(node2.getCategory())) {
+            // System.err.println("node unification not possible! ");
+            // System.err.println(node1);
+            // System.err.println(node2);
+            throw new UnifyException();
         }
-        try {
-            Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(),
-                    new Environment(2));
+        // unify might throw another exception
+        Fs fsForResult = Fs.unify(node1.getNodeFs(), node2.getNodeFs(), env);
 
-            resultBuilder = resultBuilder.fs(fsForResult);
-        } catch (UnifyException e) {
-            System.err.println("could not unify node feature structures: ");
-            System.err.println(node1);
-            System.err.println(node2);
-        }
+        resultBuilder = resultBuilder.fs(fsForResult);
         return resultBuilder.build();
     }
+
 }

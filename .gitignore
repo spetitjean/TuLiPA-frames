@@ -24,3 +24,6 @@ run/
 bin/**
 !TuLiPA-frames.jar
 
+# backup dirs for experiments
+experiments/**
+tmp/**

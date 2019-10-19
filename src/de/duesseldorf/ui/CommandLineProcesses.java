@@ -166,6 +166,15 @@ public class CommandLineProcesses {
         // input trees in bracketed format
         op.add(CommandLineOptions.Prefix.DASH, "rrgbrin",
                 CommandLineOptions.Separator.BLANK, false);
+        // output edge mismatch trees
+        op.add(CommandLineOptions.Prefix.DASH, "edgemismatch",
+                CommandLineOptions.Separator.BLANK, false);
+        // convert bracketed to XMG
+        op.add(CommandLineOptions.Prefix.DASH, "brack2XML",
+                CommandLineOptions.Separator.BLANK, false);
+        // omit most prints to stdout in rrg mode
+        op.add(CommandLineOptions.Prefix.DASH, "omitPrint",
+                CommandLineOptions.Separator.BLANK, false);
         // we compile the patterns for parsing the command line
         op.prepare();
         // we concatenate the command line
@@ -232,7 +241,13 @@ public class CommandLineProcesses {
         res += "for functionalities:\n\t";
         res += "-rrg      parser for RRG as of Kallmeyer and Osswald (2017), "
                 + "default parsing algorithm for rrg\n\t";
+        res += "-edgemismatch       include trees in the results where edge feature unification fails\n\t";
         res += "-rrgbrin     input as bracketed elementary trees with the lexical element in front, separated by a tab\n\t";
+        res += "-brack2XML     A converter, no parsing happens. The grammar -g is an input file with trees in bracketed format."
+                + "\n\t\t\tThe output is an XMG grammar that contains all trees in the input."
+                + " Trees occuring more than once are removed."
+                + "\n\t\t\tThe option -rrgbrin is also required. A sentence must be specified, but the content does not matter.\n\t";
+        res += "-omitPrint     omits most prints to stdout during RRG parsing\n\t";
         res += "-cyktag      use CYK parser for TAG, default parsing algorithm\n\t";
         res += "-tag2rcg     (use TAG to RCG conversion)\n\t";
         res += "-nofiltering cancels polarity filtering\n\t";

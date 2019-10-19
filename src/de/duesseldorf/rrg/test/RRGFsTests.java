@@ -3,13 +3,13 @@ package de.duesseldorf.rrg.test;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.io.BracketedRRGFromStringsReader;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
@@ -82,16 +82,17 @@ public class RRGFsTests {
                     .createRRGFromListOfBracketedStrings(trees.get(i));
             Situation.instantiate(grammar, null, null);
             // parse
-            Set<RRGParseTree> parseResult = new RRGParser("")
+            RRGParseResult parseResult = new RRGParser("")
                     .parseSentence(sentences.get(i));
             System.out.println("parsed sentence: " + sentences.get(i));
-            for (RRGParseTree parseTree : parseResult) {
+            for (RRGParseTree parseTree : parseResult.getSuccessfulParses()) {
                 System.out.println(parseTree);
             }
             StreamResult resultStream = new StreamResult(
                     "testout_" + i + ".xml");
             try {
-                new RRGXMLBuilder(resultStream, parseResult).buildAndWrite();
+                new RRGXMLBuilder(resultStream, parseResult, false)
+                        .buildAndWrite();
             } catch (ParserConfigurationException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

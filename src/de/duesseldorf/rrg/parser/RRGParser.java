@@ -8,13 +8,15 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import de.duesseldorf.frames.Situation;
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
-import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
+import de.duesseldorf.ui.ParsingInterface;
 
 /**
  * File RRGParser.java
@@ -63,7 +65,7 @@ public class RRGParser {
         this.treesInvolvedInParsing = new HashSet<>();
     }
 
-    public Set<RRGParseTree> parseSentence(List<String> toksentence) {
+    public RRGParseResult parseSentence(List<String> toksentence) {
         System.out.println("start parsing sentence " + toksentence);
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
@@ -74,21 +76,17 @@ public class RRGParser {
 
         this.requirementFinder = new RequirementFinder();
 
-        // if (verbosePrintsToStdOut) {
-        System.out.println("--------------------------------");
-        System.out.println(
-                "Found fitting lexical items in the following trees: ");
-        System.out.println("--------------------------------");
-
-        for (RRGParseItem item : agenda) {
-            System.out.println(item.getTree().getId());
-            System.out.println(RRGTreeTools
-                    .recursivelyPrintNode(item.getTree().getRoot()));
-            System.out.println("--------------------------------");
+        System.out.println("Found fitting lexical items in the following "
+                + agenda.size() + " trees: ");
+        if (!ParsingInterface.omitPrinting) {
+            for (RRGParseItem item : agenda) {
+                System.out.println(item.getTree().getId());
+                System.out.println(RRGTreeTools
+                        .recursivelyPrintNode(item.getTree().getRoot()));
+                System.out.println("--------------------------------");
+            }
         }
         System.out.println("--------------------------------");
-
-        // }
 
         // The real recognition
         int i = 0;
@@ -106,7 +104,7 @@ public class RRGParser {
             }
             predictwrapping(currentItem);
             combinesisters(currentItem);
-            completewrapping(currentItem);
+            completeWrapping(currentItem);
 
             // System.out.println("Agenda size: " + agenda.size());
         }
@@ -119,12 +117,12 @@ public class RRGParser {
             System.out.println(
                     "ERROR: abort parse tree extraction because chart is too large: "
                             + chart.computeSize());
-            return new HashSet<RRGParseTree>();
+            return new RRGParseResult.Builder().build();
         } else {
             // extract parse results from chart
             ParseForestExtractor extractor = new ParseForestExtractor(chart,
                     toksentence);
-            Set<RRGParseTree> result = extractor.extractParseTrees();
+            RRGParseResult result = extractor.extractParseTrees();
             return result;
         }
 
@@ -148,7 +146,7 @@ public class RRGParser {
         }
     }
 
-    private void completewrapping(RRGParseItem currentItem) {
+    private void completeWrapping(RRGParseItem currentItem) {
         // System.out.println("complW with " + currentItem);
         boolean rootItem = requirementFinder
                 .isCompleteWrappingRootItem(currentItem);
@@ -174,6 +172,17 @@ public class RRGParser {
             // Set<RRGParseItem> completeWrappingRootAntecedents =
             // requirementFinder
             // .findCompleteWrappingRoots(currentItem, chart);
+            // for (RRGParseItem rootAntecedent :
+            // completeWrappingRootAntecedents) {
+            // System.out.println("rootantecedent: " + rootAntecedent);
+            // for (Gap gap : rootAntecedent.getGaps()) {
+            // RRGParseItem consequent = deducer.applyCompleteWrapping(
+            // rootAntecedent, rootAntecedent, gap);
+            // System.out.println("cons: " + consequent);
+            // addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
+            // currentItem, rootAntecedent);
+            // }
+            // }
             // System.out.println("untested completeWrapping territory! D");
             // System.out.println("root: " + completeWrappingRootAntecedents);
             // System.out.println("ddaughter: " + currentItem);
@@ -192,8 +201,16 @@ public class RRGParser {
                     gaps.add(new Gap(currentItem.startPos(),
                             currentItem.getEnd(), cat));
                     for (RRGNode substNode : substNodes) {
-                        if (substNode.nodeUnificationPossible(
-                                currentItem.getNode())) {
+                        boolean nodeUnificationPossible = true;
+                        try {
+                            RRGTreeTools.unifyNodes(substNode,
+                                    currentItem.getNode(),
+                                    currentItem.getTree().getEnv());
+                        } catch (UnifyException e) {
+                            nodeUnificationPossible = false;
+                        }
+
+                        if (nodeUnificationPossible) {
                             // System.out.println("got to for: " + substNode);
                             RRGParseItem cons = new RRGParseItem.Builder()
                                     .tree(tree).node(substNode)
@@ -283,9 +300,14 @@ public class RRGParser {
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
                         // System.out.println("got to for: " + substNode);
-                        boolean checkIfUnificationWorks = substNode
-                                .nodeUnificationPossible(currentItem.getNode());
-
+                        boolean checkIfUnificationWorks = true;
+                        try {
+                            RRGTreeTools.unifyNodes(substNode,
+                                    currentItem.getNode(),
+                                    currentItem.getTree().getEnv());
+                        } catch (UnifyException e) {
+                            checkIfUnificationWorks = false;
+                        }
                         if (checkIfUnificationWorks) {
                             RRGParseItem cons = new RRGParseItem.Builder()
                                     .tree(tree).node(substNode)

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /**
@@ -39,7 +40,7 @@ import de.tuebingen.tree.Node;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-public class RRGTree {
+public class RRGTree implements Comparable<RRGTree> {
 
     // representation of the syntactic tree
     protected Node root;
@@ -48,15 +49,21 @@ public class RRGTree {
     private RRGNode ddaughter; // only one ddaughter is allowed!
     protected String id;
 
+    private Environment env;
+
     public RRGTree(Node root, String id) {
         this.root = new RRGNode.Builder((RRGNode) root).build();
         this.id = id;
+        this.setEnv(new Environment(0));
         retrieveSpecialNodes();
+
     }
 
     public RRGTree(RRGTree tree) {
         this.root = new RRGNode.Builder((RRGNode) tree.getRoot()).build();
         this.id = tree.id;
+        this.setEnv(tree.getEnv());
+        // System.out.println("TODO ENVIRONMENT IN RRGTREE");
         retrieveSpecialNodes();
     }
 
@@ -214,6 +221,19 @@ public class RRGTree {
     }
 
     /**
+     * ATTENTION! Really not a good implementation, but probably enough to order
+     * trees in a set
+     */
+    @Override
+    public int compareTo(RRGTree o) {
+        int compIDs = id.compareTo(o.getId());
+        if (compIDs != 0) {
+            return compIDs;
+        }
+        return ((RRGNode) root).compareTo(((RRGNode) o.getRoot()));
+    }
+
+    /**
      * prints the syntax tree from the root downwards
      */
     @Override
@@ -222,4 +242,11 @@ public class RRGTree {
         return beiwerk + RRGTreeTools.recursivelyPrintNode(root);
     }
 
+    public Environment getEnv() {
+        return env;
+    }
+
+    public void setEnv(Environment env) {
+        this.env = env;
+    }
 }

@@ -89,7 +89,7 @@ public class XMLRRGReader extends FileReader {
             RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree);
 
             // debug
-            System.out.println(syntaxTree.toString() + "\n\n\n");
+            // System.out.println(syntaxTree.toString() + "\n\n\n");
             trees.add(syntaxTree);
         }
         return new RRG(trees);

@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.duesseldorf.frames.Fs;
-import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.util.GornAddress;
-import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 /*
@@ -36,7 +34,7 @@ import de.tuebingen.tree.Node;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-public class RRGNode implements Node {
+public class RRGNode implements Node, Comparable<RRGNode> {
 
     private List<Node> children; // all children of the Node, in order
     private RRGNodeType type; // the type of this node
@@ -53,48 +51,6 @@ public class RRGNode implements Node {
         this.setCategory(category);
         this.gornaddress = ga;
         this.nodeFs = nodeFs;
-    }
-
-    /**
-     * unifies this node and the other node by replacing (!) this nodes
-     * children
-     * with {@code other}s chilren, if the categories of both nodes
-     * match.
-     * 
-     * @param other
-     * @return {@code true} iff the unification succeeded
-     */
-    public boolean nodeUnification(RRGNode other) {
-        boolean result = false;
-        if (other.getCategory().equals(this.getCategory())) {
-            this.setChildren(new LinkedList<Node>(other.getChildren()));
-            result = true;
-        }
-        return result;
-    }
-
-    /**
-     * returns true iff unification of this node and the other node is
-     * possible,
-     * i.e. iff the categories of both nodes
-     * match.
-     * 
-     * @param other
-     * @return {@code true} iff the unification succeeded
-     */
-    public boolean nodeUnificationPossible(RRGNode other) {
-        boolean result = false;
-        if (other.getCategory().equals(this.getCategory())) {
-            result = true;
-            try {
-                result = Fs.unify(this.getNodeFs(), other.getNodeFs(),
-                        new Environment(0)) != null;
-            } catch (UnifyException e) {
-                result = false;
-            }
-        }
-
-        return result;
     }
 
     public List<Node> getChildren() {
@@ -185,7 +141,7 @@ public class RRGNode implements Node {
             // System.out.println("no basecase: " + this + " VS " + other);
             return false;
         }
-        boolean fsCase = this.getNodeFs().equals(other.getNodeFs());
+        boolean fsCase = this.getNodeFs().equals(other.getNodeFs(), false);
         if (!fsCase) {
             return false;
         }
@@ -320,6 +276,32 @@ public class RRGNode implements Node {
             return new RRGNode(type, name, category, gornaddress, children,
                     nodeFs);
         }
+    }
+
+    @Override
+    public int compareTo(RRGNode o) {
+        int compareCats = this.category.compareTo(o.category);
+        if (compareCats != 0) {
+            return compareCats;
+        }
+        int compareTypes = this.type.toString().compareTo(o.type.toString());
+        if (compareTypes != 0) {
+            return compareTypes;
+        }
+
+        int childrenSizeDiff = this.children.size() - o.children.size();
+        if (childrenSizeDiff != 0) {
+            return childrenSizeDiff;
+        }
+        for (int i = 0; i < this.children.size(); i++) {
+            RRGNode thisChild = (RRGNode) children.get(i);
+            RRGNode otherChild = (RRGNode) o.children.get(i);
+            int childDiff = thisChild.compareTo(otherChild);
+            if (childDiff != 0) {
+                return childDiff;
+            }
+        }
+        return 0;
     }
 
 }

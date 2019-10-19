@@ -266,7 +266,8 @@ public class TagTree implements Tree {
         if (n.getName() != null && n.getName().equals(nodeid)) {
             // node found
             Fs eqfs = new Fs(1);
-            eqfs.setFeatWithoutReplace(eq.getType(), new Value(eq.getFeatures()));
+            eqfs.setFeatWithoutReplace(eq.getType(),
+                    new Value(eq.getFeatures()));
             Fs label = ((TagNode) n).getLabel();
             Fs fs = Fs.unify(label, eqfs, env);
             ((TagNode) n).setLabel(fs);
@@ -1047,7 +1048,11 @@ public class TagTree implements Tree {
         }
 
         // String frameString = frames.toString();
-        String frameSemString = frameSem.toString();
+        String frameSemString = "";
+        if (frameSem != null) {
+            frameSemString += "\n FrameSem : \n";
+            frameSemString += frameSemString += frameSem.toString();
+        }
         // return ("\n Tree " + id + "\n Original Id : " + originalId
         // + "\n Family : " + family + "\n Tuple id : " + tupleId
         // + "\n Trace : " + s + "\n Interface : [" + iface.toString()
@@ -1060,6 +1065,6 @@ public class TagTree implements Tree {
                 + "\n  Trace : " + s + "\n  Interface : [" + iface.toString()
                 + "]\n  Syn : \n" + space
                 + ((TagNode) root).toString(space + "  ") + "\n  Sem : \n"
-                + semantics + "\n FrameSem : \n" + frameSemString);
+                + semantics + frameSemString);
     }
 }

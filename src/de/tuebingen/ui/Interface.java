@@ -188,10 +188,8 @@ public class Interface {
                     }
                 }
             }
-        } else if (op.check("b"))
-
-        { // batch processing
-          // Load the input from a file
+        } else if (op.check("b")) { // batch processing
+            // Load the input from a file
             File input = new File(op.getVal("b"));
             BufferedReader r = new BufferedReader(new FileReader(input));
             String is = "";
@@ -212,7 +210,16 @@ public class Interface {
                     } else {
                         // in batch mode, there is an xml output, with the file
                         // name defined as follows.
-                        op.setOurVal("o", out + i + ".xml");
+			String newout;
+			if (out.endsWith(".xml")) {
+                            newout = out.substring(0,
+                                    out.length() - 4);
+                            newout = newout + "_" + i;
+                            newout += ".xml";
+                        } else {
+                            newout = out + "_" + i + ".xml";
+                        }
+                        op.setOurVal("o", newout );
                         // if TAG (left context) polarity filtering is
                         // activated, grammar reloading is necessary
                         if (op.check("tag")) {
@@ -258,6 +265,10 @@ public class Interface {
                     new InputGUI(ops);
                 }
             });
+        }
+        if (op.check("rrg")) {
+            System.out.println("Done parsing. Goodbye!");
+            System.exit(0);
         }
     }
 

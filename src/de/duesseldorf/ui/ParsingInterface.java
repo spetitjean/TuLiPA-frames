@@ -47,6 +47,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
@@ -57,7 +62,10 @@ import de.duesseldorf.frames.Situation;
 import de.duesseldorf.io.SentenceListFromFileCreator;
 //import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
+import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
@@ -97,6 +105,8 @@ import de.tuebingen.util.CollectionUtilities;
 import de.tuebingen.util.XMLUtilities;
 
 public class ParsingInterface {
+
+    public static boolean omitPrinting = true;
 
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
             String sentence) throws Exception {
@@ -429,7 +439,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-                System.err.println("########Starting removing words ");
+                //System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -706,7 +716,7 @@ public class ParsingInterface {
         // /
         // derivation trees
         System.err.println("\nTotal parsing time for sentence \"" + sentence
-                + ": " + totalTime / (Math.pow(10, 9)) + " sec.");
+                + "\": " + totalTime / (Math.pow(10, 9)) + " sec.");
 
         return res;
     }
@@ -783,7 +793,7 @@ public class ParsingInterface {
 
     public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
-        // System.out.println("yay, go RRG!");
+        omitPrinting = op.check("omitPrint");
         boolean returnValue = false;
         boolean verbose = op.check("v");
 
@@ -804,25 +814,60 @@ public class ParsingInterface {
         Integer sentenceCounter = 0;
         for (String sentence : sentences) {
             List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
+            RRGParseResult result = new RRGParseResult.Builder().build();
 
-            RRGParser rrgparser = new RRGParser(op.getVal("a"));
-            Set<RRGParseTree> result = rrgparser.parseSentence(toksentence);
-
-            if (!result.isEmpty()) {
-                returnValue = true;
+            if (!op.check("brack2XML")) {
+                ExecutorService executor = Executors.newCachedThreadPool();
+                Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
+                    public RRGParseResult call() {
+                        RRGParser rrgparser = new RRGParser(op.getVal("a"));
+                        return rrgparser.parseSentence(toksentence);
+                    }
+                };
+                Future<RRGParseResult> future = executor.submit(task);
+                try {
+                    result = future.get(500, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    System.out.println("parsing failed due to exception: " + e);
+                    e.printStackTrace();
+                    System.exit(1);
+                } finally {
+                    future.cancel(true);
+                }
+            } else { // hack for converting .tsv grammar to xml grammar
+                Set<RRGParseTree> elementaryTreeSet = RRGTools.convertTreeSet(
+                        (((RRG) Situation.getGrammar()).getTrees()));
+                result = new RRGParseResult.Builder()
+                        .successfulParses(elementaryTreeSet).build();
             }
+            returnValue = !result.getSuccessfulParses().isEmpty();
             if (op.check("b")) {
-                batchparsingResultSizes.add(result.size());
-            } else {
-                for (RRGParseTree rrgParseTree : result) {
+                batchparsingResultSizes
+                        .add(result.getSuccessfulParses().size());
+            } else if (!omitPrinting) {
+                for (RRGParseTree rrgParseTree : result.getSuccessfulParses()) {
                     // System.out.println("Extraction steps for " +
                     // SrrgParseTree.getId());
                     // System.out.println(rrgParseTree.extractionstepsPrinted());
                     System.out.println("result for " + rrgParseTree.getId());
                     System.out.println(RRGTreeTools
                             .asStringWithNodeLabelsAndNodeType(rrgParseTree));
+                    // System.out.println(
+                    // "Environment: " + rrgParseTree.getEnv().toString());
                 }
-                System.out.println("result: " + result.size() + " trees.");
+                for (RRGParseTree tree : result
+                        .getTreesWithEdgeFeatureMismatches()) {
+                    System.out.println(
+                            "tree with feature mismatch " + tree.getId());
+                    System.out.println(RRGTreeTools
+                            .asStringWithNodeLabelsAndNodeType(tree));
+                }
+                System.out.println(
+                        "result:\n" + result.getSuccessfulParses().size()
+                                + "\tgood trees.");
+                System.out.println(
+                        result.getTreesWithEdgeFeatureMismatches().size()
+                                + "\ttrees with edge feature mismatches");
             }
 
             // XML Output
@@ -846,7 +891,7 @@ public class ParsingInterface {
                 }
                 try {
                     RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(
-                            resultStream, result);
+                            resultStream, result, op.check("edgemismatch"));
                     rrgXMLBuilder.buildAndWrite();
                 } catch (ParserConfigurationException e) {
                     System.err.println(
@@ -865,7 +910,6 @@ public class ParsingInterface {
             }
         }
         long parsingTime = System.nanoTime() - startParsingTime;
-
         System.err.println(
                 "Total time : " + (parsingTime) / (Math.pow(10, 9)) + " sec.");
         return returnValue;
