@@ -789,9 +789,10 @@ public class InputGUI implements ActionListener {
             aF.setText(axiom);
         } else if (ABOUT.equals(command)) {
             String msg = "TuLiPA - " + InputGUI.VERSION
-                    + "\nTuLiPA is a parsing architecture based on Range Concatenation Grammars \n";
-            msg += "developed at University Tuebingen, more information at : \n";
-            msg += "http://www.sfs.uni-tuebingen.de/emmy/tulipa/";
+               + "\nTuLiPA-frames is an extension of the parsing architecture TuLiPA (developed at the university of Tuebingen) which\n";
+            msg += "allows to handle grammars (Tree Adjoining Grammars, Role and reference grammars) with frame based semantics. \n";
+            msg += "TuLiPA-frames is developed at the university of Duesseldorf. More information at : \n";
+            msg += "https://github.com/spetitjean/TuLiPA-frames/wiki";
             JOptionPane.showMessageDialog(guiFrame, msg);
         } else if (QUIT.equals(command)) {
             System.exit(0);
