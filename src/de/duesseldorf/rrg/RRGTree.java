@@ -3,6 +3,8 @@ package de.duesseldorf.rrg;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -46,7 +48,7 @@ public class RRGTree implements Comparable<RRGTree> {
     protected Node root;
     private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
     private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
-    private RRGNode ddaughter; // only one ddaughter is allowed!
+    private List<RRGNode> ddaughters; // only one ddaughter is allowed!
     protected String id;
 
     private Environment env;
@@ -56,7 +58,6 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = id;
         this.setEnv(new Environment(0));
         retrieveSpecialNodes();
-
     }
 
     public RRGTree(RRGTree tree) {
@@ -107,13 +108,11 @@ public class RRGTree implements Comparable<RRGTree> {
                 substNodes.get(root.getCategory()).add(root);
             }
         } else if (root.getType().equals(RRGNodeType.DDAUGHTER)) {
-            if (this.ddaughter == null) {
-                this.ddaughter = root;
-            } else {
-                System.err.println(
-                        "Problem while processing tree: more than one d-daughter in"
-                                + toString());
+            if (this.ddaughters == null) {
+                this.ddaughters = new LinkedList<>();
             }
+            System.out.println("ddaughters length: " + ddaughters.size());
+            this.ddaughters.add(root);
         }
         for (Node daughter : root.getChildren()) {
             retrieveSpecialNodes((RRGNode) daughter);
@@ -166,8 +165,8 @@ public class RRGTree implements Comparable<RRGTree> {
      * @return the ddaughter if there is one, or {@code null} if there is
      *         none.
      */
-    public RRGNode getDdaughter() {
-        return ddaughter;
+    public List<RRGNode> getDdaughters() {
+        return ddaughters;
     }
 
     /**
