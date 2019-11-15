@@ -52,7 +52,7 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = false;
+    private boolean verbosePrintsToStdOut = true;
     private Set<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
@@ -386,7 +386,7 @@ public class RRGParser {
         Set<RRGTree> treesInvolvedInScanning = new HashSet<RRGTree>();
         // Look at all trees
         for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
-
+            System.out.println(tree);
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

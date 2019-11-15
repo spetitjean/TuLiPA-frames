@@ -166,12 +166,32 @@ public class WorkbenchLoader {
                     + (loadedTime) / (Math.pow(10, 9)) + " sec.");
         } else if (op.check("rrg")) { // RRG-parsing
             if (op.check("rrgbrin")) {
-                BracketedRRGFromFileReader brReader = new BracketedRRGFromFileReader(grammar);
+                BracketedRRGFromFileReader brReader = new BracketedRRGFromFileReader(
+                        grammar);
                 g = brReader.parseRRG();
             } else {
                 XMLRRGReader rrgreader = new XMLRRGReader(grammar);
                 g = rrgreader.retrieveRRG();
                 rrgreader.close();
+            }
+            // 2. Lemmas processing
+            if (g.needsAnchoring() && !(op.check("l"))) {
+                CommandLineProcesses.error(
+                        "Anchoring needed, lexicon files not found.", op);
+            } else if (op.check("l") && !(op.getVal("l").equals(""))
+                    && !(lem.equals(""))) {
+                lemmas = new File(lem);
+                XMLLemmaReader xlr = new XMLLemmaReader(lemmas);
+                g.setLemmas(xlr.getLemmas());
+            }
+            // 3. Morphs processing
+            if (g.needsAnchoring() && !(op.check("m")) && !(mo.equals(""))) {
+                CommandLineProcesses.error(
+                        "Anchoring needed, lexicon files not found.", op);
+            } else if (op.check("m")) {
+                morphs = new File(mo);
+                XMLMorphReader xmr = new XMLMorphReader(morphs);
+                g.setMorphEntries(xmr.getMorphs());
             }
 
         } else { // TAG/TT-MCTAG parsing

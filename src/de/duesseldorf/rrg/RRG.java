@@ -41,17 +41,32 @@ public class RRG implements Grammar {
     // What is in the xml input grammars: an entry has a family, trace, frame,
     // tree, interface
 
-    Set<RRGTree> trees;
-    boolean isLexicalised;
+    private Set<RRGTree> trees;
+    private boolean isLexicalised;
+    private boolean needsAnchoring;
+    private Map<String, List<MorphEntry>> morphEntries;
+    private Map<String, List<Lemma>> lemmas;
 
     public RRG() {
         trees = new HashSet<RRGTree>();
         isLexicalised = lookForLexicalisation();
+        needsAnchoring = lookForAnchors();
     }
 
     public RRG(Set<RRGTree> trees) {
         this.trees = trees;
         isLexicalised = lookForLexicalisation();
+        needsAnchoring = lookForAnchors();
+    }
+
+    /**
+     * 
+     * @return true iff at least one tree in the grammar has an anchor node
+     */
+    private boolean lookForAnchors() {
+        boolean thereAreAnchors = trees.parallelStream()
+                .anyMatch(tree -> !tree.getAnchorNodes().isEmpty());
+        return thereAreAnchors;
     }
 
     /**
@@ -75,44 +90,37 @@ public class RRG implements Grammar {
         return isLexicalised;
     }
 
-    // public void addTree(RRGTree tree) {
-    // trees.add(tree);
-    // }
-
     public Set<RRGTree> getTrees() {
         return this.trees;
     }
 
     //////// interface methods that are not used:
     public boolean needsAnchoring() {
-        return false;
+        return needsAnchoring;
     }
 
     public void setNeedsAnchoring(boolean b) {
-        // TODO Auto-generated method stub
+        needsAnchoring = b;
     }
 
     public void setMorphEntries(Map<String, List<MorphEntry>> morphEntries) {
-        // TODO Auto-generated method stub
+        this.morphEntries = morphEntries;
     }
 
     public void setLemmas(Map<String, List<Lemma>> lemmas) {
-        // TODO Auto-generated method stub
+        this.lemmas = lemmas;
     }
 
     public Map<String, List<Lemma>> getLemmas() {
-        // TODO Auto-generated method stub
-        return null;
+        return lemmas;
     }
 
     public Map<String, List<MorphEntry>> getMorphEntries() {
-        // TODO Auto-generated method stub
-        return null;
+        return morphEntries;
     }
 
     public Map<String, List<Tuple>> getGrammar() {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

@@ -48,6 +48,7 @@ public class RRGTree implements Comparable<RRGTree> {
     protected Node root;
     private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
     private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
+    private HashMap<String, Set<RRGNode>> anchorNodes; // all anchor nodes
     private List<RRGNode> ddaughters; // only one ddaughter is allowed!
     protected String id;
 
@@ -75,7 +76,9 @@ public class RRGTree implements Comparable<RRGTree> {
     private void retrieveSpecialNodes() {
         // inits
         this.lexNodes = new HashMap<String, Set<RRGNode>>();
+        this.anchorNodes = new HashMap<String, Set<RRGNode>>();
         this.substNodes = new HashMap<String, Set<RRGNode>>();
+        this.ddaughters = new LinkedList<>();
 
         retrieveSpecialNodes((RRGNode) root);
 
@@ -97,9 +100,17 @@ public class RRGTree implements Comparable<RRGTree> {
             } else {
                 lexNodes.get(root.getCategory()).add(root);
             }
+        } else if (root.getType().equals(RRGNodeType.ANCHOR)) {
+            if (anchorNodes.get(root.getCategory()) == null) {
+                Set<RRGNode> anchorNodesWithCat = new HashSet<RRGNode>();
+                anchorNodesWithCat.add(root);
+                anchorNodes.put(root.getCategory(), anchorNodesWithCat);
+            } else {
+                anchorNodes.get(root.getCategory()).add(root);
+            }
         } else if (root.getType().equals(RRGNodeType.SUBST)) { // add
-                                                               // substitution
-                                                               // nodes
+            // substitution
+            // nodes
             if (substNodes.get(root.getCategory()) == null) {
                 Set<RRGNode> substNodeswithCat = new HashSet<RRGNode>();
                 substNodeswithCat.add(root);
@@ -108,10 +119,7 @@ public class RRGTree implements Comparable<RRGTree> {
                 substNodes.get(root.getCategory()).add(root);
             }
         } else if (root.getType().equals(RRGNodeType.DDAUGHTER)) {
-            if (this.ddaughters == null) {
-                this.ddaughters = new LinkedList<>();
-            }
-            System.out.println("ddaughters length: " + ddaughters.size());
+            // System.out.println("ddaughters length: " + ddaughters.size());
             this.ddaughters.add(root);
         }
         for (Node daughter : root.getChildren()) {
@@ -162,11 +170,21 @@ public class RRGTree implements Comparable<RRGTree> {
 
     /**
      * 
-     * @return the ddaughter if there is one, or {@code null} if there is
+     * @return the ddaughters if there are some, or {@code null} if there is
      *         none.
      */
     public List<RRGNode> getDdaughters() {
         return ddaughters;
+    }
+
+    /**
+     * a map that maps category labels (Strings) to the set of RRGNodes in the
+     * tree that are anchor nodes with that label
+     * 
+     * @return
+     */
+    public Map<String, Set<RRGNode>> getAnchorNodes() {
+        return anchorNodes;
     }
 
     /**
