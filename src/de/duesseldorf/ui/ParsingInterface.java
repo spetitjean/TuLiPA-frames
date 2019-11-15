@@ -67,6 +67,7 @@ import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGTreeTools;
+import de.duesseldorf.rrg.anchoring.RRGAnchorMan;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
 import de.tuebingen.anchoring.NameFactory;
@@ -439,7 +440,7 @@ public class ParsingInterface {
 
                 String key = its.next();
                 TagTree tree = grammarDict.get(key);
-                //System.err.println("########Starting removing words ");
+                // System.err.println("########Starting removing words ");
                 List<TagNode> nodes = new LinkedList<TagNode>();
                 ((TagNode) tree.getRoot()).getAllNodesChildrenFirst(nodes);
 
@@ -815,6 +816,10 @@ public class ParsingInterface {
         for (String sentence : sentences) {
             List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
             RRGParseResult result = new RRGParseResult.Builder().build();
+            if (Situation.getGrammar().needsAnchoring()) {
+                RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
+                anchorman.anchor();
+            }
 
             if (!op.check("brack2XML")) {
                 ExecutorService executor = Executors.newCachedThreadPool();
