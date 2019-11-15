@@ -88,6 +88,10 @@ public class XMLRRGReader extends FileReader {
 
             RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree);
 
+            String fam = ithEntrie
+                    .getElementsByTagName(XMLRRGTag.FAMILY.StringVal()).item(0)
+                    .getTextContent();
+            syntaxTree.setFamily(fam);
             // debug
             // System.out.println(syntaxTree.toString() + "\n\n\n");
             trees.add(syntaxTree);

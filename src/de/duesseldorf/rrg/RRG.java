@@ -26,10 +26,12 @@
  */
 package de.duesseldorf.rrg;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.tuebingen.lexicon.Lemma;
 import de.tuebingen.lexicon.MorphEntry;
@@ -46,15 +48,18 @@ public class RRG implements Grammar {
     private boolean needsAnchoring;
     private Map<String, List<MorphEntry>> morphEntries;
     private Map<String, List<Lemma>> lemmas;
+    private Set<RRGTree> anchoredTrees;
 
     public RRG() {
         trees = new HashSet<RRGTree>();
+        anchoredTrees = new HashSet<RRGTree>();
         isLexicalised = lookForLexicalisation();
         needsAnchoring = lookForAnchors();
     }
 
     public RRG(Set<RRGTree> trees) {
         this.trees = trees;
+        this.anchoredTrees = new HashSet<RRGTree>();
         isLexicalised = lookForLexicalisation();
         needsAnchoring = lookForAnchors();
     }
@@ -65,7 +70,7 @@ public class RRG implements Grammar {
      */
     private boolean lookForAnchors() {
         boolean thereAreAnchors = trees.parallelStream()
-                .anyMatch(tree -> !tree.getAnchorNodes().isEmpty());
+                .anyMatch(tree -> tree.getAnchorNode() != null);
         return thereAreAnchors;
     }
 
@@ -121,6 +126,25 @@ public class RRG implements Grammar {
 
     public Map<String, List<Tuple>> getGrammar() {
         // TODO Auto-generated method stub
-        return null;
+        return new HashMap<String, List<Tuple>>();
+    }
+
+    public Set<RRGTree> getTreesByFamily(String family) {
+        return trees.parallelStream()
+                .filter(tree -> tree.getFamily().equals(family))
+                .collect(Collectors.toSet());
+    }
+
+    public void addAnchoredTree(RRGTree anchoredTree) {
+        this.anchoredTrees.add(anchoredTree);
+    }
+
+    public Set<RRGTree> getAnchoredTrees() {
+        if (needsAnchoring) {
+            return this.anchoredTrees;
+        } else {
+            return this.trees;
+        }
+
     }
 }

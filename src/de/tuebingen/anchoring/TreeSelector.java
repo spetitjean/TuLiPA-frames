@@ -52,6 +52,10 @@ import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
+import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import de.duesseldorf.rrg.RRGTree;
 import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.disambiguate.Polarities;
 import de.tuebingen.disambiguate.PolarizedLemma;
@@ -245,6 +249,8 @@ public class TreeSelector {
         for (int k = 0; k < la.size(); k++) {
             // we retrieve the tuple name the scheme contains
             String family = la.get(k).getTree_id();
+            // System.out.println("fam: " + family);
+            // System.out.println("lt: " + lt.keySet());
             if (lt.containsKey(family)) {
                 // for each matching tuple
                 for (int l = 0; l < lt.get(family).size(); l++) {
@@ -328,6 +334,44 @@ public class TreeSelector {
                             System.err.println("Rejected " + head.getId()
                                     + " (categories do not match)");
                         }
+                    }
+                }
+            } else if (Situation.getGrammar() instanceof RRG) {
+                Set<RRGTree> treesInTheFamily = ((RRG) Situation.getGrammar())
+                        .getTreesByFamily(family);
+                for (RRGTree tree : treesInTheFamily) {
+                    boolean match = true;
+                    RRGNode anchorNode = tree.getAnchorNode();
+                    try {
+                        Fs morphAncFS = new Fs();
+                        morphAncFS.setFeatWithoutReplace("cat",
+                                new Value(Value.Kind.VAL, il.getCat()));
+                        Fs treeAncFS = anchorNode.getNodeFs();
+                        Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
+                                new Environment(5));
+                        anchorNode.getNodeFs().removeCategory();
+                        // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
+                        // new Value(Value.Kind.VAL,
+                        // anchorFS.getCategory()));
+                    } catch (UnifyException e) {
+                        match = false;
+                        // e.printStackTrace();
+                    }
+                    if (match) {
+                        // build an RRGNode and attach it below the anchor node
+                        RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
+                                .name(il.getCat()).cat(il.getLexItem().getLex())
+                                .type(RRGNodeType.LEX).gornaddress(anchorNode
+                                        .getGornaddress().ithDaughter(0));
+                        // System.out.println("anchor: " + anchorNode);
+                        // System.out.println("lex: " + lexnodeBuilder.build());
+                        RRGTree anchoredTree = new RRGTree(tree);
+                        anchoredTree.addLexNodeToAnchor(lexnodeBuilder.build());
+                        // System.out.println("ts RRG orig tree: " + tree);
+                        // System.out.println("ts RRG anch tree: " +
+                        // anchoredTree);
+                        ((RRG) Situation.getGrammar())
+                                .addAnchoredTree(anchoredTree);
                     }
                 }
             } else {

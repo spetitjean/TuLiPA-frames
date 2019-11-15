@@ -48,16 +48,23 @@ public class RRGTree implements Comparable<RRGTree> {
     protected Node root;
     private Map<String, Set<RRGNode>> lexNodes; // all lexical nodes
     private Map<String, Set<RRGNode>> substNodes; // all substitution nodes
-    private HashMap<String, Set<RRGNode>> anchorNodes; // all anchor nodes
+    private RRGNode anchorNode; // all anchor nodes
     private List<RRGNode> ddaughters; // only one ddaughter is allowed!
     protected String id;
 
     private Environment env;
+    /**
+     * is initialized as empty string if no family is set through the method
+     * setFamily, e.g. from the XMLRRGReader
+     */
+    private String family;
 
     public RRGTree(Node root, String id) {
         this.root = new RRGNode.Builder((RRGNode) root).build();
         this.id = id;
         this.setEnv(new Environment(0));
+        this.family = "";
+
         retrieveSpecialNodes();
     }
 
@@ -65,6 +72,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.root = new RRGNode.Builder((RRGNode) tree.getRoot()).build();
         this.id = tree.id;
         this.setEnv(tree.getEnv());
+        this.family = tree.getFamily();
         // System.out.println("TODO ENVIRONMENT IN RRGTREE");
         retrieveSpecialNodes();
     }
@@ -73,10 +81,10 @@ public class RRGTree implements Comparable<RRGTree> {
      * When creating a {@code RRGTree }object, store pointers to lex and subst
      * nodes and the ddaughter in order to access them later
      */
-    private void retrieveSpecialNodes() {
+    public void retrieveSpecialNodes() {
         // inits
         this.lexNodes = new HashMap<String, Set<RRGNode>>();
-        this.anchorNodes = new HashMap<String, Set<RRGNode>>();
+        this.anchorNode = null;
         this.substNodes = new HashMap<String, Set<RRGNode>>();
         this.ddaughters = new LinkedList<>();
 
@@ -90,24 +98,12 @@ public class RRGTree implements Comparable<RRGTree> {
      * 
      * @param root
      */
-    private void retrieveSpecialNodes(RRGNode root) {
+    public void retrieveSpecialNodes(RRGNode root) {
         // add lexical nodes
         if (root.getType().equals(RRGNodeType.LEX)) {
-            if (lexNodes.get(root.getCategory()) == null) {
-                Set<RRGNode> lexNodeswithCat = new HashSet<RRGNode>();
-                lexNodeswithCat.add(root);
-                lexNodes.put(root.getCategory(), lexNodeswithCat);
-            } else {
-                lexNodes.get(root.getCategory()).add(root);
-            }
+            this.addLexNode(root);
         } else if (root.getType().equals(RRGNodeType.ANCHOR)) {
-            if (anchorNodes.get(root.getCategory()) == null) {
-                Set<RRGNode> anchorNodesWithCat = new HashSet<RRGNode>();
-                anchorNodesWithCat.add(root);
-                anchorNodes.put(root.getCategory(), anchorNodesWithCat);
-            } else {
-                anchorNodes.get(root.getCategory()).add(root);
-            }
+            anchorNode = root;
         } else if (root.getType().equals(RRGNodeType.SUBST)) { // add
             // substitution
             // nodes
@@ -124,6 +120,19 @@ public class RRGTree implements Comparable<RRGTree> {
         }
         for (Node daughter : root.getChildren()) {
             retrieveSpecialNodes((RRGNode) daughter);
+        }
+    }
+
+    /**
+     * add a new lexical node @param node to the map of lex nodes
+     */
+    private void addLexNode(RRGNode node) {
+        if (lexNodes.get(node.getCategory()) == null) {
+            Set<RRGNode> lexNodeswithCat = new HashSet<RRGNode>();
+            lexNodeswithCat.add(node);
+            lexNodes.put(node.getCategory(), lexNodeswithCat);
+        } else {
+            lexNodes.get(node.getCategory()).add(node);
         }
     }
 
@@ -178,13 +187,11 @@ public class RRGTree implements Comparable<RRGTree> {
     }
 
     /**
-     * a map that maps category labels (Strings) to the set of RRGNodes in the
-     * tree that are anchor nodes with that label
      * 
-     * @return
+     * @return the anchor node in the tree
      */
-    public Map<String, Set<RRGNode>> getAnchorNodes() {
-        return anchorNodes;
+    public RRGNode getAnchorNode() {
+        return anchorNode;
     }
 
     /**
@@ -265,5 +272,21 @@ public class RRGTree implements Comparable<RRGTree> {
 
     public void setEnv(Environment env) {
         this.env = env;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
+    }
+
+    public String getFamily() {
+        if (this.family == null) {
+            this.family = "";
+        }
+        return this.family;
+    }
+
+    public void addLexNodeToAnchor(RRGNode node) {
+        anchorNode.addRightmostChild(node);
+        this.addLexNode(node);
     }
 }

@@ -52,7 +52,7 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = true;
+    private boolean verbosePrintsToStdOut = false;
     private Set<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
@@ -91,7 +91,9 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
-            // System.out.println("step: " + i);
+            if (verbosePrintsToStdOut) {
+                System.out.println("step: " + i);
+            }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
             // System.out.println("current item: " + currentItem);
@@ -385,8 +387,8 @@ public class RRGParser {
     private void scan(List<String> sentence) {
         Set<RRGTree> treesInvolvedInScanning = new HashSet<RRGTree>();
         // Look at all trees
-        for (RRGTree tree : ((RRG) Situation.getGrammar()).getTrees()) {
-            System.out.println(tree);
+        for (RRGTree tree : ((RRG) Situation.getGrammar()).getAnchoredTrees()) {
+            // System.out.println("RRGParser scan: "+tree);
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);
@@ -409,7 +411,8 @@ public class RRGParser {
         }
         System.out.println("Done scanning to " + treesInvolvedInScanning.size()
                 + " trees. ");
-        if (((RRG) Situation.getGrammar()).isLexicalised()) {
+        if (((RRG) Situation.getGrammar()).isLexicalised()
+                || ((RRG) Situation.getGrammar()).needsAnchoring()) {
             treesInvolvedInParsing = treesInvolvedInScanning;
         } else {
             treesInvolvedInParsing = ((RRG) Situation.getGrammar()).getTrees();

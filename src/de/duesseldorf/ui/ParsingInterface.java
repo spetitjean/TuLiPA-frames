@@ -816,6 +816,9 @@ public class ParsingInterface {
         for (String sentence : sentences) {
             List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
             RRGParseResult result = new RRGParseResult.Builder().build();
+            System.out.println("RRG grammar needs anchoring: "
+                    + ((Boolean) Situation.getGrammar().needsAnchoring())
+                            .toString());
             if (Situation.getGrammar().needsAnchoring()) {
                 RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
                 anchorman.anchor();
