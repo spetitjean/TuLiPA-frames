@@ -169,7 +169,7 @@ public class TreeSelector {
         }
     }
 
-    public void retrieveLemma(PolarizedToken ptk, InstantiatedMorph m,
+    private void retrieveLemma(PolarizedToken ptk, InstantiatedMorph m,
             Map<String, List<Lemma>> ll, Map<String, List<Tuple>> lt,
             List<String> slabels) {
 
@@ -230,7 +230,7 @@ public class TreeSelector {
 
     }
 
-    public void retrieveTuples(PolarizedLemma plm, InstantiatedLemma il,
+    private void retrieveTuples(PolarizedLemma plm, InstantiatedLemma il,
             Map<String, List<Tuple>> lt, List<String> slabels) {
 
         // il is a lemma entry coupled with the lemma reference from the input
@@ -352,7 +352,7 @@ public class TreeSelector {
      * Method used to update the NameFactory with the semantic labels name
      * prior to traverse the instantiated tree (c.f. feature sharing)
      */
-    public List<String> processSemLabels(List<SemLit> lsl, NameFactory nf) {
+    private List<String> processSemLabels(List<SemLit> lsl, NameFactory nf) {
         List<String> slabels = new LinkedList<String>();
         for (SemLit sl : lsl) {
             if (sl instanceof SemPred) {
@@ -373,15 +373,15 @@ public class TreeSelector {
         return slabels;
     }
 
-    public InstantiatedTuple anchor(PolarizedLemma plm, InstantiatedTuple t,
+    /**
+     * Method processing each instantiated tuples of the selector
+     * in order to anchor it (unification between FS and lexical anchoring
+     * of the head)
+     * frameid is the number of the frame we are considering
+     */
+    private InstantiatedTuple anchor(PolarizedLemma plm, InstantiatedTuple t,
             int i, List<String> slabels, int frameid)
             throws AnchoringException {
-        /**
-         * Method processing each instantiated tuples of the selector
-         * in order to anchor it (unification between FS and lexical anchoring
-         * of the head)
-         * frameid is the number of the frame we are considering
-         */
 
         if (verbose)
             System.err.println("\nAnchoring ... " + t.getId() + "\n");
@@ -940,11 +940,11 @@ public class TreeSelector {
         return x;
     }
 
+    /**
+     * Method used when no anchoring is needed, the tree selector
+     * then only stores the trees to the dictionary and lists.
+     */
     public void store(Map<String, List<Tuple>> grammar) {
-        /**
-         * Method used when no anchoring is needed, the tree selector
-         * then only stores the trees to the dictionary and lists.
-         */
         Set<String> keys = grammar.keySet();
         Iterator<String> it = keys.iterator();
         while (it.hasNext()) {
@@ -1036,7 +1036,11 @@ public class TreeSelector {
         return res;
     }
 
-    public void addCoanchor(String word, String cat) {
+    /**
+     * Adds a mapping from @param word to @param cat to the coAncNodes field.
+     * Then, @param cat is element of the value list word maps to
+     */
+    private void addCoanchor(String word, String cat) {
         List<String> cats = null;
         if (coancNodes.containsKey(word))
             cats = coancNodes.get(word);
@@ -1047,7 +1051,7 @@ public class TreeSelector {
         coancNodes.put(word, cats);
     }
 
-    public void updateCoAnchors(Lemma l) {
+    private void updateCoAnchors(Lemma l) {
         List<CoAnchor> lca = l.getCoAnchors();
         for (CoAnchor a : lca) {
             List<String> words = a.getLex();
@@ -1069,5 +1073,4 @@ public class TreeSelector {
         }
         return res;
     }
-
 }
