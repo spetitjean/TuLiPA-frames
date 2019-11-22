@@ -344,7 +344,7 @@ public class TreeSelector {
                     RRGNode anchorNode = tree.getAnchorNode();
                     try {
                         Fs morphAncFS = new Fs();
-                        morphAncFS.setFeatWithoutReplace("cat",
+                        morphAncFS.replaceFeat("cat",
                                 new Value(Value.Kind.VAL, il.getCat()));
                         Fs treeAncFS = anchorNode.getNodeFs();
                         Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,

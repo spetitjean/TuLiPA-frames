@@ -60,7 +60,6 @@ import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.io.SentenceListFromFileCreator;
-//import de.duesseldorf.parser.TAGParser;
 import de.duesseldorf.parser.SlimTAGParser;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGParseResult;
