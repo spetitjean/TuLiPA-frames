@@ -342,36 +342,43 @@ public class TreeSelector {
                 for (RRGTree tree : treesInTheFamily) {
                     boolean match = true;
                     RRGNode anchorNode = tree.getAnchorNode();
-                    try {
-                        Fs morphAncFS = new Fs();
-                        morphAncFS.replaceFeat("cat",
-                                new Value(Value.Kind.VAL, il.getCat()));
-                        Fs treeAncFS = anchorNode.getNodeFs();
-                        Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
-                                new Environment(5));
-                        anchorNode.getNodeFs().removeCategory();
-                        // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
-                        // new Value(Value.Kind.VAL,
-                        // anchorFS.getCategory()));
-                    } catch (UnifyException e) {
-                        match = false;
-                        // e.printStackTrace();
-                    }
-                    if (match) {
-                        // build an RRGNode and attach it below the anchor node
-                        RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
-                                .name(il.getCat()).cat(il.getLexItem().getLex())
-                                .type(RRGNodeType.LEX).gornaddress(anchorNode
-                                        .getGornaddress().ithDaughter(0));
-                        // System.out.println("anchor: " + anchorNode);
-                        // System.out.println("lex: " + lexnodeBuilder.build());
-                        RRGTree anchoredTree = new RRGTree(tree);
-                        anchoredTree.addLexNodeToAnchor(lexnodeBuilder.build());
-                        // System.out.println("ts RRG orig tree: " + tree);
-                        // System.out.println("ts RRG anch tree: " +
-                        // anchoredTree);
-                        ((RRG) Situation.getGrammar())
-                                .addAnchoredTree(anchoredTree);
+                    if (anchorNode != null) {
+                        try {
+                            Fs morphAncFS = new Fs();
+                            morphAncFS.replaceFeat("cat",
+                                    new Value(Value.Kind.VAL, il.getCat()));
+                            Fs treeAncFS = anchorNode.getNodeFs();
+                            Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
+                                    new Environment(5));
+                            anchorNode.getNodeFs().removeCategory();
+                            // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
+                            // new Value(Value.Kind.VAL,
+                            // anchorFS.getCategory()));
+                        } catch (UnifyException e) {
+                            match = false;
+                            // e.printStackTrace();
+                        }
+                        if (match) {
+                            // build an RRGNode and attach it below the anchor
+                            // node
+                            RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
+                                    .name(il.getCat())
+                                    .cat(il.getLexItem().getLex())
+                                    .type(RRGNodeType.LEX)
+                                    .gornaddress(anchorNode.getGornaddress()
+                                            .ithDaughter(0));
+                            // System.out.println("anchor: " + anchorNode);
+                            // System.out.println("lex: " +
+                            // lexnodeBuilder.build());
+                            RRGTree anchoredTree = new RRGTree(tree);
+                            anchoredTree
+                                    .addLexNodeToAnchor(lexnodeBuilder.build());
+                            // System.out.println("ts RRG orig tree: " + tree);
+                            // System.out.println("ts RRG anch tree: " +
+                            // anchoredTree);
+                            ((RRG) Situation.getGrammar())
+                                    .addAnchoredTree(anchoredTree);
+                        }
                     }
                 }
             } else {

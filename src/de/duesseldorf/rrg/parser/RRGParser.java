@@ -58,11 +58,11 @@ public class RRGParser {
     private boolean noExtractionForBigCharts = false;
     private String axiom;
 
-    public RRGParser(String axiom) {
+    public RRGParser(String axiom, Set<RRGTree> treesInvolvedInParsing) {
         this.axiom = (axiom == null) ? "" : axiom;
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
-        this.treesInvolvedInParsing = new HashSet<>();
+        this.treesInvolvedInParsing = treesInvolvedInParsing;
     }
 
     public RRGParseResult parseSentence(List<String> toksentence) {
@@ -385,9 +385,8 @@ public class RRGParser {
      * apply the scanning deduction rule
      */
     private void scan(List<String> sentence) {
-        Set<RRGTree> treesInvolvedInScanning = new HashSet<RRGTree>();
         // Look at all trees
-        for (RRGTree tree : ((RRG) Situation.getGrammar()).getAnchoredTrees()) {
+        for (RRGTree tree : treesInvolvedInParsing) {
             // System.out.println("RRGParser scan: "+tree);
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
@@ -405,17 +404,8 @@ public class RRGParser {
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
-                    treesInvolvedInScanning.add(tree);
                 }
             }
-        }
-        System.out.println("Done scanning to " + treesInvolvedInScanning.size()
-                + " trees. ");
-        if (((RRG) Situation.getGrammar()).isLexicalised()
-                || ((RRG) Situation.getGrammar()).needsAnchoring()) {
-            treesInvolvedInParsing = treesInvolvedInScanning;
-        } else {
-            treesInvolvedInParsing = ((RRG) Situation.getGrammar()).getTrees();
         }
     }
 }

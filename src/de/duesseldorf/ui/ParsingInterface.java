@@ -65,6 +65,7 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTools;
+import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.anchoring.RRGAnchorMan;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
@@ -818,16 +819,15 @@ public class ParsingInterface {
             System.out.println("RRG grammar needs anchoring: "
                     + ((Boolean) Situation.getGrammar().needsAnchoring())
                             .toString());
-            if (Situation.getGrammar().needsAnchoring()) {
-                RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
-                anchorman.anchor();
-            }
+            RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
+            Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
 
             if (!op.check("brack2XML")) {
                 ExecutorService executor = Executors.newCachedThreadPool();
                 Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
                     public RRGParseResult call() {
-                        RRGParser rrgparser = new RRGParser(op.getVal("a"));
+                        RRGParser rrgparser = new RRGParser(op.getVal("a"),
+                                treesInvolvedInParsing);
                         return rrgparser.parseSentence(toksentence);
                     }
                 };
