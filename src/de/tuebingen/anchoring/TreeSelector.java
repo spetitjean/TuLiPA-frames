@@ -337,8 +337,10 @@ public class TreeSelector {
                     }
                 }
             } else if (Situation.getGrammar() instanceof RRG) {
+                // everything RRG specific
                 Set<RRGTree> treesInTheFamily = ((RRG) Situation.getGrammar())
                         .getTreesByFamily(family);
+                // consider all trees for the family currently relevant
                 for (RRGTree tree : treesInTheFamily) {
                     boolean match = true;
                     RRGNode anchorNode = tree.getAnchorNode();

@@ -98,5 +98,4 @@ public class XMLRRGReader extends FileReader {
         }
         return new RRG(trees);
     }
-
 }

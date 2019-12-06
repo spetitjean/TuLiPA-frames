@@ -32,6 +32,13 @@ public class RRGAnchorMan {
         }
     }
 
+    /**
+     * takes the input sentence and the grammar and @return the set of all trees
+     * that (i) have an anchor node that matches the input, (ii) have no anchors
+     * and no lexical nodes at all or (iii) have a lex node that matches a part
+     * of the input
+     *
+     */
     public Set<RRGTree> anchor() {
         Map<String, List<MorphEntry>> morphEntries = Situation.getGrammar()
                 .getMorphEntries();

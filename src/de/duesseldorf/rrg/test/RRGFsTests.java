@@ -82,7 +82,7 @@ public class RRGFsTests {
                     .createRRGFromListOfBracketedStrings(trees.get(i));
             Situation.instantiate(grammar, null, null);
             // parse
-            RRGParseResult parseResult = new RRGParser("")
+            RRGParseResult parseResult = new RRGParser("", grammar.getTrees())
                     .parseSentence(sentences.get(i));
             System.out.println("parsed sentence: " + sentences.get(i));
             for (RRGParseTree parseTree : parseResult.getSuccessfulParses()) {
