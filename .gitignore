@@ -5,6 +5,7 @@ bin/.*
 
 # intellij
 .idea
+TuLiPA-frames.iml
 
 # jar file: don't commit it all the time, just build it after downloading src code
 bin/TuLiPA.jar
