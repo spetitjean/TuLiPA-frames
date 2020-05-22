@@ -1,4 +1,4 @@
-package test;
+package test.oldtests;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -73,6 +73,11 @@ public class RRGFsTests {
 
     }
 
+    /**
+     * doesn't really test anything, just parses the same sentence with different complexities of features structures
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         fillTrees();
 

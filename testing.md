@@ -3,10 +3,12 @@ Flower backshop is doing quite a lot already
 therea are already a lot of test cases: existing grammars
 idea: load the grammars into test classes manually, then test chart etc. on 
 
-run FindBugs or something similar
-move to IntelliJ? maybe makes workflow/builds/debugging easier
 
-0. look at rrg.test package!
+
+0. preps
+    - DONE look at rrg.test package!
+    - create place for tests - done, src/test
+    - build environment to run and compare all tests that are in flower_backshop as jUnitTests 
 1. **RRGParseChart**
     - Javadoc
     - tests

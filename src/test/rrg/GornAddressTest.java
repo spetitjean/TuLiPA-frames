@@ -1,4 +1,4 @@
-package test;
+package test.rrg;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
