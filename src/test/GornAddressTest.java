@@ -1,105 +1,90 @@
-package de.duesseldorf.rrg.test;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+package test;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTree;
-import de.duesseldorf.rrg.io.XMLRRGTag;
 import de.duesseldorf.util.GornAddress;
+import org.junit.Assert;
+import org.junit.Test;
+
 
 /**
- * File TestTree.java
- * 
+ * File GornAddressTest.java
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
-public class TestTree {
+public class GornAddressTest {
 
     public static void main(String[] args) {
-        // testTreePrinting();
-        // printXMLEnums();
-        // testGornAddresses();
-        // testTreeCloning();
-        testGAcomparison();
-        // testSortedMaps();
+        testTreeCloning();
     }
 
-    private static void testSortedMaps() {
+    @Test
+    public void testGornAddresses() {
+        GornAddress root = new GornAddress(); // eps
+        GornAddress sndDaughter = root.ithDaughter(1); // 1
+        GornAddress thirdGrandChild = sndDaughter.ithDaughter(2); // 1.2
 
-        Map<String, String> unsortMap = new HashMap<String, String>();
-        unsortMap.put("Z", "z");
-        unsortMap.put("B", "b");
-        unsortMap.put("A", "a");
-        unsortMap.put("C", "c");
-        unsortMap.put("D", "d");
-        unsortMap.put("E", "e");
-        unsortMap.put("Y", "y");
-        unsortMap.put("N", "n");
-        unsortMap.put("J", "j");
-        unsortMap.put("M", "m");
-        unsortMap.put("F", "f");
+        // test left sisters
+        Assert.assertFalse("root has no left sister", root.hasLeftSister());
+        Assert.assertTrue("1 has left sister", sndDaughter.hasLeftSister());
+        Assert.assertTrue("grandchild has left sister", thirdGrandChild.hasLeftSister());
 
-        System.out.println("Unsort Map......");
-        printMap(unsortMap);
-
-        System.out.println("\nSorted Map......By Key");
-        Map<String, String> treeMap = new TreeMap<String, String>(unsortMap);
-        printMap(treeMap);
-
+        // test address lists
+        Assert.assertEquals("root GA is empty", 0, root.getAddress().size());
+        Assert.assertEquals("second daughter of root has address length 1", 1, sndDaughter.getAddress().size());
+        Assert.assertEquals("thirdGC 1.2 has address length 2 ", 2, thirdGrandChild.getAddress().size());
     }
 
-    // pretty print a map. Copied from
-    // https://www.mkyong.com/java/how-to-sort-a-map-in-java/ (June 27,2018)
-    private static <K, V> void printMap(Map<K, V> map) {
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            System.out.println(
-                    "Key : " + entry.getKey() + " Value : " + entry.getValue());
-        }
-    }
-
-    private static void testGAcomparison() {
+    /**
+     * test GornAdrees.compareTo
+     */
+    @Test
+    public void testGAcomparison() {
         GornAddress root = new GornAddress();
         GornAddress one = root.ithDaughter(0);
-        System.out.println("root: " + root + "\ndaughter: " + one);
-        System.out
-                .println("one > root should be > 0:  " + (one.compareTo(root)));
         GornAddress two = one.rightSister();
-        System.out
-                .println("one < root should be < 0:  " + (root.compareTo(one)));
-        System.out.println("two < one should be < 0: " + one.compareTo(two));
-        System.out.println("two > one should be > 0: " + two.compareTo(one));
-
         GornAddress oneone = one.ithDaughter(0);
-        System.out
-                .println("oneone < two should be <0: " + oneone.compareTo(two));
-        System.out
-                .println("oneone > two should be >0: " + two.compareTo(oneone));
+
+        GornAddress rootClone = new GornAddress(root);
+        GornAddress oneClone = rootClone.ithDaughter(0);
+        GornAddress oneoneClone = oneClone.ithDaughter(0);
+
+        Assert.assertEquals("two roots are same", root, rootClone);
+        Assert.assertEquals("two roots compared are 0", 0, root.compareTo(rootClone));
+        Assert.assertEquals("two ones are same", one, oneClone);
+        Assert.assertEquals("two ones compared are 0", 0, oneClone.compareTo(one));
+        Assert.assertEquals("two oneones are same", oneoneClone, oneone);
+        Assert.assertEquals("two oneones compared are 0", 0, oneoneClone.compareTo(oneone));
+        Assert.assertTrue("one vs. root should be > 0:  ", one.compareTo(root) > 0);
+        Assert.assertTrue("root vs. one should be < 0:  ", root.compareTo(one) < 0);
+        Assert.assertTrue("one vs two should be < 0: ", one.compareTo(two) < 0);
+        Assert.assertTrue("two vs one should be > 0: ", two.compareTo(one) > 0);
+        Assert.assertTrue("oneone vs two should be < 0: ", oneone.compareTo(two) < 0);
+        Assert.assertTrue("two vs oneone should be > 0: ", two.compareTo(oneone) > 0);
     }
 
     private static void testTreeCloning() {
@@ -170,41 +155,6 @@ public class TestTree {
         RRGParseTree rightsisadj1 = leftsisadj2.sisterAdjoin(substitutedTree,
                 new GornAddress().ithDaughter(0), 1);
         System.out.println("result: \n" + rightsisadj1);
-    }
-
-    private static void testGornAddresses() {
-        GornAddress root = new GornAddress();
-        System.out.println("root: " + root.toString());
-        GornAddress firstDaughter = root.ithDaughter(1);
-        System.out.println("firstD: " + firstDaughter.toString());
-        GornAddress scndGrandChild = firstDaughter.ithDaughter(2);
-        System.out.println("second grandchild: " + scndGrandChild.toString());
-        System.out.println("firstD: " + firstDaughter.toString());
-
-    }
-
-    private static void printXMLEnums() {
-        for (XMLRRGTag e : XMLRRGTag.values()) {
-            System.out.println(e + "\t" + e.StringVal());
-        }
-    }
-
-    public static void testTreePrinting() {
-        RRGNode root = new RRGNode.Builder().type(RRGNodeType.STD).name("name")
-                .cat("rcat").build();
-        RRGNode child = new RRGNode.Builder().type(RRGNodeType.STD)
-                .name("namec").cat("ccat").build();
-        RRGNode grandchild = new RRGNode.Builder().type(RRGNodeType.SUBST)
-                .name("namegc").cat("gccat").build();
-        RRGTree tree = new RRGTree(root, "great_treeeeeeee");
-        System.out.println(tree.toString());
-
-        ((RRGNode) root).addRightmostChild(child);
-        System.out.println(tree.toString());
-
-        ((RRGNode) child).addRightmostChild(grandchild);
-        ((RRGNode) root).addRightmostChild(child);
-        System.out.println(tree.toString());
     }
 
 }

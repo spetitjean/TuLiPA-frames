@@ -19,7 +19,7 @@ move to IntelliJ? maybe makes workflow/builds/debugging easier
     - JavaDoc 
 4. **RRGTree**
     - JavaDoc
-    - tests
+    - tests - see GornAddressTest for some old stuff
     - reimplement hashCode, equals, compareTo
 5. **RRGParseTree**
     - JavaDoc
@@ -44,7 +44,7 @@ move to IntelliJ? maybe makes workflow/builds/debugging easier
     - tests
 12. **FsFromBracketedStringRetriever**
     - tests, some are in io.tests!
-13. **RRGXMLBuilder
+13. **RRGXMLBuilder**
     - JavaDoc
     - everything tested with flower_backshop?
 14. **TreeFromBracketedStringRetriever**

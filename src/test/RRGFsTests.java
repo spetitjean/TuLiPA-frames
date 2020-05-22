@@ -1,4 +1,4 @@
-package de.duesseldorf.rrg.test;
+package test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -97,9 +97,6 @@ public class RRGFsTests {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         }
-
     }
-
 }

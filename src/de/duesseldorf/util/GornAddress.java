@@ -9,7 +9,7 @@ import java.util.List;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -64,10 +64,9 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
-     * 
      * @return a new GornAddress that is the address of the left sister of this
-     *         one. Return {@code null} if this one is a root or a leftmost
-     *         sister.
+     * one. Return {@code null} if this one is a root or a leftmost
+     * sister.
      */
     public GornAddress leftSister() {
         List<Integer> newGAlist = new LinkedList<Integer>(address);
@@ -82,9 +81,8 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
-     * 
      * @return a new GornAddress that is the address of the right sister of this
-     *         one. Return {@code null} if this one is a root.
+     * one. Return {@code null} if this one is a root.
      */
     public GornAddress rightSister() {
         List<Integer> newGAlist = new LinkedList<Integer>(address);
@@ -99,9 +97,8 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
-     * 
      * @return A new {@code GornAddress} that is the i-th daughter of this
-     *         GornAddress.
+     * GornAddress.
      */
     public GornAddress ithDaughter(int i) {
         List<Integer> newaddress = new LinkedList<Integer>(address);
@@ -110,9 +107,8 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
-     * 
      * @return A new {@code GornAddress} that is the mother of this one. Return
-     *         null if {@code this} is a root.
+     * null if {@code this} is a root.
      */
     public GornAddress mother() {
         if (address.isEmpty()) {
@@ -122,9 +118,8 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
-     * 
      * @return an integer i such that this GA is the ith daughter of some node.
-     *         Return -1 if this is a root.
+     * Return -1 if this is a root.
      */
     public int isIthDaughter() {
         if (address.size() == 0) {
@@ -138,18 +133,29 @@ public class GornAddress implements Comparable<GornAddress> {
     }
 
     /**
+     * @param other
+     * @return true iff other has the same address list as this object
+     */
+    public boolean equals(Object other) {
+        if (!(other instanceof GornAddress)) {
+            return false;
+        } else return this.getAddress().equals(((GornAddress) other).getAddress());
+    }
+
+    /**
      * Another GA is bigger iff it is a GA right to and/or below this GA.
-     * 
+     * <p>
      * A
      * |\
-     * B C
+     * B D
      * | %
      * C
-     * All Addresses C and all nodes in the % field are bigger than B.
-     * 
+     * All Addresses D and all nodes in the % field are bigger than B.
+     *
      * @param other
      * @return n < 0 iff this is < other
      */
+    @Override
     public int compareTo(GornAddress other) {
         if (other.equals(this)) {
             return 0;
@@ -167,13 +173,14 @@ public class GornAddress implements Comparable<GornAddress> {
             try {
                 if (address.get(i) < other.address.get(i)) {
                     return -1;
+                } else if (address.get(i) > other.address.get(i)) {
+                    return 1;
                 }
                 // if you cant access the other address, theres an out of bounds
                 // exception
             } catch (Exception e) {
                 return 1;
             }
-
         }
         return -1;
     }
