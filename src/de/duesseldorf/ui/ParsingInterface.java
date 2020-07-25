@@ -6,7 +6,7 @@
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *         
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -18,7 +18,7 @@
  *
  *  This file is part of the TuLiPA-frames system
  *     https://github.com/spetitjean/TuLiPA-frames
- *     
+ *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -35,8 +35,13 @@
  */
 package de.duesseldorf.ui;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
+import de.duesseldorf.ui.webgui.RRGLocalWebGUI;
 import org.w3c.dom.Document;
 
 import de.duesseldorf.frames.Situation;
@@ -110,7 +116,7 @@ public class ParsingInterface {
     public static boolean omitPrinting = true;
 
     public static boolean parseTAG(CommandLineOptions op, TTMCTAG g,
-            String sentence) throws Exception {
+                                   String sentence) throws Exception {
         // you might want to check if everything is in order here
         try {
             // System.out.println(sit.getGrammar().toString());
@@ -224,7 +230,7 @@ public class ParsingInterface {
                 System.err.println(
                         "\t@@##Tree combinations after classical polarity filtering   : "
                                 + CollectionUtilities.computeAmbig(tupleSets,
-                                        toksentence)
+                                toksentence)
                                 + "\n");
 
                 if (verbose) {
@@ -641,7 +647,7 @@ public class ParsingInterface {
             // .getViewTreesFromDOM(fdoc, sit, grammarDict, false, false,
             // false, needsAnchoring, slabels, noUtool);
             if (op.check("x") || op.check("xg")) { // XML output of the
-                                                   // derivations!
+                // derivations!
                 long xmlTime = System.nanoTime();
 
                 ArrayList<ParseTreeCollection> viewTreesFromDOM = DerivedTreeViewer
@@ -736,7 +742,7 @@ public class ParsingInterface {
     }
 
     public static boolean parseNonTAG(CommandLineOptions op, Grammar g,
-            String sentence) throws TokenizerException, IOException {
+                                      String sentence) throws TokenizerException, IOException {
         boolean res = false;
 
         RCGParser p = null;
@@ -818,7 +824,7 @@ public class ParsingInterface {
             RRGParseResult result = new RRGParseResult.Builder().build();
             System.out.println("RRG grammar needs anchoring: "
                     + ((Boolean) Situation.getGrammar().needsAnchoring())
-                            .toString());
+                    .toString());
             RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
             Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
 
@@ -876,7 +882,17 @@ public class ParsingInterface {
                         result.getTreesWithEdgeFeatureMismatches().size()
                                 + "\ttrees with edge feature mismatches");
             }
+            RRGLocalWebGUI webGUI =  new RRGLocalWebGUI();
+            webGUI.displayParseResults();
+            // this works:
 
+            /** de/browsergui contains the important files
+             * Plan: create a separate class that
+             - reads the minimal html file
+             - modifies it so that it gets the correct path to the output file
+             - creates a temporary folder and copies/writes there the js and html file and the output file
+             - then open the html file in browser
+             */
             // XML Output
             if (op.check("xg")) {
                 StreamResult resultStream;
@@ -930,7 +946,7 @@ public class ParsingInterface {
      * @throws IOException
      */
     private static List<String> tokenize(CommandLineOptions op, String sentence,
-            boolean verbose) throws TokenizerException, IOException {
+                                         boolean verbose) throws TokenizerException, IOException {
         Tokenizer tok = WorkbenchLoader.loadTokenizer(op);
         List<Word> tokens = null;
         tok.setSentence(sentence);
