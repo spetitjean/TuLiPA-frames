@@ -11,11 +11,13 @@ import java.net.URI;
 
 public class RRGLocalWebGUI {
 
+    public static final int port = 8001;
     static boolean hasBeenHandled = false;
 
     public void displayParseResults() {
         try {
-            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8001), 0);
+
+            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
 
             //ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
             server.createContext("/", new MyHttpHandler());
@@ -24,13 +26,13 @@ public class RRGLocalWebGUI {
             server.setExecutor(null);
             server.start();
 
+            URI uri = new URI("http://localhost:" + port + "/");
 
-            System.out.println(" Server started on port 8001");
+            System.out.println(" Server started on port " + port + ". Open " + uri + " to view parser output");
             while (!hasBeenHandled) {
                 int i = 2+3;
             }
             Desktop desktop = Desktop.getDesktop();
-            URI uri = new URI("http://localhost:8001/");
             // URI uri = new URI("https://www.duckduckgo.com/");
             desktop.browse(uri);
 
