@@ -38,19 +38,21 @@ public class RRGXMLBuilder {
 
     private RRGParseResult parseResult;
     private Document doc;
-    private StreamResult resultStream;
     private boolean printEdgeMismatches;
 
-    public RRGXMLBuilder(StreamResult resultStream, RRGParseResult parseResult,
+    public RRGXMLBuilder(RRGParseResult parseResult,
             boolean printEdgeMismatches) throws ParserConfigurationException {
-        this.resultStream = resultStream;
         this.parseResult = parseResult;
         this.printEdgeMismatches = printEdgeMismatches;
         this.doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .newDocument();
     }
 
-    public void buildAndWrite() {
+    /** create a Document representation of the parse result
+     *
+     * @return
+     */
+    public Document build() {
         // create the root element
         Element rootGrammar = doc.createElement(XMLRRGTag.GRAMMAR.StringVal());
         for (RRGParseTree parse : parseResult.getSuccessfulParses()) {
@@ -66,6 +68,14 @@ public class RRGXMLBuilder {
             }
         }
         doc.appendChild(rootGrammar);
+        return doc;
+    }
+
+    /**
+     * always execute the build method before!
+     * wrte the document to a StreamResult
+     */
+    public void write(StreamResult resultStream) {
         try {
             Transformer transformer = TransformerFactory.newInstance()
                     .newTransformer();
@@ -81,6 +91,8 @@ public class RRGXMLBuilder {
             e.printStackTrace();
         }
     }
+
+
 
     /**
      * @param parse

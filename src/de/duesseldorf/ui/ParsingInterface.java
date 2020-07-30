@@ -882,8 +882,9 @@ public class ParsingInterface {
                         result.getTreesWithEdgeFeatureMismatches().size()
                                 + "\ttrees with edge feature mismatches");
             }
-            RRGLocalWebGUI webGUI =  new RRGLocalWebGUI();
-            webGUI.displayParseResults();
+            RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
+            RRGLocalWebGUI webGUI = new RRGLocalWebGUI();
+            webGUI.displayParseResults(rrgxmlBuilder);
             // this works:
 
             /** de/browsergui contains the important files
@@ -913,9 +914,9 @@ public class ParsingInterface {
                     resultStream = new StreamResult(System.out);
                 }
                 try {
-                    RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(
-                            resultStream, result, op.check("edgemismatch"));
-                    rrgXMLBuilder.buildAndWrite();
+                    RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
+                    rrgXMLBuilder.build();
+                    rrgXMLBuilder.write(resultStream);
                 } catch (ParserConfigurationException e) {
                     System.err.println(
                             "could not build parse results due to ParserConfigurationException");

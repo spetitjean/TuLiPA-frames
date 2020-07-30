@@ -91,8 +91,9 @@ public class RRGFsTests {
             StreamResult resultStream = new StreamResult(
                     "testout_" + i + ".xml");
             try {
-                new RRGXMLBuilder(resultStream, parseResult, false)
-                        .buildAndWrite();
+                RRGXMLBuilder rrgXMLBuilder = new RRGXMLBuilder(parseResult, false);
+                rrgXMLBuilder.build();
+                rrgXMLBuilder.write(resultStream);
             } catch (ParserConfigurationException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
