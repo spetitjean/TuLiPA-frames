@@ -88,6 +88,7 @@ import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.ui.CommandLineProcesses;
 import de.duesseldorf.ui.ParsingInterface;
+import de.duesseldorf.ui.RRGLocalWebGUIs;
 import de.duesseldorf.ui.WorkbenchLoader;
 import de.tuebingen.tag.TTMCTAG;
 import de.tuebingen.tree.Grammar;
@@ -795,6 +796,7 @@ public class InputGUI implements ActionListener {
             msg += "https://github.com/spetitjean/TuLiPA-frames/wiki";
             JOptionPane.showMessageDialog(guiFrame, msg);
         } else if (QUIT.equals(command)) {
+            RRGLocalWebGUIs.stopAllLocalWebGUIServers();
             System.exit(0);
         } else if (PARSE.equals(command)) {
             pt = new ParseLauncher();

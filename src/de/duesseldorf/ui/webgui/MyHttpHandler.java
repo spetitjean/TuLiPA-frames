@@ -25,18 +25,24 @@ public class MyHttpHandler implements HttpHandler {
         contentTypes.put("xml", "text/xml");
     }
 
+    private String sentence;
     private RRGXMLBuilder rrgxmlBuilder;
 
-    public MyHttpHandler(RRGXMLBuilder rrgxmlBuilder) {
+    public MyHttpHandler(String sentence, RRGXMLBuilder rrgxmlBuilder) {
+        this.sentence = sentence;
         this.rrgxmlBuilder = rrgxmlBuilder;
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        //System.out.println("handle request: " + httpExchange.getRequestURI());
-        if (!"GET".equals(httpExchange.getRequestMethod())) {
-            System.out.println("request method not implemented: " + httpExchange.getRequestMethod());
+        System.out.println("handle request: " + httpExchange.getRequestURI());
+
+        // shutdown command
+        if (httpExchange.getRequestURI().getPath().contains("shutdown-parser")){
+            System.out.println("told to shut down by the GUI window, exiting now");
+            System.exit(130);
         }
+
         handleResponse(httpExchange);
     }
 
@@ -85,6 +91,7 @@ public class MyHttpHandler implements HttpHandler {
 
                 String nextLine = null;
                 while ((nextLine = reader.readLine()) != null) {
+                    nextLine = nextLine.replaceAll("\\$sentence", "'" + sentence+"'");
                     htmlBuilder.append(nextLine + "\n");
                     // System.out.println("readLine: " + nextLine);
                 }

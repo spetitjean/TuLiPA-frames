@@ -266,7 +266,7 @@ public class Interface {
                 }
             });
         }
-        if (op.check("rrg")) {
+        if (op.check("rrg") && !op.check("gui")) {
             System.out.println("Done parsing. Goodbye!");
             System.exit(0);
         }

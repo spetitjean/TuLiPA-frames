@@ -800,15 +800,13 @@ public class ParsingInterface {
 
     public static boolean parseRRG(CommandLineOptions op, String sent)
             throws Exception {
+        //// 0: estup
         omitPrinting = op.check("omitPrint");
         boolean returnValue = false;
         boolean verbose = op.check("v");
 
         // store number of results so we don't need to store actual output
         List<Integer> batchparsingResultSizes = new LinkedList<>();
-        // Tokenizing
-        // tokenizer is a piece of crap, deletes full stops.
-        // List<String> toksentence = tokenize(op, sentence, verbose);
 
         List<String> sentences = new LinkedList<String>();
         if (op.check("b")) {
@@ -817,6 +815,7 @@ public class ParsingInterface {
         } else {
             sentences.add(sent);
         }
+        //// 1 parse sentences
         long startParsingTime = System.nanoTime();
         Integer sentenceCounter = 0;
         for (String sentence : sentences) {
@@ -882,18 +881,7 @@ public class ParsingInterface {
                         result.getTreesWithEdgeFeatureMismatches().size()
                                 + "\ttrees with edge feature mismatches");
             }
-            RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
-            RRGLocalWebGUI webGUI = new RRGLocalWebGUI();
-            webGUI.displayParseResults(rrgxmlBuilder);
-            // this works:
 
-            /** de/browsergui contains the important files
-             * Plan: create a separate class that
-             - reads the minimal html file
-             - modifies it so that it gets the correct path to the output file
-             - creates a temporary folder and copies/writes there the js and html file and the output file
-             - then open the html file in browser
-             */
             // XML Output
             if (op.check("xg")) {
                 StreamResult resultStream;
@@ -924,6 +912,20 @@ public class ParsingInterface {
             } else {
                 System.out.println("no output file specified with option -o");
             }
+
+            // call the GUI
+            if (!op.check("no-gui")) {
+                RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
+                int possiblePort = RRGLocalWebGUI.defaultPort;
+                if (op.check("gui")){
+                    possiblePort += RRGLocalWebGUIs.numberOfRunningGUIs();
+                }
+                int port = op.check("port") ? Integer.parseInt(op.getVal("port")) : possiblePort;
+                RRGLocalWebGUI webGUI = new RRGLocalWebGUI(port);
+                RRGLocalWebGUIs.addLocalWebGUI(webGUI);
+                webGUI.displayParseResults(sentence, rrgxmlBuilder);
+            }
+            // next round
             sentenceCounter = sentenceCounter + 1;
         }
         if (op.check("b")) {

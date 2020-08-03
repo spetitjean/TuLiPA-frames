@@ -172,9 +172,15 @@ public class CommandLineProcesses {
         // convert bracketed to XMG
         op.add(CommandLineOptions.Prefix.DASH, "brack2XML",
                 CommandLineOptions.Separator.BLANK, false);
-        // omit most prints to stdout in rrg mode
+        // omit most prints to stdout in rrg mode (good for parsing corpora)
         op.add(CommandLineOptions.Prefix.DASH, "omitPrint",
                 CommandLineOptions.Separator.BLANK, false);
+        // omit the RRG browser GUI
+        op.add(CommandLineOptions.Prefix.DASH, "no-gui",
+                CommandLineOptions.Separator.BLANK, false);
+        // non-default port for the UGI
+        op.add(CommandLineOptions.Prefix.DASH, "port",
+                CommandLineOptions.Separator.BLANK, true);
         // we compile the patterns for parsing the command line
         op.prepare();
         // we concatenate the command line
@@ -247,7 +253,9 @@ public class CommandLineProcesses {
                 + "\n\t\t\tThe output is an XMG grammar that contains all trees in the input."
                 + " Trees occuring more than once are removed."
                 + "\n\t\t\tThe option -rrgbrin is also required. A sentence must be specified, but the content does not matter.\n\t";
-        res += "-omitPrint     omits most prints to stdout during RRG parsing\n\t";
+        res += "-omitPrint     omits most prints to stdout during RRG parsing (useful for parsing corpora) \n\t";
+        res += "-no-gui        in RRGMode, do not use the in-browser GUI to display the parse result \n\t";
+        res += "-port          provide a port number if the RRG parse result display should be opened on a port other than the default port (default is 1612)\n\t";
         res += "-cyktag      use CYK parser for TAG, default parsing algorithm\n\t";
         res += "-tag2rcg     (use TAG to RCG conversion)\n\t";
         res += "-nofiltering cancels polarity filtering\n\t";

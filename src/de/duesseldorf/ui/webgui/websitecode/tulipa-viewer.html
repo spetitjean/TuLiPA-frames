@@ -60,34 +60,36 @@
 <!--<input id="file_display" type="hidden" source="../data/test_sisadj.xml" value="data/test_sisadj.xml">-->
 <input id="file_display" type="hidden" source="./PARSEROUTPUT.xml" value="./PARSEROUTPUT.xml">
 <body>
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href=".">XMG WebGUI</a>
-        </div>
-        <div
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="index.php/upload/workbench																		 ">Workbench</a>
-            </li>
-            <li class="active"><a href="index.php/upload/upload_viewer">Viewer</a></li>
-            <li><a href="https://github.com/spetitjean/XMG-2/wiki" target="_blank">Documentation</a></li>
-            <li><a href="https://github.com/xmg-hhu/xmg-webgui/issues" target="_blank">Issue tracker</a></li>
+<!--<nav class="navbar navbar-inverse">-->
+<!--    <div class="container-fluid">-->
+<!--        <div class="navbar-header">-->
+<!--            <a class="navbar-brand" href=".">XMG WebGUI</a>-->
+<!--        </div>-->
+<!--        <div-->
+<!--&lt;!&ndash;        <ul class="nav navbar-nav">&ndash;&gt;-->
+<!--&lt;!&ndash;            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <a href="index.php/upload/workbench																		 ">Workbench</a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;            <li class="active"><a href="index.php/upload/upload_viewer">Viewer</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;            <li><a href="https://github.com/spetitjean/XMG-2/wiki" target="_blank">Documentation</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;            <li><a href="https://github.com/xmg-hhu/xmg-webgui/issues" target="_blank">Issue tracker</a></li>&ndash;&gt;-->
 
-            <li><a href="https://github.com/spetitjean/TuLiPA-frames">Parser</a></li>
-            <li><a href="index.php/upload/xtag">XTAG</a></li>
-            <li><a href="index.php/upload/resources">Resources</a></li>
-        </ul>
-    </div>
-    </div>
-</nav>
+<!--&lt;!&ndash;            <li><a href="https://github.com/spetitjean/TuLiPA-frames">Parser</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;            <li><a href="index.php/upload/xtag">XTAG</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;            <li><a href="index.php/upload/resources">Resources</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;        </ul>&ndash;&gt;-->
+<!--    </div>-->
+<!--    </div>-->
+<!--</nav>-->
 </br>
-<a href="index.php/upload/upload_viewer" class="btn btn-success" role="button">Upload file</a>
-<a href="index.php/upload/upload_viewer" target="_blank" class="btn btn-info" role="button"><span
-        class="glyphicon glyphicon-plus"></span></a>
+<h1>Parse results for $sentence</h1>
+<!--<a href="index.php/upload/upload_viewer" class="btn btn-success" role="button">Upload file</a>-->
+<!--<a href="index.php/upload/upload_viewer" target="_blank" class="btn btn-info" role="button"><span-->
+<!--        class="glyphicon glyphicon-plus"></span></a>-->
 <a href="https://github.com/spetitjean/XMG-2/wiki/8:-Tools#the-xmg-webgui" target="_blank" class="btn btn-info"
    role="button">Help</a>
-
+<button type="button" class="btn btn-success"
+        onclick="var shutdown = new XMLHttpRequest(); shutdown.open('POST', 'shutdown-parser'); shutdown.send();">Shutdown TuLiPA</button>
 <div class="row">
     <div class="col-sm-2" id="entries">
         <h3 class="list-group-item list-group-item-success">Entries <span id="numentry" class="badge"> </span></h3>

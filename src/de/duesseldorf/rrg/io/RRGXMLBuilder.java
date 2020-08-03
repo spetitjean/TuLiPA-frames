@@ -36,7 +36,7 @@ public class RRGXMLBuilder {
         nodeTypesToXMLTags.put(RRGNodeType.SUBST, XMLRRGTag.XMLSUBSTNode);
     }
 
-    private RRGParseResult parseResult;
+    private final RRGParseResult parseResult;
     private Document doc;
     private boolean printEdgeMismatches;
 
@@ -210,5 +210,9 @@ public class RRGXMLBuilder {
             fsElement.setAttribute("coref", corefString);
         }
         return fsElement;
+    }
+
+    public RRGParseResult getParseResult() {
+        return parseResult;
     }
 }
