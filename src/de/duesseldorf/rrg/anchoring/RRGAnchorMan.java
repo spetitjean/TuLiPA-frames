@@ -68,7 +68,8 @@ public class RRGAnchorMan {
                 result.add(tree);
             }
         });
-        return result;
+	return result;
+
         // System.out.println(morphEntries.values());
         // System.out.println(lemmas.values());
     }

@@ -352,7 +352,8 @@ public class TreeSelector {
                             Fs treeAncFS = anchorNode.getNodeFs();
                             Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
                                     new Environment(5));
-                            anchorNode.getNodeFs().removeCategory();
+			    
+			    anchorNode.getNodeFs().removeCategory();
                             // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
                             // new Value(Value.Kind.VAL,
                             // anchorFS.getCategory()));
@@ -372,9 +373,26 @@ public class TreeSelector {
                             // System.out.println("anchor: " + anchorNode);
                             // System.out.println("lex: " +
                             // lexnodeBuilder.build());
+			    			    
+			    RRGNode lexNode = lexnodeBuilder.build();
+			    try{
+				// lexNode.setNodeFs(
+				// 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
+                                //     new Environment(5))
+				// 		  );
+				anchorNode.setNodeFs(
+						  FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
+                                    new Environment(5))
+						  );
+			    }
+			    catch (UnifyException e) {
+				 e.printStackTrace();
+			    }   
                             RRGTree anchoredTree = new RRGTree(tree);
                             anchoredTree
-                                    .addLexNodeToAnchor(lexnodeBuilder.build());
+				.addLexNodeToAnchor(lexNode);
+                            // anchoredTree
+                            //         .addLexNodeToAnchor(lexnodeBuilder.build());
                             // System.out.println("ts RRG orig tree: " + tree);
                             // System.out.println("ts RRG anch tree: " +
                             // anchoredTree);
