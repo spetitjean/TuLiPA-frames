@@ -375,15 +375,19 @@ public class TreeSelector {
                             // lexnodeBuilder.build());
 			    			    
 			    RRGNode lexNode = lexnodeBuilder.build();
+			    System.out.println(tree);
 			    try{
 				// lexNode.setNodeFs(
 				// 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
                                 //     new Environment(5))
 				// 		  );
+				Environment env = new Environment(5);
 				anchorNode.setNodeFs(
 						  FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
-                                    new Environment(5))
+                                    env)
 						  );
+				System.out.println(env);
+				((RRGNode)tree.getRoot()).updateFS(env,false);
 			    }
 			    catch (UnifyException e) {
 				 e.printStackTrace();
@@ -391,6 +395,7 @@ public class TreeSelector {
                             RRGTree anchoredTree = new RRGTree(tree);
                             anchoredTree
 				.addLexNodeToAnchor(lexNode);
+			    System.out.println(anchoredTree);
                             // anchoredTree
                             //         .addLexNodeToAnchor(lexnodeBuilder.build());
                             // System.out.println("ts RRG orig tree: " + tree);

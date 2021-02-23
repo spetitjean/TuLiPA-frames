@@ -8,6 +8,9 @@ import de.duesseldorf.frames.Fs;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
 
+import de.tuebingen.tag.Environment;
+import de.duesseldorf.frames.UnifyException;
+
 /*
  *  File RRGNode.java
  *
@@ -302,6 +305,19 @@ public class RRGNode implements Node, Comparable<RRGNode> {
             }
         }
         return 0;
+    }
+
+
+    public void updateFS(Environment env, boolean finalUpdate)
+	throws UnifyException {
+	this.setNodeFs(Fs.updateFS(this.getNodeFs(), env, finalUpdate));
+        
+        // if the node has children, we update them
+        if (this.getChildren() != null) {
+            for (int j = 0; j < this.getChildren().size(); j++) {
+                ((RRGNode) this.getChildren().get(j)).updateFS(env, finalUpdate);
+            }
+        }
     }
 
 }
