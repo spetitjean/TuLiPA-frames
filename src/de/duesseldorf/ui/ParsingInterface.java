@@ -917,7 +917,7 @@ public class ParsingInterface {
             if (!op.check("no-gui")) {
                 RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
                 int possiblePort = RRGLocalWebGUI.defaultPort;
-                if (op.check("gui")){
+                if (op.check("gui")) {
                     possiblePort += RRGLocalWebGUIs.numberOfRunningGUIs();
                 }
                 int port = op.check("port") ? Integer.parseInt(op.getVal("port")) : possiblePort;

@@ -6,7 +6,7 @@
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *         
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -18,7 +18,7 @@
  *
  *  This file is part of the TuLiPA-frames system
  *     https://github.com/spetitjean/TuLiPA-frames
- *     
+ *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -58,9 +58,9 @@ public class Interface {
 
     /**
      * Interface to the Tuebingen Parser.
-     * 
+     * <p>
      * This is entry point for the application.
-     * 
+     *
      * @param args
      */
     public static void main(String[] args)
@@ -119,9 +119,9 @@ public class Interface {
         // we load the grammar (and potentially lexicons)
         if (op.check("s") || op.check("i")
                 || (op.check("b") && !op.check("tag"))) { // NB: batch mode may
-                                                          // require grammar
-                                                          // reloading if option
-                                                          // tag is used
+            // require grammar
+            // reloading if option
+            // tag is used
             try {
                 WorkbenchLoader.loadSituation(op, gram, fram, lem, mo, th);
                 g = Situation.getGrammar();
@@ -195,23 +195,23 @@ public class Interface {
             String is = "";
             int i = 0;
             String out = op.check("o") ? op.getVal("o") : "a.out"; // for RCG
-                                                                   // output
+            // output
             if (!(op.check("x") || op.check("xg")))
                 op.setVal("x", "true"); // to deactivate graphical output
-                                        // interface
+            // interface
             // parse the input
             while ((is = r.readLine()) != null) {
                 try {
                     if (op.check("r") || op.check("c") || op.check("lcfrs")) {// RCG
-                                                                              // parsing
+                        // parsing
                         op.setOurVal("o", out + i + ".xml");
                         // RCG parse
                         ParsingInterface.parseNonTAG(op, g, is);
                     } else {
                         // in batch mode, there is an xml output, with the file
                         // name defined as follows.
-			String newout;
-			if (out.endsWith(".xml")) {
+                        String newout;
+                        if (out.endsWith(".xml")) {
                             newout = out.substring(0,
                                     out.length() - 4);
                             newout = newout + "_" + i;
@@ -219,17 +219,17 @@ public class Interface {
                         } else {
                             newout = out + "_" + i + ".xml";
                         }
-                        op.setOurVal("o", newout );
+                        op.setOurVal("o", newout);
                         // if TAG (left context) polarity filtering is
                         // activated, grammar reloading is necessary
                         if (op.check("tag")) {
                             try {
                                 op.setVal("s", "\"" + is + "\""); // we need to
-                                                                  // define the
-                                                                  // sentence to
-                                                                  // parse for
-                                                                  // the grammar
-                                                                  // filtering
+                                // define the
+                                // sentence to
+                                // parse for
+                                // the grammar
+                                // filtering
                                 WorkbenchLoader.loadSituation(op, gram, lem,
                                         mo);
                                 g = Situation.getGrammar();
@@ -257,7 +257,7 @@ public class Interface {
             }
             r.close();
         } else { // graphical mode
-                 // arguments needs to be final
+            // arguments needs to be final
             final CommandLineOptions ops = op;
             // Input GUI
             SwingUtilities.invokeLater(new Runnable() {
