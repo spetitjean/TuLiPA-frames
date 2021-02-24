@@ -809,7 +809,7 @@ public class ParsingInterface {
         List<Integer> batchparsingResultSizes = new LinkedList<>();
 
         List<String> sentences = new LinkedList<String>();
-        if (op.check("b")) {
+        if (op.check("b") && !(op.getVal("o").matches(".*[0-9].*xml"))) {
             sentences.addAll(new SentenceListFromFileCreator(op.getVal("b"))
                     .getListRepresentation());
         } else {
@@ -883,11 +883,11 @@ public class ParsingInterface {
             }
 
             // XML Output
-            if (op.check("xg")) {
+            if (op.check("xg") || op.check("b")) {
                 StreamResult resultStream;
                 if (op.check("o")) {
                     String fileName = op.getVal("o");
-                    if (op.check("b")) {
+                    if (op.check("b") && !(op.getVal("o").matches(".*[0-9].*xml"))) {
                         if (fileName.endsWith(".xml")) {
                             fileName = fileName.substring(0,
                                     fileName.length() - 4);
@@ -914,7 +914,7 @@ public class ParsingInterface {
             }
 
             // call the GUI
-            if (!op.check("no-gui")) {
+            if (!op.check("no-gui") && !op.check("b")) {
                 RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
                 int possiblePort = RRGLocalWebGUI.defaultPort;
                 if (op.check("gui")) {

@@ -195,6 +195,9 @@ public class Interface {
             String is = "";
             int i = 0;
             String out = op.check("o") ? op.getVal("o") : "a.out"; // for RCG
+            if (!op.check("o") && op.check("rrg")) {
+                out = "out";
+            }
             // output
             if (!(op.check("x") || op.check("xg")))
                 op.setVal("x", "true"); // to deactivate graphical output
@@ -211,7 +214,7 @@ public class Interface {
                         // in batch mode, there is an xml output, with the file
                         // name defined as follows.
                         String newout;
-                        if (out.endsWith(".xml")) {
+                        if (out.endsWith(".xml") && !(op.check("rrg") && op.equals("out"))) {
                             newout = out.substring(0,
                                     out.length() - 4);
                             newout = newout + "_" + i;
@@ -246,8 +249,12 @@ public class Interface {
                             // since the extended one has been performed:
                             op.setVal("nofiltering", "true");
                         }
-                        ParsingInterface.parseTAG(op,
-                                (TTMCTAG) Situation.getGrammar(), is);
+                        if (op.check("rrg")) {
+                            ParsingInterface.parseRRG(op, is);
+                        } else{
+                            ParsingInterface.parseTAG(op,
+                                    (TTMCTAG) Situation.getGrammar(), is);
+                        }
                     }
                 } catch (Exception e) {
                     System.err.println(
