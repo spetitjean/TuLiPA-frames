@@ -40,11 +40,10 @@ public class RRGLocalWebGUI {
             System.err.println(" Server started on port " + actualPort + ". Open " + uri + " in your web browser to view parser output");
 
             this.server = server;
-            //while (!hasBeenHandled) {
-            //    int i = 2 + 3;
-            //
-            // }
-        } catch (BindException be){
+	    while (true) {
+                Thread.sleep(1000);
+            }
+	} catch (BindException be){
             System.err.println("");
             System.err.println("I cannot use port " + actualPort + " to display the parse result in your browser. You have two options:");
             System.err.println("1. Run the program again, specifying a different port with the -port commandline option (e.g. ... -port 3005 )");
