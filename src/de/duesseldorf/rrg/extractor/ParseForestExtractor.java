@@ -67,7 +67,8 @@ public class ParseForestExtractor {
     public RRGParseResult extractParseTrees() {
         // find goal items in the chart. Extract them all and add the set of
         // parse trees derived from them to the resulting parses
-        Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
+
+	Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
         if (verbosePrintsToStdOut) {
             System.out.println("goal items: " + goals);
         }
@@ -77,7 +78,6 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         });
-
         return ParseForestPostProcessor
                 .postProcessParseTreeSet(resultingParses);
     }
@@ -101,14 +101,17 @@ public class ParseForestExtractor {
                     + resultingParses.size();
             resultingParseTree.setId(newId);
             resultingParses.add(resultingParseTree);
+	    System.out.println("Trace: ");
+	    System.out.println(resultingParseTree.getIds());
+	    
         }
     }
 
     private Set<RRGParseTree> extract(ExtractionStep extractionstep) {
         Backpointer backPointers = parseChart
                 .getBackPointers(extractionstep.getCurrentItem());
-        Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
-
+	// Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
+	;Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
@@ -146,6 +149,11 @@ public class ParseForestExtractor {
         parsesInThisStep.addAll(
                 extractRightAdjoin(rightAdjAntecedents, extractionstep));
 
+
+	// System.out.println("\nParses in this step after right adjoins:");
+	// System.out.println(parsesInThisStep);
+	
+	
         // Complete-Wrapping
         Set<Set<RRGParseItem>> coWrAntecedents = backPointers
                 .getAntecedents(Operation.COMPLETEWRAPPING);
@@ -183,7 +191,11 @@ public class ParseForestExtractor {
         // Set<RRGParseTree> parsesInThisStepWithCurrentExtractionStep =
         // addExtractionStepToAllTrees(
         // parsesInThisStep, extractionstep);
-        return parsesInThisStep;
+
+	// System.out.println("\nParses in this step:");
+	// System.out.println(parsesInThisStep);
+	
+	return parsesInThisStep;
     }
 
     private Set<RRGParseTree> extractPredictWrapping(
@@ -326,6 +338,8 @@ public class ParseForestExtractor {
             // System.out.println("nextStep: " + nextStep);
             // System.out.println("tmpResult: " + tmpResult);
         }
+	// System.out.println("\nparses in this right adj step:");
+	// System.out.println(parsesInThisRightAdjStep);	
         return parsesInThisRightAdjStep;
     }
 

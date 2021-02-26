@@ -17,6 +17,7 @@ import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.ui.ParsingInterface;
+import de.tuebingen.tag.Environment;
 
 /**
  * File RRGParser.java
@@ -62,7 +63,14 @@ public class RRGParser {
         this.axiom = (axiom == null) ? "" : axiom;
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
-        this.treesInvolvedInParsing = treesInvolvedInParsing;
+        //this.treesInvolvedInParsing = treesInvolvedInParsing;
+	this.treesInvolvedInParsing = new HashSet<RRGTree>();
+	for (RRGTree rrgtree : treesInvolvedInParsing){
+	    RRGTree another_rrgtree = new RRGTree(rrgtree);
+	    another_rrgtree.setEnv(new Environment(5));
+	    this.treesInvolvedInParsing.add(another_rrgtree);
+	    
+	}
     }
 
     public RRGParseResult parseSentence(List<String> toksentence) {
@@ -71,7 +79,15 @@ public class RRGParser {
                 + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size(), axiom);
-        // Axioms through scanning:
+
+	// System.out.println("Environments before parsing:");
+	    
+	// for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+	//     System.out.println(rrgtree.getEnv());
+	// }
+
+
+	// Axioms through scanning:
         scan(toksentence);
 
         this.requirementFinder = new RequirementFinder();
@@ -121,10 +137,26 @@ public class RRGParser {
                             + chart.computeSize());
             return new RRGParseResult.Builder().build();
         } else {
+
+
+	    // System.out.println("Environments after parsing:");
+	    
+	    // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+	    // 	System.out.println(rrgtree.getEnv());
+	    // }
+
+	    
             // extract parse results from chart
             ParseForestExtractor extractor = new ParseForestExtractor(chart,
                     toksentence);
             RRGParseResult result = extractor.extractParseTrees();
+
+	    // System.out.println("Environments after extraction:");
+		
+	    // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+	    // 	System.out.println(rrgtree.getEnv());
+	    // }
+
             return result;
         }
 

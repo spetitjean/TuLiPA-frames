@@ -110,6 +110,7 @@ import de.tuebingen.tree.Grammar;
 import de.tuebingen.ui.CommandLineOptions;
 import de.tuebingen.util.CollectionUtilities;
 import de.tuebingen.util.XMLUtilities;
+import de.tuebingen.tag.Environment;
 
 public class ParsingInterface {
 
@@ -819,14 +820,23 @@ public class ParsingInterface {
         long startParsingTime = System.nanoTime();
         Integer sentenceCounter = 0;
         for (String sentence : sentences) {
-            List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
+
+	    // it seems like the grammar trees and their environments get modified during parsing
+	    // this should probably not happen
+	    ((RRG) Situation.getGrammar()).resetAnchoredTrees();
+	    for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+	    	rrgtree.setEnv(new Environment(5));
+		
+	    }
+
+	    List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
             RRGParseResult result = new RRGParseResult.Builder().build();
             System.out.println("RRG grammar needs anchoring: "
                     + ((Boolean) Situation.getGrammar().needsAnchoring())
                     .toString());
             RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
             Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
-
+	    
             if (!op.check("brack2XML")) {
                 ExecutorService executor = Executors.newCachedThreadPool();
                 Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
@@ -927,6 +937,7 @@ public class ParsingInterface {
             }
             // next round
             sentenceCounter = sentenceCounter + 1;
+
         }
         if (op.check("b")) {
             System.out.println(

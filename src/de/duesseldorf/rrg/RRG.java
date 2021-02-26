@@ -147,4 +147,9 @@ public class RRG implements Grammar {
         }
 
     }
+
+    public void resetAnchoredTrees() {
+	this.anchoredTrees = new HashSet<RRGTree>();
+    }
+
 }
