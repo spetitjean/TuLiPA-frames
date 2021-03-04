@@ -96,8 +96,6 @@ public class RRGParseChart {
                 }
             }
         }
-
-        System.out.println("found goal items: " + goals);
         return goals;
     }
 

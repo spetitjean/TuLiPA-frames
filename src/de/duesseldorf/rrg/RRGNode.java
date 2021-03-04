@@ -53,7 +53,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         this.name = name;
         this.setCategory(category);
         this.gornaddress = ga;
-        this.nodeFs = nodeFs;
+        this.nodeFs = new Fs(nodeFs);
     }
 
     public List<Node> getChildren() {

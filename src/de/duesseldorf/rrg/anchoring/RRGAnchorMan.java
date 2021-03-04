@@ -49,7 +49,7 @@ public class RRGAnchorMan {
             TreeSelector ts = new TreeSelector(tokenizedSentenceAsWords, false);
             // TreeSelector adds all RRGTrees as anchoredTrees to the RRG that
             // contain an anchor node (and have lemmas in the input sentence?)
-            ts.retrieve(new LinkedList<String>());
+            ts.retrieve(new LinkedList<String>());	    
         }
         Set<RRGTree> result = ((RRG) Situation.getGrammar()).getAnchoredTrees();
         // next, take care of the lexicaliized trees and trees without anchor
