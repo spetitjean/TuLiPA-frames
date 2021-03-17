@@ -924,7 +924,7 @@ public class ParsingInterface {
             }
 
             // call the GUI
-            if (!op.check("no-gui") && !op.check("b")) {
+            if (!op.check("no-gui") && !op.check("b") && !op.check("xg") && !op.check("x")) {
                 RRGXMLBuilder rrgxmlBuilder = new RRGXMLBuilder(result, op.check("edgemismatch"));
                 int possiblePort = RRGLocalWebGUI.defaultPort;
                 if (op.check("gui")) {
