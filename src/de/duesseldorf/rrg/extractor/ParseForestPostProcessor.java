@@ -6,15 +6,30 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.duesseldorf.rrg.RRGTools;
+import de.duesseldorf.rrg.RRGNode;
+
+import de.duesseldorf.frames.UnifyException;
+
 
 public class ParseForestPostProcessor {
     /**
      * @return
      */
     static RRGParseResult postProcessParseTreeSet(
-            Set<RRGParseTree> resultingParses) {
+            Set<RRGParseTree> resultingParses) 	throws UnifyException {
+
         System.out.printf("% 12d\tresulting trees after extraction%n",
                 resultingParses.size());
+
+	// 0 features percolation
+	Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
+	for (RRGParseTree parsetree : resultingParses){
+	    ((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
+	    percolatedParseTrees.add(parsetree);
+	}
+
+	resultingParses = percolatedParseTrees;
+	
         // 1 edge features
         // edge feature unification
         RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnifier(
