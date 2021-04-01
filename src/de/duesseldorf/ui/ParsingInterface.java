@@ -816,6 +816,7 @@ public class ParsingInterface {
         } else {
             sentences.add(sent);
         }
+	System.err.println(sentences);
         //// 1 parse sentences
         long startParsingTime = System.nanoTime();
         Integer sentenceCounter = 0;

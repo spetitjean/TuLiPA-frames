@@ -86,9 +86,10 @@ public class Interface {
             System.exit(0);
         }
 
-        gui = !(op.check("s")) || (op.check("i")) || (op.check("b"));
+        gui = !(op.check("s")  || (op.check("b"))) || (op.check("i"));
         if (gui)
             op.setVal("gui", "");
+
 
         if (((op.check("s")) || (op.check("i")) || (op.check("b")))
                 && !(op.check("g"))) {
