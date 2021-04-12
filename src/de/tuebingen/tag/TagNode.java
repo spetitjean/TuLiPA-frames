@@ -301,7 +301,7 @@ public class TagNode implements Node {
     public void findCategory() {
         // update the node state by looking up for the cat feature
         if (label != null) {
-            category = label.getCategory();
+            category = label.getCategoryOrWord();
             label.propagateCategory(category);
         }
     }

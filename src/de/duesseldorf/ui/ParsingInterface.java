@@ -251,7 +251,6 @@ public class ParsingInterface {
         // Tree Selection results stored in specific variables to avoid
         // keeping a pointer to the ts variable (and wasting memory)
         Map<String, TagTree> grammarDict = ts.getTreeHash();
-
         if (op.check("tag2rcg")) {
             List<Tuple> anchoredTuples = ts.getAnctuples();
             // For debugging:

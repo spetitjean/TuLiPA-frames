@@ -229,6 +229,33 @@ public class Fs {
         }
     }
 
+    public String getCategoryOrWord() {
+	// for lexical nodes, get the value of cat or other attributes (lex?)
+	String wordLabel = "lex";
+        if (AVlist.containsKey(wordLabel)) {
+            if (AVlist.get(wordLabel).is(Value.Kind.VAL))
+                return AVlist.get(wordLabel).getSVal();
+            else if (AVlist.get(wordLabel).is(Value.Kind.ADISJ))
+                return AVlist.get(wordLabel).getAdisj().get(1).toString();
+            else
+                return "";
+        }
+	else {
+	    if (AVlist.containsKey("cat")) {
+		if (AVlist.get("cat").is(Value.Kind.VAL))
+		    return AVlist.get("cat").getSVal();
+		else if (AVlist.get("cat").is(Value.Kind.ADISJ))
+		    return AVlist.get("cat").getAdisj().get(1).toString();
+		else
+		    return "";
+	    }
+	    else {
+		return "";
+	    }
+	    
+        }
+    }
+
     public void removeCategory() {
         if (AVlist.containsKey("cat")) {
             this.removeFeat("cat");

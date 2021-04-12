@@ -1573,7 +1573,6 @@ public class SlimTAGParser {
                     // System.err.println("Category: "+cur_node.getCategory());
 
                     String word = cur_node.getCategory();
-		    
 		    // These are the features, they should be null in
 		    // the cases of co-anchor or lex node
 		    // System.out.println("Current label: "+cur_node.getLabel());

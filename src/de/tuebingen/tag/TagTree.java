@@ -1011,7 +1011,7 @@ public class TagTree implements Tree {
             String nCat = tn.getCategory(); // NB: lexical items are stored as
                                             // cat values
             lex.add(nCat);
-        }
+	}
         return lex;
     }
 

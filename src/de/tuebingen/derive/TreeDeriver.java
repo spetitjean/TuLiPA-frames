@@ -276,7 +276,7 @@ public class TreeDeriver {
             ElementaryTree dump = tree.createDumpingInstance(D);
             return dump;
         } else {
-            return tree.instantiate(D);
+            return tree.createDumpingInstance(D);
         }
     }
 
