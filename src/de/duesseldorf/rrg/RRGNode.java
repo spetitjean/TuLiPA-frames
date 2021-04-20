@@ -320,4 +320,14 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         }
     }
 
+    public RRGNode copyNode(){
+    	RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs()));
+    	if (this.getChildren() != null){
+            for (int j = 0; j < this.getChildren().size(); j++) {
+                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNode());
+    	    }
+    	}
+    	return newNode;
+    }
+    
 }

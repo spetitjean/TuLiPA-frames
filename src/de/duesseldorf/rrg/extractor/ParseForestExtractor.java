@@ -78,8 +78,8 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         });
-        return ParseForestPostProcessor
-                .postProcessParseTreeSet(resultingParses);
+	return ParseForestPostProcessor
+	    .postProcessParseTreeSet(resultingParses);
     }
 
     /**
@@ -491,7 +491,8 @@ public class ParseForestExtractor {
             RRGParseItem substAntecedentItem = (RRGParseItem) substantecedentItemSingletonList
                     .iterator().next();
             GornAddress GAtoReplaceAt = extractionstep.getGAInParseTree();
-            RRGTree substTree = substAntecedentItem.getTree();
+            //RRGTree substTree = substAntecedentItem.getTree();
+            RRGTree substTree = substAntecedentItem.getTreeInstance();
             // System.out.println("try to subst this tree: " + substTree);
             // System.out.println(
             // "into that tree: " + extractionstep.getCurrentParseTree());

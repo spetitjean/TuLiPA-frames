@@ -325,7 +325,7 @@ public class RRGParseTree extends RRGTree {
             }
         } catch (UnifyException e) {
             System.err.println(
-                    "NU not possible on tree with id: " + this.getId());
+                    "node unification not possible on tree with id: " + this.getId());
             System.err.println("at GA " + address);
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);

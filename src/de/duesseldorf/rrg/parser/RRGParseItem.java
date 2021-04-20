@@ -58,6 +58,10 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         return tree;
     }
 
+    public RRGTree getTreeInstance() {
+        return tree.getInstance();
+    }
+    
     public NodePos getNodePos() {
         return this.nodepos;
     }

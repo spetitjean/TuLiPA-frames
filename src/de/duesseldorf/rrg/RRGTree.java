@@ -289,4 +289,9 @@ public class RRGTree implements Comparable<RRGTree> {
         anchorNode.addRightmostChild(node);
         this.addLexNode(node);
     }
+
+    public RRGTree getInstance(){
+    	RRGNode newRoot = ((RRGNode)this.getRoot()).copyNode();
+    	return new RRGTree(newRoot,this.getId());
+    }
 }
