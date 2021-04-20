@@ -10,6 +10,7 @@ import de.tuebingen.tree.Node;
 
 import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.UnifyException;
+import de.tuebingen.anchoring.NameFactory;
 
 /*
  *  File RRGNode.java
@@ -321,10 +322,15 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     }
 
     public RRGNode copyNode(){
-    	RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs()));
+	NameFactory nf = new NameFactory();
+	return copyNodeRec(nf);
+    }
+    
+    public RRGNode copyNodeRec(NameFactory nf){
+    	RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs(), nf));
     	if (this.getChildren() != null){
             for (int j = 0; j < this.getChildren().size(); j++) {
-                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNode());
+                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNodeRec(nf));
     	    }
     	}
     	return newNode;

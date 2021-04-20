@@ -16,7 +16,7 @@ public class ParseForestPostProcessor {
      * @return
      */
     static RRGParseResult postProcessParseTreeSet(
-            Set<RRGParseTree> resultingParses) 	throws UnifyException {
+            Set<RRGParseTree> resultingParses)  {
 
         System.out.printf("% 12d\tresulting trees after extraction%n",
                 resultingParses.size());
@@ -24,8 +24,14 @@ public class ParseForestPostProcessor {
 	// 0 features percolation
 	Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
 	for (RRGParseTree parsetree : resultingParses){
-	    ((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
-	    percolatedParseTrees.add(parsetree);
+	    try{
+		
+		((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
+		percolatedParseTrees.add(parsetree);
+	    }
+	    catch(UnifyException e){
+		System.err.println("Failed percolation");
+	    }
 	}
 
 	resultingParses = percolatedParseTrees;

@@ -90,7 +90,7 @@ public class ParseForestExtractor {
      */
     private ExtractionStep initialExtractionStep(RRGParseItem goal) {
         ExtractionStep result = new ExtractionStep(goal, new GornAddress(),
-                new RRGParseTree(goal.getTree()), 0);
+                new RRGParseTree(goal.getTreeInstance()), 0);	
         return result;
     }
 
@@ -266,7 +266,7 @@ public class ParseForestExtractor {
             // System.out.println("insert that tree: " + gapItem.getTree());
             // System.out.println("at: " + extractionstep.getGAInParseTree());
             RRGParseTree nextStepParseTree = extractionstep
-                    .getCurrentParseTree().insertWrappedTree(gapItem.getTree(),
+                    .getCurrentParseTree().insertWrappedTree(gapItem.getTreeInstance(),
                             extractionstep.getGAInParseTree(), dDaughter);
             // System.out.println("after wrapping: " + nextStepParseTree);
 
@@ -309,7 +309,7 @@ public class ParseForestExtractor {
                 targetItem = candidate1;
             }
             RRGParseTree nextStepParseTree = extractionstep
-                    .getCurrentParseTree().sisterAdjoin(auxRootItem.getTree(),
+                    .getCurrentParseTree().sisterAdjoin(auxRootItem.getTreeInstance(),
                             extractionstep.getGAInParseTree().mother(),
                             extractionstep.getGAInParseTree().isIthDaughter()
                                     + extractionstep.getGoToRightWhenGoingDown()
@@ -380,7 +380,7 @@ public class ParseForestExtractor {
                         .max(extractionstep.getGAInParseTree().isIthDaughter()
                 /* extractionstep.getGoToRightWhenGoingDown() */, 0);
                 RRGParseTree nextStepParseTree = rrgParseTree.sisterAdjoin(
-                        auxRootItem.getTree(),
+                        auxRootItem.getTreeInstance(),
                         extractionstep.getGAInParseTree().mother(), position);
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
