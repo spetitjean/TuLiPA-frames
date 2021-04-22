@@ -174,6 +174,31 @@ public class WorkbenchLoader {
                 g = rrgreader.retrieveRRG();
                 rrgreader.close();
             }
+
+	    // 1a Semantic processing
+	    // frame part,
+	    if (frame != null) {
+		XMLTTMCTAGReader fxgr = new XMLTTMCTAGReader(frame);
+		// TODO probably, this needs to be modified
+		frameG = new TTMCTAG(fxgr.getFrames());
+		//needsAnchoring = fxgr.needsAnchoring();
+		//frameG.setNeedsAnchoring(needsAnchoring);
+		fxgr.close();
+		// for (String s : frameG.getLemmas().keySet()) {
+		// System.out.print(s + "\t" + frameG.getLemmas().get(s));
+		// }
+	    }
+	    
+	    // 1b Type hierarchy processing
+	    if (typeHierarchy != null) {
+		XMLTypeHierarchyReader thr = new XMLTypeHierarchyReader(
+									typeHierarchy);
+		tHi = thr.getTypeHierarchy();
+		
+		thr.close();
+	    }
+
+	    
             // 2. Lemmas processing
             if (g.needsAnchoring() && !(op.check("l"))) {
                 CommandLineProcesses.error(

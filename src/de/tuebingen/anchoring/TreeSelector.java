@@ -365,6 +365,31 @@ public class TreeSelector {
                         if (match) {
                             // build an RRGNode and attach it below the anchor
                             // node
+
+			    Frame LexSem = new Frame();
+			    // Trying to retrieve the frame information
+			    if(la.get(k).getSemantics().size() >0){
+				System.err.println("--------------------------");
+				
+				// getting the semantic class
+				System.err.println("Semantic class of the lemma");
+				System.err.println(la.get(k).getSemantics().get(0).getSemclass());
+				// getting the frame from the FrameGrammar
+				// should be a List<Tuple>
+				System.err.println("Associated frame");
+				System.err.println(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getFrameSem());
+				// we got the frames
+				// now we need the interface from the tree and the interface from the frame
+				// unify both interfaces
+				// update all variables to link syntactic and semantic arguments
+				System.err.println("Interface of the frame");
+				System.err.println(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface());
+				LexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getFrameSem();
+				tree.setFrameSem(LexSem);
+				System.err.println("Tree with frame: "+tree);
+			    }
+
+			    
                             RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
                                     .name(il.getCat())
                                     .cat(il.getLexItem().getLex())
@@ -391,6 +416,7 @@ public class TreeSelector {
 				RRGTree anchoredTree = new RRGTree(tree);
 				anchoredTree
 				    .addLexNodeToAnchor(lexNode);
+				System.err.println("Added tree "+tree);
 				// anchoredTree
 				//         .addLexNodeToAnchor(lexnodeBuilder.build());
 				// System.out.println("ts RRG orig tree: " + tree);

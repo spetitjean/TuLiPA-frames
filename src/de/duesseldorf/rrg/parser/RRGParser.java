@@ -68,9 +68,10 @@ public class RRGParser {
 	for (RRGTree rrgtree : treesInvolvedInParsing){
 	    RRGTree another_rrgtree = new RRGTree(rrgtree);
 	    another_rrgtree.setEnv(new Environment(5));
-	    this.treesInvolvedInParsing.add(another_rrgtree);
-	    
+	    this.treesInvolvedInParsing.add(another_rrgtree);    
 	}
+	System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
+
     }
 
     public RRGParseResult parseSentence(List<String> toksentence) {
@@ -419,7 +420,7 @@ public class RRGParser {
     private void scan(List<String> sentence) {
         // Look at all trees
         for (RRGTree tree : treesInvolvedInParsing) {
-            // System.out.println("RRGParser scan: "+tree);
+            //System.out.println("RRGParser scan: "+tree);
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);

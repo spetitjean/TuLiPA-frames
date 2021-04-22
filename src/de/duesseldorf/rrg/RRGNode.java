@@ -321,16 +321,12 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         }
     }
 
-    public RRGNode copyNode(){
-	NameFactory nf = new NameFactory();
-	return copyNodeRec(nf);
-    }
     
-    public RRGNode copyNodeRec(NameFactory nf){
+    public RRGNode copyNode(NameFactory nf){
     	RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs(), nf));
     	if (this.getChildren() != null){
             for (int j = 0; j < this.getChildren().size(); j++) {
-                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNodeRec(nf));
+                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNode(nf));
     	    }
     	}
     	return newNode;

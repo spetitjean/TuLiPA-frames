@@ -25,7 +25,6 @@ public class ParseForestPostProcessor {
 	Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
 	for (RRGParseTree parsetree : resultingParses){
 	    try{
-		
 		((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
 		percolatedParseTrees.add(parsetree);
 	    }

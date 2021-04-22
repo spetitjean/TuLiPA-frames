@@ -836,6 +836,7 @@ public class ParsingInterface {
                     .toString());
             RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
             Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
+	    //System.err.println("\n---------------------\nTrees involved in parsing: "+treesInvolvedInParsing);
 	    
             if (!op.check("brack2XML")) {
                 ExecutorService executor = Executors.newCachedThreadPool();
@@ -858,7 +859,7 @@ public class ParsingInterface {
                 }
             } else { // hack for converting .tsv grammar to xml grammar
                 Set<RRGParseTree> elementaryTreeSet = RRGTools.convertTreeSet(
-                        (((RRG) Situation.getGrammar()).getTrees()));
+                        (((RRG) Situation.getGrammar()).getTrees()));		
                 result = new RRGParseResult.Builder()
                         .successfulParses(elementaryTreeSet).build();
             }

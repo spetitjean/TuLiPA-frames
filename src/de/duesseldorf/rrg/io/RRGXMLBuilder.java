@@ -104,9 +104,7 @@ public class RRGXMLBuilder {
         Element tree = createTree(parse);
         entry.appendChild(tree);
 
-        // At the moment, we don't have a frame. But the empty element is
-        // needed to display on the WebGUI properly
-        Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
+        Element frame = createFrame(parse);
         entry.appendChild(frame);
 
         // used elementary trees:
@@ -124,6 +122,18 @@ public class RRGXMLBuilder {
         }
         return trace;
     }
+
+    private Element createFrame(RRGParseTree parse) {
+        Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
+        for (Fs fs : parse.getFrameSem().getFeatureStructures()) {
+            Element classElem = doc.createElement(XMLRRGTag.FEATURESTRUCTURE.StringVal());
+            //classElem.setTextContent(elemId);
+	    classElem = createFsElement(classElem, fs);
+            frame.appendChild(classElem);
+        }
+        return frame;
+    }
+    
 
     private Element createTree(RRGParseTree parse) {
         Element result = doc.createElement(XMLRRGTag.TREE.StringVal());
