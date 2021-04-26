@@ -51,10 +51,9 @@ public class XMLRRGTreeRetriever {
      *            the Element one level above
      * @return
      */
-    public static RRGTree retrieveTree(Element root) {
+    public static RRGTree retrieveTree(Element root, NameFactory nf) {
         Element syntacticTreeMother = (Element) root
                 .getElementsByTagName(XMLRRGTag.NODE.StringVal()).item(0);
-        NameFactory nf = new NameFactory();
         Node treeRoot = recursivelyRetrieveTree(syntacticTreeMother, nf);
         // debug:
         // System.out.println(treeRoot.getChildren().size());
@@ -65,7 +64,9 @@ public class XMLRRGTreeRetriever {
         // System.out.println("ID: " + id);
         // give the tree its gorn address:
         RRGTreeTools.initGornAddresses((RRGNode) treeRoot);
-        return new RRGTree(treeRoot, id);
+
+	RRGTree result = new RRGTree(treeRoot, id); 
+        return result;
     }
 
     /**

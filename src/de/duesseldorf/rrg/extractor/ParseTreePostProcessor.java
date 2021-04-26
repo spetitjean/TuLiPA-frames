@@ -2,9 +2,15 @@ package de.duesseldorf.rrg.extractor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
@@ -29,7 +35,8 @@ public class ParseTreePostProcessor {
         // go to all nodes of the tree (recursive)
         // go to all feature structures of nodes (recursive)
         postProcessRec((RRGNode) tree.getRoot());
-
+	
+	postProcessFrame(tree.getFrameSem());
         // rename the env of the tree:
         return tree;
     }
@@ -41,6 +48,27 @@ public class ParseTreePostProcessor {
         }
     }
 
+    private void postProcessFrame(Frame frame){
+	for (Fs fs: frame.getFeatureStructures()){
+	    renameFeatureStructure(fs);
+	}
+	Set<Relation> rels = frame.getRelations();
+	Set<Relation> new_rels = new HashSet();
+	for (Relation rel: rels){
+	    List<Value> new_args = new LinkedList<Value>();
+ 
+	    for (Value arg: rel.getArguments()){
+		arg = findPrettyCoref(arg);
+		new_args.add(arg);
+		
+	    }
+	    new_rels.add(new Relation(rel.getName(),new_args));
+
+	}
+	frame.setRelations(new_rels);
+	
+    }
+    
     private Fs renameFeatureStructure(Fs inputFs) {
         // replace the coref
         if (inputFs.getCoref() != null) {

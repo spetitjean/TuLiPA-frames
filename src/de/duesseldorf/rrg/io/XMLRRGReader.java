@@ -14,6 +14,10 @@ import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGTree;
 import de.tuebingen.util.XMLUtilities;
 
+import de.duesseldorf.frames.Fs;
+import de.tuebingen.anchoring.NameFactory;
+import de.duesseldorf.io.XMLGrammarReadingTools;
+
 /**
  * File RRGParseTree.java
  * 
@@ -80,14 +84,22 @@ public class XMLRRGReader extends FileReader {
                 .getElementsByTagName(XMLRRGTag.ENTRY.StringVal());
         // iterate over all grammar entries
         for (int i = 0; i < grammarEntries.getLength(); i++) {
+	    NameFactory nf = new NameFactory();
             Element ithEntrie = (Element) grammarEntries.item(i);
             Element tree = (Element) ithEntrie
                     .getElementsByTagName(XMLRRGTag.TREE.StringVal()).item(0);
 
             // process semantics, family etc. here
 
-            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree);
+            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree, nf);
 
+	    // process interface
+	    NodeList l = ithEntrie.getElementsByTagName("interface");
+	    Fs iface = XMLGrammarReadingTools.getNarg((Element) l.item(0),
+						      1, nf);
+	    syntaxTree.setIface(iface);
+	    
+	    
             String fam = ithEntrie
                     .getElementsByTagName(XMLRRGTag.FAMILY.StringVal()).item(0)
                     .getTextContent();

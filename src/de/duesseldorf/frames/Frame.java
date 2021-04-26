@@ -56,6 +56,10 @@ public class Frame {
         return relations;
     }
 
+    public void setRelations(Set<Relation> rels) {
+	relations = rels;
+    }
+
     public void addOtherFrame(Frame other) {
 	if(other!=null){
 	    featureStructures.addAll(other.getFeatureStructures());

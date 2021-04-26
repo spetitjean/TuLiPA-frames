@@ -13,6 +13,7 @@ import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
+import de.duesseldorf.frames.Fs;
 
 import de.duesseldorf.frames.Frame;
 
@@ -56,6 +57,7 @@ public class RRGTree implements Comparable<RRGTree> {
     private List<RRGNode> ddaughters; // only one ddaughter is allowed!
     protected String id;
     private Frame frameSem;
+    private Fs iface;
 
     private Environment env;
     /**
@@ -96,6 +98,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.setEnv(tree.getEnv());
         this.family = tree.getFamily();
 	this.frameSem = tree.getFrameSem();
+	this.iface = tree.getIface();
         // System.out.println("TODO ENVIRONMENT IN RRGTREE");
         retrieveSpecialNodes();
     }
@@ -286,7 +289,7 @@ public class RRGTree implements Comparable<RRGTree> {
     @Override
     public String toString() {
         String beiwerk = "ID: " + id + "\n";
-        return beiwerk + RRGTreeTools.recursivelyPrintNode(root) + "Frame: "+frameSem;
+        return beiwerk + RRGTreeTools.recursivelyPrintNode(root) + "Frame: "+frameSem + "Interface: "+iface;
     }
 
     public Environment getEnv() {
@@ -320,6 +323,15 @@ public class RRGTree implements Comparable<RRGTree> {
     public void setFrameSem(Frame frame) {
         this.frameSem = frame;
     }
+
+    public Fs getIface() {
+        return this.iface;
+    }
+
+    public void setIface(Fs iface) {
+        this.iface = iface;
+    }
+
     
     public RRGTree getInstance(){
 	NameFactory nf = new NameFactory();
