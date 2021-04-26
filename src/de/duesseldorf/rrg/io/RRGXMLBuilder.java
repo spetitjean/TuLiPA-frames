@@ -185,8 +185,6 @@ public class RRGXMLBuilder {
     }
 
     private Element createRelElement(Element relElement, Relation rel){
-	System.err.println("Converting relation to XML: ");
-	System.err.println(rel);
 	relElement.setAttribute(XMLRRGTag.NAME.StringVal(),rel.getName());
 	for (Value v: rel.getArguments()){
 	    Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
@@ -197,6 +195,15 @@ public class RRGXMLBuilder {
     }
     
     private Element createFsElement(Element fsElement, Fs realfs) {
+	if (realfs.isTyped()){
+	    Element ctype = doc.createElement(XMLRRGTag.CTYPE.StringVal());
+	    for(String etype: realfs.getType().getElementaryTypes()){
+		Element sym = doc.createElement(XMLRRGTag.TYPE.StringVal());
+		sym.setAttribute(XMLRRGTag.VAL.StringVal(),etype);
+		ctype.appendChild(sym);
+	    }
+	    fsElement.appendChild(ctype);
+	}
         for (Entry<String, Value> avpair : realfs.getAVlist().entrySet()) {
             Element f = doc.createElement(XMLRRGTag.FEATURE.StringVal());
             f.setAttribute(XMLRRGTag.NAME.StringVal(), avpair.getKey());

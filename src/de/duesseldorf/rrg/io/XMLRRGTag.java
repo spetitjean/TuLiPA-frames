@@ -42,6 +42,7 @@ public enum XMLRRGTag {
     NARG("narg"), // stores the fs in a node
     FEATURESTRUCTURE("fs"), // feature structure
     FEATURE("f"), // a single feature
+    CTYPE("ctype"), // conjunctive type (typed FS)
     RELATION("relation"),// relation (frame)
     SYM("sym"), // and its value
 
@@ -51,6 +52,7 @@ public enum XMLRRGTag {
     TYPE("type"), // of a node, e.g. substitution nodes or anchors (see below)
     COREF("coref"), // coreference of a FS
     VALUE("value"), // in a FS
+    VAL("val"), // in a FS type
     CAT("cat"), // of a node, either a terminal sequence or the 'label' of the
                 // node, e.g. RP, S, NP,...
 
