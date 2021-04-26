@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
@@ -126,11 +127,18 @@ public class RRGXMLBuilder {
     private Element createFrame(RRGParseTree parse) {
         Element frame = doc.createElement(XMLRRGTag.FRAME.StringVal());
         for (Fs fs : parse.getFrameSem().getFeatureStructures()) {
-            Element classElem = doc.createElement(XMLRRGTag.FEATURESTRUCTURE.StringVal());
+            Element fsElem = doc.createElement(XMLRRGTag.FEATURESTRUCTURE.StringVal());
             //classElem.setTextContent(elemId);
-	    classElem = createFsElement(classElem, fs);
-            frame.appendChild(classElem);
+	    fsElem = createFsElement(fsElem, fs);
+            frame.appendChild(fsElem);
         }
+	for (Relation rel : parse.getFrameSem().getRelations()) {
+            Element relElem = doc.createElement(XMLRRGTag.RELATION.StringVal());
+            //classElem.setTextContent(elemId);
+	    relElem = createRelElement(relElem, rel);
+            frame.appendChild(relElem);
+        }
+	
         return frame;
     }
     
@@ -176,6 +184,18 @@ public class RRGXMLBuilder {
         return resultnargNode;
     }
 
+    private Element createRelElement(Element relElement, Relation rel){
+	System.err.println("Converting relation to XML: ");
+	System.err.println(rel);
+	relElement.setAttribute(XMLRRGTag.NAME.StringVal(),rel.getName());
+	for (Value v: rel.getArguments()){
+	    Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+	    sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getVarVal());
+	    relElement.appendChild(sym);
+	}
+	return relElement;
+    }
+    
     private Element createFsElement(Element fsElement, Fs realfs) {
         for (Entry<String, Value> avpair : realfs.getAVlist().entrySet()) {
             Element f = doc.createElement(XMLRRGTag.FEATURE.StringVal());

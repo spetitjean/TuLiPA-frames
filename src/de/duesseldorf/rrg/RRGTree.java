@@ -329,7 +329,7 @@ public class RRGTree implements Comparable<RRGTree> {
 	// -> for the relations?
 	// caution: this.frameSem might be null
 	// Frame newFrame = new Frame(this.frameSem.getFeatureStructures(),this.frameSem.getRelations());
-	Frame newFrame = this.frameSem;
+	Frame newFrame = new Frame(this.frameSem, nf);
 	return new RRGTree(newRoot,newFrame,this.getId());
     }
 }

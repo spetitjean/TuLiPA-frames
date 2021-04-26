@@ -42,6 +42,7 @@ public enum XMLRRGTag {
     NARG("narg"), // stores the fs in a node
     FEATURESTRUCTURE("fs"), // feature structure
     FEATURE("f"), // a single feature
+    RELATION("relation"),// relation (frame)
     SYM("sym"), // and its value
 
     // attributes

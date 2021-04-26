@@ -385,9 +385,12 @@ public class TreeSelector {
 				System.err.println("Interface of the frame");
 				System.err.println(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface());
 				LexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getFrameSem();
-				tree.setFrameSem(LexSem);
 				System.err.println("Tree with frame: "+tree);
 			    }
+			    if(LexSem == null){
+				LexSem = new Frame();
+			    }
+			    tree.setFrameSem(LexSem);
 
 			    
                             RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()

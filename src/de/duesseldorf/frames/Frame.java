@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import de.tuebingen.anchoring.NameFactory;
+
 
 /**
  * @author david
@@ -23,6 +25,19 @@ public class Frame {
     public Frame(List<Fs> featureStructures, Set<Relation> relations) {
         this.featureStructures = featureStructures;
         this.relations = relations;
+    }
+
+    public Frame(Frame frame, NameFactory nf){
+	List<Fs> new_featureStructures = new LinkedList<Fs>();
+	for (Fs f: frame.getFeatureStructures()){
+	    new_featureStructures.add(new Fs(f, nf));
+	}
+	Set<Relation> new_relations = new HashSet<Relation>();
+	for (Relation rel: frame.getRelations()){
+	    new_relations.add(new Relation(rel, nf));
+	}
+	this.featureStructures = new_featureStructures;
+	this.relations = new_relations;
     }
 
     public List<Fs> getFeatureStructures() {
