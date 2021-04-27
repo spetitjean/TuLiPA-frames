@@ -191,6 +191,7 @@ public class RRGParseTree extends RRGTree {
                             + this.toString());
             return resultingTree;
         }
+	this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
         return resultingTree;
     }
 
@@ -299,7 +300,7 @@ public class RRGParseTree extends RRGTree {
         // }
 
         // System.out.println("resultingTree: " + result);
-
+	this.getFrameSem().addOtherFrame(adjoiningTree.getFrameSem());
         return result;
     }
 
@@ -330,7 +331,8 @@ public class RRGParseTree extends RRGTree {
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);
             System.exit(0);
-        }
+        }	
+	this.getFrameSem().addOtherFrame(substitutionTree.getFrameSem());
         return result;
     }
 
