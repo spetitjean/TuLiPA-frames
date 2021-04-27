@@ -376,17 +376,20 @@ public class TreeSelector {
 				// allLexSem contains all possible frames paired with this tree
 				// -> for each frame, create an instance of the tree
 				for (Tuple oneLexSem: allLexSem){
+				    NameFactory nf = new NameFactory();
 				    Environment env = new Environment(5);
-				    Frame oneFrame = oneLexSem.getHead().getFrameSem();
-				    RRGTree oneTree = new RRGTree(tree);
+				    Frame oneFrame = new Frame(oneLexSem.getHead().getFrameSem(),nf);
+				    //RRGTree oneTree = new RRGTree(tree);
+				    RRGTree oneTree = tree.getInstance();
+
 				    // we got the frames
 				    // now we need the interface from the tree and the interface from the frame
 				    // unify both interfaces
 				    // update all variables to link syntactic and semantic arguments
 
 				    try{
-					FsTools.unify(
-						      Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface(),
+					Fs frameIface = new Fs(oneLexSem.getHead().getIface(),nf);
+					FsTools.unify(frameIface,
 						      oneTree.getIface(), env);
 					oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
 
@@ -456,7 +459,7 @@ public class TreeSelector {
 	    RRGTree anchoredTree = new RRGTree(tree);
 	    anchoredTree
 		.addLexNodeToAnchor(lexNode);
-	    System.err.println("Added tree "+tree);
+	    System.err.println("\n-----------------------\nAdded tree "+tree);
 	    // anchoredTree
 	    //         .addLexNodeToAnchor(lexnodeBuilder.build());
 	    // System.out.println("ts RRG orig tree: " + tree);
@@ -464,8 +467,8 @@ public class TreeSelector {
 	    // anchoredTree);
 	    ((RRG) Situation.getGrammar())
 		.addAnchoredTree(anchoredTree);
-	    System.err.println("Tree after updates: ");
-	    System.err.println(anchoredTree);
+	    // System.err.println("Tree after updates: ");
+	    // System.err.println(anchoredTree);
 	    
 	}
 	catch (UnifyException e) {

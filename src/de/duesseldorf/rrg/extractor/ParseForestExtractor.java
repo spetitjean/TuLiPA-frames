@@ -101,7 +101,7 @@ public class ParseForestExtractor {
                     + resultingParses.size();
             resultingParseTree.setId(newId);
             resultingParses.add(resultingParseTree);
-	    System.out.println("Trace: ");
+	    System.out.println("\nTrace: ");
 	    System.out.println(resultingParseTree.getIds());
 	    
         }

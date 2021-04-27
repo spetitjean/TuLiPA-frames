@@ -15,7 +15,12 @@ import de.duesseldorf.frames.Value;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.tuebingen.derive.PrettyNameFactory;
+import de.tuebingen.derive.ElementaryTree;
 import de.tuebingen.tree.Node;
+import de.tuebingen.tag.Environment;
+import de.duesseldorf.frames.UnifyException;
+
+
 
 public class ParseTreePostProcessor {
 
@@ -32,13 +37,16 @@ public class ParseTreePostProcessor {
         // data structure for seen corefs
         // Might be an option:
 
+	
+	tree.setFrameSem(postProcessFrame(tree.getFrameSem(),tree.getEnv()));
+        // rename the env of the tree:
+
+
         // go to all nodes of the tree (recursive)
         // go to all feature structures of nodes (recursive)
         postProcessRec((RRGNode) tree.getRoot());
-	
-	postProcessFrame(tree.getFrameSem());
-        // rename the env of the tree:
-        return tree;
+
+	return tree;
     }
 
     private void postProcessRec(RRGNode root) {
@@ -48,7 +56,12 @@ public class ParseTreePostProcessor {
         }
     }
 
-    private void postProcessFrame(Frame frame){
+    private Frame postProcessFrame(Frame frame, Environment env){
+	try{
+	    frame = ElementaryTree.updateFrameSemWithMerge(frame, env, true);
+	}
+	catch (UnifyException e){
+	}
 	for (Fs fs: frame.getFeatureStructures()){
 	    renameFeatureStructure(fs);
 	}
@@ -66,7 +79,7 @@ public class ParseTreePostProcessor {
 
 	}
 	frame.setRelations(new_rels);
-	
+	return frame;
     }
     
     private Fs renameFeatureStructure(Fs inputFs) {

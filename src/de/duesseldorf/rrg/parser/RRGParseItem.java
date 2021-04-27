@@ -59,7 +59,6 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     public RRGTree getTreeInstance() {
-	System.err.println(tree.getInstance());
         return tree.getInstance();
     }
     

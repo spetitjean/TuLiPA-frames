@@ -71,6 +71,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = id;
         this.setEnv(new Environment(0));
         this.family = "";
+	this.frameSem = new Frame();
         retrieveSpecialNodes();
     }
 
@@ -347,6 +348,8 @@ public class RRGTree implements Comparable<RRGTree> {
 	// caution: this.frameSem might be null
 	// Frame newFrame = new Frame(this.frameSem.getFeatureStructures(),this.frameSem.getRelations());
 	Frame newFrame = new Frame(this.frameSem, nf);
-	return new RRGTree(newRoot,newFrame,this.getId());
+	RRGTree newTree = new RRGTree(newRoot,newFrame,this.getId());
+	newTree.setIface(new Fs(this.getIface(),nf));
+	return newTree;
     }
 }

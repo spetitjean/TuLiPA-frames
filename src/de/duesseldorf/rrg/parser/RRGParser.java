@@ -70,12 +70,12 @@ public class RRGParser {
 	    another_rrgtree.setEnv(new Environment(5));
 	    this.treesInvolvedInParsing.add(another_rrgtree);    
 	}
-	System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
+	//System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
 
     }
 
     public RRGParseResult parseSentence(List<String> toksentence) {
-        System.out.println("start parsing sentence " + toksentence);
+        System.out.println("\nstart parsing sentence " + toksentence);
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
