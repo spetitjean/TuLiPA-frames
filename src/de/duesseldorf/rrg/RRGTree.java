@@ -220,6 +220,11 @@ public class RRGTree implements Comparable<RRGTree> {
         return anchorNode;
     }
 
+    public void setAnchorNode(RRGNode anchor) {
+        anchorNode = anchor;
+    }
+
+    
     /**
      * 
      * @return the root node of the tree

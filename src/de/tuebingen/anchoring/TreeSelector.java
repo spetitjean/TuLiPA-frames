@@ -363,112 +363,51 @@ public class TreeSelector {
                             // e.printStackTrace();
                         }
                         if (match) {
+				   
                             // build an RRGNode and attach it below the anchor
                             // node
-			    Environment env = new Environment(5);
-
-			    Frame LexSem = new Frame();
+			    List<Tuple> allLexSem = new LinkedList();
 			    // Trying to retrieve the frame information
 			    if(la.get(k).getSemantics().size() >0){
-				System.err.println("--------------------------");
-				
-				// getting the semantic class
-				System.err.println("Semantic class of the lemma");
-				System.err.println(la.get(k).getSemantics().get(0).getSemclass());
-				// getting the frame from the FrameGrammar
-				// should be a List<Tuple>
-				System.err.println("Associated frame");
-				System.err.println(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getFrameSem());
-				LexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getFrameSem();
-				// we got the frames
-				// now we need the interface from the tree and the interface from the frame
-				// unify both interfaces
-				// update all variables to link syntactic and semantic arguments
-				System.err.println("Interface of the frame");
-				System.err.println(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface());
-				System.err.println("Interface of the tree");
-				System.err.println(tree.getIface());
+				// get all frames of the semantic class associated to the lemma
+				allLexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass());
+			    }
+			    if (allLexSem.size() >0){
+				// allLexSem contains all possible frames paired with this tree
+				// -> for each frame, create an instance of the tree
+				for (Tuple oneLexSem: allLexSem){
+				    Environment env = new Environment(5);
+				    Frame oneFrame = oneLexSem.getHead().getFrameSem();
+				    RRGTree oneTree = new RRGTree(tree);
+				    // we got the frames
+				    // now we need the interface from the tree and the interface from the frame
+				    // unify both interfaces
+				    // update all variables to link syntactic and semantic arguments
 
-				try{
-				    FsTools.unify(Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface(), tree.getIface(), env);
-				    // List<Fs> newFs = new ArrayList<Fs>();
-				    // for (Fs fs : LexSem.getFeatureStructures()) {
-				    // 	// System.out.println("Before: " + fs);
-				    // 	if (fs != null) {
-				    // 	    newFs.add(Fs.updateFS(fs, env, false));
-				    // 	    // System.out.println("After: " + fs);
-				    // 	}
-				    // }
-				    
-				    // Set<Relation> newRelations = new HashSet<Relation>();
-				    // for (Relation oldRel : LexSem.getRelations()) {
-				    // 	List<Value> newArgs = new LinkedList<Value>();
-				    // 	for (Value oldVal : oldRel.getArguments()) {
-				    // 	    Value oldCopy = new Value(oldVal);
-				    // 	    oldCopy.update(env, false);
-				    // 	    // Value newVal = env.deref(oldVal);
-				    // 	    newArgs.add(oldCopy);
-				    // 	}
-				    // 	newRelations.add(new Relation(oldRel.getName(), newArgs));
-				    // }
+				    try{
+					FsTools.unify(
+						      Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass()).get(0).getHead().getIface(),
+						      oneTree.getIface(), env);
+					oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
 
-				    // LexSem = new Frame(newFs, newRelations);
-				    LexSem = ElementaryTree.updateFrameSem(LexSem, env, false);
-
+				    }
+				    catch (UnifyException e) {
+					System.err.println("Unification of the interfaces failed");
+				    }   
+				    oneTree.setFrameSem(oneFrame);
+				    // let us give different names to the trees depending on the frames
+				    oneTree.setId(oneTree.getId()+"+"+oneLexSem.getId());
+				    anchorRRG(il, oneTree, env);
 				}
-				catch (UnifyException e) {
-				    //e.printStackTrace();
-				}   
-				
-				
-				System.err.println("Tree with frame: "+tree);
-			    }
-			    if(LexSem == null){
-				LexSem = new Frame();
-			    }
-			    tree.setFrameSem(LexSem);
 
-			    
-                            RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
-                                    .name(il.getCat())
-                                    .cat(il.getLexItem().getLex())
-                                    .type(RRGNodeType.LEX)
-                                    .gornaddress(anchorNode.getGornaddress()
-                                            .ithDaughter(0));
-                            // System.out.println("anchor: " + anchorNode);
-                            // System.out.println("lex: " +
-                            // lexnodeBuilder.build());
-			    			    
-			    RRGNode lexNode = lexnodeBuilder.build();
-			    //System.out.println(tree);
-			    try{
-				// lexNode.setNodeFs(
-				// 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
-                                //     new Environment(5))
-				// 		  );
-				anchorNode.setNodeFs(
-						  FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
-                                    env)
-						  );
-				((RRGNode)tree.getRoot()).updateFS(env,false);
-				RRGTree anchoredTree = new RRGTree(tree);
-				anchoredTree
-				    .addLexNodeToAnchor(lexNode);
-				System.err.println("Added tree "+tree);
-				// anchoredTree
-				//         .addLexNodeToAnchor(lexnodeBuilder.build());
-				// System.out.println("ts RRG orig tree: " + tree);
-				// System.out.println("ts RRG anch tree: " +
-				// anchoredTree);
-				((RRG) Situation.getGrammar())
-                                    .addAnchoredTree(anchoredTree);
-				System.err.println("Tree after updates: ");
-				System.err.println(anchoredTree);
-				
 			    }
-			    catch (UnifyException e) {
-				//e.printStackTrace();
-			    }   
+			    // there is no frame to be paired with this tree, anchor it 
+			    else{
+				Environment env = new Environment(5);
+				tree.setFrameSem(new Frame());
+				anchorRRG(il, tree, env);
+			    }
+
                         }
                     }
                 }
@@ -488,6 +427,51 @@ public class TreeSelector {
         int amb = ambiguity.get(word);
         amb += cpt_tmp;
         ambiguity.put(word, amb);
+    }
+
+
+    private void anchorRRG(InstantiatedLemma il, RRGTree tree, Environment env){
+	RRGNode anchorNode = tree.getAnchorNode();
+	RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
+	    .name(il.getCat())
+	    .cat(il.getLexItem().getLex())
+	    .type(RRGNodeType.LEX)
+	    .gornaddress(anchorNode.getGornaddress()
+			 .ithDaughter(0));
+	// System.out.println("anchor: " + anchorNode);
+	// System.out.println("lex: " +
+	// lexnodeBuilder.build());
+	RRGNode lexNode = lexnodeBuilder.build();
+	//System.out.println(tree);
+	try{
+	    // lexNode.setNodeFs(
+	    // 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
+	    //     new Environment(5))
+	    // 		  );
+	    anchorNode.setNodeFs(
+				 FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
+					       env)
+				 );
+	    ((RRGNode)tree.getRoot()).updateFS(env,false);
+	    RRGTree anchoredTree = new RRGTree(tree);
+	    anchoredTree
+		.addLexNodeToAnchor(lexNode);
+	    System.err.println("Added tree "+tree);
+	    // anchoredTree
+	    //         .addLexNodeToAnchor(lexnodeBuilder.build());
+	    // System.out.println("ts RRG orig tree: " + tree);
+	    // System.out.println("ts RRG anch tree: " +
+	    // anchoredTree);
+	    ((RRG) Situation.getGrammar())
+		.addAnchoredTree(anchoredTree);
+	    System.err.println("Tree after updates: ");
+	    System.err.println(anchoredTree);
+	    
+	}
+	catch (UnifyException e) {
+	    //e.printStackTrace();
+	}   
+	
     }
 
     /**
