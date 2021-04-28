@@ -64,9 +64,8 @@ public class XMLRRGTreeRetriever {
         // System.out.println("ID: " + id);
         // give the tree its gorn address:
         RRGTreeTools.initGornAddresses((RRGNode) treeRoot);
-
         // 2. Frame related stuff
-        if (frameRoot == null) {
+        if (frameRoot == null || frameRoot.getLength() == 0) {
             RRGTree result = new RRGTree(treeRoot, id);
             return result;
         } else {

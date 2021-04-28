@@ -370,7 +370,12 @@ public class TreeSelector {
 			    // Trying to retrieve the frame information
 			    if(la.get(k).getSemantics().size() >0){
 				// get all frames of the semantic class associated to the lemma
-				allLexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass());
+				if (Situation.getFrameGrammar() != null){
+				    allLexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass());
+				}
+				else{
+				    System.err.println("Warning: could not retrieve frames associated to lemma (no frame grammar given)");
+				}
 			    }
 			    if (allLexSem.size() >0){
 				// allLexSem contains all possible frames paired with this tree
