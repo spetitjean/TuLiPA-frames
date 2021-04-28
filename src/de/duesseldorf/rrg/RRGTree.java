@@ -21,31 +21,30 @@ import de.tuebingen.anchoring.NameFactory;
 
 /**
  * File RRGTree.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class RRGTree implements Comparable<RRGTree> {
 
@@ -71,7 +70,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = id;
         this.setEnv(new Environment(0));
         this.family = "";
-	this.frameSem = new Frame();
+        this.frameSem = new Frame();
         retrieveSpecialNodes();
     }
 
@@ -80,7 +79,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = id;
         this.setEnv(new Environment(0));
         this.family = "";
-	this.frameSem = frame;
+        this.frameSem = frame;
         retrieveSpecialNodes();
     }
 
@@ -89,7 +88,7 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = id;
         this.setEnv(new Environment(0));
         this.family = "";
-	this.frameSem = frame;
+        this.frameSem = frame;
         retrieveSpecialNodes();
     }
 
@@ -98,8 +97,8 @@ public class RRGTree implements Comparable<RRGTree> {
         this.id = tree.id;
         this.setEnv(tree.getEnv());
         this.family = tree.getFamily();
-	this.frameSem = tree.getFrameSem();
-	this.iface = tree.getIface();
+        this.frameSem = tree.getFrameSem();
+        this.iface = tree.getIface();
         // System.out.println("TODO ENVIRONMENT IN RRGTREE");
         retrieveSpecialNodes();
     }
@@ -122,7 +121,7 @@ public class RRGTree implements Comparable<RRGTree> {
     /**
      * recursive retrieval, use {@code retrieveSpecialNodes()} without
      * parameters to trigger retrieval
-     * 
+     *
      * @param root
      */
     public void retrieveSpecialNodes(RRGNode root) {
@@ -165,10 +164,10 @@ public class RRGTree implements Comparable<RRGTree> {
 
     /**
      * Look for a gorn address in a tree.
-     * 
+     *
      * @param address
      * @return The RRGNode that you have been looking for, or {@code null} if it
-     *         is not in the tree.
+     * is not in the tree.
      */
     public RRGNode findNode(GornAddress address) {
         try {
@@ -189,7 +188,6 @@ public class RRGTree implements Comparable<RRGTree> {
     }
 
     /**
-     * 
      * @return a map with all the lexical nodes and their lexical elements
      */
     public Map<String, Set<RRGNode>> getLexNodes() {
@@ -197,7 +195,6 @@ public class RRGTree implements Comparable<RRGTree> {
     }
 
     /**
-     * 
      * @return a map with all the substitution nodes and their categories
      */
     public Map<String, Set<RRGNode>> getSubstNodes() {
@@ -205,16 +202,14 @@ public class RRGTree implements Comparable<RRGTree> {
     }
 
     /**
-     * 
      * @return the ddaughters if there are some, or {@code null} if there is
-     *         none.
+     * none.
      */
     public List<RRGNode> getDdaughters() {
         return ddaughters;
     }
 
     /**
-     * 
      * @return the anchor node in the tree
      */
     public RRGNode getAnchorNode() {
@@ -225,9 +220,8 @@ public class RRGTree implements Comparable<RRGTree> {
         anchorNode = anchor;
     }
 
-    
+
     /**
-     * 
      * @return the root node of the tree
      */
     public Node getRoot() {
@@ -237,7 +231,7 @@ public class RRGTree implements Comparable<RRGTree> {
     /**
      * Always keep in mind that this Id is only unique in the XML input grammar.
      * Later, it might reappear several times!
-     * 
+     *
      * @return
      */
     public String getId() {
@@ -249,11 +243,10 @@ public class RRGTree implements Comparable<RRGTree> {
     }
 
     /**
-     * 
      * @return <code>true</code> if the root node of this tree is a
-     *         <code>STAR</code> node
-     *         made for sister
-     *         adjunction, <code>false</code> otherwise
+     * <code>STAR</code> node
+     * made for sister
+     * adjunction, <code>false</code> otherwise
      */
     public boolean isSisAdjTree() {
         return ((RRGNode) root).getType().equals(RRGNodeType.STAR);
@@ -295,7 +288,7 @@ public class RRGTree implements Comparable<RRGTree> {
     @Override
     public String toString() {
         String beiwerk = "ID: " + id + "\n";
-        return beiwerk + RRGTreeTools.recursivelyPrintNode(root) + "Frame: "+frameSem + "Interface: "+iface;
+        return beiwerk + RRGTreeTools.recursivelyPrintNode(root) + "Frame: " + frameSem + "Interface: " + iface;
     }
 
     public Environment getEnv() {
@@ -338,18 +331,18 @@ public class RRGTree implements Comparable<RRGTree> {
         this.iface = iface;
     }
 
-    
-    public RRGTree getInstance(){
-	NameFactory nf = new NameFactory();
-    	RRGNode newRoot = ((RRGNode)this.getRoot()).copyNode(nf);
-	// ToDo: the variables in the new frame should still be bound to the variables in the tree
-	// -> for fs, new Fs with the nf
-	// -> for the relations?
-	// caution: this.frameSem might be null
-	// Frame newFrame = new Frame(this.frameSem.getFeatureStructures(),this.frameSem.getRelations());
-	Frame newFrame = new Frame(this.frameSem, nf);
-	RRGTree newTree = new RRGTree(newRoot,newFrame,this.getId());
-	newTree.setIface(new Fs(this.getIface(),nf));
-	return newTree;
+
+    public RRGTree getInstance() {
+        NameFactory nf = new NameFactory();
+        RRGNode newRoot = ((RRGNode) this.getRoot()).copyNode(nf);
+        // ToDo: the variables in the new frame should still be bound to the variables in the tree
+        // -> for fs, new Fs with the nf
+        // -> for the relations?
+        // caution: this.frameSem might be null
+        // Frame newFrame = new Frame(this.frameSem.getFeatureStructures(),this.frameSem.getRelations());
+        Frame newFrame = new Frame(this.frameSem, nf);
+        RRGTree newTree = new RRGTree(newRoot, newFrame, this.getId());
+        newTree.setIface(new Fs(this.getIface(), nf));
+        return newTree;
     }
 }
