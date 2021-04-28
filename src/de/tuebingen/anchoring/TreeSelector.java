@@ -381,7 +381,6 @@ public class TreeSelector {
 				    Frame oneFrame = new Frame(oneLexSem.getHead().getFrameSem(),nf);
 				    //RRGTree oneTree = new RRGTree(tree);
 				    RRGTree oneTree = tree.getInstance();
-
 				    // we got the frames
 				    // now we need the interface from the tree and the interface from the frame
 				    // unify both interfaces
@@ -393,7 +392,8 @@ public class TreeSelector {
 					FsTools.unify(frameIface,
 						      oneTree.getIface(), env);
 					oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
-					oneTree.setFrameSem(oneFrame);
+					//oneTree.setFrameSem(oneFrame);
+					oneTree.getFrameSem().addOtherFrame(oneFrame);
 					anchorRRG(il, oneTree, env);
 				    }
 				    catch (UnifyException e) {

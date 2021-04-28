@@ -18,7 +18,7 @@ public class ParseForestPostProcessor {
     static RRGParseResult postProcessParseTreeSet(
             Set<RRGParseTree> resultingParses)  {
 
-        System.out.printf("% 12d\tresulting trees after extraction%n",
+        System.out.printf("\n% 12d\tresulting trees after extraction%n",
                 resultingParses.size());
 
 	// 0 features percolation
