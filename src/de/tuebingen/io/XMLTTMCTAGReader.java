@@ -291,32 +291,11 @@ public class XMLTTMCTAGReader extends FileReader {
         l = e.getElementsByTagName("frame");
 
         if (l.getLength() > 0) {
-            List<Fs> framefss = new ArrayList<Fs>();
-            Set<Relation> framerels = new HashSet<Relation>();
-
-            Element frameEl = (Element) l.item(0);
-            NodeList frameEls = frameEl.getChildNodes();
-            for (int i = 0; i < frameEls.getLength(); i++) {
-                if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    Element ithFrameEl = (Element) frameEls.item(i);
-                    Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
-                    if (ithFrameEl.getTagName().equals("fs")) {
-                        Fs framefs = XMLGrammarReadingTools.getFeats(ithFrameEl,
-                                NOFS, toAdd, nf);
-                        framefss.add(framefs);
-                        // res.concatFrames(framefs);
-                    } else if (ithFrameEl.getTagName().equals("relation")) {
-                        Relation rel = getRelation(ithFrameEl, toAdd, nf);
-                        framerels.add(rel);
-                    }
-                }
-            }
-            Frame frameSem = new Frame(framefss, framerels);
+            Frame frameSem = createFrame(l, nf);
             // System.out.println(
             // "frameSem in XMLTTMCTAGREADER:\n" + frameSem.toString());
             res.setFrameSem(frameSem);
             // System.out.println("Frame from XMLTTMCTAGReader: " + frameSem);
-
         }
         // 6. Processing of the semantics
         // to ensure that the semantics of a TagTree is not null, it might
@@ -333,6 +312,36 @@ public class XMLTTMCTAGReader extends FileReader {
         res.setSem(semrepr);
 
         return res;
+    }
+
+    /**
+     * create a frame object from XML
+     * @param l
+     * @return
+     */
+    public static Frame createFrame(NodeList l, NameFactory nf) {
+        List<Fs> framefss = new ArrayList<Fs>();
+        Set<Relation> framerels = new HashSet<Relation>();
+
+        Element frameEl = (Element) l.item(0);
+        NodeList frameEls = frameEl.getChildNodes();
+        for (int i = 0; i < frameEls.getLength(); i++) {
+            if (frameEls.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element ithFrameEl = (Element) frameEls.item(i);
+                Hashtable<String, Value> toAdd = new Hashtable<String, Value>();
+                if (ithFrameEl.getTagName().equals("fs")) {
+                    Fs framefs = XMLGrammarReadingTools.getFeats(ithFrameEl,
+                            NOFS, toAdd, nf);
+                    framefss.add(framefs);
+                    // res.concatFrames(framefs);
+                } else if (ithFrameEl.getTagName().equals("relation")) {
+                    Relation rel = getRelation(ithFrameEl, toAdd, nf);
+                    framerels.add(rel);
+                }
+            }
+        }
+        Frame frameSem = new Frame(framefss, framerels);
+        return frameSem;
     }
 
     /**

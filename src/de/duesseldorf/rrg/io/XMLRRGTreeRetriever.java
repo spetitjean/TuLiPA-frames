@@ -2,6 +2,7 @@ package de.duesseldorf.rrg.io;
 
 import java.util.Hashtable;
 
+import de.duesseldorf.frames.Frame;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -45,12 +46,13 @@ import de.tuebingen.tree.Node;
 public class XMLRRGTreeRetriever {
 
     /**
-     * @param root Not the Element representing the root of the syntax tree, but
-     *             the Element one level above
+     * @param xmlTreeRoot Not the Element representing the root of the syntax tree, but
+     *                 the Element one level above
      * @return
      */
-    public static RRGTree retrieveTree(Element root, NameFactory nf) {
-        Element syntacticTreeMother = (Element) root
+    public static RRGTree retrieveTree(Element xmlTreeRoot, NodeList frameRoot, NameFactory nf) {
+        // 1. tree related stuff
+        Element syntacticTreeMother = (Element) xmlTreeRoot
                 .getElementsByTagName(XMLRRGTag.NODE.StringVal()).item(0);
         Node treeRoot = recursivelyRetrieveTree(syntacticTreeMother, nf);
         // debug:
@@ -58,13 +60,20 @@ public class XMLRRGTreeRetriever {
         // System.out.println(RRGTreeTools.recursivelyPrintNode(treeRoot));
 
         // TODO: give the tree an id etc.
-        String id = root.getAttribute(XMLRRGTag.ID.StringVal());
+        String id = xmlTreeRoot.getAttribute(XMLRRGTag.ID.StringVal());
         // System.out.println("ID: " + id);
         // give the tree its gorn address:
         RRGTreeTools.initGornAddresses((RRGNode) treeRoot);
 
-        RRGTree result = new RRGTree(treeRoot, id);
-        return result;
+        // 2. Frame related stuff
+        if (frameRoot == null) {
+            RRGTree result = new RRGTree(treeRoot, id);
+            return result;
+        } else {
+            Frame frame = XMLTTMCTAGReader.createFrame(frameRoot, nf);
+            RRGTree result = new RRGTree(treeRoot, frame, id);
+            return result;
+        }
     }
 
     /**

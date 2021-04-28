@@ -88,8 +88,10 @@ public class XMLRRGReader extends FileReader {
                     .getElementsByTagName(XMLRRGTag.TREE.StringVal()).item(0);
 
             // process semantics, family etc. here
+            NodeList frameRoot = ithEntrie.getElementsByTagName(XMLRRGTag.FRAME.StringVal());
 
-            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree, nf);
+
+            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree, frameRoot, nf);
 
             // process interface
             NodeList l = ithEntrie.getElementsByTagName("interface");
