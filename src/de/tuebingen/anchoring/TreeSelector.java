@@ -386,21 +386,23 @@ public class TreeSelector {
 				    // now we need the interface from the tree and the interface from the frame
 				    // unify both interfaces
 				    // update all variables to link syntactic and semantic arguments
-
+				    Fs frameIface = new Fs(oneLexSem.getHead().getIface(),nf);
+				    // let us give different names to the trees depending on the frames
+				    oneTree.setId(oneTree.getId()+"+"+oneLexSem.getId());
 				    try{
-					Fs frameIface = new Fs(oneLexSem.getHead().getIface(),nf);
 					FsTools.unify(frameIface,
 						      oneTree.getIface(), env);
 					oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
-
+					oneTree.setFrameSem(oneFrame);
+					anchorRRG(il, oneTree, env);
 				    }
 				    catch (UnifyException e) {
-					System.err.println("Unification of the interfaces failed");
+					// System.err.println("\nUnification of the interfaces failed:\nFrame interface:");
+					// System.err.println(frameIface);
+					// System.err.println("Tree interface:");
+					// System.err.println(oneTree.getIface());
+					System.err.println("\n-----------------------\nTree "+oneTree.getId()+" dropped (incompatible interfaces in tree and frame)");
 				    }   
-				    oneTree.setFrameSem(oneFrame);
-				    // let us give different names to the trees depending on the frames
-				    oneTree.setId(oneTree.getId()+"+"+oneLexSem.getId());
-				    anchorRRG(il, oneTree, env);
 				}
 
 			    }
