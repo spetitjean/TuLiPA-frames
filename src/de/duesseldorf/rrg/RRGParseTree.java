@@ -330,7 +330,7 @@ public class RRGParseTree extends RRGTree {
             System.err.println("at GA " + address);
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);
-            System.exit(0);
+            //System.exit(0);
         }	
 	this.getFrameSem().addOtherFrame(substitutionTree.getFrameSem());
         return result;

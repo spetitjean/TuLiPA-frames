@@ -67,6 +67,7 @@ public class RRGParser {
 	this.treesInvolvedInParsing = new HashSet<RRGTree>();
 	for (RRGTree rrgtree : treesInvolvedInParsing){
 	    RRGTree another_rrgtree = new RRGTree(rrgtree);
+	    //RRGTree another_rrgtree = rrgtree.getInstance();
 	    another_rrgtree.setEnv(new Environment(5));
 	    this.treesInvolvedInParsing.add(another_rrgtree);    
 	}
@@ -330,7 +331,7 @@ public class RRGParser {
     private void substitute(RRGParseItem currentItem) {
         if (requirementFinder.substituteReq(currentItem)) {
             for (RRGTree tree : treesInvolvedInParsing) {
-                Set<RRGNode> substNodes = tree.getSubstNodes()
+		Set<RRGNode> substNodes = tree.getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
@@ -338,8 +339,10 @@ public class RRGParser {
                         boolean checkIfUnificationWorks = true;
                         try {
                             RRGTreeTools.unifyNodes(substNode,
-                                    currentItem.getNode(),
-                                    currentItem.getTree().getEnv());
+						    currentItem.getNode(),
+						    new Environment(5)
+						    //currentItem.getTree().getEnv()
+						    );
                         } catch (UnifyException e) {
                             checkIfUnificationWorks = false;
                         }
