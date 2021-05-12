@@ -39,17 +39,20 @@ Side conditions:
 - label(α,m) = Y
 
 Consequents:
-- $[α,m_⊥,i,j,Γ1◦Γ3◦Γ2,no]$
+- $[α,m_⊥,i,j,Γ1◦Γ3◦Γ2,no,[γ,q_T,i,j,Γ1◦<<f1,f2,Y>>◦Γ2,ws?]]$ Put differently, the consequent item has a direct pointer
+  back to the antecedent target item of the wrapping so that we can jump back to parse the upper part of the wrapping 
+  target tree later
 
 ### Finish Generalized CW
 
 A new rule is necessary: After going to the root of the wrapping tree, jump back to the target tree of the wrapping and continue going upwards
 
+
 Antecedents:
-- $[α, eps, TOP, i, j, Γ1, false]$
-- $[γ,q_T,i,j,Γ1◦<<f1,f2,Y>>◦Γ2,ws?]$
+- $[α, eps, TOP, i, j, Γ1, false, [γ, q_T,k,l,Γ2,ws?]]$
 
-
+Consequent:
+- $[γ,q_T,i,j,Γ1,false]$
 
 
 

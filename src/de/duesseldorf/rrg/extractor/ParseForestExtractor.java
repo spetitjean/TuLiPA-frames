@@ -68,7 +68,7 @@ public class ParseForestExtractor {
 
 	Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
         //if (verbosePrintsToStdOut) {
-            System.out.println("goal items: " + goals);
+        System.out.println("goal items: " + goals);
         //}
         goals.stream().forEach((goal) -> {
             ExtractionStep initExtrStep = initialExtractionStep(
@@ -108,8 +108,8 @@ public class ParseForestExtractor {
     private Set<RRGParseTree> extract(ExtractionStep extractionstep) {
         Backpointer backPointers = parseChart
                 .getBackPointers(extractionstep.getCurrentItem());
-	// Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
-	Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
+	    // Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
+	    Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
@@ -170,9 +170,12 @@ public class ParseForestExtractor {
             wrappingException = true;
         }
 
+        // Generalized Wrapping
         Set<Set<RRGParseItem>> jumpbackAntecedents = backPointers.getAntecedents(Operation.GENCWJUMPBACK);
         parsesInThisStep.addAll(extractJumpBack(jumpbackAntecedents, extractionstep));
 
+        Set<Set<RRGParseItem>> gencwAntecedents = backPointers.getAntecedents(Operation.GENCW);
+        parsesInThisStep.addAll(extractGenCompleteWrapping(gencwAntecedents, extractionstep));
         // if no other rule applied (i.e. if we dealt with a scanned item):
         boolean noBackPointersBecauseLexNode = extractionstep.getCurrentItem()
                 .getNode().getType().equals(RRGNodeType.LEX);
@@ -205,15 +208,20 @@ public class ParseForestExtractor {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.GENCWJUMPBACK);
             }
+            RRGParseTree currentParseTree = extractionstep.getCurrentParseTree();
             RRGParseItem jumpbackAntecedent = itemset.iterator().next();
             RRGTree wrappingTree = jumpbackAntecedent.getTree();
-            int ddaughterIndex = -1;
+            /**int ddaughterIndex = -1;
             for (int i = 0; i < wrappingTree.getRoot().getChildren().size(); i++) {
                 RRGNode ithDaughter = (RRGNode) wrappingTree.getRoot().getChildren().get(i);
                 if (ithDaughter.getType().equals(RRGNodeType.DDAUGHTER)) {
                     break;
                 }
-            }
+            }*/
+            GornAddress currentGA = extractionstep.getGAInParseTree();
+            RRGParseTree nextStepParseTree = currentParseTree.insertWrappingTree(wrappingTree, currentGA, jumpbackAntecedent.getGenwrappingjumpback());
+            ExtractionStep nextStep =  new ExtractionStep(jumpbackAntecedent, currentGA, nextStepParseTree, extractionstep.getGoToRightWhenGoingDown());
+            parsesInThisStep.addAll(extract(nextStep));
             // first extract all arms to the right of the ddaguther
             // then jumpback
             // then extract left armas
@@ -257,6 +265,30 @@ public class ParseForestExtractor {
                 throw new WrappingException();
         }
         return parsesInThisPWStep;
+    }
+
+    private Set<RRGParseTree> extractGenCompleteWrapping(Set<Set<RRGParseItem>> gencwAntecedents, ExtractionStep extractionstep) {
+        Set<RRGParseTree> parsesInThisStep = new HashSet<>();
+        for (Set<RRGParseItem> backpointerset : gencwAntecedents) {
+            if (verbosePrintsToStdOut) {
+                System.out.println(Operation.GENCW);
+            }
+
+            RRGParseItem ddaughterItem = backpointerset.stream().filter(item -> item.getwsflag()).findFirst().orElseGet(null);
+            RRGParseItem wraprootItem = backpointerset.stream().filter(item -> !item.getwsflag()).findFirst().orElseGet(null);
+
+
+            RRGParseTree currentParseTree = extractionstep.getCurrentParseTree();
+            GornAddress currentGA = extractionstep.getGAInParseTree();
+            RRGParseTree nextStepParseTree = currentParseTree.insertWrappedTreeForGeneralizedWrapping(wraprootItem, currentGA, ddaughterItem);
+
+            GornAddress newGA = extractionstep.getGAInParseTree().mother();
+            ExtractionStep nextStep = new ExtractionStep(wraprootItem,
+                    newGA, nextStepParseTree,
+                    extractionstep.getGAInParseTree().isIthDaughter());
+            parsesInThisStep.addAll(extract(nextStep));
+        }
+        return parsesInThisStep;
     }
 
     private Set<RRGParseTree> extractCompleteWrapping(

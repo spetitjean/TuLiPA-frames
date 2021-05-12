@@ -130,6 +130,31 @@ public class RRGParseTree extends RRGTree {
         }
     }
 
+    public RRGParseTree insertWrappingTree(RRGTree wrappingTree, GornAddress targetAddress, RRGParseItem jumpBackitem) {
+        RRGParseTree resultingTree = new RRGParseTree(this);
+
+        RRGNode targetNode = resultingTree.findNode(targetAddress);
+        boolean wrappingPossible = true;
+        RRGNode newTargetNode = null;
+        try {
+            newTargetNode = RRGTreeTools.unifyNodes((RRGNode) wrappingTree.getRoot(), targetNode, getEnv());
+        } catch (UnifyException e) {
+            wrappingPossible = false;
+        }
+        if (wrappingPossible) {
+            resultingTree.setNode(targetAddress, newTargetNode);
+            resultingTree.wrappingSubTrees.put(jumpBackitem, targetNode);
+        }
+        resultingTree.getFrameSem().addOtherFrame(wrappingTree.getFrameSem());
+        return resultingTree;
+    }
+
+    public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
+        RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
+        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, wrapRootItem.getTree().getId());
+        return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem);
+    }
+
     /**
      * TODO deal with substitution of the tree below ddaughter. Keep that
      * subtree somewhere?
@@ -191,6 +216,7 @@ public class RRGParseTree extends RRGTree {
                             + this.toString());
             return resultingTree;
         }
+        //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
 	    this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
         return resultingTree;
     }
