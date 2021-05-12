@@ -42,9 +42,10 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     private final int end;
     private final Set<Gap> gaps;
     private final boolean ws;
+    private final RRGParseItem genwrappingjumpback;
 
     private RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos, int start,
-            int end, Set<Gap> gaps, boolean ws) {
+                         int end, Set<Gap> gaps, boolean ws, RRGParseItem genwrappingjumpback) {
         this.tree = tree;
         this.node = node;
         this.nodepos = nodepos;
@@ -52,6 +53,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         this.end = end;
         this.gaps = gaps;
         this.ws = ws;
+        this.genwrappingjumpback = genwrappingjumpback;
     }
 
     public RRGTree getTree() {
@@ -61,7 +63,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     public RRGTree getTreeInstance() {
         return tree.getInstance();
     }
-    
+
     public NodePos getNodePos() {
         return this.nodepos;
     }
@@ -86,9 +88,13 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         return gaps;
     }
 
+    public RRGParseItem getGenwrappingjumpback() {
+        return genwrappingjumpback;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(tree, start, end, node, gaps, nodepos, ws);
+        return Objects.hash(tree, start, end, node, gaps, nodepos, ws, genwrappingjumpback);
     }
 
     @Override
@@ -110,9 +116,11 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         gapstr += "]";
         String itemstr = "[" + this.tree.getId() + ", "
                 + this.node.toStringWithoutFs() + ", " + this.nodepos + ", "
-                + this.start + ", " + this.end + ", " + gapstr + ", " + ws
-                + "]";
-
+                + this.start + ", " + this.end + ", " + gapstr + ", " + ws;
+        if (genwrappingjumpback != null) {
+            itemstr += ", " + genwrappingjumpback.toString();
+        }
+        itemstr += "]";
         return itemstr;
     }
 
@@ -147,6 +155,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         private int end = -2;
         private Set<Gap> gaps = null;
         private Boolean ws;
+        private RRGParseItem genwrappingjumpback = null;
 
         public Builder() {
         }
@@ -186,6 +195,11 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             return this;
         }
 
+        public Builder genwrappingjumpback(RRGParseItem genwrappingjumpback) {
+            this.genwrappingjumpback = genwrappingjumpback;
+            return this;
+        }
+
         public RRGParseItem build() {
             /*
              * System.out.println();
@@ -194,7 +208,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
              * System.out.println();
              * System.out.println();
              */
-            return new RRGParseItem(tree, node, nodepos, start, end, gaps, ws);
+            return new RRGParseItem(tree, node, nodepos, start, end, gaps, ws, genwrappingjumpback);
         }
     }
 }

@@ -191,7 +191,7 @@ public class RRGParseTree extends RRGTree {
                             + this.toString());
             return resultingTree;
         }
-	this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
+	    this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
         return resultingTree;
     }
 

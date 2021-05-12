@@ -44,13 +44,20 @@ public class Deducer {
      * @return
      */
     public RRGParseItem applyCombineSisters(RRGParseItem leftItem,
-            RRGParseItem rightItem) {
+                                            RRGParseItem rightItem) {
         Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
+        RRGParseItem jumpBackItem = (leftItem.getGenwrappingjumpback() != null) ?
+                leftItem.getGenwrappingjumpback() :
+                rightItem.getGenwrappingjumpback();
+        if (leftItem.getGenwrappingjumpback() != null && rightItem.getGenwrappingjumpback() != null) {
+            System.out.println("something strange: two jumpback items not zero during CSis: l: " + leftItem + ", r: " + rightItem);
+        }
         return new RRGParseItem.Builder().tree(rightItem.getTree())
                 .node(rightItem.getNode()).nodepos(RRGParseItem.NodePos.TOP)
                 .start(leftItem.startPos()).end(rightItem.getEnd()).gaps(gaps)
-                .ws(false).build();
+                .ws(false)
+                .genwrappingjumpback(jumpBackItem).build();
     }
 
     /**
@@ -74,7 +81,8 @@ public class Deducer {
         return new RRGParseItem.Builder().tree(currentItem.getTree())
                 .node(mothernode).nodepos(RRGParseItem.NodePos.BOT)
                 .start(currentItem.startPos()).end(currentItem.getEnd())
-                .gaps(currentItem.getGaps()).ws(newwsflag).build();
+                .gaps(currentItem.getGaps()).ws(newwsflag)
+                .genwrappingjumpback(currentItem.getGenwrappingjumpback()).build();
     }
 
     /**
@@ -89,6 +97,7 @@ public class Deducer {
                 .node(currentItem.getNode()).nodepos(RRGParseItem.NodePos.TOP)
                 .start(currentItem.startPos()).end(currentItem.getEnd())
                 .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
+                .genwrappingjumpback(currentItem.getGenwrappingjumpback())
                 .build();
     }
 
@@ -102,15 +111,21 @@ public class Deducer {
      * @return
      */
     public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister,
-            RRGParseItem auxTreeRoot) {
+                                        RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
-
+        RRGParseItem jumpBackItem = (targetSister.getGenwrappingjumpback() != null) ?
+                targetSister.getGenwrappingjumpback() :
+                auxTreeRoot.getGenwrappingjumpback();
+        if (targetSister.getGenwrappingjumpback() != null && auxTreeRoot.getGenwrappingjumpback() != null) {
+            System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + targetSister + ", a: " + auxTreeRoot);
+        }
         return new RRGParseItem.Builder().tree(targetSister.getTree())
                 .node(targetSister.getNode()).nodepos(targetSister.getNodePos())
                 .start(auxTreeRoot.startPos()).end(targetSister.getEnd())
-                .gaps(gaps).ws(false).build();
+                .gaps(gaps).ws(false)
+                .genwrappingjumpback(jumpBackItem).build();
     }
 
     /**
@@ -123,27 +138,59 @@ public class Deducer {
      * @return
      */
     public RRGParseItem applyRightAdjoin(RRGParseItem target,
-            RRGParseItem auxTreeRoot) {
+                                         RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
         Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
-
+        RRGParseItem jumpBackItem = (target.getGenwrappingjumpback() != null) ?
+                target.getGenwrappingjumpback() :
+                auxTreeRoot.getGenwrappingjumpback();
+        if (target.getGenwrappingjumpback() != null && auxTreeRoot.getGenwrappingjumpback() != null) {
+            System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + target + ", a: " + auxTreeRoot);
+        }
         // System.out.print(target.getTree());
         return new RRGParseItem.Builder().tree(target.getTree())
                 .node(target.getNode()).nodepos(target.getNodePos())
                 .start(target.startPos()).end(auxTreeRoot.getEnd()).gaps(gaps)
-                .ws(target.getwsflag()).build();
+                .ws(target.getwsflag())
+                .genwrappingjumpback(jumpBackItem).build();
+    }
+
+    public RRGParseItem applyGeneralizedCompleteWrapping(RRGParseItem targetItem, RRGParseItem fillerddaughterItem, Gap gap) {
+        return applyCW(targetItem, fillerddaughterItem, gap, true);
     }
 
     public RRGParseItem applyCompleteWrapping(RRGParseItem targetRootItem,
-            RRGParseItem fillerddaughterItem, Gap gap) {
-        Set<Gap> gaps = new HashSet<Gap>(targetRootItem.getGaps());
+                                              RRGParseItem fillerddaughterItem, Gap gap) {
+        return applyCW(targetRootItem, fillerddaughterItem, gap, false);
+    }
+
+    private RRGParseItem applyCW(RRGParseItem targetItem, RRGParseItem fillerddaughterItem, Gap gap, boolean generalized) {
+        Set<Gap> gaps = new HashSet<Gap>(targetItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
-        return new RRGParseItem.Builder().tree(fillerddaughterItem.getTree())
+        RRGParseItem.Builder builder = new RRGParseItem.Builder().tree(fillerddaughterItem.getTree())
                 .node(fillerddaughterItem.getNode())
                 .nodepos(fillerddaughterItem.getNodePos())
-                .start(targetRootItem.startPos()).end(targetRootItem.getEnd())
-                .gaps(gaps).ws(false).build();
+                .start(targetItem.startPos()).end(targetItem.getEnd())
+                .gaps(gaps).ws(false);
+        if (generalized) {
+            builder = builder.genwrappingjumpback(targetItem);
+        } else {
+            builder.genwrappingjumpback(targetItem.getGenwrappingjumpback());
+        }
+        return builder.build();
+    }
+
+    public RRGParseItem applyJumpBackAfterGenWrapping(RRGParseItem currentItem) {
+        RRGParseItem jumpBackItem = currentItem.getGenwrappingjumpback();
+        Set<Gap> gaps = new HashSet<>(currentItem.getGaps());
+        return new RRGParseItem.Builder().start(currentItem.startPos())
+                .end(currentItem.getEnd())
+                .tree(jumpBackItem.getTree())
+                .node(jumpBackItem.getNode())
+                .nodepos(RRGParseItem.NodePos.TOP)
+                .gaps(gaps)
+                .ws(false).build();
     }
 }

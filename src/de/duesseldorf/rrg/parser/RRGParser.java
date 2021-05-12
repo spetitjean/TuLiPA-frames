@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
@@ -113,7 +114,7 @@ public class RRGParser {
             }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
-            // System.out.println("current item: " + currentItem);
+            System.out.println(i + "\t" + currentItem);
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -124,7 +125,8 @@ public class RRGParser {
             predictwrapping(currentItem);
             combinesisters(currentItem);
             completeWrapping(currentItem);
-
+            generalizedCompleteWrapping(currentItem);
+            jumpBackAfterGenWrapping(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
         if (verbosePrintsToStdOut) {
@@ -132,7 +134,7 @@ public class RRGParser {
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
-        if (noExtractionForBigCharts && chart.computeSize() < 3000) {
+        if (noExtractionForBigCharts && chart.computeSize() > 3000) {
             System.out.println(
                     "ERROR: abort parse tree extraction because chart is too large: "
                             + chart.computeSize());
@@ -181,6 +183,33 @@ public class RRGParser {
         }
     }
 
+
+    private void jumpBackAfterGenWrapping(RRGParseItem currentItem) {
+        boolean isRootItemOfGenWrappingTree = requirementFinder.isJumpBackAntecedent(currentItem);
+        if (isRootItemOfGenWrappingTree) {
+            RRGParseItem consequent = deducer.applyJumpBackAfterGenWrapping(currentItem);
+            addToChartAndAgenda(consequent, Operation.GENCWJUMPBACK, currentItem);
+        }
+    }
+
+    private void generalizedCompleteWrapping(RRGParseItem currentItem) {
+        boolean rootItem = requirementFinder.isGeneralizedCompleteWrappingTargetItem(currentItem);
+        if (rootItem) {
+            for (Gap gap : currentItem.getGaps()) {
+                Set<RRGParseItem> completeWrappingFillterAntecedents =
+                        requirementFinder.findCompleteWrappingFillers(currentItem, gap, chart);
+                // keep only those where the node of the filler is a daughter of the root
+                completeWrappingFillterAntecedents = completeWrappingFillterAntecedents.stream().filter(
+                        item -> item.getNode().getGornaddress().mother().mother() == null
+                ).collect(Collectors.toSet());
+                for (RRGParseItem fillerddaughterItem : completeWrappingFillterAntecedents) {
+                    RRGParseItem consequent = deducer.applyGeneralizedCompleteWrapping(currentItem, fillerddaughterItem, gap);
+                    addToChartAndAgenda(consequent, Operation.GENCW, currentItem, fillerddaughterItem);
+                }
+            }
+        }
+    }
+
     private void completeWrapping(RRGParseItem currentItem) {
         // System.out.println("complW with " + currentItem);
         boolean rootItem = requirementFinder
@@ -200,7 +229,6 @@ public class RRGParser {
                             currentItem, fillerddaughterItem);
                 }
             }
-
         }
         if (fillerItem) {
             // System.out.println("TODO in Parser CW 2 " + currentItem);
@@ -350,6 +378,7 @@ public class RRGParser {
                                     .start(currentItem.startPos())
                                     .end(currentItem.getEnd())
                                     .gaps(currentItem.getGaps()).ws(false)
+                                    .genwrappingjumpback(currentItem.getGenwrappingjumpback())
                                     .build();
                             // System.out.println("cons: " + consequent);
                             addToChartAndAgenda(cons, Operation.SUBSTITUTE,
