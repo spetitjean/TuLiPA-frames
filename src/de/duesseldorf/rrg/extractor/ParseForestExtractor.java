@@ -323,7 +323,7 @@ public class ParseForestExtractor {
             // System.out.println("at: " + extractionstep.getGAInParseTree());
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().insertWrappedTree(gapItem.getTreeInstance(),
-                            extractionstep.getGAInParseTree(), dDaughter);
+                            extractionstep.getGAInParseTree(), dDaughter, false);
             // System.out.println("after wrapping: " + nextStepParseTree);
 
             // adjust Gorn Addresses here.

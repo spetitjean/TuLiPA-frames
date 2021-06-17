@@ -151,8 +151,8 @@ public class RRGParseTree extends RRGTree {
 
     public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
-        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, wrapRootItem.getTree().getId());
-        return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem);
+        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
+        return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
     }
 
     /**
@@ -169,7 +169,7 @@ public class RRGParseTree extends RRGTree {
      * @return
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
-            GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
+            GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
         int position = ddaughterAddress.isIthDaughter();
@@ -200,7 +200,11 @@ public class RRGParseTree extends RRGTree {
             for (int i = rootChildren.size() - 1; i >= 0; i--) {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
-            resultingTree.ids.add("WRAPPING::" + wrappedTree.getId());
+            if (internalWrapping) {
+                resultingTree.ids.add("INTERNAL_WRAPPING::" + wrappedTree.getId());
+            } else {
+                resultingTree.ids.add("WRAPPING::" + wrappedTree.getId());
+            }
             try {
                 resultingTree.setEnv(Environment.merge(resultingTree.getEnv(),
                         wrappedTree.getEnv()));
