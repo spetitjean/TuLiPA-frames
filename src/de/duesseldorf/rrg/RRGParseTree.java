@@ -150,9 +150,21 @@ public class RRGParseTree extends RRGTree {
     }
 
     public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
+	System.out.println("insertWrappedTreeForGeneralizedWrapping");
+	System.out.println("wrapRootItem");
+	System.out.println(wrapRootItem);
+	System.out.println("wrappingSubTrees");
+	System.out.println(wrappingSubTrees);
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
-        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
-        return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
+	System.out.println("wrappedNode:");
+	System.out.println(wrappedNode);
+	System.out.println(ddaughterItem.getTree().getId());
+	// what to do when wrappedNode is null?
+	if(wrappedNode == null){
+	    return this;
+	}
+	RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
+	return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
     }
 
     /**
@@ -178,10 +190,13 @@ public class RRGParseTree extends RRGTree {
         RRGNode targetNode = resultingTree.findNode(dmother);
         boolean wrappingPossible = true;
         RRGNode newTargetNode = null;
+	System.out.println("inserWrappedTree: unifying");
+	System.out.println(targetNode);
+	System.out.println((RRGNode) wrappedTree.getRoot());
         try {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
-        } catch (UnifyException e) {
+        } catch (UnifyException | NullPointerException e) {
             wrappingPossible = false;
         }
         if (wrappingPossible) {
@@ -264,7 +279,7 @@ public class RRGParseTree extends RRGTree {
                 // resultingTree.wrappingSubTrees.remove(0);
                 // resultingTree.ids.add("PREDWRAPPING::" +
                 // subTreeRoot.getCategory());
-            } catch (UnifyException e) {
+            } catch (UnifyException | NullPointerException e) {
                 // System.out.println(
                 // "adding a subtree at extracting predict wrapping was not
                 // possible");
@@ -350,11 +365,11 @@ public class RRGParseTree extends RRGTree {
             try {
                 result.setEnv(
                         Environment.merge(getEnv(), substitutionTree.getEnv()));
-            } catch (UnifyException e) {
+            } catch (UnifyException | NullPointerException e) {
                 System.out.println(
                         "ERROR: Not able to merge environments during substitution");
             }
-        } catch (UnifyException e) {
+        } catch (UnifyException | NullPointerException e) {
             System.err.println(
                     "node unification not possible on tree with id: " + this.getId());
             System.err.println("at GA " + address);
