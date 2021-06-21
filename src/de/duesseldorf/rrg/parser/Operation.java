@@ -34,5 +34,5 @@ public enum Operation {
     COMBINESIS, // combine sisters
     NLS, // no left sister
     SCAN, // scan
-    PREDICTWRAPPING, COMPLETEWRAPPING;
+    PREDICTWRAPPING, COMPLETEWRAPPING, GENCW, GENCWJUMPBACK;
 }

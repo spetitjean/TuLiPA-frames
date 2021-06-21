@@ -82,7 +82,9 @@ public class RRGParseChart {
                     // in a root
                     && rrgitem.getNode().getGornaddress().mother() == null
                     // in a STD node
-                    && rrgitem.getNode().getType().equals(RRGNodeType.STD);
+                    && rrgitem.getNode().getType().equals(RRGNodeType.STD)
+                    // no backpointers
+                    && rrgitem.getGenwrappingjumpback() == null;
             boolean axiomFits = axiom.equals("")
                     || rrgitem.getNode().getCategory().equals(axiom);
             if (goalReqsFromItem) {
