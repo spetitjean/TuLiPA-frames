@@ -336,7 +336,7 @@ public class RRGParseTree extends RRGTree {
                 System.out.println(
                         "ERROR: Not able to merge environments during sister adjunction");
             }
-        } catch (UnifyException e) {
+        } catch (UnifyException | NullPointerException e) {
             System.out.println(
                     "node unification not possible during sister adjunction");
         }

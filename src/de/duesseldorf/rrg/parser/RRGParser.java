@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import de.duesseldorf.frames.Situation;
@@ -52,6 +53,7 @@ public class RRGParser {
 
     private RRGParseChart chart;
     private ConcurrentSkipListSet<RRGParseItem> agenda;
+    private LinkedList<String> seenItems;
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
@@ -81,6 +83,7 @@ public class RRGParser {
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
+        this.seenItems = new LinkedList<String>();
         this.chart = new RRGParseChart(toksentence.size(), axiom);
 
         // System.out.println("Environments before parsing:");
@@ -115,7 +118,14 @@ public class RRGParser {
             }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
+	    if (seenItems.contains(currentItem.toString()))
+		continue;
+	    seenItems.add(currentItem.toString());
+	    // for (String one_item: seenItems)
+	    // 	System.out.println(one_item);
             System.out.println(i + "\t" + currentItem);
+            //System.out.println(currentItem.hashCode());
+            //System.out.println("Agenda size: "+agenda.size());
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -173,7 +183,10 @@ public class RRGParser {
     private void addToChartAndAgenda(RRGParseItem consequent,
                                      Operation operation, RRGParseItem... antecedents) {
         if (chart.addItem(consequent, operation, antecedents)) {
-            agenda.add(consequent);
+	    //System.out.println("Adding to agenda:");
+	    //System.out.println(consequent);
+	    if (!seenItems.contains(consequent.toString()))
+		agenda.add(consequent);
         }
         // Debug
         if (verbosePrintsToStdOut) {
@@ -242,9 +255,11 @@ public class RRGParser {
                             currentItem, fillerddaughterItem, gap);
                     // System.out.println("did a Compl Wrapping with: "
                     // + consequent + currentItem);
-                    addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
-                            currentItem, fillerddaughterItem);
-                }
+		    if (consequent != currentItem){
+			addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
+					    currentItem, fillerddaughterItem);
+		    }
+		}
             }
         }
         if (fillerItem) {
@@ -299,8 +314,13 @@ public class RRGParser {
                                     .end(currentItem.getEnd()).gaps(gaps)
                                     .ws(false).build();
                             // System.out.println("cons: " + consequent);
-                            addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
-                                    currentItem);
+			    if(cons != currentItem){
+				// System.out.println("Adding to agenda in predictwrapping:");
+				// System.out.println(cons);
+				// System.out.println(currentItem);
+				addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
+						    currentItem);
+			    }
                         }
                     }
                 }
@@ -327,6 +347,7 @@ public class RRGParser {
                 // System.out.println("THERE: " + simpleRRGParseItem);
                 RRGParseItem consequent = deducer.applyLeftAdjoin(target,
                         currentItem);
+		//System.out.println("Adding to agenda in sisteradjoin:");
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         currentItem, target);
             }
@@ -337,6 +358,7 @@ public class RRGParser {
             for (RRGParseItem target : rightAdjoinAntecedents) {
                 RRGParseItem consequent = deducer.applyRightAdjoin(target,
                         currentItem);
+		//System.out.println("Adding to agenda in sisteradjoin:");
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
                         currentItem);
             }
@@ -354,6 +376,7 @@ public class RRGParser {
             for (RRGParseItem auxRootItem : sisadjroots.get("l")) {
                 RRGParseItem consequent = deducer.applyLeftAdjoin(currentItem,
                         auxRootItem);
+		//System.out.println("Adding to agenda [1]:");
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         auxRootItem, currentItem);
             }
@@ -361,6 +384,7 @@ public class RRGParser {
             for (RRGParseItem auxRootItem : sisadjroots.get("r")) {
                 RRGParseItem consequent = deducer.applyRightAdjoin(currentItem,
                         auxRootItem);
+		//System.out.println("Adding to agenda [2]:");
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
                         currentItem, auxRootItem);
                 // System.out.println(auxRootItem + " and " + currentItem
@@ -400,8 +424,11 @@ public class RRGParser {
                                     .genwrappingjumpback(currentItem.getGenwrappingjumpback())
                                     .build();
                             // System.out.println("cons: " + consequent);
-                            addToChartAndAgenda(cons, Operation.SUBSTITUTE,
-                                    currentItem);
+			    if (cons != currentItem){
+				//System.out.println("Adding to agenda [3]:");
+				addToChartAndAgenda(cons, Operation.SUBSTITUTE,
+						currentItem);
+			    }
                         }
                     }
                 }
@@ -414,8 +441,11 @@ public class RRGParser {
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
             RRGParseItem newItem = deducer.applyMoveUp(currentItem);
-            addToChartAndAgenda(newItem, Operation.MOVEUP, currentItem);
-        }
+	    //System.out.println("Adding to agenda [4]:");
+	    if (newItem != currentItem){
+		addToChartAndAgenda(newItem, Operation.MOVEUP, currentItem);
+	    }
+	}
     }
 
     private void combinesisters(RRGParseItem currentItem) {
@@ -430,7 +460,8 @@ public class RRGParser {
             RRGParseItem rightSisTopItem = deducer.applyCombineSisters(
                     currentItem, rightSisterAntecedentItem);
             // System.out.println(rightSisTopItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
+	    //System.out.println("Adding to agenda [5]:");
+	    addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
                     currentItem, rightSisterAntecedentItem);
         }
         // case 2: currentItem is the right node of the combination
@@ -439,7 +470,8 @@ public class RRGParser {
         for (RRGParseItem leftSisterAntecedentItem : leftSisterCandidates) {
             RRGParseItem rightSisTopItem = deducer
                     .applyCombineSisters(leftSisterAntecedentItem, currentItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
+	    //System.out.println("Adding to agenda [6]:");
+	    addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
                     leftSisterAntecedentItem, currentItem);
 
         }
@@ -457,8 +489,10 @@ public class RRGParser {
         if (nlsrequirements) {
 
             RRGParseItem newItem = deducer.applyNoLeftSister(currentItem);
-
-            addToChartAndAgenda(newItem, Operation.NLS, currentItem);
+	    //System.out.println("Adding to agenda [7]:");
+	    if(newItem != currentItem){
+		addToChartAndAgenda(newItem, Operation.NLS, currentItem);
+	    }
         }
     }
 
@@ -483,7 +517,8 @@ public class RRGParser {
                                 .tree(tree).node(lexLeaf).nodepos(NodePos.BOT)
                                 .start(start).end(start + 1)
                                 .gaps(new HashSet<Gap>()).ws(false).build();
-                        addToChartAndAgenda(scannedItem, Operation.SCAN);
+			//System.out.println("Adding to agenda [8]:");
+			addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
                 }
             }

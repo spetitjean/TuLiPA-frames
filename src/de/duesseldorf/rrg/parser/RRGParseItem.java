@@ -99,9 +99,27 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
 
     @Override
     public boolean equals(Object o) {
+        // if (o instanceof RRGParseItem) {
+        //     return o.hashCode() == this.hashCode();
+        // }
         if (o instanceof RRGParseItem) {
-            return o.hashCode() == this.hashCode();
+            return o.toString() == this.toString();
         }
+        // if (o instanceof RRGParseItem) {
+	//     // System.out.println("Comparing");
+	//     // System.out.println(this);
+	//     // System.out.println(o);
+        //     return
+	// 	this.tree == ((RRGParseItem)(o)).getTree() &&
+	// 	this.node == ((RRGParseItem)(o)).getNode() &&
+	// 	this.nodepos == ((RRGParseItem)(o)).getNodePos() &&
+	// 	this.start == ((RRGParseItem)(o)).startPos() &&
+	// 	this.end == ((RRGParseItem)(o)).getEnd() &&
+	// 	this.gaps == ((RRGParseItem)(o)).getGaps() &&
+	// 	this.ws == ((RRGParseItem)(o)).getwsflag() &&
+	// 	this.genwrappingjumpback == ((RRGParseItem)(o)).getGenwrappingjumpback();
+
+        // }
         return false;
     }
 
@@ -128,11 +146,16 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         if (this.equals(o)) {
             return 0;
         }
-        if (o.startPos() < this.startPos()) {
-            return 1;
-        } else {
-            return -1;
-        }
+	return this.toString().compareTo(o.toString());
+        // if (o.hashCode() < this.hashCode()) {
+	//     return 1;
+	// }
+        // if (o.startPos() < this.startPos()) {
+        //     return 1;
+        //}
+	// else {
+        //     return -1;
+        // }
     }
 
     /**
