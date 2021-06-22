@@ -1,5 +1,7 @@
 package de.duesseldorf.rrg.parser;
 
+import java.util.Objects;
+
 /**
  * represents the gaps in wrapping substitution (see deductino rules)
  * 
@@ -44,4 +46,35 @@ class Gap {
     public String toString() {
         return "(" + start + ", " + end + ", " + nonterminal + ")";
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end, nonterminal);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Gap) {
+            return this.hashCode() == o.hashCode();
+        }
+        return false;
+    }
+
+    public int compareTo(Gap o) {
+        if (this.equals(o)) {
+            return 0;
+        }
+        if (o.start < this.start) {
+            return 1;
+        } else if (o.start > this.start) {
+            return -1;
+        }
+        if (o.end < this.end) {
+            return 1;
+        } else if (o.end > this.end) {
+            return -1;
+        }
+        return this.nonterminal.compareTo(o.nonterminal);
+    }
+
 }
