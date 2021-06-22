@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
@@ -18,6 +19,7 @@ import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.ui.ParsingInterface;
 import de.tuebingen.tag.Environment;
+import de.tuebingen.tree.Node;
 
 /**
  * File RRGParser.java
@@ -64,13 +66,13 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
-	this.treesInvolvedInParsing = new HashSet<RRGTree>();
-	for (RRGTree rrgtree : treesInvolvedInParsing){
-	    RRGTree another_rrgtree = new RRGTree(rrgtree);
-	    another_rrgtree.setEnv(new Environment(5));
-	    this.treesInvolvedInParsing.add(another_rrgtree);    
-	}
-	//System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
+        this.treesInvolvedInParsing = new HashSet<RRGTree>();
+        for (RRGTree rrgtree : treesInvolvedInParsing) {
+            RRGTree another_rrgtree = new RRGTree(rrgtree);
+            another_rrgtree.setEnv(new Environment(5));
+            this.treesInvolvedInParsing.add(another_rrgtree);
+        }
+        //System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
 
     }
 
@@ -81,14 +83,14 @@ public class RRGParser {
         this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
         this.chart = new RRGParseChart(toksentence.size(), axiom);
 
-	// System.out.println("Environments before parsing:");
-	    
-	// for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
-	//     System.out.println(rrgtree.getEnv());
-	// }
+        // System.out.println("Environments before parsing:");
+
+        // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+        //     System.out.println(rrgtree.getEnv());
+        // }
 
 
-	// Axioms through scanning:
+        // Axioms through scanning:
         scan(toksentence);
 
         this.requirementFinder = new RequirementFinder();
@@ -113,7 +115,7 @@ public class RRGParser {
             }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
-            // System.out.println("current item: " + currentItem);
+            System.out.println(i + "\t" + currentItem);
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -124,7 +126,8 @@ public class RRGParser {
             predictwrapping(currentItem);
             combinesisters(currentItem);
             completeWrapping(currentItem);
-
+            generalizedCompleteWrapping(currentItem);
+            jumpBackAfterGenWrapping(currentItem);
             // System.out.println("Agenda size: " + agenda.size());
         }
         if (verbosePrintsToStdOut) {
@@ -132,7 +135,7 @@ public class RRGParser {
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
-        if (noExtractionForBigCharts && chart.computeSize() < 3000) {
+        if (noExtractionForBigCharts && chart.computeSize() > 3000) {
             System.out.println(
                     "ERROR: abort parse tree extraction because chart is too large: "
                             + chart.computeSize());
@@ -140,23 +143,23 @@ public class RRGParser {
         } else {
 
 
-	    // System.out.println("Environments after parsing:");
-	    
-	    // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
-	    // 	System.out.println(rrgtree.getEnv());
-	    // }
+            // System.out.println("Environments after parsing:");
 
-	    
+            // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+            // 	System.out.println(rrgtree.getEnv());
+            // }
+
+
             // extract parse results from chart
             ParseForestExtractor extractor = new ParseForestExtractor(chart,
                     toksentence);
             RRGParseResult result = extractor.extractParseTrees();
 
-	    // System.out.println("Environments after extraction:");
-		
-	    // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
-	    // 	System.out.println(rrgtree.getEnv());
-	    // }
+            // System.out.println("Environments after extraction:");
+
+            // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
+            // 	System.out.println(rrgtree.getEnv());
+            // }
 
             return result;
         }
@@ -165,11 +168,10 @@ public class RRGParser {
 
     /**
      * @param consequent
-     * @param antecedents
-     *            always give the antecedent items in left-to-right order
+     * @param antecedents always give the antecedent items in left-to-right order
      */
     private void addToChartAndAgenda(RRGParseItem consequent,
-            Operation operation, RRGParseItem... antecedents) {
+                                     Operation operation, RRGParseItem... antecedents) {
         if (chart.addItem(consequent, operation, antecedents)) {
             agenda.add(consequent);
         }
@@ -178,6 +180,50 @@ public class RRGParser {
             System.out.println("next to agenda: " + consequent + "\n\t "
                     + operation + "\n\t antecedents: "
                     + Arrays.asList(antecedents));
+        }
+    }
+
+
+    private void jumpBackAfterGenWrapping(RRGParseItem currentItem) {
+        boolean isRootItemOfGenWrappingTree = requirementFinder.isJumpBackAntecedent(currentItem);
+        if (isRootItemOfGenWrappingTree) {
+            RRGParseItem consequent = deducer.applyJumpBackAfterGenWrapping(currentItem);
+            addToChartAndAgenda(consequent, Operation.GENCWJUMPBACK, currentItem);
+        }
+    }
+
+    private void generalizedCompleteWrapping(RRGParseItem currentItem) {
+        boolean rootItem = requirementFinder.isGeneralizedCompleteWrappingTargetItem(currentItem);
+        if (rootItem) {
+            for (Gap gap : currentItem.getGaps()) {
+                Set<RRGParseItem> completeWrappingFillterAntecedents =
+                        requirementFinder.findCompleteWrappingFillers(currentItem, gap, chart);
+                // keep only those where the node of the filler is a daughter of the root
+                completeWrappingFillterAntecedents = completeWrappingFillterAntecedents.stream().filter(
+                        item -> item.getNode().getGornaddress().mother().mother() == null
+                ).collect(Collectors.toSet());
+                // find out if you moved one up or if you try to wrap around a single node
+                Set<Set<RRGParseItem>> combineSisAntecedents = chart.getBackPointers(currentItem).getAntecedents(Operation.COMBINESIS);
+                boolean wrappedAroundSameNode = false;
+                for (Set<RRGParseItem> combsisants : combineSisAntecedents) {
+                    RRGParseItem botCSAntecedent = combsisants.stream().filter(item -> item.getNodePos().equals(NodePos.BOT)).findFirst().orElse(null);
+                    if (botCSAntecedent != null) {
+                        Set<Set<RRGParseItem>> pwantecedents = chart.getBackPointers(botCSAntecedent).getAntecedents(Operation.PREDICTWRAPPING);
+                        for (Set<RRGParseItem> pwantecedent : pwantecedents) {
+                            RRGParseItem pwantecedentItem = pwantecedent.stream().findFirst().orElse(null);
+                            if (completeWrappingFillterAntecedents.stream().anyMatch((item) -> item.equals(pwantecedentItem))) {
+                                wrappedAroundSameNode = true;
+                            }
+                        }
+                    }
+                }
+                if (!wrappedAroundSameNode) {
+                    for (RRGParseItem fillerddaughterItem : completeWrappingFillterAntecedents) {
+                        RRGParseItem consequent = deducer.applyGeneralizedCompleteWrapping(currentItem, fillerddaughterItem, gap);
+                        addToChartAndAgenda(consequent, Operation.GENCW, currentItem, fillerddaughterItem);
+                    }
+                }
+            }
         }
     }
 
@@ -200,7 +246,6 @@ public class RRGParser {
                             currentItem, fillerddaughterItem);
                 }
             }
-
         }
         if (fillerItem) {
             // System.out.println("TODO in Parser CW 2 " + currentItem);
@@ -350,6 +395,7 @@ public class RRGParser {
                                     .start(currentItem.startPos())
                                     .end(currentItem.getEnd())
                                     .gaps(currentItem.getGaps()).ws(false)
+                                    .genwrappingjumpback(currentItem.getGenwrappingjumpback())
                                     .build();
                             // System.out.println("cons: " + consequent);
                             addToChartAndAgenda(cons, Operation.SUBSTITUTE,

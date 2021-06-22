@@ -849,7 +849,7 @@ public class ParsingInterface {
                 };
                 Future<RRGParseResult> future = executor.submit(task);
                 try {
-                    result = future.get(500, TimeUnit.SECONDS);
+                    result = future.get(500, TimeUnit.MINUTES);
                 } catch (Exception e) {
                     System.out.println("parsing failed due to exception: " + e);
                     e.printStackTrace();

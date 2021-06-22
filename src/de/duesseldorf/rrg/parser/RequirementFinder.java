@@ -83,12 +83,11 @@ public class RequirementFinder {
      * - end of left item is start of right item
      *
      * @param leftSister
-     * @param chart
-     *            look up here
+     * @param chart      look up here
      * @return
      */
     public Set<RRGParseItem> findCombineSisRightSisters(RRGParseItem leftSister,
-            RRGParseChart chart) {
+                                                        RRGParseChart chart) {
         Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
         // find the right sister, which already ensures we are in the same tree
         RRGNode rightSis = leftSister.getTree()
@@ -97,7 +96,7 @@ public class RequirementFinder {
         boolean leftReq = rightSis != null // there is a right sister
                 && !leftSister.getwsflag() // no WS
                 && leftSister.getNodePos() // the left item is in TOP position
-                        .equals(RRGParseItem.NodePos.TOP);
+                .equals(RRGParseItem.NodePos.TOP);
 
         if (leftReq) {
             // System.out.println("starter: " + leftSister);
@@ -118,7 +117,7 @@ public class RequirementFinder {
     }
 
     public Set<RRGParseItem> findCombineSisLeftSisters(RRGParseItem rightSister,
-            RRGParseChart chart) {
+                                                       RRGParseChart chart) {
         Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
         // case 2: current item is the right node of the combination
         RRGNode leftSis = rightSister.getTree()
@@ -128,8 +127,8 @@ public class RequirementFinder {
                 && rightSister.getNode().getGornaddress().hasLeftSister()
                 && !rightSister.getwsflag() // no WS
                 && rightSister.getNodePos() // the right item is in BOT
-                        // position
-                        .equals(RRGParseItem.NodePos.BOT);
+                // position
+                .equals(RRGParseItem.NodePos.BOT);
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
             RRGParseItem model = new RRGParseItem.Builder()
@@ -169,7 +168,7 @@ public class RequirementFinder {
      *
      * @param item
      * @return {@code true} iff {@code item} is in the root of a sister
-     *         adjunction tree
+     * adjunction tree
      */
     public boolean isSisadjRoot(RRGParseItem item) {
         boolean result = item.getNode().getGornaddress().mother() == null && // 1a
@@ -180,14 +179,13 @@ public class RequirementFinder {
     }
 
     /**
-     * @param sisAdjRoot
-     *            is the root of a sister adjunction tree
+     * @param sisAdjRoot is the root of a sister adjunction tree
      * @param chart
      * @return All items in the chart that the {@code sisAdjRoot} node might
-     *         left-sister-adjoin to.
+     * left-sister-adjoin to.
      */
     public Set<RRGParseItem> findLeftAdjoinTargets(RRGParseItem sisAdjRoot,
-            RRGParseChart chart) {
+                                                   RRGParseChart chart) {
         // create a template for the items that might perform leftAdjoin with
         // currentItem
         // Before Refactor
@@ -215,14 +213,13 @@ public class RequirementFinder {
     }
 
     /**
-     * @param sisadjroot
-     *            is the root of a sister adjunction tree
+     * @param sisadjroot is the root of a sister adjunction tree
      * @param chart
      * @return All items in the chart that the {@code sisAdjRoot} node might
-     *         right-sister-adjoin to.
+     * right-sister-adjoin to.
      */
     public Set<RRGParseItem> findRightAdjoinTargets(RRGParseItem sisadjroot,
-            RRGParseChart chart) {
+                                                    RRGParseChart chart) {
         // RRGParseItem model = new RRGParseItem(null, null, RRGParseItem
         // .NodePos.TOP,
         // -2, sisadjroot.startPos(), null,
@@ -238,11 +235,11 @@ public class RequirementFinder {
      * @param sisadjroot
      * @param targetCandidates
      * @return A set of items X such that every item in X is in targetCandidates
-     *         and the mother of the node has the same label as the mother of
-     *         the (sister adjunction) root item sisadjroot.
+     * and the mother of the node has the same label as the mother of
+     * the (sister adjunction) root item sisadjroot.
      */
     private Set<RRGParseItem> filterByMother(RRGParseItem sisadjroot,
-            Set<RRGParseItem> targetCandidates) {
+                                             Set<RRGParseItem> targetCandidates) {
         Set<RRGParseItem> filteredCandidates = new HashSet<RRGParseItem>();
         for (RRGParseItem candidate : targetCandidates) {
             if (suitableMother(sisadjroot, candidate))
@@ -259,7 +256,7 @@ public class RequirementFinder {
      * @param root
      * @param target
      * @return true iff the node in root has the same label as the mother of the
-     *         node in target
+     * node in target
      */
     private boolean suitableMother(RRGParseItem root, RRGParseItem target) {
         RRGNode targetMother = target.getTree()
@@ -282,8 +279,8 @@ public class RequirementFinder {
      * @param currentItem
      * @param chart
      * @return A map with two entries. The entrie "l" maps to a set with all
-     *         items suited for left-adjunction, the "r" entrie contains right
-     *         adjoin root items.
+     * items suited for left-adjunction, the "r" entrie contains right
+     * adjoin root items.
      */
     public Map<String, Set<RRGParseItem>> findSisAdjRoots(
             RRGParseItem currentItem, RRGParseChart chart) {
@@ -372,9 +369,21 @@ public class RequirementFinder {
      * @return
      */
     public boolean isCompleteWrappingRootItem(RRGParseItem currentItem) {
+        return isGeneralizedCompleteWrappingTargetItem(currentItem) // 1,3
+                && currentItem.getNode().getGornaddress().mother() == null; // 2
+    }
+
+    /**
+     * needed:<br>
+     * 1. in TOP position<br>
+     * 2. at least one gap <br>
+     *
+     * @param currentItem
+     * @return
+     */
+    public boolean isGeneralizedCompleteWrappingTargetItem(RRGParseItem currentItem) {
         return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
-                && currentItem.getNode().getGornaddress().mother() == null // 2
-                && currentItem.getGaps().size() > 0; // 3
+                && currentItem.getGaps().size() > 0; // 2
     }
 
     /**
@@ -402,8 +411,7 @@ public class RequirementFinder {
      * @param chart
      * @return
      */
-    public Set<RRGParseItem> findCompleteWrappingFillers(
-            RRGParseItem targetRootItem, Gap gap, RRGParseChart chart) {
+    public Set<RRGParseItem> findCompleteWrappingFillers(RRGParseItem targetRootItem, Gap gap, RRGParseChart chart) {
         /*
          * RRGParseItem model = new RRGParseItem(null, null, NodePos.BOT,
          * gap.start,
@@ -415,7 +423,6 @@ public class RequirementFinder {
                 false);
         Set<RRGParseItem> candidatesWithFittingCats = new HashSet<RRGParseItem>();
         for (RRGParseItem item : candidates) {
-
             boolean gapHasRightLabel = item.getNode().getCategory()
                     .equals(gap.nonterminal);
             boolean targetRootSuitsDMother = true;
@@ -450,7 +457,7 @@ public class RequirementFinder {
      * @return
      */
     public Set<RRGParseItem> findCompleteWrappingRoots(RRGParseItem fillerItem,
-            RRGParseChart chart) {
+                                                       RRGParseChart chart) {
         Gap modelgap = new Gap(fillerItem.startPos(), fillerItem.getEnd(),
                 fillerItem.getNode().getCategory());
         Set<Gap> modelgaps = new HashSet<Gap>();
@@ -463,5 +470,17 @@ public class RequirementFinder {
         RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
                 .gaps(modelgaps).ws(false).build();
         return chart.findUnderspecifiedItem(model, true);
+    }
+
+    /**
+     * in root pos (1) and TOP position (1) and has a jumpback item (3)
+     *
+     * @param currentItem
+     * @return
+     */
+    public boolean isJumpBackAntecedent(RRGParseItem currentItem) {
+        return currentItem.getNode().getGornaddress().mother() == null && // 1
+                currentItem.getNodePos() == NodePos.TOP && // 2
+                currentItem.getGenwrappingjumpback() != null; // 3
     }
 }
