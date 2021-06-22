@@ -363,7 +363,6 @@ public class TreeSelector {
                             // e.printStackTrace();
                         }
                         if (match) {
-				   
                             // build an RRGNode and attach it below the anchor
                             // node
 			    List<Tuple> allLexSem = new LinkedList();
@@ -414,7 +413,7 @@ public class TreeSelector {
 			    // there is no frame to be paired with this tree, anchor it 
 			    else{
 				Environment env = new Environment(5);
-				tree.setFrameSem(new Frame());
+				//tree.setFrameSem(new Frame());
 				anchorRRG(il, tree, env);
 			    }
 
@@ -479,7 +478,11 @@ public class TreeSelector {
 	    
 	}
 	catch (UnifyException e) {
-	    //e.printStackTrace();
+	    e.printStackTrace();
+	    System.err.println("Anchoring failed");
+	    System.err.println(anchorNode.getNodeFs());
+	    System.err.println(il.getLref().getFeatures());
+
 	}   
 	
     }
