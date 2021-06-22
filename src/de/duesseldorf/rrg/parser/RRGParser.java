@@ -115,7 +115,7 @@ public class RRGParser {
             }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
-            System.out.println(i + "\t" + currentItem);
+            //System.out.println(i + "\t" + currentItem);
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
