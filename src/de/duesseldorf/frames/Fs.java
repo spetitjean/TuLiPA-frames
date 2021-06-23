@@ -124,11 +124,16 @@ public class Fs {
             this.coref = null;
             AVlist = new Hashtable<String, Value>();
         } else {
-            this.type = new Type(fs.getType());
-            if (fs.getType() != null && fs.getType().getVar() != null) {
+            this.is_typed = fs.isTyped();
+	    if(fs.getType() != null){
+		this.type = null;
+		this.is_typed = false;
+	    }
+	    else
+		this.type = new Type(fs.getType());
+            if (type != null && type.getVar() != null) {
                 this.type.setVar(new Value(fs.getType().getVar(), nf));
             }
-            this.is_typed = fs.isTyped();
             if (fs.getCoref() != null) {
                 this.coref = new Value(fs.getCoref(), nf);
             }

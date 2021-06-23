@@ -145,10 +145,10 @@ public class RRGParseChart {
                     || model.getEnd() == ((RRGParseItem) s).getEnd();
             if (endCheck) {
                 boolean treeCheck = model.getTree() == null
-                        || model.getTree().equals(((RRGParseItem) s).getTree());
+		    || model.getTree().getInstance().equals(((RRGParseItem) s).getTree().getInstance());
                 if (treeCheck) {
                     boolean nodeCheck = model.getNode() == null || model
-                            .getNode().equals(((RRGParseItem) s).getNode());
+			.getNode().copyNode().equals(((RRGParseItem) s).getNode().copyNode());
                     if (nodeCheck) {
                         boolean posCheck = model.getNodePos() == null
                                 || model.getNodePos().equals(

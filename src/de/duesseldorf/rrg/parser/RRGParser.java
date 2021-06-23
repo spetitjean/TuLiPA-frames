@@ -113,7 +113,7 @@ public class RRGParser {
             }
             i++;
             RRGParseItem currentItem = agenda.pollFirst();
-            // System.out.println("current item: " + currentItem);
+	    //System.out.println("current item: " + currentItem);
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -171,8 +171,14 @@ public class RRGParser {
     private void addToChartAndAgenda(RRGParseItem consequent,
             Operation operation, RRGParseItem... antecedents) {
         if (chart.addItem(consequent, operation, antecedents)) {
+	    //System.out.println("Not in chart:");
+	    System.out.println(consequent);
             agenda.add(consequent);
         }
+	else{
+	    //System.out.println("Consequent already in chart:");
+	    //System.out.println(consequent);
+	}
         // Debug
         if (verbosePrintsToStdOut) {
             System.out.println("next to agenda: " + consequent + "\n\t "
@@ -196,6 +202,10 @@ public class RRGParser {
                             currentItem, fillerddaughterItem, gap);
                     // System.out.println("did a Compl Wrapping with: "
                     // + consequent + currentItem);
+		    
+		    //System.out.println("Adding item for completeWrapping");
+		    //System.out.println(consequent);
+
                     addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
                             currentItem, fillerddaughterItem);
                 }
@@ -238,9 +248,12 @@ public class RRGParser {
                     for (RRGNode substNode : substNodes) {
                         boolean nodeUnificationPossible = true;
                         try {
-                            RRGTreeTools.unifyNodes(substNode,
-                                    currentItem.getNode(),
-                                    currentItem.getTree().getEnv());
+                            // RRGTreeTools.unifyNodes(substNode,
+                            //         currentItem.getNode(),
+                            //         currentItem.getTree().getEnv());
+                            RRGTreeTools.unifyNodes(substNode.copyNode(),
+			    	    currentItem.getNode().copyNode(),
+			    	    new Environment(5));
                         } catch (UnifyException e) {
                             nodeUnificationPossible = false;
                         }
@@ -248,12 +261,14 @@ public class RRGParser {
                         if (nodeUnificationPossible) {
                             // System.out.println("got to for: " + substNode);
                             RRGParseItem cons = new RRGParseItem.Builder()
-                                    .tree(tree).node(substNode)
+				.tree(tree.getInstance()).node(substNode.copyNode())
                                     .nodepos(NodePos.BOT)
                                     .start(currentItem.startPos())
                                     .end(currentItem.getEnd()).gaps(gaps)
                                     .ws(false).build();
                             // System.out.println("cons: " + consequent);
+			    //System.out.println("Adding item for predictWrapping");
+			    //System.out.println(cons);
                             addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
                                     currentItem);
                         }
@@ -270,6 +285,7 @@ public class RRGParser {
      * expensive. But we probably cant survive without it)
      */
     private void sisteradjoin(RRGParseItem currentItem) {
+	//System.out.println("sisteradjoin");
         boolean sisadjroot = requirementFinder.isSisadjRoot(currentItem);
         boolean sisAdjTarget = requirementFinder.isSisadjTarget(currentItem);
         // System.out.print(root);
@@ -328,8 +344,13 @@ public class RRGParser {
     }
 
     private void substitute(RRGParseItem currentItem) {
+	//System.out.println("substitute");
+	//System.out.println(currentItem.getNode());
         if (requirementFinder.substituteReq(currentItem)) {
             for (RRGTree tree : treesInvolvedInParsing) {
+		// System.out.println("trying tree");
+		// System.out.println(tree);
+		
                 Set<RRGNode> substNodes = tree.getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
@@ -337,15 +358,19 @@ public class RRGParser {
                         // System.out.println("got to for: " + substNode);
                         boolean checkIfUnificationWorks = true;
                         try {
-                            RRGTreeTools.unifyNodes(substNode,
-                                    currentItem.getNode(),
-                                    currentItem.getTree().getEnv());
+                            // RRGTreeTools.unifyNodes(substNode,
+                            //         currentItem.getNode(),
+                            //         currentItem.getTree().getEnv());
+                            RRGTreeTools.unifyNodes(substNode.copyNode(),
+			    	    currentItem.getNode().copyNode(),
+			    	    new Environment(5));
                         } catch (UnifyException e) {
+			    //System.out.println("Failed unification");
                             checkIfUnificationWorks = false;
                         }
                         if (checkIfUnificationWorks) {
                             RRGParseItem cons = new RRGParseItem.Builder()
-                                    .tree(tree).node(substNode)
+				.tree(tree.getInstance()).node(substNode.copyNode())
                                     .nodepos(NodePos.BOT)
                                     .start(currentItem.startPos())
                                     .end(currentItem.getEnd())
@@ -362,6 +387,7 @@ public class RRGParser {
     }
 
     private void moveup(RRGParseItem currentItem) {
+	//System.out.println("moveup");
         // System.out.println("currentnode: " + currentItem.getNode());
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
@@ -371,7 +397,7 @@ public class RRGParser {
     }
 
     private void combinesisters(RRGParseItem currentItem) {
-
+	//System.out.println("combinesisters");
         // case 1: currentItem is the left node of the combination
         Set<RRGParseItem> rightSisterCandidates = requirementFinder
                 .findCombineSisRightSisters(currentItem, chart);
@@ -404,7 +430,7 @@ public class RRGParser {
      * @param currentItem
      */
     private void noleftsister(RRGParseItem currentItem) {
-
+	//System.out.println("noleftsister");
         boolean nlsrequirements = requirementFinder.nlsReq(currentItem);
         if (nlsrequirements) {
 
@@ -418,6 +444,7 @@ public class RRGParser {
      * apply the scanning deduction rule
      */
     private void scan(List<String> sentence) {
+	//System.out.println("scan");
         // Look at all trees
         for (RRGTree tree : treesInvolvedInParsing) {
             //System.out.println("RRGParser scan: "+tree);
@@ -432,7 +459,7 @@ public class RRGParser {
                         // If so, create a new item and add it to the chart and
                         // agenda
                         RRGParseItem scannedItem = new RRGParseItem.Builder()
-                                .tree(tree).node(lexLeaf).nodepos(NodePos.BOT)
+			    .tree(tree.getInstance()).node(lexLeaf.copyNode()).nodepos(NodePos.BOT)
                                 .start(start).end(start + 1)
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);

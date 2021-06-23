@@ -11,6 +11,7 @@ import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGTreeTools;
 import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
 import de.duesseldorf.util.GornAddress;
+import de.tuebingen.tag.Environment;
 
 /**
  * File RequirementFinder.java
@@ -103,7 +104,7 @@ public class RequirementFinder {
             // System.out.println("starter: " + leftSister);
 
             RRGParseItem model = new RRGParseItem.Builder()
-                    .tree(leftSister.getTree()).node(rightSis)
+		.tree(leftSister.getTree().getInstance()).node(rightSis.copyNode())
                     .nodepos(NodePos.BOT).start(leftSister.getEnd()).ws(false)
                     .build();
             // System.out.println("model: " + model);
@@ -133,7 +134,7 @@ public class RequirementFinder {
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
             RRGParseItem model = new RRGParseItem.Builder()
-                    .tree(rightSister.getTree()).node(leftSis)
+		.tree(rightSister.getTree().getInstance()).node(leftSis.copyNode())
                     .nodepos(NodePos.TOP).end(rightSister.startPos()).ws(false)
                     .build();
             // System.out.println("right req met for: " + currentItem);
@@ -263,12 +264,13 @@ public class RequirementFinder {
      */
     private boolean suitableMother(RRGParseItem root, RRGParseItem target) {
         RRGNode targetMother = target.getTree()
-                .findNode(target.getNode().getGornaddress().mother());
+	    .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
+	    targetMother = targetMother.copyNode();
             boolean nodeUnificationPossible = true;
             try {
-                RRGTreeTools.unifyNodes(root.getNode(), targetMother,
-                        root.getTree().getEnv());
+                RRGTreeTools.unifyNodes(root.getNode().copyNode(), targetMother,
+					new Environment(5));
             } catch (UnifyException e) {
                 nodeUnificationPossible = false;
             }
@@ -420,10 +422,10 @@ public class RequirementFinder {
                     .equals(gap.nonterminal);
             boolean targetRootSuitsDMother = true;
             try {
-                RRGTreeTools.unifyNodes(targetRootItem.getNode(),
+                RRGTreeTools.unifyNodes(targetRootItem.getNode().copyNode(),
                         item.getTree().findNode(
-                                item.getNode().getGornaddress().mother()),
-                        item.getTree().getEnv());
+						item.getNode().getGornaddress().mother()).copyNode(),
+					new Environment(5));
             } catch (UnifyException e) {
                 targetRootSuitsDMother = false;
             }

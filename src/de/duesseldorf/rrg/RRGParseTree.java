@@ -157,6 +157,7 @@ public class RRGParseTree extends RRGTree {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
         } catch (UnifyException e) {
+	    System.out.println("Unification failed in insertWrappedTree");
             wrappingPossible = false;
         }
         if (wrappingPossible) {
@@ -235,9 +236,7 @@ public class RRGParseTree extends RRGTree {
                 // resultingTree.ids.add("PREDWRAPPING::" +
                 // subTreeRoot.getCategory());
             } catch (UnifyException e) {
-                // System.out.println(
-                // "adding a subtree at extracting predict wrapping was not
-                // possible");
+                System.out.println("adding a subtree at extracting predict wrapping was not possible");
                 return null;
             }
         } else {

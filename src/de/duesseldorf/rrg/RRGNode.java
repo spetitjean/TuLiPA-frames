@@ -331,5 +331,9 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     	}
     	return newNode;
     }
+
+    public RRGNode copyNode(){
+	return this.copyNode(new NameFactory());
+    }
     
 }

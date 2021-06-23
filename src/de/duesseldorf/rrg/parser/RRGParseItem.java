@@ -117,14 +117,21 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     public int compareTo(RRGParseItem o) {
-        if (this.equals(o)) {
-            return 0;
-        }
-        if (o.startPos() < this.startPos()) {
-            return 1;
-        } else {
-            return -1;
-        }
+	if(this.hashCode() == o.hashCode()){
+	    return 0;
+	}
+	if(this.hashCode() > o.hashCode())
+	    return 1;
+	return -1;
+	// System.out.println("Using compareTo in RRGParseItem");
+        // if (this.equals(o)) {
+        //     return 0;
+        // }
+        // if (o.startPos() < this.startPos()) {
+        //     return 1;
+        // } else {
+        //     return -1;
+        // }
     }
 
     /**

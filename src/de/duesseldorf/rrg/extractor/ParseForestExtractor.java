@@ -89,6 +89,7 @@ public class ParseForestExtractor {
      *            item and creates the initial extraction step from that item
      */
     private ExtractionStep initialExtractionStep(RRGParseItem goal) {
+	System.out.println(goal);
         ExtractionStep result = new ExtractionStep(goal, new GornAddress(),
                 new RRGParseTree(goal.getTreeInstance()), 0);	
         return result;
@@ -115,6 +116,7 @@ public class ParseForestExtractor {
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
+	System.out.println(extractionstep);
         // distinguish different operations here
         // NLS
         parsesInThisStep.addAll(extractNLS(
@@ -151,7 +153,7 @@ public class ParseForestExtractor {
 
 
 	// System.out.println("\nParses in this step after right adjoins:");
-	// System.out.println(parsesInThisStep);
+	System.out.println(parsesInThisStep);
 	
 	
         // Complete-Wrapping
@@ -229,9 +231,11 @@ public class ParseForestExtractor {
                         nextStepParseTree,
                         extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisPWStep.addAll(extract(nextStep));
-            } else
+            } else{
+		System.out.println("Wrapping failed");
                 throw new WrappingException();
-        }
+	    }
+	}
         return parsesInThisPWStep;
     }
 

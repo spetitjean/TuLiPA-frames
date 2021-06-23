@@ -9,5 +9,4 @@ package de.duesseldorf.rrg.extractor;
  *
  */
 public class WrappingException extends Exception {
-
 }

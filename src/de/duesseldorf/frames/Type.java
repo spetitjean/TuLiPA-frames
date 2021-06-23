@@ -153,8 +153,13 @@ public final class Type {
     }
 
     public Set<String> getElementaryTypes() {
-        Set<String> e = new HashSet<String>(elemTypes);
-        return e;
+	if(elemTypes != null){
+	    Set<String> e = new HashSet<String>(elemTypes);
+	    return e;
+	}
+	else
+	    return new HashSet<String>();	    
+        
     }
 
     /**
