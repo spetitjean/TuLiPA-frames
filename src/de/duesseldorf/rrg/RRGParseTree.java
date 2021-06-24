@@ -211,11 +211,17 @@ public class RRGParseTree extends RRGTree {
             RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
+	System.out.println("Getting ");
+	System.out.println(ddaughterItem);
+	System.out.println(" in ");
+	System.out.println(resultingTree.wrappingSubTrees);
 
-        // System.out.println("target GA: " + ddaughterAbsAddress);
-        // System.out.println("in tree:\n" + resultingTree);
-        // System.out.println("parseTree target node: "
-        // + resultingTree.findNode(ddaughterAbsAddress));
+	System.out.println(subTreeRoot);
+
+        System.out.println("target GA: " + ddaughterAbsAddress);
+        System.out.println("in tree:\n" + resultingTree);
+        System.out.println("parseTree target node: "
+        + resultingTree.findNode(ddaughterAbsAddress));
         // System.out.println(
         // "subtree: " + RRGTreeTools.recursivelyPrintNode(subTreeRoot));
         RRGNode ddaughter = resultingTree.findNode(ddaughterAbsAddress);

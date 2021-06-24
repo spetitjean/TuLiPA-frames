@@ -116,7 +116,10 @@ public class ParseForestExtractor {
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
+	System.out.println("Extraction step:");
 	System.out.println(extractionstep);
+	System.out.println("backPointers:");
+	System.out.println(backPointers);
         // distinguish different operations here
         // NLS
         parsesInThisStep.addAll(extractNLS(
@@ -153,8 +156,9 @@ public class ParseForestExtractor {
 
 
 	// System.out.println("\nParses in this step after right adjoins:");
-	System.out.println(parsesInThisStep);
-	
+	// System.out.println(parsesInThisStep);
+
+	System.out.println("complete wrapping");
 	
         // Complete-Wrapping
         Set<Set<RRGParseItem>> coWrAntecedents = backPointers
@@ -162,6 +166,8 @@ public class ParseForestExtractor {
         parsesInThisStep.addAll(
                 extractCompleteWrapping(coWrAntecedents, extractionstep));
 
+	System.out.println("predict wrapping");
+	
         // Predict-Wrapping
 
         Set<Set<RRGParseItem>> prWrAntecedents = backPointers
@@ -205,6 +211,8 @@ public class ParseForestExtractor {
             ExtractionStep extractionstep) throws WrappingException {
 
         Set<RRGParseTree> parsesInThisPWStep = new HashSet<RRGParseTree>();
+	System.out.println("predictWrappingAntecedents");
+	System.out.println(predictWrappingAntecedents);
         for (Set<RRGParseItem> predictWrappingantecedentItemsingletonList : predictWrappingAntecedents) {
             if (verbosePrintsToStdOut) {
                 System.out.println(Operation.PREDICTWRAPPING);
@@ -214,17 +222,26 @@ public class ParseForestExtractor {
             // + predictWrappingantecedentItemsingletonList);
             // System.out.println("step: " + extractionstep);
 
+	    System.out.println("predictWrappingantecedentItemsingletonList:");
+	    System.out.println(predictWrappingantecedentItemsingletonList);
+            
+	    
             RRGParseItem predictWrappingAntecedentItem = (RRGParseItem) predictWrappingantecedentItemsingletonList
                     .iterator().next();
+	    System.out.println("predictWrappingAntecedentItem:");
+	    System.out.println(predictWrappingAntecedentItem);
             GornAddress ddaughterAbsAddress = new GornAddress(
                     extractionstep.getGAInParseTree());
+	    System.out.println("ddaughterAbsAddress:");
+	    System.out.println(ddaughterAbsAddress);
             // insert the subtree stored in the RRGParseTree at the correct GA
             // (seems to work)
-            // continue extraction from there with same GA
-
+            // continue extraction from there with same GA	    
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().addWrappingSubTree(
                             ddaughterAbsAddress, predictWrappingAntecedentItem);
+	    System.out.println("nextStepParseTree:");
+	    System.out.println(nextStepParseTree);
             if (nextStepParseTree != null) {
                 ExtractionStep nextStep = new ExtractionStep(
                         predictWrappingAntecedentItem, ddaughterAbsAddress,
@@ -233,8 +250,9 @@ public class ParseForestExtractor {
                 parsesInThisPWStep.addAll(extract(nextStep));
             } else{
 		System.out.println("Wrapping failed");
-                throw new WrappingException();
+                //throw new WrappingException();
 	    }
+	    System.out.println("Next antecedent");
 	}
         return parsesInThisPWStep;
     }
