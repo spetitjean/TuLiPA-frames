@@ -815,29 +815,29 @@ public class ParsingInterface {
         } else {
             sentences.add(sent);
         }
-	System.err.println(sentences);
+        System.err.println(sentences);
         //// 1 parse sentences
         long startParsingTime = System.nanoTime();
         Integer sentenceCounter = 0;
         for (String sentence : sentences) {
 
-	    // it seems like the grammar trees and their environments get modified during parsing
-	    // this should probably not happen
-	    ((RRG) Situation.getGrammar()).resetAnchoredTrees();
-	    for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
-	    	rrgtree.setEnv(new Environment(5));
-		
-	    }
+            // it seems like the grammar trees and their environments get modified during parsing
+            // this should probably not happen
+            ((RRG) Situation.getGrammar()).resetAnchoredTrees();
+            for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()) {
+                rrgtree.setEnv(new Environment(5));
 
-	    List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
+            }
+
+            List<String> toksentence = Arrays.asList(sentence.split("\\s+"));
             RRGParseResult result = new RRGParseResult.Builder().build();
             System.out.println("RRG grammar needs anchoring: "
                     + ((Boolean) Situation.getGrammar().needsAnchoring())
                     .toString());
             RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
             Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
-	    //System.err.println("\n---------------------\nTrees involved in parsing: "+treesInvolvedInParsing);
-	    
+            //System.err.println("\n---------------------\nTrees involved in parsing: "+treesInvolvedInParsing);
+
             if (!op.check("brack2XML")) {
                 ExecutorService executor = Executors.newCachedThreadPool();
                 Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
@@ -859,7 +859,7 @@ public class ParsingInterface {
                 }
             } else { // hack for converting .tsv grammar to xml grammar
                 Set<RRGParseTree> elementaryTreeSet = RRGTools.convertTreeSet(
-                        (((RRG) Situation.getGrammar()).getTrees()));		
+                        (((RRG) Situation.getGrammar()).getTrees()));
                 result = new RRGParseResult.Builder()
                         .successfulParses(elementaryTreeSet).build();
             }

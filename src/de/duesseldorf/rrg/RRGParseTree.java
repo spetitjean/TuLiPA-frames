@@ -17,31 +17,30 @@ import de.tuebingen.tree.Node;
 
 /**
  * File RRGParseTree.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class RRGParseTree extends RRGTree {
 
@@ -95,7 +94,7 @@ public class RRGParseTree extends RRGTree {
 
     /**
      * replace the id of this parse tree with
-     * 
+     *
      * @param newId
      */
     public void setId(String newId) {
@@ -111,11 +110,10 @@ public class RRGParseTree extends RRGTree {
     }
 
     /**
-     * 
      * @param tree
      * @return {@code true} iff {@code this} and {@code tree} have the same
-     *         non-unique id of the elementary tree providing the root for
-     *         {@code this}.
+     * non-unique id of the elementary tree providing the root for
+     * {@code this}.
      */
     public boolean idequals(RRGTree tree) {
         return this.getId().equals(tree.getId());
@@ -153,29 +151,29 @@ public class RRGParseTree extends RRGTree {
 
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
 
-	// what to do when wrappedNode is null?
-	if(wrappedNode == null){
-	    return this;
-	}
-	RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
-	return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
+        // what to do when wrappedNode is null?
+        if (wrappedNode == null) {
+            return this;
+        }
+        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
+        return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
     }
 
     /**
      * TODO deal with substitution of the tree below ddaughter. Keep that
      * subtree somewhere?
-     * 
+     * <p>
      * Returns a new tree that is a (hopefully deep) copy of the one the method
      * is called on.
      * The method inserts all children of the root of wrappedTree at the
      * position where the node ddaughter used to be. The ddaughter is The
      * GornAddressees of all
      * dmother's children further right might be affected, and are updated.
-     * 
+     *
      * @return
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
-            GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
+                                          GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
         int position = ddaughterAddress.isIthDaughter();
@@ -227,7 +225,7 @@ public class RRGParseTree extends RRGTree {
             return resultingTree;
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
-	    this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
+        this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
         return resultingTree;
     }
 
@@ -235,15 +233,13 @@ public class RRGParseTree extends RRGTree {
      * Corresponding to the predict wrapping step. At the absolute address of
      * the ddaughter in that parseTree, add the subtree of the wrapping tree
      * below the ddaughter.
-     * 
-     * 
-     * 
+     *
      * @param ddaughterAbsAddress
      * @param ddaughterItem
      * @return null if no fitting subtree available
      */
     public RRGParseTree addWrappingSubTree(GornAddress ddaughterAbsAddress,
-            RRGParseItem ddaughterItem) {
+                                           RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
 
@@ -281,22 +277,20 @@ public class RRGParseTree extends RRGTree {
 
     /**
      * TODO do I need to create a deep copy of the adjoining tree?
-     * 
+     * <p>
      * Returns a new tree that is a (hopefully deep) copy of the one the method
      * is called on. Method sister-adjoins the adjoining tree at the GA
      * targetAddress (root of adjoiningtree and targetAddress node are unified.
-     * 
-     * @param adjoiningTree
-     *            root of that tree must have only one daughter.
+     *
+     * @param adjoiningTree root of that tree must have only one daughter.
      * @param targetAddress
-     * @param position
-     *            indicates at which position sisteradjunction happens. position
-     *            = 0 means that the adjoining tree is added as leftmost sister,
-     *            position = 1 that the adjoining tree has one left sister etc.
+     * @param position      indicates at which position sisteradjunction happens. position
+     *                      = 0 means that the adjoining tree is added as leftmost sister,
+     *                      position = 1 that the adjoining tree has one left sister etc.
      * @return
      */
     public RRGParseTree sisterAdjoin(RRGTree adjoiningTree,
-            GornAddress targetAddress, int position) {
+                                     GornAddress targetAddress, int position) {
         // System.out.println(
         // "Sister adjunction at GA" + targetAddress + "pos: " + position);
         // System.out.println("in tree: " + this.toString());
@@ -333,12 +327,12 @@ public class RRGParseTree extends RRGTree {
         // }
 
         // System.out.println("resultingTree: " + result);
-	this.getFrameSem().addOtherFrame(adjoiningTree.getFrameSem());
+        this.getFrameSem().addOtherFrame(adjoiningTree.getFrameSem());
         return result;
     }
 
     public RRGParseTree substitute(RRGTree substitutionTree,
-            GornAddress address) {
+                                   GornAddress address) {
         RRGParseTree result = new RRGParseTree(this);
         // can we substitute?
         // System.out.println("address: " + address);
@@ -364,22 +358,22 @@ public class RRGParseTree extends RRGTree {
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);
             //System.exit(0);
-        }	
-	this.getFrameSem().addOtherFrame(substitutionTree.getFrameSem());
+        }
+        this.getFrameSem().addOtherFrame(substitutionTree.getFrameSem());
         return result;
     }
 
     /**
      * Did I mess up this method, because it adds the root of the subtree as a
      * daughter?
-     * 
+     *
      * @param address
      * @param subTree
      * @param position
      * @return
      */
     public RRGParseTree addSubTree(GornAddress address, RRGTree subTree,
-            int position) {
+                                   int position) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode motherOfSubtree = resultingTree.findNode(address);
         motherOfSubtree.addXchild(subTree.getRoot(), position);

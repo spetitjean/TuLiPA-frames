@@ -1,9 +1,5 @@
 package de.duesseldorf.rrg.extractor;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -13,36 +9,37 @@ import de.duesseldorf.rrg.parser.Operation;
 import de.duesseldorf.rrg.parser.RRGParseChart;
 import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.duesseldorf.util.GornAddress;
-import de.tuebingen.tree.Node;
 import de.tuebingen.util.TextUtilities;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * File NewParseForestExtractor.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class ParseForestExtractor {
 
@@ -56,7 +53,7 @@ public class ParseForestExtractor {
     private List<String> toksentence;
 
     public ParseForestExtractor(RRGParseChart parseChart,
-            List<String> toksentence) {
+                                List<String> toksentence) {
         this.parseChart = parseChart;
         this.toksentence = toksentence;
         this.resultingParses = new ConcurrentSkipListSet<RRGParseTree>();
@@ -66,7 +63,7 @@ public class ParseForestExtractor {
         // find goal items in the chart. Extract them all and add the set of
         // parse trees derived from them to the resulting parses
 
-	Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
+        Set<RRGParseItem> goals = parseChart.retrieveGoalItems();
         //if (verbosePrintsToStdOut) {
         System.out.println("goal items: " + goals);
         //}
@@ -76,19 +73,18 @@ public class ParseForestExtractor {
             Set<RRGParseTree> resultingTrees = extract(initExtrStep);
             addToResultingParses(resultingTrees);
         });
-	return ParseForestPostProcessor
-	    .postProcessParseTreeSet(resultingParses);
+        return ParseForestPostProcessor
+                .postProcessParseTreeSet(resultingParses);
     }
 
     /**
      * this method takes a
-     * 
-     * @param goal
-     *            item and creates the initial extraction step from that item
+     *
+     * @param goal item and creates the initial extraction step from that item
      */
     private ExtractionStep initialExtractionStep(RRGParseItem goal) {
         ExtractionStep result = new ExtractionStep(goal, new GornAddress(),
-                new RRGParseTree(goal.getTreeInstance()), 0);	
+                new RRGParseTree(goal.getTreeInstance()), 0);
         return result;
     }
 
@@ -105,8 +101,8 @@ public class ParseForestExtractor {
     private Set<RRGParseTree> extract(ExtractionStep extractionstep) {
         Backpointer backPointers = parseChart
                 .getBackPointers(extractionstep.getCurrentItem());
-	    // Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
-	    Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
+        // Set<RRGParseTree> parsesInThisStep = new ConcurrentSkipListSet<RRGParseTree>();
+        Set<RRGParseTree> parsesInThisStep = new HashSet<RRGParseTree>();
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
@@ -189,10 +185,10 @@ public class ParseForestExtractor {
         // addExtractionStepToAllTrees(
         // parsesInThisStep, extractionstep);
 
-	// System.out.println("\nParses in this step:");
-	// System.out.println(parsesInThisStep);
-	
-	return parsesInThisStep;
+        // System.out.println("\nParses in this step:");
+        // System.out.println(parsesInThisStep);
+
+        return parsesInThisStep;
     }
 
     private Set<RRGParseTree> extractJumpBack(Set<Set<RRGParseItem>> jumpbackAntecedents, ExtractionStep extractionstep) {
@@ -205,15 +201,15 @@ public class ParseForestExtractor {
             RRGParseItem jumpbackAntecedent = itemset.iterator().next();
             RRGTree wrappingTree = jumpbackAntecedent.getTree();
             /**int ddaughterIndex = -1;
-            for (int i = 0; i < wrappingTree.getRoot().getChildren().size(); i++) {
-                RRGNode ithDaughter = (RRGNode) wrappingTree.getRoot().getChildren().get(i);
-                if (ithDaughter.getType().equals(RRGNodeType.DDAUGHTER)) {
-                    break;
-                }
-            }*/
+             for (int i = 0; i < wrappingTree.getRoot().getChildren().size(); i++) {
+             RRGNode ithDaughter = (RRGNode) wrappingTree.getRoot().getChildren().get(i);
+             if (ithDaughter.getType().equals(RRGNodeType.DDAUGHTER)) {
+             break;
+             }
+             }*/
             GornAddress currentGA = extractionstep.getGAInParseTree();
             RRGParseTree nextStepParseTree = currentParseTree.insertWrappingTree(wrappingTree, currentGA, jumpbackAntecedent.getGenwrappingjumpback());
-            ExtractionStep nextStep =  new ExtractionStep(jumpbackAntecedent, currentGA, nextStepParseTree, extractionstep.getGoToRightWhenGoingDown());
+            ExtractionStep nextStep = new ExtractionStep(jumpbackAntecedent, currentGA, nextStepParseTree, extractionstep.getGoToRightWhenGoingDown());
             parsesInThisStep.addAll(extract(nextStep));
             // first extract all arms to the right of the ddaguther
             // then jumpback
@@ -237,7 +233,7 @@ public class ParseForestExtractor {
             // + predictWrappingantecedentItemsingletonList);
             // System.out.println("step: " + extractionstep);
 
-	    
+
             RRGParseItem predictWrappingAntecedentItem = (RRGParseItem) predictWrappingantecedentItemsingletonList
                     .iterator().next();
             GornAddress ddaughterAbsAddress = new GornAddress(
@@ -256,7 +252,7 @@ public class ParseForestExtractor {
                         extractionstep.getGoToRightWhenGoingDown());
                 parsesInThisPWStep.addAll(extract(nextStep));
             }
-	}
+        }
         return parsesInThisPWStep;
     }
 
@@ -328,7 +324,7 @@ public class ParseForestExtractor {
             ExtractionStep nextStep = new ExtractionStep(gapItem,
                     shiftedGAInParseTree, nextStepParseTree,
                     extractionstep.getGAInParseTree().isIthDaughter()
-            /* + extractionstep.getGoToRightWhenGoingDown() */);
+                    /* + extractionstep.getGoToRightWhenGoingDown() */);
             parsesInThisCWStep.addAll(extract(nextStep));
         }
         return parsesInThisCWStep;
@@ -387,8 +383,8 @@ public class ParseForestExtractor {
             // System.out.println("nextStep: " + nextStep);
             // System.out.println("tmpResult: " + tmpResult);
         }
-	// System.out.println("\nparses in this right adj step:");
-	// System.out.println(parsesInThisRightAdjStep);	
+        // System.out.println("\nparses in this right adj step:");
+        // System.out.println(parsesInThisRightAdjStep);
         return parsesInThisRightAdjStep;
     }
 
@@ -427,7 +423,7 @@ public class ParseForestExtractor {
             for (RRGParseTree rrgParseTree : tmpResult) {
                 int position = Math
                         .max(extractionstep.getGAInParseTree().isIthDaughter()
-                /* extractionstep.getGoToRightWhenGoingDown() */, 0);
+                                /* extractionstep.getGoToRightWhenGoingDown() */, 0);
                 RRGParseTree nextStepParseTree = rrgParseTree.sisterAdjoin(
                         auxRootItem.getTreeInstance(),
                         extractionstep.getGAInParseTree().mother(), position);
@@ -579,7 +575,7 @@ public class ParseForestExtractor {
     }
 
     private Set<RRGParseTree> extractNLS(Set<Set<RRGParseItem>> nlsAntecedents,
-            ExtractionStep extractionstep) {
+                                         ExtractionStep extractionstep) {
         Set<RRGParseTree> parsesInThisNLSStep = new HashSet<RRGParseTree>();
         for (Set<RRGParseItem> antecedentItemSingletonList : nlsAntecedents) {
             if (verbosePrintsToStdOut) {
