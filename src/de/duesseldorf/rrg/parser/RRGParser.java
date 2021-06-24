@@ -171,8 +171,6 @@ public class RRGParser {
     private void addToChartAndAgenda(RRGParseItem consequent,
                                      Operation operation, RRGParseItem... antecedents) {
         if (chart.addItem(consequent, operation, antecedents)) {
-	    //System.out.println("Not in chart:");
-	    System.out.println(consequent);
             agenda.add(consequent);
         }
 	else{

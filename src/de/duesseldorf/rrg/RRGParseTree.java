@@ -150,15 +150,9 @@ public class RRGParseTree extends RRGTree {
     }
 
     public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
-	System.out.println("insertWrappedTreeForGeneralizedWrapping");
-	System.out.println("wrapRootItem");
-	System.out.println(wrapRootItem);
-	System.out.println("wrappingSubTrees");
-	System.out.println(wrappingSubTrees);
+
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
-	System.out.println("wrappedNode:");
-	System.out.println(wrappedNode);
-	System.out.println(ddaughterItem.getTree().getId());
+
 	// what to do when wrappedNode is null?
 	if(wrappedNode == null){
 	    return this;
@@ -190,14 +184,10 @@ public class RRGParseTree extends RRGTree {
         RRGNode targetNode = resultingTree.findNode(dmother);
         boolean wrappingPossible = true;
         RRGNode newTargetNode = null;
-	System.out.println("inserWrappedTree: unifying");
-	System.out.println(targetNode);
-	System.out.println((RRGNode) wrappedTree.getRoot());
         try {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
         } catch (UnifyException | NullPointerException e) {
-	    System.out.println("Unification failed in insertWrappedTree");
             wrappingPossible = false;
         }
         if (wrappingPossible) {
@@ -256,17 +246,10 @@ public class RRGParseTree extends RRGTree {
             RRGParseItem ddaughterItem) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         RRGNode subTreeRoot = resultingTree.wrappingSubTrees.get(ddaughterItem);
-	System.out.println("Getting ");
-	System.out.println(ddaughterItem);
-	System.out.println(" in ");
-	System.out.println(resultingTree.wrappingSubTrees);
 
-	System.out.println(subTreeRoot);
-
-        System.out.println("target GA: " + ddaughterAbsAddress);
-        System.out.println("in tree:\n" + resultingTree);
-        System.out.println("parseTree target node: "
-        + resultingTree.findNode(ddaughterAbsAddress));
+        // System.out.println("target GA: " + ddaughterAbsAddress);
+        // System.out.println("in tree:\n" + resultingTree);
+        // System.out.println("parseTree target node: " + resultingTree.findNode(ddaughterAbsAddress));
         // System.out.println(
         // "subtree: " + RRGTreeTools.recursivelyPrintNode(subTreeRoot));
         RRGNode ddaughter = resultingTree.findNode(ddaughterAbsAddress);
