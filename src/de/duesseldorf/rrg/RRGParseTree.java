@@ -56,7 +56,7 @@ public class RRGParseTree extends RRGTree {
     public RRGParseTree(Node root, String id) {
         super(root, id);
         this.ids = new LinkedList<String>();
-        ids.add("ROOT::" + id);
+        ids.add("ROOT::" + id + "::" + this.getLexNodes().keySet().toString());
         this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
         this.extractionsteps = new LinkedList<ExtractionStep>();
     }
@@ -75,7 +75,7 @@ public class RRGParseTree extends RRGTree {
             this.extractionsteps = ((RRGParseTree) tree).getExtractionsteps();
         } else {
             this.ids = new LinkedList<String>();
-            this.ids.add("ROOT::" + tree.getId());
+            this.ids.add("ROOT::" + tree.getId() + "::" + this.getLexNodes().keySet().toString());
             this.wrappingSubTrees = new HashMap<RRGParseItem, RRGNode>();
             this.extractionsteps = new LinkedList<ExtractionStep>();
         }
@@ -205,9 +205,9 @@ public class RRGParseTree extends RRGTree {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
             if (internalWrapping) {
-                resultingTree.ids.add("INTERNAL_WRAPPING::" + wrappedTree.getId());
+                resultingTree.ids.add("INTERNAL_WRAPPING::" + this.getId() + "::" + this.getLexNodes().keySet());
             } else {
-                resultingTree.ids.add("WRAPPING::" + wrappedTree.getId());
+                resultingTree.ids.add("WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
             }
             try {
                 resultingTree.setEnv(Environment.merge(resultingTree.getEnv(),
@@ -310,7 +310,7 @@ public class RRGParseTree extends RRGTree {
             result.setNode(targetAddress, newTargetNode);
             newTargetNode.addXchild(
                     adjoiningTree.getRoot().getChildren().get(0), position);
-            result.ids.add("SISTERADJOIN::" + adjoiningTree.getId());
+            result.ids.add("SISTERADJOIN::" + adjoiningTree.getId() + "::" + adjoiningTree.getLexNodes().keySet());
             try {
                 result.setEnv(
                         Environment.merge(getEnv(), adjoiningTree.getEnv()));
@@ -343,7 +343,7 @@ public class RRGParseTree extends RRGTree {
             RRGNode substNodeWithFs = RRGTreeTools.unifyNodes(
                     (RRGNode) substitutionTree.getRoot(), targetNode, getEnv());
             result.setNode(address, substNodeWithFs);
-            result.ids.add("SUBST::" + substitutionTree.getId());
+            result.ids.add("SUBST::" + substitutionTree.getId() + "::" + substitutionTree.getLexNodes().keySet());
             try {
                 result.setEnv(
                         Environment.merge(getEnv(), substitutionTree.getEnv()));
