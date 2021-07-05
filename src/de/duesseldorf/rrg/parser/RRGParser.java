@@ -57,12 +57,13 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
-        this.treesInvolvedInParsing = new HashSet<RRGTree>();
+        this.treesInvolvedInParsing = new ConcurrentSkipListSet<RRGTree>();
         for (RRGTree rrgtree : treesInvolvedInParsing) {
             RRGTree another_rrgtree = new RRGTree(rrgtree);
             another_rrgtree.setEnv(new Environment(5));
             this.treesInvolvedInParsing.add(another_rrgtree);
         }
+        //Collections.sort(this.treesInvolvedInParsing);
         //System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
     }
 
@@ -100,12 +101,11 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
+            RRGParseItem currentItem = agenda.pollFirst();
             if (verbosePrintsToStdOut) {
-                System.out.println("step: " + i);
+                System.out.println("step: " + i + "\t" + currentItem);
             }
             i++;
-            RRGParseItem currentItem = agenda.pollFirst();
-	    System.out.println("start"+currentItem);
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -120,7 +120,7 @@ public class RRGParser {
             jumpBackAfterGenWrapping(currentItem);
         }
         if (verbosePrintsToStdOut) {
-            // System.out.println("Done parsing. \n" + chart.toString());
+            System.out.println("Done parsing. \n" + chart.toString());
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
