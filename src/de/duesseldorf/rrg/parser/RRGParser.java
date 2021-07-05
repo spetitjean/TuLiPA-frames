@@ -57,12 +57,13 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
-        this.treesInvolvedInParsing = new HashSet<RRGTree>();
+        this.treesInvolvedInParsing = new LinkedList<>();
         for (RRGTree rrgtree : treesInvolvedInParsing) {
             RRGTree another_rrgtree = new RRGTree(rrgtree);
             another_rrgtree.setEnv(new Environment(5));
             this.treesInvolvedInParsing.add(another_rrgtree);
         }
+        Collections.sort(this.treesInvolvedInParsing);
         //System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
     }
 
@@ -100,11 +101,11 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
+            RRGParseItem currentItem = agenda.pollFirst();
             if (verbosePrintsToStdOut) {
-                System.out.println("step: " + i);
+                System.out.println("step: " + i + "\t" + currentItem);
             }
             i++;
-            RRGParseItem currentItem = agenda.pollFirst();
             if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
                 noleftsister(currentItem);
             } else {
@@ -120,7 +121,7 @@ public class RRGParser {
             // System.out.println("Agenda size: " + agenda.size());
         }
         if (verbosePrintsToStdOut) {
-            // System.out.println("Done parsing. \n" + chart.toString());
+            System.out.println("Done parsing. \n" + chart.toString());
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
@@ -379,7 +380,7 @@ public class RRGParser {
         //System.out.println(currentItem.getNode());
         if (requirementFinder.substituteReq(currentItem)) {
             for (RRGTree tree : treesInvolvedInParsing) {
-                Set<RRGNode> substNodes = tree.getSubstNodes()
+                Set<RRGNode> substNodes = tree.getInstance().getSubstNodes()
                         .get(currentItem.getNode().getCategory());
                 if (substNodes != null) {
                     for (RRGNode substNode : substNodes) {
