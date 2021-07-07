@@ -68,10 +68,11 @@ public class ParseForestExtractor {
         System.out.println("goal items: " + goals);
         //}
         goals.stream().forEach((goal) -> {
-            ExtractionStep initExtrStep = initialExtractionStep(
-                    (RRGParseItem) goal);
-            Set<RRGParseTree> resultingTrees = extract(initExtrStep);
-            addToResultingParses(resultingTrees);
+		System.out.println("goal item: " + goal);
+		ExtractionStep initExtrStep = initialExtractionStep(
+								    (RRGParseItem) goal);
+		Set<RRGParseTree> resultingTrees = extract(initExtrStep);
+		addToResultingParses(resultingTrees);
         });
         return ParseForestPostProcessor
                 .postProcessParseTreeSet(resultingParses);

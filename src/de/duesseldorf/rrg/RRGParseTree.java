@@ -314,11 +314,11 @@ public class RRGParseTree extends RRGTree {
             try {
                 result.setEnv(
                         Environment.merge(getEnv(), adjoiningTree.getEnv()));
-            } catch (UnifyException e) {
+            } catch (UnifyException | NullPointerException e) {
                 System.out.println(
                         "ERROR: Not able to merge environments during sister adjunction");
             }
-        } catch (UnifyException e) {
+        } catch (UnifyException | NullPointerException e) {
             System.out.println(
                     "node unification not possible during sister adjunction");
         }
