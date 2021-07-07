@@ -371,13 +371,15 @@ public class RequirementFinder {
      * @return
      */
     public boolean isCompleteWrappingRootItem(RRGParseItem currentItem) {
-        return isGeneralizedCompleteWrappingTargetItem(currentItem) // 1,3
+        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
+                && currentItem.getGaps().size() > 0 // 3
                 && currentItem.getNode().getGornaddress().mother() == null; // 2
     }
 
     /**
      * needed:<br>
      * 1. in TOP position<br>
+     * 2. of a non-root node
      * 2. at least one gap <br>
      *
      * @param currentItem
@@ -385,7 +387,8 @@ public class RequirementFinder {
      */
     public boolean isGeneralizedCompleteWrappingTargetItem(RRGParseItem currentItem) {
         return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
-                && currentItem.getGaps().size() > 0; // 2
+                && currentItem.getGaps().size() > 0 // 2
+                && currentItem.getNode().getGornaddress().mother() != null;
     }
 
     /**
@@ -401,6 +404,21 @@ public class RequirementFinder {
         return (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
                 && currentItem.getwsflag() == true // 2
                 && currentItem.getNode().getGornaddress().mother() != null; // 3
+    }
+
+    /**
+     * needed: <br>
+     * 1. BOT position<br>
+     * 2. ws=yes<br>
+     * 3. is a daughter of the root node<br>
+     *
+     * @param item
+     * @return
+     */
+    public boolean isInternalCompleteWrappingFillerItem(RRGParseItem item) {
+        return (item.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
+                && item.getwsflag() //2
+                && item.getNode().getGornaddress().getAddress().size() == 1;
     }
 
     /**
