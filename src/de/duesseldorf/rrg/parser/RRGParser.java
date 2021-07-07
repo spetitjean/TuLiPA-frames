@@ -57,7 +57,7 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
-        this.treesInvolvedInParsing = new ConcurrentSkipListSet<RRGTree>();
+        this.treesInvolvedInParsing = new LinkedList<>();
         for (RRGTree rrgtree : treesInvolvedInParsing) {
             RRGTree another_rrgtree = new RRGTree(rrgtree);
             another_rrgtree.setEnv(new Environment(5));
