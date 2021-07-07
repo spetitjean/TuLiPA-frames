@@ -1,5 +1,6 @@
 package de.duesseldorf.rrg.extractor;
 
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
@@ -353,12 +354,17 @@ public class ParseForestExtractor {
                 auxRootItem = it.next();
                 targetItem = candidate1;
             }
-            RRGParseTree nextStepParseTree = extractionstep
-                    .getCurrentParseTree().sisterAdjoin(auxRootItem.getTreeInstance(),
-                            extractionstep.getGAInParseTree().mother(),
-                            extractionstep.getGAInParseTree().isIthDaughter()
-                                    + extractionstep.getGoToRightWhenGoingDown()
-                                    + 1);
+            RRGParseTree nextStepParseTree = null;
+            try {
+                nextStepParseTree = extractionstep
+                        .getCurrentParseTree().sisterAdjoin(auxRootItem.getTreeInstance(),
+                                extractionstep.getGAInParseTree().mother(),
+                                extractionstep.getGAInParseTree().isIthDaughter()
+                                        + extractionstep.getGoToRightWhenGoingDown()
+                                        + 1);
+            } catch (UnifyException e) {
+                continue;
+            }
             // extract aux tree:
             ExtractionStep nextStep = new ExtractionStep(auxRootItem,
                     extractionstep.getGAInParseTree().mother(),
@@ -424,9 +430,15 @@ public class ParseForestExtractor {
                 int position = Math
                         .max(extractionstep.getGAInParseTree().isIthDaughter()
                                 /* extractionstep.getGoToRightWhenGoingDown() */, 0);
-                RRGParseTree nextStepParseTree = rrgParseTree.sisterAdjoin(
-                        auxRootItem.getTreeInstance(),
-                        extractionstep.getGAInParseTree().mother(), position);
+
+                RRGParseTree nextStepParseTree = null;
+                try {
+                    nextStepParseTree = rrgParseTree.sisterAdjoin(
+                            auxRootItem.getTreeInstance(),
+                            extractionstep.getGAInParseTree().mother(), position);
+                } catch (UnifyException e) {
+                    continue;
+                }
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
                         nextStepParseTree, position);
