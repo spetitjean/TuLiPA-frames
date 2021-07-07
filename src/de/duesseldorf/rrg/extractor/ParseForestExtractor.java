@@ -576,13 +576,15 @@ public class ParseForestExtractor {
             }
             RRGParseItem moveupAntecedentItem = (RRGParseItem) moveupAntecedentItemSingletonList
                     .iterator().next();
-            GornAddress newMoveUpGA = extractionstep.getGAInParseTree()
+	    if (extractionstep.getGAInParseTree() != null){
+		GornAddress newMoveUpGA = extractionstep.getGAInParseTree()
                     .ithDaughter(moveupAntecedentItem.getNode().getGornaddress()
-                            .isIthDaughter()
-                            + extractionstep.getGoToRightWhenGoingDown());
-            ExtractionStep nextStep = new ExtractionStep(moveupAntecedentItem,
-                    newMoveUpGA, extractionstep.getCurrentParseTree(), 0);
-            parsesInThisMoveUpStep.addAll(extract(nextStep));
+				 .isIthDaughter()
+				 + extractionstep.getGoToRightWhenGoingDown());
+		ExtractionStep nextStep = new ExtractionStep(moveupAntecedentItem,
+							     newMoveUpGA, extractionstep.getCurrentParseTree(), 0);
+		parsesInThisMoveUpStep.addAll(extract(nextStep));
+	    }
         }
         return parsesInThisMoveUpStep;
     }
