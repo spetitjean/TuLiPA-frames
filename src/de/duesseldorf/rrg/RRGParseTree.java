@@ -290,7 +290,7 @@ public class RRGParseTree extends RRGTree {
      * @return
      */
     public RRGParseTree sisterAdjoin(RRGTree adjoiningTree,
-                                     GornAddress targetAddress, int position) {
+                                     GornAddress targetAddress, int position) throws UnifyException {
         // System.out.println(
         // "Sister adjunction at GA" + targetAddress + "pos: " + position);
         // System.out.println("in tree: " + this.toString());
@@ -317,10 +317,12 @@ public class RRGParseTree extends RRGTree {
             } catch (UnifyException | NullPointerException e) {
                 System.out.println(
                         "ERROR: Not able to merge environments during sister adjunction");
+                throw new UnifyException("environment merging problem", e);
             }
         } catch (UnifyException | NullPointerException e) {
             System.out.println(
                     "node unification not possible during sister adjunction");
+            throw new UnifyException("node unif not possible during sister adjunction", e);
         }
         // for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
         // System.out.println(e.toString());

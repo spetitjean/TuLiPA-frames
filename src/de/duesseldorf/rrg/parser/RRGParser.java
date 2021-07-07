@@ -47,7 +47,7 @@ public class RRGParser {
     private Deducer deducer;
 
     private boolean verbosePrintsToStdOut = false;
-    private Set<RRGTree> treesInvolvedInParsing;
+    private LinkedList<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
     private String axiom;
@@ -57,7 +57,7 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
-        this.treesInvolvedInParsing = new ConcurrentSkipListSet<RRGTree>();
+        this.treesInvolvedInParsing = new LinkedList<>();
         for (RRGTree rrgtree : treesInvolvedInParsing) {
             RRGTree another_rrgtree = new RRGTree(rrgtree);
             another_rrgtree.setEnv(new Environment(5));
@@ -501,6 +501,7 @@ public class RRGParser {
      */
     private void scan(List<String> sentence) {
         //System.out.println("scan");
+        Set<String> scannedWords = new HashSet<>();
         // Look at all trees
         for (RRGTree tree : treesInvolvedInParsing) {
             //System.out.println("RRGParser scan: "+tree);
@@ -511,6 +512,7 @@ public class RRGParser {
                 // See if the word is a lex Node of the tree
                 Set<RRGNode> candidates = tree.getLexNodes().get(word);
                 if (candidates != null) {
+                    scannedWords.add(word);
                     for (RRGNode lexLeaf : candidates) {
                         // If so, create a new item and add it to the chart and
                         // agenda
@@ -520,6 +522,19 @@ public class RRGParser {
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
                     }
+                }
+            }
+        }
+        if (scannedWords.size() != sentence.size()) {
+            System.out.println("the number of scanned words and the number of words in the sentence differ.");
+            if (scannedWords.size() < sentence.size()) {
+                System.out.println("Is there a word in the sentence that is not in your lexicon");
+            }
+            System.out.println("Sentence: " + sentence);
+            System.out.println("Scanned words: " + scannedWords);
+            for (String word : sentence) {
+                if (!scannedWords.contains(word)) {
+                    System.out.println("Word from sentence not in the set of scanned words: " + word);
                 }
             }
         }
