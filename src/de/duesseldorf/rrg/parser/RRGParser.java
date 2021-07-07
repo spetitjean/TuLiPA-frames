@@ -82,7 +82,10 @@ public class RRGParser {
 
 
         // Axioms through scanning:
-        scan(toksentence);
+        if (!scan(toksentence)) {
+            return new RRGParseResult.Builder().successfulParses(new HashSet<>())
+                    .treesWithEdgeFeatureMismatches(new HashSet<>()).build();
+        }
 
         this.requirementFinder = new RequirementFinder();
 
@@ -499,7 +502,7 @@ public class RRGParser {
     /**
      * apply the scanning deduction rule
      */
-    private void scan(List<String> sentence) {
+    private boolean scan(List<String> sentence) {
         //System.out.println("scan");
         Set<String> scannedWords = new HashSet<>();
         // Look at all trees
@@ -512,7 +515,7 @@ public class RRGParser {
                 // See if the word is a lex Node of the tree
                 Set<RRGNode> candidates = tree.getLexNodes().get(word);
                 if (candidates != null) {
-                    scannedWords.add(word);
+                    scannedWords.add(word + "_" + start);
                     for (RRGNode lexLeaf : candidates) {
                         // If so, create a new item and add it to the chart and
                         // agenda
@@ -538,5 +541,6 @@ public class RRGParser {
                 }
             }
         }
+        return scannedWords.size() == sentence.size();
     }
 }
