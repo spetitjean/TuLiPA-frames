@@ -47,7 +47,7 @@ public class RRGParser {
     private Deducer deducer;
 
     private boolean verbosePrintsToStdOut = false;
-    private Set<RRGTree> treesInvolvedInParsing;
+    private LinkedList<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
     private String axiom;
