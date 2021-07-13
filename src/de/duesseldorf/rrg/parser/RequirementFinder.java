@@ -441,7 +441,6 @@ public class RequirementFinder {
                 .start(gap.start).end(gap.end).ws(true).build();
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
-	System.out.println("candidates (findCompleteWrappingFillers): "+candidates);
         Set<RRGParseItem> candidatesWithFittingCats = new HashSet<RRGParseItem>();
         for (RRGParseItem item : candidates) {
             boolean gapHasRightLabel = item.getNode().getCategory()
