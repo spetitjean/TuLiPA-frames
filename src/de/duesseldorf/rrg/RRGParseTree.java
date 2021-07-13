@@ -185,8 +185,11 @@ public class RRGParseTree extends RRGTree {
         try {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
-        } catch (UnifyException | NullPointerException e) {
+        } catch (UnifyException e) {
+            System.out.println("unify exception while inserting " + wrappedTree.getId() + " into " + getId() );
+        } catch (NullPointerException e) {
             wrappingPossible = false;
+            System.out.println("null pointer exception while inserting " + wrappedTree.getId() + " into " + getId() );
         }
         if (wrappingPossible) {
 
@@ -215,18 +218,22 @@ public class RRGParseTree extends RRGTree {
             } catch (UnifyException e) {
                 System.out.println(
                         "ERROR: Not able to merge environments during wrapping");
+                return null;
             }
         } else {
-            System.err.println(
+            String dmotherNode =  dmother != null ? dmother.toString() : "null node";
+            String wrappedTreeStr = wrappedTree != null ? wrappedTree.getId() : "null wrapped tree";
+            System.out.println(
                     "could not complete a wrapping of target tree into wrapping tree at node "
-                            + dmother.toString() + "\nwrapped tree:\n"
-                            + wrappedTree.toString() + "\ntarget tree:\n"
+                            + dmotherNode + "\nwrapped tree:\n"
+                            + wrappedTreeStr + "\ntarget tree:\n"
                             + this.toString());
-            return resultingTree;
+            return null;
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
         this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
-        return resultingTree;
+        // System.out.println("got to the end of insertWrappedTree but return null");
+        return null;
     }
 
     /**

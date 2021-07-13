@@ -272,7 +272,9 @@ public class ParseForestExtractor {
             RRGParseTree currentParseTree = extractionstep.getCurrentParseTree();
             GornAddress currentGA = extractionstep.getGAInParseTree();
             RRGParseTree nextStepParseTree = currentParseTree.insertWrappedTreeForGeneralizedWrapping(wraprootItem, currentGA, ddaughterItem);
-
+            if (nextStepParseTree == null) {
+                continue;
+            }
             GornAddress newGA = extractionstep.getGAInParseTree().mother();
             ExtractionStep nextStep = new ExtractionStep(wraprootItem,
                     newGA, nextStepParseTree,
@@ -315,6 +317,11 @@ public class ParseForestExtractor {
             RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().insertWrappedTree(gapItem.getTreeInstance(),
                             extractionstep.getGAInParseTree(), dDaughter, false);
+            if (nextStepParseTree == null) {
+                continue;
+            }
+
+
             // System.out.println("after wrapping: " + nextStepParseTree);
 
             // adjust Gorn Addresses here.
