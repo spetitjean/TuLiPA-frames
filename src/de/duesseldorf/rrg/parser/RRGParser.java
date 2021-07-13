@@ -183,8 +183,6 @@ public class RRGParser {
         boolean isRootItemOfGenWrappingTree = requirementFinder.isJumpBackAntecedent(currentItem);
         if (isRootItemOfGenWrappingTree) {
             RRGParseItem consequent = deducer.applyJumpBackAfterGenWrapping(currentItem);
-            System.out.println("Added by jumpBackAfterGenWrapping");
-            System.out.println(consequent);
 
             addToChartAndAgenda(consequent, Operation.GENCWJUMPBACK, currentItem);
         }
@@ -192,18 +190,19 @@ public class RRGParser {
 
     private void generalizedCompleteWrapping(RRGParseItem currentItem) {
         boolean rootItem = requirementFinder.isGeneralizedCompleteWrappingTargetItem(currentItem);
-        System.out.println("in generalizedCompleteWrapping (" + currentItem + ")");
+        boolean fillerItem = requirementFinder.isInternalCompleteWrappingFillerItem(currentItem);
+        // System.out.println("in generalizedCompleteWrapping (" + currentItem + ")");
         if (rootItem) {
             for (Gap gap : currentItem.getGaps()) {
-                System.out.println(gap);
+                //System.out.println(gap);
                 Set<RRGParseItem> completeWrappingFillterAntecedents =
                         requirementFinder.findCompleteWrappingFillers(currentItem, gap, chart);
-                System.out.println(completeWrappingFillterAntecedents);
+                //System.out.println(completeWrappingFillterAntecedents);
                 // keep only those where the node of the filler is a daughter of the root
                 completeWrappingFillterAntecedents = completeWrappingFillterAntecedents.stream().filter(
                         item -> item.getNode().getGornaddress().mother().mother() == null
                 ).collect(Collectors.toSet());
-                System.out.println(completeWrappingFillterAntecedents);
+                //System.out.println(completeWrappingFillterAntecedents);
                 // find out if you moved one up or if you try to wrap around a single node
                 Set<Set<RRGParseItem>> combineSisAntecedents = chart.getBackPointers(currentItem).getAntecedents(Operation.COMBINESIS);
                 boolean wrappedAroundSameNode = false;
@@ -222,12 +221,15 @@ public class RRGParser {
                 if (!wrappedAroundSameNode) {
                     for (RRGParseItem fillerddaughterItem : completeWrappingFillterAntecedents) {
                         RRGParseItem consequent = deducer.applyGeneralizedCompleteWrapping(currentItem, fillerddaughterItem, gap);
-                        System.out.println("Adding by generalizedCompleteWrapping: " + consequent);
-                        System.out.println("Previous item: " + currentItem);
+                        //System.out.println("Adding by generalizedCompleteWrapping: " + consequent);
+                        //System.out.println("Previous item: " + currentItem);
                         addToChartAndAgenda(consequent, Operation.GENCW, currentItem, fillerddaughterItem);
                     }
                 }
             }
+        }
+        if(fillerItem) {
+            System.out.println("Got to internal wrapping not implemented second case!!!" + currentItem);
         }
     }
 
@@ -246,10 +248,6 @@ public class RRGParser {
                             currentItem, fillerddaughterItem, gap);
                     // System.out.println("did a Compl Wrapping with: "
                     // + consequent + currentItem);
-
-                    System.out.println("Adding item for completeWrapping");
-                    System.out.println(consequent);
-
                     addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
                             currentItem, fillerddaughterItem);
                 }
@@ -262,18 +260,21 @@ public class RRGParser {
                             .findCompleteWrappingRoots(currentItem, chart);
             for (RRGParseItem rootAntecedent :
                     completeWrappingRootAntecedents) {
-                System.out.println("rootantecedent: " + rootAntecedent);
                 for (Gap gap : rootAntecedent.getGaps()) {
+                    if (gap.start != currentItem.startPos() || gap.end != currentItem.getEnd() || !gap.nonterminal.equals(currentItem.getNode().getCategory())) {
+                        continue;
+                    }
                     RRGParseItem consequent = deducer.applyCompleteWrapping(
                             rootAntecedent, currentItem, gap);
-                    System.out.println("cons: " + consequent);
+                    //System.out.println("I actually did something!!!");
+                    //System.out.println("cons: " + consequent);
                     addToChartAndAgenda(consequent, Operation.COMPLETEWRAPPING,
                             currentItem, rootAntecedent);
                 }
             }
-            System.out.println("untested completeWrapping territory! D");
-            System.out.println("root: " + completeWrappingRootAntecedents);
-            System.out.println("ddaughter: " + currentItem);
+            //System.out.println("untested completeWrapping territory! D");
+            //System.out.println("root: " + completeWrappingRootAntecedents);
+            //System.out.println("ddaughter: " + currentItem);
         }
     }
 
@@ -309,9 +310,6 @@ public class RRGParser {
                                     .start(currentItem.startPos())
                                     .end(currentItem.getEnd()).gaps(gaps)
                                     .ws(false).build();
-                            // System.out.println("cons: " + consequent);
-                            System.out.println("Adding item for predictWrapping");
-                            System.out.println(cons);
                             addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
                                     currentItem);
                         }
@@ -341,8 +339,6 @@ public class RRGParser {
                 // System.out.println("THERE: " + simpleRRGParseItem);
                 RRGParseItem consequent = deducer.applyLeftAdjoin(target,
                         currentItem);
-                System.out.println("sister adjoin");
-                System.out.println("cons: " + consequent);
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         currentItem, target);
             }
@@ -353,13 +349,9 @@ public class RRGParser {
             for (RRGParseItem target : rightAdjoinAntecedents) {
                 RRGParseItem consequent = deducer.applyRightAdjoin(target,
                         currentItem);
-                System.out.println("sister adjoin");
-                System.out.println("cons: " + consequent);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN, target,
                         currentItem);
             }
-            // System.out.println("rightadjoin: " + currentItem);
-            // System.out.println(rightAdjoinAntecedents);
         } else if (sisAdjTarget) {
             Map<String, Set<RRGParseItem>> sisadjroots = requirementFinder
                     .findSisAdjRoots(currentItem, chart);
@@ -372,8 +364,6 @@ public class RRGParser {
             for (RRGParseItem auxRootItem : sisadjroots.get("l")) {
                 RRGParseItem consequent = deducer.applyLeftAdjoin(currentItem,
                         auxRootItem);
-                System.out.println("sister adjoin");
-                System.out.println("cons: " + consequent);
                 addToChartAndAgenda(consequent, Operation.LEFTADJOIN,
                         auxRootItem, currentItem);
             }
@@ -381,8 +371,6 @@ public class RRGParser {
             for (RRGParseItem auxRootItem : sisadjroots.get("r")) {
                 RRGParseItem consequent = deducer.applyRightAdjoin(currentItem,
                         auxRootItem);
-                System.out.println("sister adjoin");
-                System.out.println("cons: " + consequent);
                 addToChartAndAgenda(consequent, Operation.RIGHTADJOIN,
                         currentItem, auxRootItem);
                 // System.out.println(auxRootItem + " and " + currentItem
@@ -426,8 +414,6 @@ public class RRGParser {
                                     .genwrappingjumpback(currentItem.getGenwrappingjumpback())
                                     .build();
 
-                            System.out.println("Adding for substitution");
-                            System.out.println("cons: " + cons);
                             addToChartAndAgenda(cons, Operation.SUBSTITUTE,
                                     currentItem);
                         }
@@ -443,8 +429,6 @@ public class RRGParser {
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
             RRGParseItem newItem = deducer.applyMoveUp(currentItem);
-            System.out.println("move up");
-            System.out.println("cons: " + newItem);
 
             addToChartAndAgenda(newItem, Operation.MOVEUP, currentItem);
         }
@@ -462,8 +446,6 @@ public class RRGParser {
             RRGParseItem rightSisTopItem = deducer.applyCombineSisters(
                     currentItem, rightSisterAntecedentItem);
             // System.out.println(rightSisTopItem);
-            System.out.println("combine right sister: " + rightSisterAntecedentItem);
-            System.out.println("cons: " + rightSisTopItem);
             addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
                     currentItem, rightSisterAntecedentItem);
         }
@@ -473,8 +455,6 @@ public class RRGParser {
         for (RRGParseItem leftSisterAntecedentItem : leftSisterCandidates) {
             RRGParseItem rightSisTopItem = deducer
                     .applyCombineSisters(leftSisterAntecedentItem, currentItem);
-            System.out.println("combine left sister: " + leftSisterAntecedentItem);
-            System.out.println("cons: " + rightSisTopItem);
             addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
                     leftSisterAntecedentItem, currentItem);
 
@@ -493,8 +473,6 @@ public class RRGParser {
         if (nlsrequirements) {
 
             RRGParseItem newItem = deducer.applyNoLeftSister(currentItem);
-            System.out.println("noleftsister");
-            System.out.println("cons: " + newItem);
             addToChartAndAgenda(newItem, Operation.NLS, currentItem);
         }
     }
