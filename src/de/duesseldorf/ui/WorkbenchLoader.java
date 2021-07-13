@@ -171,7 +171,7 @@ public class WorkbenchLoader {
                 g = brReader.parseRRG();
             } else {
                 XMLRRGReader rrgreader = new XMLRRGReader(grammar);
-                g = rrgreader.retrieveRRG();
+                g = rrgreader.retrieveRRG(op.check("omitNodeFs"));
                 rrgreader.close();
             }
 

@@ -181,6 +181,9 @@ public class CommandLineProcesses {
         // non-default port for the UGI
         op.add(CommandLineOptions.Prefix.DASH, "port",
                 CommandLineOptions.Separator.BLANK, true);
+        // do not load node fs
+        op.add(CommandLineOptions.Prefix.DASH, "omitNodeFs",
+                CommandLineOptions.Separator.BLANK, false);
         // we compile the patterns for parsing the command line
         op.prepare();
         // we concatenate the command line
@@ -248,6 +251,7 @@ public class CommandLineProcesses {
         res += "-rrg      parser for RRG as of Kallmeyer and Osswald (2017), "
                 + "default parsing algorithm for rrg\n\t";
         res += "-edgemismatch       include trees in the results where edge feature unification fails\n\t";
+        res += "-omitNodeFs         omit node feature structures";
         res += "-rrgbrin     input as bracketed elementary trees with the lexical element in front, separated by a tab\n\t";
         res += "-brack2XML     A converter, no parsing happens. The grammar -g is an input file with trees in bracketed format."
                 + "\n\t\t\tThe output is an XMG grammar that contains all trees in the input."

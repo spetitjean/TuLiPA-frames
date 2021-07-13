@@ -74,7 +74,7 @@ public class XMLRRGReader extends FileReader {
         rrgGramDoc = XMLUtilities.parseXMLFile(rrgGrammar, false);
     }
 
-    public RRG retrieveRRG() {
+    public RRG retrieveRRG(boolean omitFeatures) {
         Set<RRGTree> trees = new HashSet<RRGTree>();
 
         Element rrgGramDocRoot = rrgGramDoc.getDocumentElement();
@@ -91,7 +91,7 @@ public class XMLRRGReader extends FileReader {
             NodeList frameRoot = ithEntrie.getElementsByTagName(XMLRRGTag.FRAME.StringVal());
 
 
-            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree, frameRoot, nf);
+            RRGTree syntaxTree = XMLRRGTreeRetriever.retrieveTree(tree, frameRoot, nf, omitFeatures);
 
             // process interface
             NodeList l = ithEntrie.getElementsByTagName("interface");

@@ -50,11 +50,11 @@ public class XMLRRGTreeRetriever {
      *                 the Element one level above
      * @return
      */
-    public static RRGTree retrieveTree(Element xmlTreeRoot, NodeList frameRoot, NameFactory nf) {
+    public static RRGTree retrieveTree(Element xmlTreeRoot, NodeList frameRoot, NameFactory nf, boolean omitFeatures) {
         // 1. tree related stuff
         Element syntacticTreeMother = (Element) xmlTreeRoot
                 .getElementsByTagName(XMLRRGTag.NODE.StringVal()).item(0);
-        Node treeRoot = recursivelyRetrieveTree(syntacticTreeMother, nf);
+        Node treeRoot = recursivelyRetrieveTree(syntacticTreeMother, nf, omitFeatures);
         // debug:
         // System.out.println(treeRoot.getChildren().size());
         // System.out.println(RRGTreeTools.recursivelyPrintNode(treeRoot));
@@ -79,9 +79,9 @@ public class XMLRRGTreeRetriever {
      * @param root the root node of the (sub)tree
      * @return a (RRG) Node representation of the subtree
      */
-    private static Node recursivelyRetrieveTree(Element root, NameFactory nf) {
+    private static Node recursivelyRetrieveTree(Element root, NameFactory nf, boolean omitFeatures) {
         // base case: process the root node of the subtree
-        Node treeRoot = retrieveNode(root, nf);
+        Node treeRoot = retrieveNode(root, nf, omitFeatures);
         // process all daughters of the XML-Element root, i.e. process the tree
         // from left to right, depth-first
         NodeList daughters = root.getChildNodes();
@@ -94,13 +94,13 @@ public class XMLRRGTreeRetriever {
                     && ithchild.getNodeName()
                     .equals(XMLRRGTag.NODE.StringVal())) {
                 ((RRGNode) treeRoot).addRightmostChild(recursivelyRetrieveTree(
-                        (Element) daughters.item(i), nf));
+                        (Element) daughters.item(i), nf, omitFeatures));
             }
         }
         return treeRoot;
     }
 
-    private static Node retrieveNode(Element root, NameFactory nf) {
+    private static Node retrieveNode(Element root, NameFactory nf, boolean omitFeatures) {
         RRGNodeType type = findRRGNodeType(root);
 
         String category = retrieveCat(root);
@@ -115,23 +115,27 @@ public class XMLRRGTreeRetriever {
         // new NameFactory());
         NodeList rootChildTags = root.getChildNodes();
         Fs fs = null;
-        for (int i = 0; i < rootChildTags.getLength(); i++) {
-            org.w3c.dom.Node rootChildTag = rootChildTags.item(i);
-            if (rootChildTag.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE
-                    && ((Element) rootChildTag).getTagName()
-                    .equals(XMLRRGTag.NARG.StringVal())) {
-                // fs = XMLGrammarReadingTools.getNarg(((Element) rootChildTag),
-                // XMLTTMCTAGReader.FROM_NODE, new NameFactory());
-                NodeList fsElems = ((Element) rootChildTag)
-                        .getElementsByTagName(
-                                XMLRRGTag.FEATURESTRUCTURE.StringVal());
-                // if (fsElems.getLength() == 1) {
-                fs = XMLGrammarReadingTools.getFeats((Element) fsElems.item(0),
-                        XMLTTMCTAGReader.FROM_NODE,
-                        new Hashtable<String, Value>(), nf);
-                fs.removeCategory();
-                // }
+        if (!omitFeatures) {
+            for (int i = 0; i < rootChildTags.getLength(); i++) {
+                org.w3c.dom.Node rootChildTag = rootChildTags.item(i);
+                if (rootChildTag.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE
+                        && ((Element) rootChildTag).getTagName()
+                        .equals(XMLRRGTag.NARG.StringVal())) {
+                    // fs = XMLGrammarReadingTools.getNarg(((Element) rootChildTag),
+                    // XMLTTMCTAGReader.FROM_NODE, new NameFactory());
+                    NodeList fsElems = ((Element) rootChildTag)
+                            .getElementsByTagName(
+                                    XMLRRGTag.FEATURESTRUCTURE.StringVal());
+                    // if (fsElems.getLength() == 1) {
+                    fs = XMLGrammarReadingTools.getFeats((Element) fsElems.item(0),
+                            XMLTTMCTAGReader.FROM_NODE,
+                            new Hashtable<String, Value>(), nf);
+                    fs.removeCategory();
+                    // }
+                }
             }
+        } else {
+            fs = new Fs();
         }
         RRGNode.Builder nodeBuilder = new RRGNode.Builder().type(type)
                 .name(name).cat(category);
