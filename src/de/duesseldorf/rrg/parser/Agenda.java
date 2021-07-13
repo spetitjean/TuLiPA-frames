@@ -22,9 +22,9 @@ public class Agenda {
     public void add(RRGParseItem item) {
         if (item.getwsflag()) {
             this.DDAUGHTER.add(item);
-        } else if (item.getNode().getType().equals(RRGNode.RRGNodeType.STAR)) {
+        } else if (item.getNode().getType().equals(RRGNode.RRGNodeType.STAR) && item.getNodePos() == RRGParseItem.NodePos.TOP) {
             this.AUXROOT.add(item);
-        } else if (item.getNode().getGornaddress().mother() == null) {
+        } else if (item.getNode().getGornaddress().mother() == null && item.getNodePos() == RRGParseItem.NodePos.TOP) {
             this.INITROOT.add(item);
         } else {
             this.WITHIN.add(item);
