@@ -46,7 +46,7 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = true;
+    private boolean verbosePrintsToStdOut = false;
     private LinkedList<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
