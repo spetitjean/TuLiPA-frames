@@ -42,11 +42,11 @@ import java.util.stream.Collectors;
 public class RRGParser {
 
     private RRGParseChart chart;
-    private ConcurrentSkipListSet<RRGParseItem> agenda;
+    private Agenda agenda;
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
-    private boolean verbosePrintsToStdOut = false;
+    private boolean verbosePrintsToStdOut = true;
     private LinkedList<RRGTree> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
@@ -71,7 +71,7 @@ public class RRGParser {
         System.out.println("\nstart parsing sentence " + toksentence);
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
-        this.agenda = new ConcurrentSkipListSet<RRGParseItem>();
+        this.agenda = new Agenda();
         this.chart = new RRGParseChart(toksentence.size(), axiom);
 
         // System.out.println("Environments before parsing:");
@@ -92,7 +92,7 @@ public class RRGParser {
         System.out.println("Found fitting lexical items in the following "
                 + agenda.size() + " trees: ");
         if (!ParsingInterface.omitPrinting) {
-            for (RRGParseItem item : agenda) {
+            for (RRGParseItem item : agenda.getAllItems()) {
                 System.out.println(item.getTree().getId());
                 System.out.println(RRGTreeTools
                         .recursivelyPrintNode(item.getTree().getRoot()));
@@ -104,7 +104,7 @@ public class RRGParser {
         // The real recognition
         int i = 0;
         while (!agenda.isEmpty()) {
-            RRGParseItem currentItem = agenda.pollFirst();
+            RRGParseItem currentItem = agenda.getNext();
             if (verbosePrintsToStdOut) {
                 System.out.println("step: " + i + "\t" + currentItem);
             }
