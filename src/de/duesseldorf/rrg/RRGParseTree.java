@@ -205,7 +205,7 @@ public class RRGParseTree extends RRGTree {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
             if (internalWrapping) {
-                resultingTree.ids.add("INTERNAL_WRAPPING::" + this.getId() + "::" + this.getLexNodes().keySet());
+                resultingTree.ids.add("INTERNAL_WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
             } else {
                 resultingTree.ids.add("WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
             }
