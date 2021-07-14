@@ -127,6 +127,7 @@ public class RRGParser {
         }
 
         System.out.println("Done parsing. Chart size: " + chart.computeSize());
+        //System.out.println(chart);
         if (noExtractionForBigCharts && chart.computeSize() > 3000) {
             System.out.println(
                     "ERROR: abort parse tree extraction because chart is too large: "
