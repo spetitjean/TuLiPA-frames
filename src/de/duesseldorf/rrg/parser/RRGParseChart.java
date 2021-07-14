@@ -101,6 +101,10 @@ public class RRGParseChart {
         return goals;
     }
 
+    public Map<Integer, Map<RRGParseItem, Backpointer>> getChart() {
+        return chart;
+    }
+
     /**
      * 
      * @param item
