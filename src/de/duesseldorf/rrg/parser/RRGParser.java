@@ -513,9 +513,10 @@ public class RRGParser {
             }
             System.out.println("Sentence: " + sentence);
             System.out.println("Scanned words: " + scannedWords);
-            for (String word : sentence) {
-                if (!scannedWords.contains(word)) {
-                    System.out.println("Word from sentence not in the set of scanned words: " + word);
+            for (int i = 0; i < sentence.size(); i++) {
+                String word_with_index = sentence.get(i) + "_" + i;
+                if (!scannedWords.contains(word_with_index)) {
+                    System.out.println("Word from sentence not in the set of scanned words: " + sentence.get(i));
                 }
             }
         }
