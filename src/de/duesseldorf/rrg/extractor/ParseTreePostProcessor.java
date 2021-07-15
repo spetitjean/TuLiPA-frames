@@ -36,8 +36,6 @@ public class ParseTreePostProcessor {
 
         // data structure for seen corefs
         // Might be an option:
-
-	
 	tree.setFrameSem(postProcessFrame(tree.getFrameSem(),tree.getEnv()));
         // rename the env of the tree:
 

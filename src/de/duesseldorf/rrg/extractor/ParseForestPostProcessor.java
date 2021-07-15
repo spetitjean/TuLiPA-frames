@@ -9,6 +9,7 @@ import de.duesseldorf.rrg.RRGTools;
 import de.duesseldorf.rrg.RRGNode;
 
 import de.duesseldorf.frames.UnifyException;
+import de.tuebingen.anchoring.NameFactory;
 
 
 public class ParseForestPostProcessor {
@@ -25,8 +26,12 @@ public class ParseForestPostProcessor {
 	Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
 	for (RRGParseTree parsetree : resultingParses){
 	    try{
-		((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
-		percolatedParseTrees.add(parsetree);
+		if (((RRGNode)parsetree.getRoot()).postUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)){
+		    if(((RRGNode)parsetree.getRoot()).postPostUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)){
+			((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
+			percolatedParseTrees.add(parsetree);
+		    }
+		}
 	    }
 	    catch(UnifyException e){
 		System.err.println("Failed percolation");
