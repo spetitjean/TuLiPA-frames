@@ -176,7 +176,16 @@ public class RRGParseTree extends RRGTree {
                                           GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
-        int position = ddaughterAddress.isIthDaughter();
+	// System.err.println("this");
+	// System.err.println(this);
+	// System.err.println("wrappedTree");
+	// System.err.println(wrappedTree);
+	// System.err.println("ddaughterAddress");
+	// System.err.println(ddaughterAddress);
+	// System.err.println("dmother");
+	// System.err.println(dmother);
+	// System.err.println("----------------");
+	int position = ddaughterAddress.isIthDaughter();
 
         // insert the children
         RRGNode targetNode = resultingTree.findNode(dmother);
@@ -217,11 +226,17 @@ public class RRGParseTree extends RRGTree {
                         "ERROR: Not able to merge environments during wrapping");
             }
         } else {
-            System.err.println(
-                    "could not complete a wrapping of target tree into wrapping tree at node "
-                            + dmother.toString() + "\nwrapped tree:\n"
-                            + wrappedTree.toString() + "\ntarget tree:\n"
-                            + this.toString());
+	    if (dmother != null && wrappedTree != null){
+		System.err.println(
+				   "could not complete a wrapping of target tree into wrapping tree at node "
+				   + dmother.toString() + "\nwrapped tree:\n"
+				   + wrappedTree.toString() + "\ntarget tree:\n"
+				   + this.toString());
+	    }
+	    else{
+		System.err.println(
+				   "could not complete a wrapping of target tree into wrapping tree"); 
+	    }
             return resultingTree;
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
