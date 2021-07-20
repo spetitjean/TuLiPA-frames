@@ -51,7 +51,14 @@ public class RRGAnchorMan {
             // contain an anchor node (and have lemmas in the input sentence?)
             ts.retrieve(new LinkedList<String>());	    
         }
-        Set<RRGTree> result = ((RRG) Situation.getGrammar()).getAnchoredTrees();
+        Set<RRGTree> tmpresult = ((RRG) Situation.getGrammar()).getAnchoredTrees();
+        Set<RRGTree> resultWithNewIds = new HashSet<>();
+        for (RRGTree tree : tmpresult) {
+            RRGTree newTree = new RRGTree(tree);
+            newTree.setId(tree.getId() + "_" + tree.getLexNodes().keySet().toString());
+            resultWithNewIds.add(newTree);
+        }
+        Set<RRGTree> result = new HashSet<>(resultWithNewIds);
         // next, take care of the lexicaliized trees and trees without anchor
         // nodes
 
