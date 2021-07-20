@@ -351,9 +351,9 @@ public class TreeSelector {
                             morphAncFS.replaceFeat("cat",
                                     new Value(Value.Kind.VAL, il.getCat()));
                             Fs treeAncFS = anchorNode.getNodeFs();
-                            Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
-                                    new Environment(5));
-			    
+			    Environment e = new Environment(5); 
+			    Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
+                                    e);
 			    anchorNode.getNodeFs().removeCategory();
                             // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
                             // new Value(Value.Kind.VAL,
@@ -460,7 +460,7 @@ public class TreeSelector {
 	    anchorNode.setNodeFs(
 				 FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
 					       env)
-				 );
+				 );	    
 	    ((RRGNode)tree.getRoot()).updateFS(env,false);
 	    RRGTree anchoredTree = new RRGTree(tree);
 	    anchoredTree

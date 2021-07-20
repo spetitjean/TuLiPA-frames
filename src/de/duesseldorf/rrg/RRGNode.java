@@ -1,12 +1,14 @@
 package de.duesseldorf.rrg;
 
 import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 import de.duesseldorf.frames.Fs;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tree.Node;
+import de.duesseldorf.frames.Value;
 
 import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.UnifyException;
@@ -311,6 +313,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
 
     public void updateFS(Environment env, boolean finalUpdate)
 	throws UnifyException {
+	
 	this.setNodeFs(Fs.updateFS(this.getNodeFs(), env, finalUpdate));
         
         // if the node has children, we update them
@@ -320,6 +323,48 @@ public class RRGNode implements Node, Comparable<RRGNode> {
             }
         }
     }
+
+    public boolean postUpdateFeatures(Environment eEnv, NameFactory nf, boolean finalUpdate)
+    {
+        // update vars by environment
+        Fs fs = this.getNodeFs();
+	// System.out.println("in postUpdateFeatures");
+	// System.out.println(fs);
+	// System.out.println(this);
+        if (fs != null) {
+            if (fs.collect_corefs(eEnv, nf, new HashSet<Value>()) == false) {
+                return false;
+            }
+            this.setNodeFs(fs);
+        }
+        // update child node features
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            if(!((RRGNode)this.getChildren().get(i)).postUpdateFeatures(eEnv, nf, finalUpdate))
+		return false;
+        }
+	return true;
+    }
+
+    public Boolean postPostUpdateFeatures(Environment eEnv, NameFactory nf, boolean finalUpdate)
+	throws UnifyException
+    {
+        // update vars by environment
+        Fs fs = this.getNodeFs();
+        if (fs != null) {
+	    Fs newFs=fs.update_corefs(eEnv, new HashSet<Value>());
+	    if(newFs==null){
+		return false;}
+	    this.setNodeFs(newFs);
+        }
+        // update child node features
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            if(!((RRGNode)this.getChildren().get(i)).postPostUpdateFeatures( eEnv, nf, finalUpdate))
+		return false;
+        }
+	return true;
+	
+    }
+
 
     
     public RRGNode copyNode(NameFactory nf){

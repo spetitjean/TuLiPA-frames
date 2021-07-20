@@ -94,7 +94,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tree, start, end, node, gaps, nodepos, ws, genwrappingjumpback);
+        return Objects.hash(tree.getId(), start, end, node.getType(), node.getName(), node.getCategory(), gaps, nodepos, ws, genwrappingjumpback);
     }
 
     @Override
@@ -129,10 +129,10 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             return getTree().getId().compareTo(o.getTree().getId());
         }
         if (this.start != o.start) {
-            return this.start - o.start;
+	    return this.start - o.start;
         }
         if (this.end != o.end) {
-            return this.end - o.end;
+	    return this.end - o.end;
         }
         return this.hashCode() - o.hashCode();
     }

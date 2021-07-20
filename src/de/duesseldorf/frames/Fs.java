@@ -498,7 +498,7 @@ public class Fs {
             Set<Value> seen) throws UnifyException {
         // System.err.println("updating [" + fs.toString() + "] env: " +
         // env.toString());
-        // System.out.println("\nUpdating "+fs);
+        //System.out.println("\nUpdating "+fs);
         Fs res = null;
         if (fs.isTyped()) {
             Value coref = fs.getCoref();

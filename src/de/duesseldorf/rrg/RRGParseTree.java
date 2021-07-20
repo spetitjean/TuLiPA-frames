@@ -176,7 +176,16 @@ public class RRGParseTree extends RRGTree {
                                           GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
-        int position = ddaughterAddress.isIthDaughter();
+	// System.err.println("this");
+	// System.err.println(this);
+	// System.err.println("wrappedTree");
+	// System.err.println(wrappedTree);
+	// System.err.println("ddaughterAddress");
+	// System.err.println(ddaughterAddress);
+	// System.err.println("dmother");
+	// System.err.println(dmother);
+	// System.err.println("----------------");
+	int position = ddaughterAddress.isIthDaughter();
 
         // insert the children
         RRGNode targetNode = resultingTree.findNode(dmother);
@@ -221,14 +230,18 @@ public class RRGParseTree extends RRGTree {
                 return null;
             }
         } else {
-            String dmotherNode =  dmother != null ? dmother.toString() : "null node";
-            String wrappedTreeStr = wrappedTree != null ? wrappedTree.getId() : "null wrapped tree";
-            System.out.println(
-                    "could not complete a wrapping of target tree into wrapping tree at node "
-                            + dmotherNode + "\nwrapped tree:\n"
-                            + wrappedTreeStr + "\ntarget tree:\n"
-                            + this.toString());
-            return null;
+	    if (dmother != null && wrappedTree != null){
+		System.err.println(
+				   "could not complete a wrapping of target tree into wrapping tree at node "
+				   + dmother.toString() + "\nwrapped tree:\n"
+				   + wrappedTree.toString() + "\ntarget tree:\n"
+				   + this.toString());
+	    }
+	    else{
+		System.err.println(
+				   "could not complete a wrapping of target tree into wrapping tree");
+	    }
+            return resultingTree;
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
         this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());

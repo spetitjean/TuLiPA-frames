@@ -108,7 +108,11 @@ public class ParseForestExtractor {
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
-
+	// System.out.println("Extraction step");
+	// System.out.println(extractionstep);
+	//System.out.println("Backpointers");
+	//System.out.println(backPointers);
+	
         // distinguish different operations here
         // NLS
         parsesInThisStep.addAll(extractNLS(
@@ -238,9 +242,12 @@ public class ParseForestExtractor {
 
             RRGParseItem predictWrappingAntecedentItem = (RRGParseItem) predictWrappingantecedentItemsingletonList
                     .iterator().next();
-            GornAddress ddaughterAbsAddress = new GornAddress(
-                    extractionstep.getGAInParseTree());
-
+	    if(extractionstep.getGAInParseTree() == null){
+		System.err.println("Weird NullPointerException, should be caught in a cleaner way");
+		return parsesInThisPWStep;
+	    }
+	    GornAddress ddaughterAbsAddress = new GornAddress(
+		     extractionstep.getGAInParseTree());
             // insert the subtree stored in the RRGParseTree at the correct GA
             // (seems to work)
             // continue extraction from there with same GA	    
