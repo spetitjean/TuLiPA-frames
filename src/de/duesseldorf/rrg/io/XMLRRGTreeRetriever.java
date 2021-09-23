@@ -129,7 +129,7 @@ public class XMLRRGTreeRetriever {
                 fs = XMLGrammarReadingTools.getFeats((Element) fsElems.item(0),
                         XMLTTMCTAGReader.FROM_NODE,
                         new Hashtable<String, Value>(), nf);
-                fs.removeCategory();
+                //fs.removeCategory();
                 // }
             }
         }

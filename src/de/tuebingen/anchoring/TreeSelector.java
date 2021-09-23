@@ -344,7 +344,7 @@ public class TreeSelector {
                 for (RRGTree tree : treesInTheFamily) {
 		    tree = new RRGTree(tree);
                     boolean match = true;
-                    RRGNode anchorNode = tree.getAnchorNode();
+                    RRGNode anchorNode = tree.getAnchorNode();		    
                     if (anchorNode != null) {
                         try {
                             Fs morphAncFS = new Fs();
@@ -354,8 +354,9 @@ public class TreeSelector {
 			    Environment e = new Environment(5); 
 			    Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
                                     e);
-			    anchorNode.getNodeFs().removeCategory();
-                            // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
+			    // anchorNode.getNodeFs().removeCategory();
+
+			    // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
                             // new Value(Value.Kind.VAL,
                             // anchorFS.getCategory()));
                         } catch (UnifyException e) {
@@ -414,6 +415,7 @@ public class TreeSelector {
 			    else{
 				Environment env = new Environment(5);
 				//tree.setFrameSem(new Frame());
+				//System.out.println("Anchoring "+il);
 				anchorRRG(il, tree, env);
 			    }
 
@@ -457,20 +459,48 @@ public class TreeSelector {
 	    // 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
 	    //     new Environment(5))
 	    // 		  );
+
+
+	    Hashtable catTable = new Hashtable<String, Value>();
+	    catTable.put(new String("cat"), new Value(Value.Kind.VAL, il.getCat()));
+	    Fs catFs = new Fs(catTable);
+	    
+	    
 	    anchorNode.setNodeFs(
 				 FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
 					       env)
-				 );	    
+				 );
+	    
+
 	    ((RRGNode)tree.getRoot()).updateFS(env,false);
 	    RRGTree anchoredTree = new RRGTree(tree);
 	    anchoredTree
 		.addLexNodeToAnchor(lexNode);
+
+	    System.out.println(anchoredTree);
+	    
+	    // add the cat of the lemma (in case it is a variable in the tree)
+	    // This works but does not propagate, we need to create a Fs cat=il.getCat() and unify it with the Fs of the lemma
+
+	    // problem: the category (shared variable) is not in the tree. Is it removed? 
+	    
+	    // il.getLref().getFeatures().replaceFeat("cat",
+            //                         new Value(Value.Kind.VAL, il.getCat()));
+	    anchoredTree.getAnchorNode().setNodeFs(
+				 FsTools.unify(anchorNode.getNodeFs() , catFs,
+					       env)
+				 );	    
+
+
+	    
+	    ((RRGNode)anchoredTree.getRoot()).updateFS(env,false);
 	    System.err.println("\n-----------------------\nAdded tree "+tree);
 	    // anchoredTree
 	    //         .addLexNodeToAnchor(lexnodeBuilder.build());
 	    // System.out.println("ts RRG orig tree: " + tree);
 	    // System.out.println("ts RRG anch tree: " +
 	    // anchoredTree);
+	    ((RRGNode)anchoredTree.getRoot()).removeCategory();
 	    ((RRG) Situation.getGrammar())
 		.addAnchoredTree(anchoredTree);
 	    // System.err.println("Tree after updates: ");

@@ -142,15 +142,19 @@ public class RRGParseTree extends RRGTree {
         if (wrappingPossible) {
             resultingTree.setNode(targetAddress, newTargetNode);
             resultingTree.wrappingSubTrees.put(jumpBackitem, targetNode);
+	    System.out.println("Adding to wrappingSubTrees");
+	    System.out.println(targetNode);
+        
         }
         resultingTree.getFrameSem().addOtherFrame(wrappingTree.getFrameSem());
         return resultingTree;
     }
 
     public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
-
+	
+	System.out.println("wrappingSubTrees");
+        System.out.println(wrappingSubTrees);
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
-
         // what to do when wrappedNode is null?
         if (wrappedNode == null) {
             return this;
@@ -174,6 +178,10 @@ public class RRGParseTree extends RRGTree {
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
                                           GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
+	System.out.println("begining of wrapping");
+	System.out.println("internalWrapping: "+internalWrapping);
+	System.out.println(this);
+	System.out.println(wrappedTree);
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
 	// System.err.println("this");
@@ -195,7 +203,7 @@ public class RRGParseTree extends RRGTree {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
         } catch (UnifyException | NullPointerException e) {
-            wrappingPossible = false;
+	    wrappingPossible = false;
         }
         if (wrappingPossible) {
 
@@ -214,7 +222,11 @@ public class RRGParseTree extends RRGTree {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
             if (internalWrapping) {
+		System.out.println(wrappedTree.getLexNodes().keySet());
+		System.out.println(wrappedTree);
                 resultingTree.ids.add("INTERNAL_WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
+		System.out.println("middle of wrapping");
+		System.out.println(resultingTree.ids);
             } else {
                 resultingTree.ids.add("WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
             }
@@ -241,6 +253,8 @@ public class RRGParseTree extends RRGTree {
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
         this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
+	System.out.println("end of wrapping");
+	System.out.println(resultingTree.ids);
         return resultingTree;
     }
 

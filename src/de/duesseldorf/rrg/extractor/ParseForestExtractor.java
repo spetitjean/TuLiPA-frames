@@ -445,7 +445,7 @@ public class ParseForestExtractor {
                             auxRootItem.getTreeInstance(),
                             extractionstep.getGAInParseTree().mother(), position);
                 } catch (UnifyException e) {
-                    continue;
+		    continue;
                 }
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),

@@ -380,5 +380,21 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     public RRGNode copyNode(){
 	return this.copyNode(new NameFactory());
     }
+
+    public void removeCategory(){
+	// before removing, update the RRGNode category
+	if (this.type != RRGNodeType.LEX){
+	    //System.out.println("Setting cat: ");
+	    //System.out.println(this.nodeFs.getCategoryOrWord());
+	    this.setCategory(this.nodeFs.getCategory());
+	    }
+	this.nodeFs.removeCategory();
+	if (this.getChildren() != null){
+            for (int j = 0; j < this.getChildren().size(); j++) {
+                ((RRGNode)this.getChildren().get(j)).removeCategory();
+    	    }
+    	}
+    }
+
     
 }
