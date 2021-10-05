@@ -8,6 +8,7 @@ import java.util.Set;
 
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
+import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.tuebingen.anchoring.TreeSelector;
 import de.tuebingen.lexicon.Lemma;
@@ -51,10 +52,13 @@ public class RRGAnchorMan {
             // contain an anchor node (and have lemmas in the input sentence?)
             ts.retrieve(new LinkedList<String>());	    
         }
+
+
         Set<RRGTree> tmpresult = ((RRG) Situation.getGrammar()).getAnchoredTrees();
         Set<RRGTree> resultWithNewIds = new HashSet<>();
         for (RRGTree tree : tmpresult) {
             RRGTree newTree = new RRGTree(tree);
+            ((RRGNode) newTree.getRoot()).removeCategory();
             newTree.setId(tree.getId() + "_" + tree.getLexNodes().keySet().toString());
             resultWithNewIds.add(newTree);
         }

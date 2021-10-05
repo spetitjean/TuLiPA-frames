@@ -381,6 +381,10 @@ public class RRGNode implements Node, Comparable<RRGNode> {
 	return this.copyNode(new NameFactory());
     }
 
+    /**
+     * remove the feature "cat" from the node fs and from the node fs's from all the
+     * children of the current node
+     */
     public void removeCategory(){
 	// before removing, update the RRGNode category
 	if (this.type != RRGNodeType.LEX){

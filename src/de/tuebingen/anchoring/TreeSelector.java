@@ -500,9 +500,7 @@ public class TreeSelector {
 	    // System.out.println("ts RRG orig tree: " + tree);
 	    // System.out.println("ts RRG anch tree: " +
 	    // anchoredTree);
-	    ((RRGNode)anchoredTree.getRoot()).removeCategory();
-	    ((RRG) Situation.getGrammar())
-		.addAnchoredTree(anchoredTree);
+	    ((RRG) Situation.getGrammar()).addAnchoredTree(anchoredTree);
 	    // System.err.println("Tree after updates: ");
 	    // System.err.println(anchoredTree);
 	    
