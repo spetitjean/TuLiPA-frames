@@ -125,7 +125,7 @@ public class Fs {
             AVlist = new Hashtable<String, Value>();
         } else {
             this.is_typed = fs.isTyped();
-	    if(fs.getType() != null){
+	    if(fs.getType() == null){
 		this.type = null;
 		this.is_typed = false;
 	    }
