@@ -20,12 +20,12 @@ var svgRoot,										// root element of the svg tree
 
 // draw tree (standalone) 
 function standaloneTree(){
-		makeTree(document.getElementsByTagName("svg")[0],document.getElementsByTagName("entry")[0])
+    makeTree(document.getElementsByTagName("svg")[0],document.getElementsByTagName("entry")[0])
 }
 
 // draw frame (standalone)
 function standaloneFrame() {
-	makeFrame(document.getElementsByTagName("svg")[0],document.getElementsByTagName("entry")[0]);
+    makeFrame(document.getElementsByTagName("svg")[0],document.getElementsByTagName("entry")[0]);
     
 }
 
@@ -190,7 +190,8 @@ function makeFrame(target,entry) {
 	num=printRelation(frame.children[i],new_frame,ypoint,num);  // TODO: remove second argument?			
     }
     
-    addFrameButtons(svgRoot); 
+    addFrameButtons(svgRoot);
+    console.log(svgRoot);
 }
 
 
@@ -1341,26 +1342,26 @@ function pressedButtonExportSVG (evt) {
 function exportSVG (object) {
     var clone = object.cloneNode(true);
     //console.log(clone);
-		// clean-up SVG: remove ce-switch and onclick-stuff
-		var svgElements = clone.getElementsByTagName("svg");
-		for (var i = 0; i<svgElements.length; i++) {
-				if (svgElements[i].getAttribute("type") == "ce-switch") {
-						svgElements[i].parentNode.removeChild(svgElements[i]);
+    // clean-up SVG: remove ce-switch and onclick-stuff
+    var svgElements = clone.getElementsByTagName("svg");
+    for (var i = 0; i<svgElements.length; i++) {
+	if (svgElements[i].getAttribute("type") == "ce-switch") {
+	    svgElements[i].parentNode.removeChild(svgElements[i]);
+	}
+    }
+    var rectElements = clone.getElementsByTagName("rect");
+    for (var i = 0; i< rectElements.length; i++) {
+	if (rectElements[i].hasAttribute("onclick")) {
+	    rectElements[i].removeAttribute("onclick");
+	}
+	if (rectElements[i].hasAttribute("cursor")) {
+	    rectElements[i].removeAttribute("cursor");
 				}
-		}
-		var rectElements = clone.getElementsByTagName("rect");
-		for (var i = 0; i< rectElements.length; i++) {
-				if (rectElements[i].hasAttribute("onclick")) {
-						rectElements[i].removeAttribute("onclick");
-				}
-				if (rectElements[i].hasAttribute("cursor")) {
-						rectElements[i].removeAttribute("cursor");
-				}
-		}
-
-		var serializer = new XMLSerializer();
+    }
+    
+    var serializer = new XMLSerializer();
     var blob = new Blob([serializer.serializeToString(clone)],{type:"image/svg+xml"});
-		saveAs(blob, entryName+".svg");
+    saveAs(blob, entryName+".svg");
 }
 
 function pressedButtonCollapseAll (evt) {
@@ -1464,17 +1465,17 @@ function toggleButtonDisplay (button) {
 
 
 function pressedButtonExportLatex (evt) {
-		var object;
-		var siblings = evt.target.parentNode.parentNode.children;
-		for (var i = 0;  i< siblings.length; i++) {
-				if (siblings[i].getAttribute("type")=="tree" || siblings[i].getAttribute("type")=="frame") {
-						object = siblings[i];
-				}
-		}
-		
-		var latexButton = object.parentNode.getElementById("buttonLatex");
-		toggleButtonDisplay(latexButton);
-		exportLatex(object);
+    var object;
+    var siblings = evt.target.parentNode.parentNode.children;
+    for (var i = 0;  i< siblings.length; i++) {
+	if (siblings[i].getAttribute("type")=="tree" || siblings[i].getAttribute("type")=="frame") {
+	    object = siblings[i];
+	}
+    }
+    
+    var latexButton = object.parentNode.getElementById("buttonLatex");
+    toggleButtonDisplay(latexButton);
+    exportLatex(object);    
 }
 
 function pressedButtonGraph (evt) {
@@ -1489,7 +1490,69 @@ function pressedButtonGraph (evt) {
     
     var graphButton = object.parentNode.getElementById("buttonGraph");
     toggleButtonDisplay(graphButton);
-    displayGraph(object);
+    //displayGraph(object);
+    var StringIndent = "\t";
+
+    if (graphButton.getAttribute("status") == "pressed" ) {
+	$.ajax({
+	    method: "POST",
+	    url: "/js/graph_exec.php",
+	    data: { text: graphFrame(object,StringIndent) }
+	})
+	    .done(function( response ) {
+		console.log(response);
+		// document.getElementsByTagName("svg")[0].innerHTML = response;
+		// console.log(document.querySelector("[id=semFrameSVG]"));
+		semFrameSVG = document.querySelector("[id=semFrameSVG]");
+		semFrameSVG.innerHTMLFrame = semFrameSVG.innerHTML;
+		semFrameSVG.innerHTML = response;
+
+		allNodes = semFrameSVG.getElementsByClassName("node");
+		// console.log(allNodes);
+		for (var i = 0; i < allNodes.length; i++){
+		    // console.log(allNodes[i]);
+		    // console.log(allNodes[i].childNodes);
+		    // console.log(allNodes[i].childNodes[3]);
+		    //addLabel(allNodes[i].childNodes[5].lastChild.data,allNodes[i].childNodes[5]);
+
+		    // remove the square brackets
+
+		    if (allNodes[i].childNodes[1].lastChild.data.startsWith('[')){
+			addLabel(allNodes[i].childNodes[1].lastChild.data.replace('[','').replace(']',''),allNodes[i]);
+		    
+			//addLabel("V3",allNodes[i]);
+			label = allNodes[i].lastChild; 
+			label.setAttribute("y",allNodes[i].childNodes[3].getAttribute('cy'));
+			label.setAttribute("x",allNodes[i].childNodes[3].getAttribute('cx')-0.5*label.getBBox().width);
+			label.lastChild.setAttribute("stroke-width","0");
+		    }
+		}		
+
+		
+		semFrameSVG.parentNode.setAttribute("width",semFrameSVG.getBBox().width+10); // TODO: this should be more dynamic
+		semFrameSVG.parentNode.setAttribute("height",semFrameSVG.getBBox().height+50);
+		semFrameSVG.parentNode.setAttribute("max-height","100%");
+		semFrameSVG.parentNode.setAttribute("max-width","100%");
+		// console.log("graph:");
+		// console.log(semFrameSVG);
+
+		// console.log(document.getElementsByTagName("svg"));
+		// var parser = new DOMParser();
+		// var doc_graph = parser.parseFromString(response, "image/svg+xml");
+		// var serializer = new XMLSerializer();
+		// var blob = new Blob([serializer.serializeToString(doc_graph)],{type:"image/svg+xml"});
+		// saveAs(blob, entryName+".svg");
+	    });
+
+    }
+    else{
+	semFrameSVG = document.querySelector("[id=semFrameSVG]");
+	document.querySelector("[id=semFrameSVG]").innerHTML = semFrameSVG.innerHTMLFrame;	
+	semFrameSVG.parentNode.setAttribute("width",semFrameSVG.getBBox().width+10); // TODO: this should be more dynamic
+	semFrameSVG.parentNode.setAttribute("height",semFrameSVG.getBBox().height+50);
+	semFrameSVG.parentNode.setAttribute("max-height","100%");
+	semFrameSVG.parentNode.setAttribute("max-width","100%");
+    }
 }
 
 function displayGraph (object) {
@@ -1553,7 +1616,7 @@ function exportLatex (object) {
     foreignObject.setAttribute("width","100%");
     foreignObject.setAttribute("height","100%");
     object.parentNode.appendChild(foreignObject);
-    console.log(foreignObject.getBBox().height);
+    //console.log(foreignObject.getBBox().height);
     //var bodyElement = document.createElementNS("http://www.w3.org/1999/xhtml","body");
     //foreignObject.appendChild(bodyElement);
     
@@ -1577,9 +1640,12 @@ function exportLatex (object) {
     foreignObject.setAttribute("width","100%");
     //console.log(foreignObject.parentNode);
     //console.log(foreignObject.getBBox().height);
-    //foreignObject.parentNode.setAttribute("height","100%");
-    //foreignObject.parentNode.setAttribute("height",foreignObject.getBBox().height+50);
-    //foreignObject.parentNode.setAttribute("width","100%");
+    // foreignObject.parentNode.setAttribute("height",foreignObject.getBBox().height+50);
+    // foreignObject.parentNode.setAttribute("width",foreignObject.getBBox().height+50);
+    // foreignObject.parentNode.setAttribute("height","100%");
+    // foreignObject.parentNode.setAttribute("width","100%");
+    //foreignObject.parentNode.setAttribute("max-height","100%");
+    //foreignObject.parentNode.setAttribute("max-width","100%");
 
 }
 
@@ -1613,7 +1679,7 @@ function graphFrame (frame,StringIndent) {
 		//CurrentNode+= "["+frame.children[i].getAttribute("label")+"]";
 	    }
 	    String +=
-		"digraph{\nrankdir=\"LR\";\n" +
+		"digraph{\nrankdir=\"TB\";\n" +
 		//CurrentNode +
 		graphFS(frame.children[i],StringIndent) +
 		"\n}";
@@ -1761,7 +1827,8 @@ function graphFS (fs, indent){
     }
     var TypeString="";
     if(CurrentType!=""){
-	TypeString= "[label=\""+ CurrentType +"\"]";
+	//TypeString= "[label=\""+ CurrentType +"\"]";
+	TypeString= "[label=\"" + CurrentType + "\", class=\"clickable_node\", id=\"V3\"]";
     }
 	
     String += "\""+CurrentNode+ "\"" +TypeString +";\n";
@@ -1779,13 +1846,13 @@ function graphFS (fs, indent){
 			valueString = value.children[j].innerHTML;
 		    }
 		    if (value.children[j].getAttribute("type") == "label") {
-			labelString = "[" +  value.children[j].getElementsByTagName("text")[0].innerHTML +"]"; 
+			labelString = "\""+ "[" +  value.children[j].getElementsByTagName("text")[0].innerHTML +"]" + "\""; 
 		    }
 		    if (value.children[j].getAttribute("type") == "fs") {
 			String += graphFS(value.children[j], indent);
 		    }
 		}
-		String += "\""+CurrentNode+ "\"" + "->" +  "\""+ labelString + "\"" + valueString + " [ label= \" " + Attribute + "\"] ;\n";
+		String += "\""+CurrentNode+ "\"" + "->" +  labelString + valueString + " [ label= \" " + Attribute + "\"] ;\n";
 	    }
 	}
     }
