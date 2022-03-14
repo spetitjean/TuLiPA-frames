@@ -1492,15 +1492,16 @@ function pressedButtonGraph (evt) {
     toggleButtonDisplay(graphButton);
     //displayGraph(object);
     var StringIndent = "\t";
-
+    
     if (graphButton.getAttribute("status") == "pressed" ) {
 	$.ajax({
 	    method: "POST",
-	    url: "/js/graph_exec.php",
-	    data: { text: graphFrame(object,StringIndent) }
+	    url: "GRAPHVIZ.svg",
+	    //data: { text: graphFrame(object,StringIndent) }
+	    data:  graphFrame(object,StringIndent) 
 	})
 	    .done(function( response ) {
-		console.log(response);
+		//console.log(response);
 		// document.getElementsByTagName("svg")[0].innerHTML = response;
 		// console.log(document.querySelector("[id=semFrameSVG]"));
 		semFrameSVG = document.querySelector("[id=semFrameSVG]");
@@ -1708,6 +1709,7 @@ function graphFrame (frame,StringIndent) {
     }
     // add some empty lines for debugging
     for(i=0;i<10;i++){String+="\n";}
+    //console.log(String);
     return(String);
 }
 
