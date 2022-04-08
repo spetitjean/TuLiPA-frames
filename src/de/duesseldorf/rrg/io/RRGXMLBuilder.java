@@ -24,6 +24,8 @@ import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
 import de.tuebingen.tree.Node;
 
+import java.util.LinkedList;
+
 public class RRGXMLBuilder {
 
     static Map<RRGNode.RRGNodeType, XMLRRGTag> nodeTypesToXMLTags = new HashMap<RRGNode.RRGNodeType, XMLRRGTag>();
@@ -193,6 +195,21 @@ public class RRGXMLBuilder {
 	}
 	return relElement;
     }
+
+    private Element createVAltElement(Element vAltElement, Value vAlt){
+	// do we really need the coref? Ignoring it for now
+	LinkedList<Value> adisj = vAlt.getAdisj(); 
+	// we remove the first element of the list because it is apparently the coref
+	adisj.remove();
+
+	for (Value v: adisj){
+	    Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+	    sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getSVal());
+	    vAltElement.appendChild(sym);
+	}
+	return vAltElement;
+    }
+
     
     private Element createFsElement(Element fsElement, Fs realfs) {
 	if (realfs.isTyped()){
@@ -228,7 +245,12 @@ public class RRGXMLBuilder {
                 Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
                 sym.setAttribute("varname", avpair.getValue().getVarVal());
                 f.appendChild(sym);
-            } else {
+            } else if (avpair.getValue().is(Value.Kind.ADISJ)) {
+                Element valt = doc.createElement(XMLRRGTag.VALT.StringVal());
+		valt = createVAltElement(valt, avpair.getValue());
+		f.appendChild(valt);
+            }
+	    else {
                 System.err.println("ERROR during XML writing!!!"
                         + avpair.getValue().getType());
             }
