@@ -363,7 +363,7 @@ public class RRGParseTree extends RRGTree {
     }
 
     public RRGParseTree substitute(RRGTree substitutionTree,
-                                   GornAddress address) {
+                                   GornAddress address) throws UnifyException {
         RRGParseTree result = new RRGParseTree(this);
         // can we substitute?
         // System.out.println("address: " + address);
@@ -388,6 +388,8 @@ public class RRGParseTree extends RRGTree {
             System.err.println("at GA " + address);
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);
+	    throw new UnifyException("node unif not possible during substitution", e);
+
             //System.exit(0);
         }
         this.getFrameSem().addOtherFrame(substitutionTree.getFrameSem());
