@@ -9,7 +9,7 @@ public class RRGParseResult {
     private Set<RRGParseTree> treesWithEdgeFeatureMismatches;
 
     private RRGParseResult(Set<RRGParseTree> successfulParses,
-            Set<RRGParseTree> treesWithEdgeFeatureMismatches) {
+                           Set<RRGParseTree> treesWithEdgeFeatureMismatches) {
         this.successfulParses = successfulParses;
         this.treesWithEdgeFeatureMismatches = treesWithEdgeFeatureMismatches;
     }

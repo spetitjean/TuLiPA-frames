@@ -37,7 +37,7 @@ public class MyHttpHandler implements HttpHandler {
         System.out.println("handle request: " + httpExchange.getRequestURI());
 
         // shutdown command
-        if (httpExchange.getRequestURI().getPath().contains("shutdown-parser")){
+        if (httpExchange.getRequestURI().getPath().contains("shutdown-parser")) {
             System.out.println("told to shut down by the GUI window, exiting now");
             System.exit(130);
         }
@@ -76,67 +76,65 @@ public class MyHttpHandler implements HttpHandler {
             response = streamResult.getWriter().toString().getBytes();
         } else {
 
-	    if (requestedPath.contains("GRAPHVIZ.svg")) {
-		InputStreamReader dotstream = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
-		BufferedReader br = new BufferedReader(dotstream);
-		String dot = "";
-		String s = null;
-		while((s = br.readLine()) != null){
-		    dot += s + '\n';
-		}
-		// System.out.println("Input:");
-		// System.out.println(dot);
-		String[] cmd = {"/bin/sh","-c","echo '" + dot + "' | dot -Tsvg"};
-		Process process = Runtime.getRuntime().exec(cmd);
-		//Process process = Runtime.getRuntime().exec("ls");
-		InputStreamReader svgstream = new InputStreamReader(process.getInputStream());
-		BufferedReader brsvg = new BufferedReader(svgstream);
-		String dotsvg = "";
-		// System.out.println("Output:");
-		while((s = brsvg.readLine()) != null){
-		    dotsvg += s + '\n';
-		}
-		InputStreamReader errorstream = new InputStreamReader(process.getErrorStream());
-		BufferedReader brerror = new BufferedReader(errorstream);
-		String error = "";
-		//System.out.println("Error");
-		// while((s = brerror.readLine()) != null){
-		//     System.out.println(s);
-		// }
-		response = dotsvg.getBytes();
+            if (requestedPath.contains("GRAPHVIZ.svg")) {
+                InputStreamReader dotstream = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
+                BufferedReader br = new BufferedReader(dotstream);
+                String dot = "";
+                String s = null;
+                while ((s = br.readLine()) != null) {
+                    dot += s + '\n';
+                }
+                // System.out.println("Input:");
+                // System.out.println(dot);
+                String[] cmd = {"/bin/sh", "-c", "echo '" + dot + "' | dot -Tsvg"};
+                Process process = Runtime.getRuntime().exec(cmd);
+                //Process process = Runtime.getRuntime().exec("ls");
+                InputStreamReader svgstream = new InputStreamReader(process.getInputStream());
+                BufferedReader brsvg = new BufferedReader(svgstream);
+                String dotsvg = "";
+                // System.out.println("Output:");
+                while ((s = brsvg.readLine()) != null) {
+                    dotsvg += s + '\n';
+                }
+                InputStreamReader errorstream = new InputStreamReader(process.getErrorStream());
+                BufferedReader brerror = new BufferedReader(errorstream);
+                String error = "";
+                //System.out.println("Error");
+                // while((s = brerror.readLine()) != null){
+                //     System.out.println(s);
+                // }
+                response = dotsvg.getBytes();
 
-	    }
+            } else {
 
-	    else{
+                InputStream inputStream = MyHttpHandler.class.getResourceAsStream(requestedPath);
+                if (inputStream == null) {
+                    System.out.println("instream null, cannot handle request for " + httpExchange.getRequestURI());
+                }
 
-		InputStream inputStream = MyHttpHandler.class.getResourceAsStream(requestedPath);
-		if (inputStream == null) {
-		    System.out.println("instream null, cannot handle request for " + httpExchange.getRequestURI());
-		}
-		
-		
-		// handle text separately, so that for example we can replace things in html
-		if (contentType.startsWith("text")) {
-		    //System.out.println("process text file " + requestedPath);
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		    StringBuilder htmlBuilder = new StringBuilder();
-		    
-		    String nextLine = null;
-		    while ((nextLine = reader.readLine()) != null) {
-			nextLine = nextLine.replaceAll("\\$sentence", "'" + sentence+"'");
-			htmlBuilder.append(nextLine + "\n");
-			// System.out.println("readLine: " + nextLine);
-		    }
-		    String textResponse = htmlBuilder.toString();
-		    response = textResponse.getBytes();
-		} else {
-                // process non-text files, like binarys (e.g. font files)
-                // System.out.println("process non-text file" + requestedPath);
-		    response = inputStream.readAllBytes();
-		}
-	    }
-	}
-	    
+
+                // handle text separately, so that for example we can replace things in html
+                if (contentType.startsWith("text")) {
+                    //System.out.println("process text file " + requestedPath);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder htmlBuilder = new StringBuilder();
+
+                    String nextLine = null;
+                    while ((nextLine = reader.readLine()) != null) {
+                        nextLine = nextLine.replaceAll("\\$sentence", "'" + sentence + "'");
+                        htmlBuilder.append(nextLine + "\n");
+                        // System.out.println("readLine: " + nextLine);
+                    }
+                    String textResponse = htmlBuilder.toString();
+                    response = textResponse.getBytes();
+                } else {
+                    // process non-text files, like binarys (e.g. font files)
+                    // System.out.println("process non-text file" + requestedPath);
+                    response = inputStream.readAllBytes();
+                }
+            }
+        }
+
         //// send
         httpExchange.sendResponseHeaders(200, response.length);
 

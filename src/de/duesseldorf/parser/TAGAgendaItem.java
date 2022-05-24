@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Thomas Schoenemann  <tosch@phil.uni-duesseldorf.de>
- *     
+ *
  *  Copyright:
  *     Thomas Schoenemann, 2012
  *
@@ -30,11 +30,11 @@
 package de.duesseldorf.parser;
 
 //import de.tuebingen.tree.Grammar;
+
 import de.tuebingen.tag.TagNode;
 
 /**
  * @author tosch
- *
  */
 
 class TAGAgendaItem {
@@ -47,7 +47,7 @@ class TAGAgendaItem {
     public int pos;
 
     public TAGAgendaItem(TagNode n, int _i1, int _i2, int _j1, int _j2,
-            int pos) {
+                         int pos) {
         node = n;
         i1 = _i1;
         i2 = _i2;

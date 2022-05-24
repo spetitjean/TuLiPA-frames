@@ -4,7 +4,7 @@
  *  Authors:
  *     Johannes Dellert  <jdellert@sfs.uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *     Yannick Parmentier, 2008
@@ -32,40 +32,36 @@ package fr.loria.disambiguation;
 
 import java.util.*;
 
-public class PolarityAutomatonState
-{
-	int stateId;
+public class PolarityAutomatonState {
+    int stateId;
     Polarities polarities;
     //automata are deterministic: edge labels are assigned the IDs of the states they lead to
     HashMap<Integer, List<String>> edges;  // NB: outgoing edges!
-    
-    public PolarityAutomatonState(Polarities polarities, int i)
-    {
-    	this.stateId = i;
+
+    public PolarityAutomatonState(Polarities polarities, int i) {
+        this.stateId = i;
         this.polarities = polarities;
         this.edges = new HashMap<Integer, List<String>>();
     }
-        
-    public int getStateId() 
-    {
-		return stateId;
-	}
 
-	public void setStateId(int stateId) 
-	{
-		this.stateId = stateId;
-	}
-	
-	public String toString() {
-		String res = "";
-		res += "State n°" + stateId + "\n";
-		res += "Polarities: "+ polarities.toString();
-		Iterator<Integer> it = edges.keySet().iterator();
-		while (it.hasNext()) {
-			Integer next = it.next();
-			res += "To " + next + " " + edges.get(next).toString() + "\n";
-		}
-		return res;
-	}
+    public int getStateId() {
+        return stateId;
+    }
+
+    public void setStateId(int stateId) {
+        this.stateId = stateId;
+    }
+
+    public String toString() {
+        String res = "";
+        res += "State n°" + stateId + "\n";
+        res += "Polarities: " + polarities.toString();
+        Iterator<Integer> it = edges.keySet().iterator();
+        while (it.hasNext()) {
+            Integer next = it.next();
+            res += "To " + next + " " + edges.get(next).toString() + "\n";
+        }
+        return res;
+    }
 
 }

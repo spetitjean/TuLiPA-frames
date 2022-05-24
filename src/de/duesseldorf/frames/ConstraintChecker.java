@@ -84,10 +84,10 @@ public class ConstraintChecker {
     /**
      * iff the constraint is fulfilled, this method returns the Fs that is the
      * changed Fs given as parameter
-     * 
+     * <p>
      * Iff the constraint is not fulfilled (unification does not succeed), the
      * method returns null
-     * 
+     *
      * @param constraint
      * @param fs
      * @return

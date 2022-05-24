@@ -1,31 +1,30 @@
 /**
  * File FSPrinter.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
  * Simon Petitjean <petitjean@phil.hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2017
  * Simon Petitjean, 2017
- * 
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 package de.duesseldorf.frames;
 
@@ -38,7 +37,7 @@ import java.util.Set;
 import de.tuebingen.tag.Environment;
 
 /**
- * 
+ *
  * @author david
  *
  */
@@ -116,7 +115,7 @@ public class FsTools {
 
     /**
      * Temporary method so that nothing breaks
-     * 
+     *
      * @param fs1
      * @param fs2
      * @param env
@@ -132,9 +131,9 @@ public class FsTools {
      * Unifies two feature structures according to an environment and a Type
      * Hierarchy. To compute the unification of untyped feature structurs, set
      * the value of the typehierarchy null.
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param fs1,
      *            fs2, env
      *            fs1 is a feature structure containing a hashtable of
@@ -166,7 +165,7 @@ public class FsTools {
         // 1. loop through avm1
         for (String k : avm1.keySet()) {
             if (avm2.containsKey(k)) { // k is a common feature, we unify its
-                                       // values
+                // values
                 Value nval = null;
                 try {
                     // exception caught and re-thrown to extend the error

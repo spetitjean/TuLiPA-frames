@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -38,62 +38,62 @@ import de.tuebingen.anchoring.NameFactory;
 
 
 public class PolarizedToken {
-	
-	private String                       token;
-	private int                       position;
-	private Map<String, PolarizedLemma> lemmas;
-		
-	public PolarizedToken (String t, int p) {
-		token    = t;
-		position = p;
-		lemmas   = new HashMap<String, PolarizedLemma>();
-	}
-	
-	public void addLemma(PolarizedLemma lemma) {
-		String suffix = new NameFactory().getName(token);
-		// the suffix is used to deal with morphological ambiguity (token + lemma is not a unique key!)
-		lemmas.put(lemma.getLemmaID() + "--" + suffix, lemma);
-	}
-	
-	public Iterator<String> iterator() {
-		return lemmas.keySet().iterator();
-	}
 
-	public String getToken() {
-		return token;
-	}
+    private String token;
+    private int position;
+    private Map<String, PolarizedLemma> lemmas;
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public PolarizedToken(String t, int p) {
+        token = t;
+        position = p;
+        lemmas = new HashMap<String, PolarizedLemma>();
+    }
 
-	public int getPosition() {
-		return position;
-	}
+    public void addLemma(PolarizedLemma lemma) {
+        String suffix = new NameFactory().getName(token);
+        // the suffix is used to deal with morphological ambiguity (token + lemma is not a unique key!)
+        lemmas.put(lemma.getLemmaID() + "--" + suffix, lemma);
+    }
 
-	public void setPosition(int position) {
-		this.position = position;
-	}
+    public Iterator<String> iterator() {
+        return lemmas.keySet().iterator();
+    }
 
-	public Map<String, PolarizedLemma> getLemmas() {
-		return lemmas;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public void setLemmas(Map<String, PolarizedLemma> lemmas) {
-		this.lemmas = lemmas;
-	}
-	
-	public String toString() {
-		String res = "";
-		res += "Token " + token + "\n";
-		res += "Lemmas : \n";
-		Set<String> keys = lemmas.keySet();
-		Iterator<String> it = keys.iterator();
-		while (it.hasNext()) {
-			String next = it.next();
-			res += lemmas.get(next).toString();
-		}
-		return res;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public Map<String, PolarizedLemma> getLemmas() {
+        return lemmas;
+    }
+
+    public void setLemmas(Map<String, PolarizedLemma> lemmas) {
+        this.lemmas = lemmas;
+    }
+
+    public String toString() {
+        String res = "";
+        res += "Token " + token + "\n";
+        res += "Lemmas : \n";
+        Set<String> keys = lemmas.keySet();
+        Iterator<String> it = keys.iterator();
+        while (it.hasNext()) {
+            String next = it.next();
+            res += lemmas.get(next).toString();
+        }
+        return res;
+    }
 
 }

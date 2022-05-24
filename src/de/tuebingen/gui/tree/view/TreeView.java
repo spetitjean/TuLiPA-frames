@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -71,7 +71,7 @@ public class TreeView {
     }
 
     public TreeView(TreeModel model, int treeNodesDistance,
-            int treeLevelHeight) {
+                    int treeLevelHeight) {
         rootID = -1;
         nodeShape = BOX_SHAPE;
         setTotalTreeWidth(0);
@@ -126,7 +126,7 @@ public class TreeView {
     }
 
     private void createSubtreeStructure(TreeModelNode modelNode,
-            TreeViewNode viewNode, TreeModel model) {
+                                        TreeViewNode viewNode, TreeModel model) {
         for (int i = 0; i < modelNode.children.size(); i++) {
             TreeModelNode currentChild = model.nodes
                     .get(modelNode.children.get(i));
@@ -210,9 +210,9 @@ public class TreeView {
                         xOffset = (int) (treeNodes.get(parent).x + treeNodes
                                 .get(parent).subTreeWidth
                                 * ((double) (treeNodes
-                                        .get(nodes.get(j)).subTreeWidth)
-                                        / treeNodes.get(parent).subTreeWidth
-                                        - 0.5)
+                                .get(nodes.get(j)).subTreeWidth)
+                                / treeNodes.get(parent).subTreeWidth
+                                - 0.5)
                                 * treeNodesDistance);
                     }
                     if (i > 0) {
@@ -222,8 +222,8 @@ public class TreeView {
                 }
                 if (nodes.size() > 0
                         && treeNodes.get(nodes.get(nodes.size() - 1)).x
-                                + (int) (treeNodesDistance
-                                        * zoomFactor) > getTotalTreeWidth()) {
+                        + (int) (treeNodesDistance
+                        * zoomFactor) > getTotalTreeWidth()) {
                     setTotalTreeWidth(
                             treeNodes.get(nodes.get(nodes.size() - 1)).x
                                     + (int) (treeNodesDistance * zoomFactor));
@@ -260,7 +260,7 @@ public class TreeView {
                 for (int t : terminals) {
                     treeNodes.get(
                             treeNodes.get(t).getParent()).y = treeNodes.get(t).y
-                                    - (int) (treeLevelHeight * zoomFactor);
+                            - (int) (treeLevelHeight * zoomFactor);
                 }
             }
         }

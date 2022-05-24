@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *

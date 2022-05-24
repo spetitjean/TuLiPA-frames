@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -34,7 +34,7 @@ package de.tuebingen.rcg;
  * E.g., the TT-MCTAG converter produces PredComplexLabels,
  * while regular RCG parsing can be done with just Strings as
  * labels, such as in PredStringLabel.
- * 
+ *
  * @author wmaier
  */
 

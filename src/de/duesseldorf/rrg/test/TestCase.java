@@ -10,7 +10,7 @@ class TestCase {
     String sentence;
 
     public TestCase(String index, File inputGrammar, File targetGrammar,
-            String sentence) {
+                    String sentence) {
         this.index = index;
         this.inputGrammar = inputGrammar;
         this.targetGrammar = targetGrammar;

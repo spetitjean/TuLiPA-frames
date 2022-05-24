@@ -13,7 +13,7 @@ import de.tuebingen.tree.Node;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -37,11 +37,9 @@ import de.tuebingen.tree.Node;
 public class RRGTreeTools {
 
     /**
-     * 
-     * @param root
-     *            the root node of the tree to be printed
+     * @param root the root node of the tree to be printed
      * @return A multiline string representation of <code>root</code> and its
-     *         daughters
+     * daughters
      */
     public static String recursivelyPrintNode(Node root) {
         StringBuffer sb = new StringBuffer();
@@ -50,16 +48,12 @@ public class RRGTreeTools {
     }
 
     /**
-     * 
-     * @param root
-     *            the root node of the tree to be printed
-     * @param sb
-     *            The StringBuffer that is modified
-     * @param sep
-     *            The number of blanks needed to properly indent the nodes
+     * @param root the root node of the tree to be printed
+     * @param sb   The StringBuffer that is modified
+     * @param sep  The number of blanks needed to properly indent the nodes
      */
     private static void recursivelyPrintNode(Node root, StringBuffer sb,
-            int sep) {
+                                             int sep) {
         // add separators
         for (int i = 0; i < sep; i++) {
             sb.append(" ");
@@ -72,10 +66,8 @@ public class RRGTreeTools {
     }
 
     /**
-     * 
-     * @param treeRoot
-     *            The root of a tree (gorn address eps) that will be modified to
-     *            become the root of a tree with gorn addresses
+     * @param treeRoot The root of a tree (gorn address eps) that will be modified to
+     *                 become the root of a tree with gorn addresses
      */
     public static void initGornAddresses(RRGNode treeRoot) {
         // base case:
@@ -116,7 +108,7 @@ public class RRGTreeTools {
     }
 
     private static void asStringWithNodeLabelsAndNodeType(Node root,
-            StringBuffer sb, int sep) {
+                                                          StringBuffer sb, int sep) {
         // add separators+ root.)
         for (int i = 0; i < sep; i++) {
             sb.append(".");
@@ -141,13 +133,13 @@ public class RRGTreeTools {
      * NOT symmetrical! The resulting node is built based on node1. The only
      * thing thats added are fetures tructures. The resulging nodes has the
      * childre from node1.
-     * 
+     *
      * @param node1
      * @param node2
      * @return
      */
     public static RRGNode unifyNodes(RRGNode node1, RRGNode node2,
-            Environment env) throws UnifyException {
+                                     Environment env) throws UnifyException {
         RRGNode.Builder resultBuilder = new RRGNode.Builder(node1);
         if (!node1.getType().equals(node2.getType())) {
             resultBuilder = resultBuilder.type(RRGNodeType.STD);

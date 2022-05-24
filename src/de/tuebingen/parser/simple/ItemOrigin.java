@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -29,9 +29,8 @@
  */
 package de.tuebingen.parser.simple;
 
-public class ItemOrigin 
-{
-	String label = "start";
-	IncrementalEarleyItem parent1 = null;
-	IncrementalEarleyItem parent2 = null;
+public class ItemOrigin {
+    String label = "start";
+    IncrementalEarleyItem parent1 = null;
+    IncrementalEarleyItem parent2 = null;
 }

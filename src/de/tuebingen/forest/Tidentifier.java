@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -31,75 +31,75 @@ package de.tuebingen.forest;
 
 public class Tidentifier implements Comparable<Tidentifier> {
 
-	private int          clauseId;
-	private String         treeId;
-	private String         nodeId; // gorn address of the node receiving the operation
-	private String        binding; //bindings may differ between 2 instances of the same clauseId!
-	
-	public Tidentifier(int i, String tname, String bd){
-		clauseId = i;
-		treeId   = tname;
-		binding  = bd;
-		nodeId = "0"; // default value, added by YP 2013/06/13
-	}
-	
-	public Tidentifier(Tidentifier tid) {
-		clauseId = tid.getClauseId();
-		treeId   = tid.getTreeId();
-		nodeId   = tid.getNodeId();
-		binding  = tid.getBinding();
-	}
-	
-	public int getClauseId() {
-		return clauseId;
-	}
-	
-	public void setClauseId(int number) {
-		this.clauseId = number;
-	}
-	
-	public String getTreeId() {
-		return treeId;
-	}
-	
-	public void setTreeId(String treeId) {
-		this.treeId = treeId;
-	}
-	
-	public String getNodeId() {
-		return nodeId;
-	}
+    private int clauseId;
+    private String treeId;
+    private String nodeId; // gorn address of the node receiving the operation
+    private String binding; //bindings may differ between 2 instances of the same clauseId!
 
-	public void setNodeId(String nodeId) {
-		this.nodeId = nodeId;
-	}
+    public Tidentifier(int i, String tname, String bd) {
+        clauseId = i;
+        treeId = tname;
+        binding = bd;
+        nodeId = "0"; // default value, added by YP 2013/06/13
+    }
 
-	public String getBinding() {
-		return binding;
-	}
+    public Tidentifier(Tidentifier tid) {
+        clauseId = tid.getClauseId();
+        treeId = tid.getTreeId();
+        nodeId = tid.getNodeId();
+        binding = tid.getBinding();
+    }
 
-	public void setBinding(String binding) {
-		this.binding = binding;
-	}
-	
-	public int hashCode() {
-		return toString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return this.hashCode() == o.hashCode();
-	}
+    public int getClauseId() {
+        return clauseId;
+    }
 
-	public String toString() {
-		String res = "";
-		res += clauseId;
-		res += " [" + treeId + "] ";
-		res += binding + " ";
-		return res;
-	}
+    public void setClauseId(int number) {
+        this.clauseId = number;
+    }
 
-	public int compareTo(Tidentifier arg0) { // for sorting Tidentifier according to clause ids
-		return ((Integer) this.clauseId).compareTo(arg0.getClauseId()); 
-	}
-	
+    public String getTreeId() {
+        return treeId;
+    }
+
+    public void setTreeId(String treeId) {
+        this.treeId = treeId;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public String getBinding() {
+        return binding;
+    }
+
+    public void setBinding(String binding) {
+        this.binding = binding;
+    }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
+
+    public String toString() {
+        String res = "";
+        res += clauseId;
+        res += " [" + treeId + "] ";
+        res += binding + " ";
+        return res;
+    }
+
+    public int compareTo(Tidentifier arg0) { // for sorting Tidentifier according to clause ids
+        return ((Integer) this.clauseId).compareTo(arg0.getClauseId());
+    }
+
 }

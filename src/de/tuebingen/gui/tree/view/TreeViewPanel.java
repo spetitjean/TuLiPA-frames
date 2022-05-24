@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -42,10 +42,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 /**
- * 
  * A panel where a elementary tree, derivation tree or derived tree is
  * displayed.
- *
  */
 public class TreeViewPanel extends JPanel {
     // serialVersionUID to avoid warning
@@ -147,7 +145,7 @@ public class TreeViewPanel extends JPanel {
         // print box around node tag
         int x = t.treeNodes.get(nodeID).x
                 - (int) (t.treeNodes.get(nodeID).tag.length() * 6
-                        * t.getZoomFactor());
+                * t.getZoomFactor());
         int y = t.treeNodes.get(nodeID).y - 10;
         int width = (int) (t.treeNodes.get(nodeID).tag.length() * 12
                 * t.getZoomFactor());
@@ -175,25 +173,25 @@ public class TreeViewPanel extends JPanel {
             arrowhead.addPoint(x1, y1);
             if ((x2 <= x1 && slope < -1) || (x2 >= x1 && slope > -1))
                 arrowhead.addPoint(x1
-                        + (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
+                                + (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
                         y1 + (int) ((10
                                 / Math.sqrt(1 + lowerSlope * lowerSlope))
                                 * lowerSlope));
             if ((x2 <= x1 && slope > -1) || (x2 > x1 && slope < -1))
                 arrowhead.addPoint(x1
-                        - (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
+                                - (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
                         y1 - (int) ((10
                                 / Math.sqrt(1 + lowerSlope * lowerSlope))
                                 * lowerSlope));
             if ((x2 <= x1 && slope > 1) || (x2 > x1 && slope < 1))
                 arrowhead.addPoint(x1
-                        + (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
+                                + (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
                         y1 + (int) ((10
                                 / Math.sqrt(1 + higherSlope * higherSlope))
                                 * higherSlope));
             if ((x2 <= x1 && slope < 1) || (x2 >= x1 && slope > 1))
                 arrowhead.addPoint(x1
-                        - (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
+                                - (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
                         y1 - (int) ((10
                                 / Math.sqrt(1 + higherSlope * higherSlope))
                                 * higherSlope));
@@ -206,25 +204,25 @@ public class TreeViewPanel extends JPanel {
             arrowhead.addPoint(x2, y2);
             if ((x2 < x1 && slope < -1) || (x2 >= x1 && slope > -1))
                 arrowhead.addPoint(x2
-                        - (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
+                                - (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
                         y2 - (int) ((10
                                 / Math.sqrt(1 + lowerSlope * lowerSlope))
                                 * lowerSlope));
             if ((x2 < x1 && slope > -1) || (x2 > x1 && slope < -1))
                 arrowhead.addPoint(x2
-                        + (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
+                                + (int) (10 / Math.sqrt(1 + lowerSlope * lowerSlope)),
                         y2 + (int) ((10
                                 / Math.sqrt(1 + lowerSlope * lowerSlope))
                                 * lowerSlope));
             if ((x2 < x1 && slope > 1) || (x2 > x1 && slope < 1))
                 arrowhead.addPoint(x2
-                        - (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
+                                - (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
                         y2 - (int) ((10
                                 / Math.sqrt(1 + higherSlope * higherSlope))
                                 * higherSlope));
             if ((x2 < x1 && slope < 1) || (x2 >= x1 && slope > 1))
                 arrowhead.addPoint(x2
-                        + (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
+                                + (int) (10 / Math.sqrt(1 + higherSlope * higherSlope)),
                         y2 + (int) ((10
                                 / Math.sqrt(1 + higherSlope * higherSlope))
                                 * higherSlope));
@@ -262,7 +260,7 @@ public class TreeViewPanel extends JPanel {
     /**
      * prints the tag of a single node, e.g. the name of a phrase or the
      * terminaols
-     * 
+     *
      * @param canvas
      * @param nodeID
      */
@@ -280,7 +278,7 @@ public class TreeViewPanel extends JPanel {
         // print oval around node tag
         int x = t.treeNodes.get(nodeID).x
                 - (int) (t.treeNodes.get(nodeID).tag.length() * 8
-                        * t.getZoomFactor());
+                * t.getZoomFactor());
         int y = t.treeNodes.get(nodeID).y - 10;
         int width = (int) (t.treeNodes.get(nodeID).tag.length() * 16
                 * t.getZoomFactor());
@@ -328,7 +326,7 @@ public class TreeViewPanel extends JPanel {
 
     /**
      * prints all the nodes in the tree to be displayed
-     * 
+     *
      * @param cnv
      */
     public void printTreeNodes(Graphics cnv) {
@@ -363,7 +361,7 @@ public class TreeViewPanel extends JPanel {
      * prints a line that may be dottet (if type=="dotted")
      */
     public static void drawLineAccordingToType(Graphics g, String type, int x0,
-            int y0, int x1, int y1) {
+                                               int y0, int x1, int y1) {
         if (type.equals("dotted")) {
             drawDottedLine(g, x0, y0, x1, y1, g.getColor(), 1, 1);
         } else {
@@ -372,7 +370,7 @@ public class TreeViewPanel extends JPanel {
     }
 
     public static void drawDottedLine(Graphics g, int x0, int y0, int x1,
-            int y1, Color color, int dashLen, int spaceLen) {
+                                      int y1, Color color, int dashLen, int spaceLen) {
         Color c = g.getColor();
         g.setColor(color);
         int dx = x1 - x0;

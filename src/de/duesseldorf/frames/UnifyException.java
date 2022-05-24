@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -30,50 +30,45 @@
 package de.duesseldorf.frames;
 
 /**
- * 
  * @author parmenti
- *
  */
 public class UnifyException extends Exception {
-	
-	/**
-	 * Class used to handle feature unification exceptions 
-	 */
-	private static final long serialVersionUID = 1L;
-    
+
+    /**
+     * Class used to handle feature unification exceptions
+     */
+    private static final long serialVersionUID = 1L;
+
     private String feat1;
     private String feat2;
 
-	public UnifyException(){
-		super();
-	}
-    
-    public UnifyException(String feat1, String feat2)
-    {
+    public UnifyException() {
+        super();
+    }
+
+    public UnifyException(String feat1, String feat2) {
         super("Unification failure between " + feat1 + " and " + feat2);
         this.feat1 = feat1;
         this.feat2 = feat2;
     }
-	
-	public UnifyException(String message){
-		super(message);
-	}
-	
-	public UnifyException(Throwable cause){
-		super(cause);
-	}
-	
-	public UnifyException(String message, Throwable cause){
-		super(message, cause);
-	}
 
-    public String getFeat1()
-    {
+    public UnifyException(String message) {
+        super(message);
+    }
+
+    public UnifyException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnifyException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public String getFeat1() {
         return feat1;
     }
 
-    public String getFeat2()
-    {
+    public String getFeat2() {
         return feat2;
     }
 }

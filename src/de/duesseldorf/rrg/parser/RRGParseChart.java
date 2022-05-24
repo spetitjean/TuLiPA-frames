@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -62,20 +62,19 @@ public class RRGParseChart {
     }
 
     /**
-     * 
      * @return The Set of all goal items in the chart if the conditions are
-     *         met:<br>
-     *         - start = 0, end = sentencelength<br>
-     *         - ws is false<br>
-     *         - in TOP position in a STD root node<br>
-     *         - axiom fits
+     * met:<br>
+     * - start = 0, end = sentencelength<br>
+     * - ws is false<br>
+     * - in TOP position in a STD root node<br>
+     * - axiom fits
      */
     public Set<RRGParseItem> retrieveGoalItems() {
         Set<RRGParseItem> goals = new HashSet<RRGParseItem>();
         for (RRGParseItem item : chart.get(0).keySet()) {
             RRGParseItem rrgitem = (RRGParseItem) item;
             boolean goalReqsFromItem = rrgitem.getEnd() == sentencelength && // end=n
-            // no more ws
+                    // no more ws
                     rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
                     // TOP position
                     && rrgitem.getNodePos().equals(RRGParseItem.NodePos.TOP)
@@ -102,31 +101,27 @@ public class RRGParseChart {
     }
 
     /**
-     * 
      * @param item
      * @return A Set of the backpointers of item, i.e. a Set of all sets of
-     *         items that created the item.
+     * items that created the item.
      */
     public Backpointer getBackPointers(RRGParseItem item) {
         return chart.get(item.startPos()).get(item);
     }
 
     /**
-     * 
-     * @param model
-     *            find items in the chart that match the template given by
-     *            model. To construct the template, equip the item with
-     *            concrete models or to leave values unspecified <br>
-     *            - give null for {@code tree}, {@code node}, {@code nodePos},
-     *            {@code gaps}, {@code wsflag} <br>
-     *            - give -2 for {@code start}, {@code end}
-     * @param gapSubSet
-     *            are the gaps in the model only a subset of the gaps in the
-     *            item we look for?
+     * @param model     find items in the chart that match the template given by
+     *                  model. To construct the template, equip the item with
+     *                  concrete models or to leave values unspecified <br>
+     *                  - give null for {@code tree}, {@code node}, {@code nodePos},
+     *                  {@code gaps}, {@code wsflag} <br>
+     *                  - give -2 for {@code start}, {@code end}
+     * @param gapSubSet are the gaps in the model only a subset of the gaps in the
+     *                  item we look for?
      * @return
      */
     public Set<RRGParseItem> findUnderspecifiedItem(RRGParseItem model,
-            boolean gapSubSet) {
+                                                    boolean gapSubSet) {
         Set<RRGParseItem> result = new HashSet<RRGParseItem>();
 
         // collect all the items that might fit the model
@@ -147,14 +142,14 @@ public class RRGParseChart {
                     || model.getEnd() == ((RRGParseItem) s).getEnd();
             if (endCheck) {
                 boolean treeCheck = model.getTree() == null
-		    || model.getTree().getInstance().equals(((RRGParseItem) s).getTree().getInstance());
+                        || model.getTree().getInstance().equals(((RRGParseItem) s).getTree().getInstance());
                 if (treeCheck) {
                     boolean nodeCheck = model.getNode() == null || model
-			.getNode().copyNode().equals(((RRGParseItem) s).getNode().copyNode());
+                            .getNode().copyNode().equals(((RRGParseItem) s).getNode().copyNode());
                     if (nodeCheck) {
                         boolean posCheck = model.getNodePos() == null
                                 || model.getNodePos().equals(
-                                        ((RRGParseItem) s).getNodePos());
+                                ((RRGParseItem) s).getNodePos());
                         if (posCheck) {
                             // several cases: 1. no gaps given - gaps = null. 2.
                             // gaps given, equal to the gaps we look for
@@ -183,7 +178,7 @@ public class RRGParseChart {
                                 boolean wsCheck = (Boolean) model
                                         .getwsflag() == null
                                         || ((Boolean) model.getwsflag()).equals(
-                                                ((RRGParseItem) s).getwsflag());
+                                        ((RRGParseItem) s).getwsflag());
                                 if (wsCheck) {
                                     result.add((RRGParseItem) s);
                                 }
@@ -199,15 +194,13 @@ public class RRGParseChart {
 
     /**
      * adds an item to the chart if it is not already in there.
-     * 
-     * @param consequent
-     *            the item that should be added to the chart.
-     * @param antecedents
-     *            the antecedents from which this item was created.
+     *
+     * @param consequent  the item that should be added to the chart.
+     * @param antecedents the antecedents from which this item was created.
      * @return true if the RRGParseItem was not already in the chart
      */
     public boolean addItem(RRGParseItem consequent, Operation operation,
-            RRGParseItem... antecedents) {
+                           RRGParseItem... antecedents) {
         Set<RRGParseItem> antes;
         if (antecedents.length > 0) {
             antes = new HashSet<RRGParseItem>(Arrays.asList(antecedents));
@@ -217,23 +210,23 @@ public class RRGParseChart {
         int startpos = consequent.startPos();
 
         // was the item in the chart before?
-	
+
         boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
             boolean antesAlreadyThere = chart.get(startpos)
                     .get(consequent) != null
                     && chart.get(startpos).get(consequent)
-                            .getAntecedents(operation).contains(antes);
+                    .getAntecedents(operation).contains(antes);
             if (!antesAlreadyThere) {
                 chart.get(startpos).get(consequent).addToBackpointer(operation,
                         antes);
             } /*
-               * else {
-               * System.out
-               * .println("equality! " + operation + consequent + antes);
-               * }
-               */
+             * else {
+             * System.out
+             * .println("equality! " + operation + consequent + antes);
+             * }
+             */
         } else {
             // add the consequent and a fresh set of backpointers
             Backpointer backpointer = new Backpointer();

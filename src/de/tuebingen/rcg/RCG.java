@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -49,9 +49,8 @@ import de.tuebingen.util.MathUtilities;
 
 /**
  * Represents a Range Concatenation Grammar (Boullier 2000)
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class RCG implements Grammar {
 
@@ -62,8 +61,8 @@ public class RCG implements Grammar {
     private PredLabel startPredicate;
     private boolean needsAnchoring;
     private Map<String, Integer> categories; // compute adjunction restrictions
-                                             // wrt the modifiers in the
-                                             // subgrammar
+    // wrt the modifiers in the
+    // subgrammar
     private boolean termtransformed = false;
 
     public RCG() {
@@ -230,7 +229,7 @@ public class RCG implements Grammar {
      * T(a) -> eps
      * or
      * T(eps) -> eps
-     * 
+     * <p>
      * Preliminary, since based on pred-string labels.
      */
     public void termtransform() {

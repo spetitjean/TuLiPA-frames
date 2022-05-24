@@ -54,7 +54,7 @@ public class Deducer {
             System.out.println("something strange: two jumpback items not zero during CSis: l: " + leftItem + ", r: " + rightItem);
         }
         return new RRGParseItem.Builder().tree(rightItem.getTree().getInstance())
-	    .node(rightItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
+                .node(rightItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
                 .start(leftItem.startPos()).end(rightItem.getEnd()).gaps(gaps)
                 .ws(false)
                 .genwrappingjumpback(jumpBackItem).build();
@@ -94,7 +94,7 @@ public class Deducer {
      */
     public RRGParseItem applyNoLeftSister(RRGParseItem currentItem) {
         return new RRGParseItem.Builder().tree(currentItem.getTree().getInstance())
-	    .node(currentItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
+                .node(currentItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
                 .start(currentItem.startPos()).end(currentItem.getEnd())
                 .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
                 .genwrappingjumpback(currentItem.getGenwrappingjumpback())
@@ -122,7 +122,7 @@ public class Deducer {
             System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + targetSister + ", a: " + auxTreeRoot);
         }
         return new RRGParseItem.Builder().tree(targetSister.getTree().getInstance())
-	    .node(targetSister.getNode().copyNode()).nodepos(targetSister.getNodePos())
+                .node(targetSister.getNode().copyNode()).nodepos(targetSister.getNodePos())
                 .start(auxTreeRoot.startPos()).end(targetSister.getEnd())
                 .gaps(gaps).ws(false)
                 .genwrappingjumpback(jumpBackItem).build();
@@ -150,7 +150,7 @@ public class Deducer {
         }
         // System.out.print(target.getTree());
         return new RRGParseItem.Builder().tree(target.getTree().getInstance())
-	    .node(target.getNode().copyNode()).nodepos(target.getNodePos())
+                .node(target.getNode().copyNode()).nodepos(target.getNodePos())
                 .start(target.startPos()).end(auxTreeRoot.getEnd()).gaps(gaps)
                 .ws(target.getwsflag())
                 .genwrappingjumpback(jumpBackItem).build();
@@ -170,7 +170,7 @@ public class Deducer {
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
         RRGParseItem.Builder builder = new RRGParseItem.Builder().tree(fillerddaughterItem.getTree().getInstance())
-	    .node(fillerddaughterItem.getNode().copyNode())
+                .node(fillerddaughterItem.getNode().copyNode())
                 .nodepos(fillerddaughterItem.getNodePos())
                 .start(targetItem.startPos()).end(targetItem.getEnd())
                 .gaps(gaps).ws(false);

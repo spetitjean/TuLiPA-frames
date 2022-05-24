@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -51,14 +51,14 @@ public class ProduceDOM {
     private static Map<Tidentifier, List<Rule>> forest;
     private static List<Tidentifier> start;
     private static NameFactory name_factory; // to rename the clause identifiers
-                                             // in case of instantiation
-                                             // ambiguity
+    // in case of instantiation
+    // ambiguity
     private static Map<String, TagTree> dictionary; // to find out original tree
-                                                    // ids
+    // ids
 
     public static Document buildDOMForest(Map<Tidentifier, List<Rule>> f,
-            List<Tidentifier> s, String sentence, String grammarname,
-            NameFactory nf, Map<String, TagTree> dict) {
+                                          List<Tidentifier> s, String sentence, String grammarname,
+                                          NameFactory nf, Map<String, TagTree> dict) {
         dictionary = dict;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory
@@ -106,13 +106,13 @@ public class ProduceDOM {
             // 1---------------------------------------------------------------
             /*
              * Preprocessing needed ? discussion going on with Johannes
-             * 
+             *
              * // Pre-processing needed: we gather disjunctions of clause
              * instantiation
              * // within the same forest rule
              * Tidentifier[] ids = forest.keySet().toArray(new Tidentifier[0]);
              * Arrays.sort(ids);
-             * 
+             *
              * // for each rule
              * Tidentifier current = null;
              * Element curelt = null;
@@ -134,17 +134,17 @@ public class ProduceDOM {
              * else
              * st.setAttribute("tree_name",
              * dictionary.get(next.getTreeId()).getOriginalId());
-             * 
+             *
              * curelt = st;
              * }
-             * 
+             *
              * // in all cases, we add the rules
              * List<Rule> rules = forest.get(next);
              * for(int j = 0 ; j < rules.size() ; j++){
              * buildRHS(curelt, rules.get(j));
              * }
              * root.appendChild(curelt);
-             * 
+             *
              * current = next;
              * i++;
              * }
@@ -227,13 +227,13 @@ public class ProduceDOM {
         Element e = forestDoc.createElement("operation");
         String value = "";
         switch (top.getType()) {
-        case PredComplexLabel.ADJ:
-            value = "adj";
-            break;
-        case PredComplexLabel.SUB:
-            value = "sub";
-            break;
-        default: // skip
+            case PredComplexLabel.ADJ:
+                value = "adj";
+                break;
+            case PredComplexLabel.SUB:
+                value = "sub";
+                break;
+            default: // skip
         }
         if (!value.equals(""))
             e.setAttribute("type", value);

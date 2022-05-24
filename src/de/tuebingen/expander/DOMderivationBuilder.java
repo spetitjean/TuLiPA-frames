@@ -4,7 +4,7 @@
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
  *     Johannes Dellert <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *     Johannes Dellert, 2007
@@ -83,7 +83,6 @@ public class DOMderivationBuilder {
     }
 
     /**
-     * 
      * @param viewTreesFromDOM
      * @param sentence
      * @return
@@ -105,11 +104,10 @@ public class DOMderivationBuilder {
     }
 
     /**
-     * 
      * @param all
      * @param sentence
      * @return a DOM Document containing all derivation trees and derived trees
-     *         for the sentence, in the standard old TuLiPA format.
+     * for the sentence, in the standard old TuLiPA format.
      */
     public Document buildDOMderivation(ArrayList<ParseTreeCollection> all) {
 
@@ -128,8 +126,8 @@ public class DOMderivationBuilder {
     }
 
     public void buildOneGrammarFormat(Element mother, Node derivation,
-            Node derived, DerivedTree dTree, List<SemLit> semantics,
-            String[] specifiedSemantics, Frame frameSem) {
+                                      Node derived, DerivedTree dTree, List<SemLit> semantics,
+                                      String[] specifiedSemantics, Frame frameSem) {
         // the entry with the derived tree
         Element parseDerivedEntry = derivDoc.createElement("entry");
         // Element parseDerivationEntry = derivDoc.createElement("entry"); //
@@ -177,8 +175,8 @@ public class DOMderivationBuilder {
     }
 
     public static void buildOne(Element mother, Node derivation, Node derived,
-            DerivedTree dTree, List<SemLit> semantics,
-            String[] specifiedSemantics, Frame frameSem) {
+                                DerivedTree dTree, List<SemLit> semantics,
+                                String[] specifiedSemantics, Frame frameSem) {
         Element p = derivDoc.createElement("parse");
         Element d1 = derivDoc.createElement("derivationTree");
         Element d2 = derivDoc.createElement("derivedTree");
@@ -243,10 +241,10 @@ public class DOMderivationBuilder {
             if (name.equals("id")) {
                 t.setTextContent(val);
             } // else if (name.equals("op")) {
-              // t.setAttribute("op", val);
-              // } else if (name.equals("op-node")) {
-              // t.setAttribute("node", val);
-              // } // skip the other attributes
+            // t.setAttribute("op", val);
+            // } else if (name.equals("op-node")) {
+            // t.setAttribute("node", val);
+            // } // skip the other attributes
         }
         NodeList childList = derivation.getChildNodes();
         for (int i = 0; i < childList.getLength(); i++) {
@@ -259,7 +257,7 @@ public class DOMderivationBuilder {
     }
 
     public static void buildDerivedTree(Element mother, DerivedTree dTree,
-            Node current, Node derived) {
+                                        Node current, Node derived) {
         Element t = derivDoc.createElement("node");
         Element narg = derivDoc.createElement("narg");
 
@@ -406,7 +404,7 @@ public class DOMderivationBuilder {
     }
 
     private static void buildRelations(Element mother,
-            Set<Relation> relations) {
+                                       Set<Relation> relations) {
         // go through all the relations
         for (Relation properRelation : relations) {
             // create the element
@@ -455,25 +453,25 @@ public class DOMderivationBuilder {
             // adisj for now)
             Element e;
             switch (fval.getType()) {
-            // case VAL
-            case VAL:
-                // System.out.println("case VAL");
-                e = derivDoc.createElement("sym");
-                e.setAttribute("value", fval.getSVal());
-                f.appendChild(e);
-                break;
-            // case VAR
-            case VAR:
-                // System.out.println("case VAR");
-                e = derivDoc.createElement("sym");
-                e.setAttribute("varname", fval.getVarVal());
-                f.appendChild(e);
-                break;
-            // case AVM
-            case AVM:
-                // System.out.println("case AVM");
-                buildFrame(f, fval.getAvmVal());
-                break;
+                // case VAL
+                case VAL:
+                    // System.out.println("case VAL");
+                    e = derivDoc.createElement("sym");
+                    e.setAttribute("value", fval.getSVal());
+                    f.appendChild(e);
+                    break;
+                // case VAR
+                case VAR:
+                    // System.out.println("case VAR");
+                    e = derivDoc.createElement("sym");
+                    e.setAttribute("varname", fval.getVarVal());
+                    f.appendChild(e);
+                    break;
+                // case AVM
+                case AVM:
+                    // System.out.println("case AVM");
+                    buildFrame(f, fval.getAvmVal());
+                    break;
             }
             fs.appendChild(f);
         }

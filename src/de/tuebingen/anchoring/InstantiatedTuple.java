@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -35,54 +35,54 @@ import de.tuebingen.lexicon.Anchor;
 import de.tuebingen.tag.Tuple;
 
 public class InstantiatedTuple extends Tuple {
-	
-	private InstantiatedLemma lemma;
-	private Anchor           anchor;
-	private List<String>  semLabels;
 
-	public InstantiatedTuple() {
-		super();
-	}
+    private InstantiatedLemma lemma;
+    private Anchor anchor;
+    private List<String> semLabels;
 
-	public InstantiatedTuple(InstantiatedTuple it) {
-		super((Tuple) it);
-		lemma  = new InstantiatedLemma(it.getLemma());
-		anchor = new Anchor(it.getAnchor()); 
-	}
+    public InstantiatedTuple() {
+        super();
+    }
 
-	public InstantiatedTuple(Tuple t, InstantiatedLemma l){
-		super(t);
-		this.lemma = new InstantiatedLemma(l);
-	}
+    public InstantiatedTuple(InstantiatedTuple it) {
+        super((Tuple) it);
+        lemma = new InstantiatedLemma(it.getLemma());
+        anchor = new Anchor(it.getAnchor());
+    }
 
-	public InstantiatedTuple(Anchor a, Tuple t, InstantiatedLemma l){
-		super(t);
-		this.anchor= new Anchor(a);
-		this.lemma = new InstantiatedLemma(l);
-	}
-	
-	public Anchor getAnchor() {
-		return anchor;
-	}
+    public InstantiatedTuple(Tuple t, InstantiatedLemma l) {
+        super(t);
+        this.lemma = new InstantiatedLemma(l);
+    }
 
-	public void setAnchor(Anchor anchor) {
-		this.anchor = anchor;
-	}
+    public InstantiatedTuple(Anchor a, Tuple t, InstantiatedLemma l) {
+        super(t);
+        this.anchor = new Anchor(a);
+        this.lemma = new InstantiatedLemma(l);
+    }
 
-	public InstantiatedLemma getLemma() {
-		return lemma;
-	}
+    public Anchor getAnchor() {
+        return anchor;
+    }
 
-	public void setLemma(InstantiatedLemma lemma) {
-		this.lemma = lemma;
-	}
+    public void setAnchor(Anchor anchor) {
+        this.anchor = anchor;
+    }
 
-	public List<String> getSemLabels() {
-		return semLabels;
-	}
+    public InstantiatedLemma getLemma() {
+        return lemma;
+    }
 
-	public void setSemLabels(List<String> semLabels) {
-		this.semLabels = semLabels;
-	}
+    public void setLemma(InstantiatedLemma lemma) {
+        this.lemma = lemma;
+    }
+
+    public List<String> getSemLabels() {
+        return semLabels;
+    }
+
+    public void setSemLabels(List<String> semLabels) {
+        this.semLabels = semLabels;
+    }
 
 }

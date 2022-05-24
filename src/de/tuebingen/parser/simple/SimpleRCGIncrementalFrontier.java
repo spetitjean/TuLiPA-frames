@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -31,46 +31,37 @@ package de.tuebingen.parser.simple;
 
 import java.util.*;
 
-public class SimpleRCGIncrementalFrontier
-{
-	HashMap<Integer, List<IncrementalEarleyItem>> frontier;
-	int size;
-	int currentPos;
-	
-	public SimpleRCGIncrementalFrontier()
-	{
-		frontier = new HashMap<Integer, List<IncrementalEarleyItem>>();
-		size = 0;
-		currentPos = 0;
-	}
-	
-	public void add(IncrementalEarleyItem it)
-	{
-		if (frontier.get(it.pos) == null)
-		{
-			frontier.put(it.pos, new LinkedList<IncrementalEarleyItem>());
-		}
-		frontier.get(it.pos).add(it);
-		size++;
-	}
-	
-	public int size()
-	{
-		return size;
-	}
-	
-	public IncrementalEarleyItem next()
-	{
-		if (frontier.get(currentPos).size() > 0)
-		{
-			size--;
-			return frontier.get(currentPos).remove(0);
-		}
-		else
-		{
-			currentPos++;
-			return next();
-		}
-	}
-	
+public class SimpleRCGIncrementalFrontier {
+    HashMap<Integer, List<IncrementalEarleyItem>> frontier;
+    int size;
+    int currentPos;
+
+    public SimpleRCGIncrementalFrontier() {
+        frontier = new HashMap<Integer, List<IncrementalEarleyItem>>();
+        size = 0;
+        currentPos = 0;
+    }
+
+    public void add(IncrementalEarleyItem it) {
+        if (frontier.get(it.pos) == null) {
+            frontier.put(it.pos, new LinkedList<IncrementalEarleyItem>());
+        }
+        frontier.get(it.pos).add(it);
+        size++;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public IncrementalEarleyItem next() {
+        if (frontier.get(currentPos).size() > 0) {
+            size--;
+            return frontier.get(currentPos).remove(0);
+        } else {
+            currentPos++;
+            return next();
+        }
+    }
+
 }

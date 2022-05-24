@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -31,15 +31,13 @@ package de.tuebingen.expander;
 
 import org.w3c.dom.*;
 
-public class Operation
-{
+public class Operation {
     String id;
     String opId;
     String node;
     String type;
-    
-    public Operation(Node n)
-    {
+
+    public Operation(Node n) {
         id = n.getAttributes().getNamedItem("id").getNodeValue();
         opId = id.substring(id.indexOf("_"));
         node = n.getAttributes().getNamedItem("node").getNodeValue();
@@ -47,10 +45,9 @@ public class Operation
         //for compatibility reasons
         if (type.equals("sub")) type = "subst";
     }
-    
-    public String toString()
-    {
-    	return opId;
-    	//return "(" + id + "," + opId + "," + node + "," + type + ")";
+
+    public String toString() {
+        return opId;
+        //return "(" + id + "," + opId + "," + node + "," + type + ")";
     }
 }

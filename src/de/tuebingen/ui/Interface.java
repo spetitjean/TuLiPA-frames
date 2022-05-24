@@ -86,7 +86,7 @@ public class Interface {
             System.exit(0);
         }
 
-        gui = !(op.check("s")  || (op.check("b"))) || (op.check("i"));
+        gui = !(op.check("s") || (op.check("b"))) || (op.check("i"));
         if (gui)
             op.setVal("gui", "");
 
@@ -252,7 +252,7 @@ public class Interface {
                         }
                         if (op.check("rrg")) {
                             ParsingInterface.parseRRG(op, is);
-                        } else{
+                        } else {
                             ParsingInterface.parseTAG(op,
                                     (TTMCTAG) Situation.getGrammar(), is);
                         }

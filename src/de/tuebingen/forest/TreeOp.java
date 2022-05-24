@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -33,71 +33,76 @@ import de.tuebingen.rcg.PredComplexLabel;
 
 public class TreeOp {
 
-	private Tidentifier id;
-	private int       type;  // ADJ or SUB (i.e. 1 and 2 resp., cf PredComplexLabel)
-	private TreeOp      or;  // for ambiguity
-	
-	public TreeOp() {}
-	
-	public TreeOp(Tidentifier tid) {
-		id = tid;
-	}
-	
-	public TreeOp(Tidentifier tree, int t){
-		id   = tree;
-		type = t;
-	}
-	
-	public TreeOp(TreeOp top) {
-		id   = new Tidentifier(top.getId());
-		type = top.getType();
-		if (top.getOr() != null)
-			or   = new TreeOp(top.getOr());
-	}
-	
-	public boolean isBlank() {
-		return (id == null);
-	}
-	
-	public boolean isDisj() {
-		return (or != null);
-	}
-	
-	public Tidentifier getId() {
-		return id;
-	}
-	public void setId(Tidentifier id) {
-		this.id = id;
-	}
-	public int getType() {
-		return type;
-	}
-	public void setType(int type) {
-		this.type = type;
-	}
-	
-	public TreeOp getOr() {
-		return or;
-	}
+    private Tidentifier id;
+    private int type;  // ADJ or SUB (i.e. 1 and 2 resp., cf PredComplexLabel)
+    private TreeOp or;  // for ambiguity
 
-	public void setOr(TreeOp or) {
-		this.or = or;
-	}
+    public TreeOp() {
+    }
 
-	public String toString(){
-		String res = (id == null) ? "" : id.getClauseId()+"";
-		res += "[" + id.getBinding() + "]"; 
-		switch (type) {
-		case PredComplexLabel.ADJ:
-			res += ".a" + "[" + id.getNodeId() + "]";
-			break;
-		case PredComplexLabel.SUB:
-			res += ".s" + "[" + id.getNodeId() + "]";
-			break;
-		default: res += "._" + type;
-		} 
-		if (or != null)
-			res += " | " + or.toString();
-		return res;
-	}
+    public TreeOp(Tidentifier tid) {
+        id = tid;
+    }
+
+    public TreeOp(Tidentifier tree, int t) {
+        id = tree;
+        type = t;
+    }
+
+    public TreeOp(TreeOp top) {
+        id = new Tidentifier(top.getId());
+        type = top.getType();
+        if (top.getOr() != null)
+            or = new TreeOp(top.getOr());
+    }
+
+    public boolean isBlank() {
+        return (id == null);
+    }
+
+    public boolean isDisj() {
+        return (or != null);
+    }
+
+    public Tidentifier getId() {
+        return id;
+    }
+
+    public void setId(Tidentifier id) {
+        this.id = id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public TreeOp getOr() {
+        return or;
+    }
+
+    public void setOr(TreeOp or) {
+        this.or = or;
+    }
+
+    public String toString() {
+        String res = (id == null) ? "" : id.getClauseId() + "";
+        res += "[" + id.getBinding() + "]";
+        switch (type) {
+            case PredComplexLabel.ADJ:
+                res += ".a" + "[" + id.getNodeId() + "]";
+                break;
+            case PredComplexLabel.SUB:
+                res += ".s" + "[" + id.getNodeId() + "]";
+                break;
+            default:
+                res += "._" + type;
+        }
+        if (or != null)
+            res += " | " + or.toString();
+        return res;
+    }
 }

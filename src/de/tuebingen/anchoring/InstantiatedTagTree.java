@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -34,77 +34,77 @@ import fr.loria.disambiguation.Polarities;
 
 public class InstantiatedTagTree {
 
-	private InstantiatedLemma lemma;
-	private Anchor          iAnchor;
-	private String         treeName;
-	private Polarities   polarities;
-	private Word               word;
-	
-	public InstantiatedTagTree(String tn, Polarities pol) {
-		this.polarities = pol;
-		this.treeName   = tn;
-	}
+    private InstantiatedLemma lemma;
+    private Anchor iAnchor;
+    private String treeName;
+    private Polarities polarities;
+    private Word word;
 
-	public InstantiatedTagTree(String tn, InstantiatedLemma l){
-		this.treeName = tn;
-		this.lemma = new InstantiatedLemma(l);
-	}
+    public InstantiatedTagTree(String tn, Polarities pol) {
+        this.polarities = pol;
+        this.treeName = tn;
+    }
 
-	public InstantiatedTagTree(Anchor a, String tn, InstantiatedLemma l){
-		this(tn, l);
-		this.iAnchor= new Anchor(a);
-	}
-	
-	public InstantiatedTagTree(InstantiatedTagTree it) {
-		lemma  = new InstantiatedLemma(it.getLemma());
-		iAnchor = new Anchor(it.getIAnchor()); 
-	}
+    public InstantiatedTagTree(String tn, InstantiatedLemma l) {
+        this.treeName = tn;
+        this.lemma = new InstantiatedLemma(l);
+    }
 
-	public Anchor getIAnchor() {
-		return iAnchor;
-	}
+    public InstantiatedTagTree(Anchor a, String tn, InstantiatedLemma l) {
+        this(tn, l);
+        this.iAnchor = new Anchor(a);
+    }
 
-	public void setAnchor(Anchor anchor) {
-		this.iAnchor = anchor;
-	}
+    public InstantiatedTagTree(InstantiatedTagTree it) {
+        lemma = new InstantiatedLemma(it.getLemma());
+        iAnchor = new Anchor(it.getIAnchor());
+    }
 
-	public InstantiatedLemma getLemma() {
-		return lemma;
-	}
+    public Anchor getIAnchor() {
+        return iAnchor;
+    }
 
-	public void setLemma(InstantiatedLemma lemma) {
-		this.lemma = lemma;
-	}
+    public void setAnchor(Anchor anchor) {
+        this.iAnchor = anchor;
+    }
 
-	public Polarities getPolarities() {
-		return polarities;
-	}
+    public InstantiatedLemma getLemma() {
+        return lemma;
+    }
 
-	public void setPolarities(Polarities polarities) {
-		this.polarities = polarities;
-	}
+    public void setLemma(InstantiatedLemma lemma) {
+        this.lemma = lemma;
+    }
 
-	public Word getWord() {
-		return word;
-	}
+    public Polarities getPolarities() {
+        return polarities;
+    }
 
-	public void setWord(Word word) {
-		this.word = word;
-	}
+    public void setPolarities(Polarities polarities) {
+        this.polarities = polarities;
+    }
 
-	public String getTreeName() {
-		return treeName;
-	}
+    public Word getWord() {
+        return word;
+    }
 
-	public void setTreeName(String treeName) {
-		this.treeName = treeName;
-	}
-	
-	public String toString() {
-		String res = "";
-		res += treeName + "-" + word + "\n";
-		res += polarities.toString();
-		return res;
-	}
+    public void setWord(Word word) {
+        this.word = word;
+    }
+
+    public String getTreeName() {
+        return treeName;
+    }
+
+    public void setTreeName(String treeName) {
+        this.treeName = treeName;
+    }
+
+    public String toString() {
+        String res = "";
+        res += treeName + "-" + word + "\n";
+        res += polarities.toString();
+        return res;
+    }
 
 }

@@ -29,6 +29,7 @@ import java.util.LinkedList;
 public class RRGXMLBuilder {
 
     static Map<RRGNode.RRGNodeType, XMLRRGTag> nodeTypesToXMLTags = new HashMap<RRGNode.RRGNodeType, XMLRRGTag>();
+
     static {
         nodeTypesToXMLTags.put(RRGNodeType.ANCHOR, XMLRRGTag.XMLANCHORNode);
         nodeTypesToXMLTags.put(RRGNodeType.DDAUGHTER,
@@ -44,14 +45,15 @@ public class RRGXMLBuilder {
     private boolean printEdgeMismatches;
 
     public RRGXMLBuilder(RRGParseResult parseResult,
-            boolean printEdgeMismatches) throws ParserConfigurationException {
+                         boolean printEdgeMismatches) throws ParserConfigurationException {
         this.parseResult = parseResult;
         this.printEdgeMismatches = printEdgeMismatches;
         this.doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .newDocument();
     }
 
-    /** create a Document representation of the parse result
+    /**
+     * create a Document representation of the parse result
      *
      * @return
      */
@@ -96,7 +98,6 @@ public class RRGXMLBuilder {
     }
 
 
-
     /**
      * @param parse
      * @return
@@ -131,19 +132,19 @@ public class RRGXMLBuilder {
         for (Fs fs : parse.getFrameSem().getFeatureStructures()) {
             Element fsElem = doc.createElement(XMLRRGTag.FEATURESTRUCTURE.StringVal());
             //classElem.setTextContent(elemId);
-	    fsElem = createFsElement(fsElem, fs);
+            fsElem = createFsElement(fsElem, fs);
             frame.appendChild(fsElem);
         }
-	for (Relation rel : parse.getFrameSem().getRelations()) {
+        for (Relation rel : parse.getFrameSem().getRelations()) {
             Element relElem = doc.createElement(XMLRRGTag.RELATION.StringVal());
             //classElem.setTextContent(elemId);
-	    relElem = createRelElement(relElem, rel);
+            relElem = createRelElement(relElem, rel);
             frame.appendChild(relElem);
         }
-	
+
         return frame;
     }
-    
+
 
     private Element createTree(RRGParseTree parse) {
         Element result = doc.createElement(XMLRRGTag.TREE.StringVal());
@@ -186,41 +187,41 @@ public class RRGXMLBuilder {
         return resultnargNode;
     }
 
-    private Element createRelElement(Element relElement, Relation rel){
-	relElement.setAttribute(XMLRRGTag.NAME.StringVal(),rel.getName());
-	for (Value v: rel.getArguments()){
-	    Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
-	    sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getVarVal());
-	    relElement.appendChild(sym);
-	}
-	return relElement;
+    private Element createRelElement(Element relElement, Relation rel) {
+        relElement.setAttribute(XMLRRGTag.NAME.StringVal(), rel.getName());
+        for (Value v : rel.getArguments()) {
+            Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+            sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getVarVal());
+            relElement.appendChild(sym);
+        }
+        return relElement;
     }
 
-    private Element createVAltElement(Element vAltElement, Value vAlt){
-	// do we really need the coref? Ignoring it for now
-	LinkedList<Value> adisj = vAlt.getAdisj(); 
-	// we remove the first element of the list because it is apparently the coref
-	adisj.remove();
+    private Element createVAltElement(Element vAltElement, Value vAlt) {
+        // do we really need the coref? Ignoring it for now
+        LinkedList<Value> adisj = vAlt.getAdisj();
+        // we remove the first element of the list because it is apparently the coref
+        adisj.remove();
 
-	for (Value v: adisj){
-	    Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
-	    sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getSVal());
-	    vAltElement.appendChild(sym);
-	}
-	return vAltElement;
+        for (Value v : adisj) {
+            Element sym = doc.createElement(XMLRRGTag.SYM.StringVal());
+            sym.setAttribute(XMLRRGTag.VALUE.StringVal(), v.getSVal());
+            vAltElement.appendChild(sym);
+        }
+        return vAltElement;
     }
 
-    
+
     private Element createFsElement(Element fsElement, Fs realfs) {
-	if (realfs.isTyped()){
-	    Element ctype = doc.createElement(XMLRRGTag.CTYPE.StringVal());
-	    for(String etype: realfs.getType().getElementaryTypes()){
-		Element sym = doc.createElement(XMLRRGTag.TYPE.StringVal());
-		sym.setAttribute(XMLRRGTag.VAL.StringVal(),etype);
-		ctype.appendChild(sym);
-	    }
-	    fsElement.appendChild(ctype);
-	}
+        if (realfs.isTyped()) {
+            Element ctype = doc.createElement(XMLRRGTag.CTYPE.StringVal());
+            for (String etype : realfs.getType().getElementaryTypes()) {
+                Element sym = doc.createElement(XMLRRGTag.TYPE.StringVal());
+                sym.setAttribute(XMLRRGTag.VAL.StringVal(), etype);
+                ctype.appendChild(sym);
+            }
+            fsElement.appendChild(ctype);
+        }
         for (Entry<String, Value> avpair : realfs.getAVlist().entrySet()) {
             Element f = doc.createElement(XMLRRGTag.FEATURE.StringVal());
             f.setAttribute(XMLRRGTag.NAME.StringVal(), avpair.getKey());
@@ -247,10 +248,9 @@ public class RRGXMLBuilder {
                 f.appendChild(sym);
             } else if (avpair.getValue().is(Value.Kind.ADISJ)) {
                 Element valt = doc.createElement(XMLRRGTag.VALT.StringVal());
-		valt = createVAltElement(valt, avpair.getValue());
-		f.appendChild(valt);
-            }
-	    else {
+                valt = createVAltElement(valt, avpair.getValue());
+                f.appendChild(valt);
+            } else {
                 System.err.println("ERROR during XML writing!!!"
                         + avpair.getValue().getType());
             }

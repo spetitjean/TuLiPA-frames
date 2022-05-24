@@ -19,10 +19,8 @@ public class XMLGrammarReadingTools {
 
     /**
      * Process a narg XML tag to extract a TagNode label
-     * 
-     * @param e
-     *            the DOM Element corresponding to the feature structure
-     * 
+     *
+     * @param e the DOM Element corresponding to the feature structure
      */
     public static Fs getNarg(Element e, int from, NameFactory nf) {
         Fs res = null;
@@ -58,14 +56,14 @@ public class XMLGrammarReadingTools {
                 Iterator<String> it = keys.iterator();
                 while (it.hasNext()) {
                     String f = it.next();
-		    if(top.getAvmVal()!=null)
-			if (!(top.getAvmVal().hasFeat(f))) {
-			    top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-			}
-		    if(bot.getAvmVal()!=null)
-			if (!(bot.getAvmVal().hasFeat(f))) {
-			    bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
-			}
+                    if (top.getAvmVal() != null)
+                        if (!(top.getAvmVal().hasFeat(f))) {
+                            top.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+                        }
+                    if (bot.getAvmVal() != null)
+                        if (!(bot.getAvmVal().hasFeat(f))) {
+                            bot.getAvmVal().setFeatWithoutReplace(f, toAdd.get(f));
+                        }
                 }
             }
         } catch (Exception ex) {
@@ -76,21 +74,19 @@ public class XMLGrammarReadingTools {
 
     /**
      * Process a fs XML tag to extract a TagNode label (class Fs)
-     * 
-     * @param e
-     *            the DOM Element corresponding to the fs feature structure
-     * 
+     *
+     * @param e the DOM Element corresponding to the fs feature structure
      */
     public static Fs getFeats(Element e, int type,
-            Hashtable<String, Value> toAdd, NameFactory nf) {
+                              Hashtable<String, Value> toAdd, NameFactory nf) {
         // NB: an fs XML element has f element as children
         Fs res = null;
         String coref = e.getAttribute("coref");
-	Value corefval;
-	if(coref!="")
-	    corefval=new Value(Value.Kind.VAR, nf.getName(coref));
-	else
-	    corefval=new Value(Value.Kind.VAR, nf.getUniqueName());
+        Value corefval;
+        if (coref != "")
+            corefval = new Value(Value.Kind.VAR, nf.getName(coref));
+        else
+            corefval = new Value(Value.Kind.VAR, nf.getUniqueName());
 
         NodeList etypes = null;
         Value typevar = null;

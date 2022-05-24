@@ -103,7 +103,7 @@ public class RequirementFinder {
             // System.out.println("starter: " + leftSister);
 
             RRGParseItem model = new RRGParseItem.Builder()
-		.tree(leftSister.getTree().getInstance()).node(rightSis.copyNode())
+                    .tree(leftSister.getTree().getInstance()).node(rightSis.copyNode())
                     .nodepos(NodePos.BOT).start(leftSister.getEnd()).ws(false)
                     .build();
             // System.out.println("model: " + model);
@@ -133,7 +133,7 @@ public class RequirementFinder {
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
             RRGParseItem model = new RRGParseItem.Builder()
-		.tree(rightSister.getTree().getInstance()).node(leftSis.copyNode())
+                    .tree(rightSister.getTree().getInstance()).node(leftSis.copyNode())
                     .nodepos(NodePos.TOP).end(rightSister.startPos()).ws(false)
                     .build();
             // System.out.println("right req met for: " + currentItem);
@@ -261,13 +261,13 @@ public class RequirementFinder {
      */
     private boolean suitableMother(RRGParseItem root, RRGParseItem target) {
         RRGNode targetMother = target.getTree()
-	    .findNode(target.getNode().getGornaddress().mother());
+                .findNode(target.getNode().getGornaddress().mother());
         if (targetMother != null) {
-	    targetMother = targetMother.copyNode();
+            targetMother = targetMother.copyNode();
             boolean nodeUnificationPossible = true;
             try {
                 RRGTreeTools.unifyNodes(root.getNode().copyNode(), targetMother,
-					new Environment(5));
+                        new Environment(5));
             } catch (UnifyException e) {
                 nodeUnificationPossible = false;
             }
@@ -449,8 +449,8 @@ public class RequirementFinder {
             try {
                 RRGTreeTools.unifyNodes(targetRootItem.getNode().copyNode(),
                         item.getTree().findNode(
-						item.getNode().getGornaddress().mother()).copyNode(),
-					new Environment(5));
+                                item.getNode().getGornaddress().mother()).copyNode(),
+                        new Environment(5));
             } catch (UnifyException e) {
                 targetRootSuitsDMother = false;
             }

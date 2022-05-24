@@ -10,10 +10,8 @@ import de.duesseldorf.rrg.RRGTree;
 public class BracketedRRGFromStringsReader {
 
     /**
-     * 
-     * @param grammar
-     *            a List<String> where the string has the format
-     *            lexEntry\t(tree with <> for lex entry)
+     * @param grammar a List<String> where the string has the format
+     *                lexEntry\t(tree with <> for lex entry)
      * @return
      */
     public static RRG createRRGFromListOfBracketedStrings(

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,56 +33,56 @@ import de.tuebingen.rcg.Clause;
 
 public class Step {
 
-	private int       id;
-	private ClauseKey ck;
-	private Clause    cl;
-	private float   prob;
-	
-	public Step(ClauseKey c, int i, Clause cc){
-		this(c,i,cc,-1);
-	}
-	
-	public Step(ClauseKey ck, int id, Clause cl, float prob) {
-		this.ck = ck;
-		this.id = id;
-		this.cl = cl;
-		this.prob = prob;
-	}
+    private int id;
+    private ClauseKey ck;
+    private Clause cl;
+    private float prob;
 
-	public int getId() {
-		return id;
-	}
+    public Step(ClauseKey c, int i, Clause cc) {
+        this(c, i, cc, -1);
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public Step(ClauseKey ck, int id, Clause cl, float prob) {
+        this.ck = ck;
+        this.id = id;
+        this.cl = cl;
+        this.prob = prob;
+    }
 
-	public ClauseKey getCk() {
-		return ck;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setCk(ClauseKey ck) {
-		this.ck = ck;
-	}
-	
-	public Clause getCl() {
-		return cl;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setCl(Clause cl) {
-		this.cl = cl;
-	}
+    public ClauseKey getCk() {
+        return ck;
+    }
 
-	public float getProb() {
-		return prob;
-	}
+    public void setCk(ClauseKey ck) {
+        this.ck = ck;
+    }
 
-	public void setProb(float prob) {
-		this.prob = prob;
-	}
+    public Clause getCl() {
+        return cl;
+    }
 
-	public String toString(){
-		return "step num " + id + ", clause " + cl.toString() + ", instantiation " + ck.getArglist().toString();
-	}
-	
+    public void setCl(Clause cl) {
+        this.cl = cl;
+    }
+
+    public float getProb() {
+        return prob;
+    }
+
+    public void setProb(float prob) {
+        this.prob = prob;
+    }
+
+    public String toString() {
+        return "step num " + id + ", clause " + cl.toString() + ", instantiation " + ck.getArglist().toString();
+    }
+
 }

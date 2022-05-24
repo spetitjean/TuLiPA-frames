@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,51 +33,51 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MorphEntry {
-	
-	private String lex;
-	private List<Lemmaref> lemmarefs;
-	
-	public MorphEntry(String l){
-		lex = l;
-		lemmarefs = null;
-	}
-	
-	public MorphEntry(MorphEntry m){
-		lex       = m.getLex();
-		lemmarefs = new LinkedList<Lemmaref>();
-		for(int i = 0 ; i < m.getLemmarefs().size() ; i++) {
-			lemmarefs.add(new Lemmaref(m.getLemmarefs().get(i)));
-		}
-	}
-	
-	public void addLemmaref(Lemmaref l) {
-		if (lemmarefs == null)
-			lemmarefs = new LinkedList<Lemmaref>();
-		lemmarefs.add(l);
-	}
 
-	public String getLex() {
-		return lex;
-	}
+    private String lex;
+    private List<Lemmaref> lemmarefs;
 
-	public void setLex(String lex) {
-		this.lex = lex;
-	}
+    public MorphEntry(String l) {
+        lex = l;
+        lemmarefs = null;
+    }
 
-	public List<Lemmaref> getLemmarefs() {
-		return lemmarefs;
-	}
+    public MorphEntry(MorphEntry m) {
+        lex = m.getLex();
+        lemmarefs = new LinkedList<Lemmaref>();
+        for (int i = 0; i < m.getLemmarefs().size(); i++) {
+            lemmarefs.add(new Lemmaref(m.getLemmarefs().get(i)));
+        }
+    }
 
-	public void setLemmarefs(List<Lemmaref> lemmarefs) {
-		this.lemmarefs = lemmarefs;
-	}
-	
-	public String toString(){
-		String res="";
-		for (int i=0; i< lemmarefs.size(); i++){
-			res += lemmarefs.get(i);
-		}
-		return "Morph : "+lex+"\n  lemmarefs : \n"+res;
-	}
-	
+    public void addLemmaref(Lemmaref l) {
+        if (lemmarefs == null)
+            lemmarefs = new LinkedList<Lemmaref>();
+        lemmarefs.add(l);
+    }
+
+    public String getLex() {
+        return lex;
+    }
+
+    public void setLex(String lex) {
+        this.lex = lex;
+    }
+
+    public List<Lemmaref> getLemmarefs() {
+        return lemmarefs;
+    }
+
+    public void setLemmarefs(List<Lemmaref> lemmarefs) {
+        this.lemmarefs = lemmarefs;
+    }
+
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < lemmarefs.size(); i++) {
+            res += lemmarefs.get(i);
+        }
+        return "Morph : " + lex + "\n  lemmarefs : \n" + res;
+    }
+
 }

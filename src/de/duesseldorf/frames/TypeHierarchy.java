@@ -1,31 +1,30 @@
 /**
  * File TypeHierarchy.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
  * Simon Petitjean <petitjean@phil.hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2017
  * Simon Petitjean, 2017
- * 
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 package de.duesseldorf.frames;
 
@@ -37,7 +36,7 @@ import java.util.Set;
 import de.tuebingen.tag.Environment;
 
 /**
- * 
+ *
  * @author david
  *
  */
@@ -47,7 +46,7 @@ public class TypeHierarchy {
 
     /**
      * given a Collection of Types, create a type hierarchy.
-     * 
+     *
      * @param l
      */
     public TypeHierarchy(Iterable<Type> l) {
@@ -63,7 +62,7 @@ public class TypeHierarchy {
     }
 
     /**
-     * 
+     *
      * @return the type which
      *         - is in the type hierarchy
      *         - consists of the fewest elementary types

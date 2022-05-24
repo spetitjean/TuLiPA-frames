@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -34,9 +34,8 @@ import java.awt.*;
 
 import de.tuebingen.gui.tree.model.*;
 
-public class TreeViewNode 
-{
-	TreeModelNode modelNode;
+public class TreeViewNode {
+    TreeModelNode modelNode;
     public int id;
     private int parent;
     public ArrayList<Integer> children;
@@ -46,13 +45,12 @@ public class TreeViewNode
     public int x;
     public int y;
     public int subTreeWidth;
-	protected String edgeTag;
-	protected String edgeDir;
+    protected String edgeTag;
+    protected String edgeDir;
 
-	String edgeType;
-    
-    public TreeViewNode(TreeModelNode modelNode, int parent, ArrayList<Integer> children, int x, int y)
-    {
+    String edgeType;
+
+    public TreeViewNode(TreeModelNode modelNode, int parent, ArrayList<Integer> children, int x, int y) {
         this.modelNode = modelNode;
         this.id = modelNode.id;
         this.setParent(parent);
@@ -68,20 +66,18 @@ public class TreeViewNode
         this.edgeDir = "";
         this.edgeType = "";
         //star at beginning of tag symbolizes dotted edge to parent
-        if (tag.startsWith("*"))
-        {
+        if (tag.startsWith("*")) {
             tag = tag.substring(1);
             edgeType = "dotted";
         }
     }
-    
-    public TreeViewNode(int id, int parent, ArrayList<Integer> children, String tag, int x, int y)
-    {
+
+    public TreeViewNode(int id, int parent, ArrayList<Integer> children, String tag, int x, int y) {
         this.modelNode = null;
         this.id = id;
         this.setParent(parent);
         this.children = children;
-	this.children = new ArrayList<Integer>();
+        this.children = new ArrayList<Integer>();
         this.tag = tag;
         this.color = null;
         this.edgeTagColor = null;
@@ -92,39 +88,32 @@ public class TreeViewNode
         this.edgeDir = "";
         this.edgeType = "";
     }
-    
-    public int getSubTreeWidth()
-	{
-		return subTreeWidth;
-	}
-    
-    public String getEdgeTag()
-	{
-		return edgeTag;
-	}
 
-	public void setEdgeTag(String edgeTag)
-	{
-		this.edgeTag = edgeTag;
-	}
-	
-	public String getEdgeDir()
-	{
-		return edgeDir;
-	}
+    public int getSubTreeWidth() {
+        return subTreeWidth;
+    }
 
-	public void setEdgeDir(String edgeDir)
-	{
-		this.edgeDir = edgeDir;
-	}
+    public String getEdgeTag() {
+        return edgeTag;
+    }
 
-	public void setParent(int parent)
-	{
-		this.parent = parent;
-	}
+    public void setEdgeTag(String edgeTag) {
+        this.edgeTag = edgeTag;
+    }
 
-	public int getParent()
-	{
-		return parent;
-	}
+    public String getEdgeDir() {
+        return edgeDir;
+    }
+
+    public void setEdgeDir(String edgeDir) {
+        this.edgeDir = edgeDir;
+    }
+
+    public void setParent(int parent) {
+        this.parent = parent;
+    }
+
+    public int getParent() {
+        return parent;
+    }
 }

@@ -5,7 +5,7 @@
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -34,6 +34,7 @@
 package de.tuebingen.derive;
 
 //import de.tuebingen.gui.XMLTreeViewer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +54,9 @@ import de.tuebingen.anchoring.NameFactory;
 
 public class TreeDeriver {
     public static DerivedTree deriveTree(Node derivationTree,
-            Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
-            ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
-            List<String> semlabels, boolean needsAnchoring) {
+                                         Map<String, TagTree> treeDict, ArrayList<ElementaryTree> eTrees,
+                                         ArrayList<ElementaryTree> steps, boolean returnIncompleteTrees,
+                                         List<String> semlabels, boolean needsAnchoring) {
         //System.out.println("\n\nDeriving new tree");
         DerivedTree derivedTree = null;
         boolean failed = false;
@@ -69,7 +70,7 @@ public class TreeDeriver {
                     .getNamedItem("id").getNodeValue();
             ElementaryTree iniTree = getTreeInstance(initialTreeID, treeDict, D,
                     eTrees, needsAnchoring);
-	    NameFactory nf = new NameFactory();
+            NameFactory nf = new NameFactory();
             if (iniTree != null) {
                 derivedTree = new DerivedTree(iniTree);
                 if (steps != null) {
@@ -84,7 +85,7 @@ public class TreeDeriver {
                             derivedTree.root, "", "", derivedTree.topFeatures,
                             derivedTree.bottomFeatures, derivedTree.semantics,
                             derivedTree.getFrameSem()))
-                                    .createDumpingInstance(D);
+                            .createDumpingInstance(D);
                     System.out.println(
                             "frameSem in newStep: " + newStep.getFrameSem());
                     newStep.setID("Step " + steps.size());
@@ -154,17 +155,17 @@ public class TreeDeriver {
             // derivedTree.env);
             // List<Fs> mergedFrames = derivedTree.frames;
             derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf, true);
-	    Boolean p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-					   true);
-	    Boolean p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-					   true);
-	    // we need a second round (see comment in Fs:collect_corefs about artificial variables)
-	    p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-	    				   true);
-	    p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
-	    				   true);
-	    if(!p1||!p2)
-	     	failed=true;
+            Boolean p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+                    true);
+            Boolean p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+                    true);
+            // we need a second round (see comment in Fs:collect_corefs about artificial variables)
+            p1 = derivedTree.postUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+                    true);
+            p2 = derivedTree.postPostUpdateFeatures(derivedTree.root, derivedTree.env, nf,
+                    true);
+            if (!p1 || !p2)
+                failed = true;
             // if (mergedFrames == null) {
             // System.err
             // .println("Frame unification failed, tree discarded!\n");
@@ -176,21 +177,21 @@ public class TreeDeriver {
             // System.out.println("Derived tree env before: "+derivedTree.env);
             // DA addRelations
 
-	    //System.out.println("\n\nOld sem: "+derivedTree.getFrameSem());
+            //System.out.println("\n\nOld sem: "+derivedTree.getFrameSem());
             Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, true);
 
             if (newFrameSem == null) {
                 failed = true;
-	    }
-	    if(!failed){
-		newFrameSem = new ConstraintChecker(newFrameSem,
-						    derivedTree.env, returnIncompleteTrees)
-		    .checkConstraints();
+            }
+            if (!failed) {
+                newFrameSem = new ConstraintChecker(newFrameSem,
+                        derivedTree.env, returnIncompleteTrees)
+                        .checkConstraints();
                 // newFrameSem = ElementaryTree.updateFrameSemWithMerge(
                 // newFrameSem, derivedTree.env, false);
                 derivedTree.setFrameSem(newFrameSem);
-		//System.out.println("\n\nNew sem: "+newFrameSem);
+                //System.out.println("\n\nNew sem: "+newFrameSem);
                 // System.out.println("Derived tree env after:
                 // "+derivedTree.env);
                 Environment.rename(derivedTree.env);
@@ -210,7 +211,7 @@ public class TreeDeriver {
             System.err.println(e.getMessage());
             e.printStackTrace();
             // System.exit(1);
-	    failed = true;
+            failed = true;
         }
         // TODO: find threshold here by taking input size into consideration
         if (needsAnchoring && derivedTree.numTerminals < Integer.MIN_VALUE) {
@@ -229,9 +230,9 @@ public class TreeDeriver {
     }
 
     public static void recursivelyDeriveTree(Node treeNode,
-            ElementaryTree elementaryTree, Map<String, TagTree> treeDict,
-            Document D, DerivedTree t, ArrayList<ElementaryTree> eTrees,
-            ArrayList<ElementaryTree> steps, boolean needsAnchoring)
+                                             ElementaryTree elementaryTree, Map<String, TagTree> treeDict,
+                                             Document D, DerivedTree t, ArrayList<ElementaryTree> eTrees,
+                                             ArrayList<ElementaryTree> steps, boolean needsAnchoring)
             throws UnifyException {
         // System.out.println(
         // "Test output: recursivelyDeriveTree in TreeDeriver was used");
@@ -247,20 +248,19 @@ public class TreeDeriver {
 
     /**
      * Instantiation of elementary trees during the derived tree building
-     * 
+     *
      * @param id
      * @param treeDict
      * @param D
      * @param eTrees
-     * @param needsAnchoring
-     *            : if we are handling a formal grammar (i.e. no anchoring), we
-     *            need to create tree-based name space, otherwise, we can the
-     *            tuple name space.
+     * @param needsAnchoring : if we are handling a formal grammar (i.e. no anchoring), we
+     *                       need to create tree-based name space, otherwise, we can the
+     *                       tuple name space.
      * @return
      */
     public static ElementaryTree getTreeInstance(String id,
-            Map<String, TagTree> treeDict, Document D,
-            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
+                                                 Map<String, TagTree> treeDict, Document D,
+                                                 ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
         // System.err.println(treeDict.keySet());
         // tree dict entries are accessed without disambiguation IDs
         // if (id.indexOf("__") >= 0) id = id.substring(0,id.indexOf("__"));
@@ -281,8 +281,8 @@ public class TreeDeriver {
     }
 
     public static ArrayList<Object[]> prepareOperations(Node treeNode,
-            Map<String, TagTree> treeDict, Document D,
-            ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
+                                                        Map<String, TagTree> treeDict, Document D,
+                                                        ArrayList<ElementaryTree> eTrees, boolean needsAnchoring) {
         // System.out.println(treeNode);
         ArrayList<Object[]> operations = new ArrayList<Object[]>();
         for (int i = 0; i < treeNode.getChildNodes().getLength(); i++) {

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2008
  *
@@ -75,7 +75,7 @@ public abstract class Tokenizer {
 
     /**
      * @return a list of words converted into a list of String with position
-     *         suffixed
+     * suffixed
      */
     public static List<String> tok2stringPos(List<Word> toks) {
         List<String> res = new ArrayList<String>();
@@ -88,8 +88,7 @@ public abstract class Tokenizer {
 
     /**
      * @return an array of strings converted into a list of words
-     * @throws TokenizerException
-     *             if a string (a word) contains whitespace
+     * @throws TokenizerException if a string (a word) contains whitespace
      */
     public static List<Word> strings2words(String[] strings) {
         List<Word> al = new ArrayList<Word>(strings.length);
@@ -127,7 +126,7 @@ public abstract class Tokenizer {
 
     /**
      * get the sentence
-     * 
+     *
      * @return the sentence
      */
     public String getSentence() {
@@ -136,9 +135,8 @@ public abstract class Tokenizer {
 
     /**
      * set the sentence
-     * 
-     * @param sentence
-     *            the sentence
+     *
+     * @param sentence the sentence
      */
     public void setSentence(String sentence) {
         this.sentence = sentence;

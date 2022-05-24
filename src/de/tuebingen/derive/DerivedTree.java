@@ -5,7 +5,7 @@
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -111,7 +111,7 @@ public class DerivedTree {
     }
 
     public void showAllFeaturesWithMarkedFailures(Node n, String feat1,
-            String feat2) {
+                                                  String feat2) {
         Fs topFs = topFeatures.get(n);
         Fs botFs = bottomFeatures.get(n);
         Hashtable<String, Value> jointFs = new Hashtable<String, Value>();
@@ -142,7 +142,7 @@ public class DerivedTree {
     // call with merge = false to update top and bot features according to the
     // environment for derivation step display
     public void updateTopDownFeatures(Node n, boolean merge,
-            boolean finalUpdate) throws UnifyException {
+                                      boolean finalUpdate) throws UnifyException {
         // update vars by environment
         Fs topFs = topFeatures.get(n);
         // System.out.println("Top features: "+topFs);
@@ -205,8 +205,7 @@ public class DerivedTree {
 
     }
 
-    public boolean postUpdateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate)
-    {
+    public boolean postUpdateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate) {
         // update vars by environment
         Fs fs = features.get(n);
         if (fs != null) {
@@ -217,32 +216,32 @@ public class DerivedTree {
         }
         // update child node features
         for (int i = 0; i < n.getChildNodes().getLength(); i++) {
-            if(!postUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
-		return false;
+            if (!postUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
+                return false;
         }
-	return true;
+        return true;
     }
 
     public Boolean postPostUpdateFeatures(Node n, Environment eEnv, NameFactory nf, boolean finalUpdate)
-	throws UnifyException
-    {
+            throws UnifyException {
         // update vars by environment
         Fs fs = features.get(n);
         if (fs != null) {
-	    Fs newFs=fs.update_corefs(eEnv, new HashSet<Value>());
-	    if(newFs==null){
-		return false;}
-	    features.put(n, fs);
+            Fs newFs = fs.update_corefs(eEnv, new HashSet<Value>());
+            if (newFs == null) {
+                return false;
+            }
+            features.put(n, fs);
         }
         // update child node features
         for (int i = 0; i < n.getChildNodes().getLength(); i++) {
-            if(!postPostUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
-		return false;
+            if (!postPostUpdateFeatures(n.getChildNodes().item(i), eEnv, nf, finalUpdate))
+                return false;
         }
-	return true;
-	
+        return true;
+
     }
-    
+
     public void addMissingBottomFeatures(HashMap<Node, Fs> botFs) {
         for (Node n : botFs.keySet()) {
             if (bottomFeatures.get(n) == null && botFs.get(n) != null) {

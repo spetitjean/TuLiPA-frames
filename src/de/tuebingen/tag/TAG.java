@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -36,51 +36,50 @@ import de.tuebingen.lexicon.MorphEntry;
 
 /**
  * A class representing a tree-adjoining grammar.
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class TAG {
 
-	private List<TagTree> trees;
-	private List<Lemma> lemmas;
-	private List<MorphEntry> morphEntries;
-	
-	public List<TagTree> getTrees() {
-		return trees;
-	}
-	
-	public void setTrees(List<TagTree> trees) {
-		this.trees = trees;
-	}
-	
-	public void addTree(TagTree tree) {
-		trees.add(tree);
-	}
-	
-	public List<Lemma> getLemmas() {
-		return lemmas;
-	}
-	
-	public void setLemmas(List<Lemma> lemmas) {
-		this.lemmas = lemmas;
-	}
-	
-	public void addLemma(Lemma l) {
-		lemmas.add(l);
-	}
-	
-	public List<MorphEntry> getMorphEntries() {
-		return morphEntries;
-	}
-	
-	public void setMorphEntries(List<MorphEntry> morphEntries) {
-		this.morphEntries = morphEntries;
-	}
-	
-	public void addMorphEntry(MorphEntry m) {
-		morphEntries.add(m);
-	}
+    private List<TagTree> trees;
+    private List<Lemma> lemmas;
+    private List<MorphEntry> morphEntries;
 
-	
+    public List<TagTree> getTrees() {
+        return trees;
+    }
+
+    public void setTrees(List<TagTree> trees) {
+        this.trees = trees;
+    }
+
+    public void addTree(TagTree tree) {
+        trees.add(tree);
+    }
+
+    public List<Lemma> getLemmas() {
+        return lemmas;
+    }
+
+    public void setLemmas(List<Lemma> lemmas) {
+        this.lemmas = lemmas;
+    }
+
+    public void addLemma(Lemma l) {
+        lemmas.add(l);
+    }
+
+    public List<MorphEntry> getMorphEntries() {
+        return morphEntries;
+    }
+
+    public void setMorphEntries(List<MorphEntry> morphEntries) {
+        this.morphEntries = morphEntries;
+    }
+
+    public void addMorphEntry(MorphEntry m) {
+        morphEntries.add(m);
+    }
+
+
 }

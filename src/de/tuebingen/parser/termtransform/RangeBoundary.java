@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2008
  *
@@ -32,49 +32,49 @@
 package de.tuebingen.parser.termtransform;
 
 public class RangeBoundary {
-	private int id;
-	private int val;
-	
-	public RangeBoundary(int name) {
-		this(name, -1);
-	}
-	
-	public RangeBoundary(int name, int val) {
-		this.id = name;
-		this.val = val;
-	}
-	
-	public RangeBoundary(RangeBoundary r) {
-		this.id = r.id;
-		this.val = r.val;
-	}
+    private int id;
+    private int val;
 
-	public int getId() {
-		return id;
-	}
-	
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public void addToId(int n) {
-		id += n;
-	}
-	
-	public int getVal() {
-		return val;
-	}
-	
-	public void setVal(int val) {
-		this.val = val;
-	}
-	
-	public String toString() {
-		String ret = "V" + String.valueOf(id);
-		if (val > -1) {
-			ret += ":" + val;
-		}
-		return ret;
-	}
-	
+    public RangeBoundary(int name) {
+        this(name, -1);
+    }
+
+    public RangeBoundary(int name, int val) {
+        this.id = name;
+        this.val = val;
+    }
+
+    public RangeBoundary(RangeBoundary r) {
+        this.id = r.id;
+        this.val = r.val;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void addToId(int n) {
+        id += n;
+    }
+
+    public int getVal() {
+        return val;
+    }
+
+    public void setVal(int val) {
+        this.val = val;
+    }
+
+    public String toString() {
+        String ret = "V" + String.valueOf(id);
+        if (val > -1) {
+            ret += ":" + val;
+        }
+        return ret;
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -30,39 +30,40 @@
 package de.tuebingen.util;
 
 public class Pair {
-	
-	private Object key;
-	private Object value;
-	
-	public Pair(){}
-	
-	public Pair(Object k, Object v){
-		key   = k;
-		value = v;
-	}
 
-	public Object getKey() {
-		return key;
-	}
+    private Object key;
+    private Object value;
 
-	public void setKey(Object key) {
-		this.key = key;
-	}
+    public Pair() {
+    }
 
-	public Object getValue() {
-		return value;
-	}
+    public Pair(Object k, Object v) {
+        key = k;
+        value = v;
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
-	
-	public boolean equals(Object o) {
-		return (this.key.equals(((Pair) o).getKey()) && this.value.equals(((Pair) o).getValue()));
-	}
-	
-	public String toString(){
-		return key+"<->"+value;
-	}
+    public Object getKey() {
+        return key;
+    }
+
+    public void setKey(Object key) {
+        this.key = key;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    public boolean equals(Object o) {
+        return (this.key.equals(((Pair) o).getKey()) && this.value.equals(((Pair) o).getValue()));
+    }
+
+    public String toString() {
+        return key + "<->" + value;
+    }
 
 }

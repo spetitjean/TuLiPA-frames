@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -31,47 +31,37 @@ package de.tuebingen.gui.graph;
 
 import java.util.*;
 
-public class Vertex
-{
+public class Vertex {
     public ArrayList<Edge> edges;
-    
+
     private String caption;
-    
-    public Vertex(String caption)
-    {
+
+    public Vertex(String caption) {
         this.caption = caption;
         this.edges = new ArrayList<Edge>();
     }
-    
-    public static Vertex createDummyVertex()
-    {
+
+    public static Vertex createDummyVertex() {
         Vertex v = new Vertex("?");
         return v;
     }
-    
-    public void addEdge(Edge edge)
-    {
+
+    public void addEdge(Edge edge) {
         edges.add(edge);
     }
 
-    public void setCaption(String caption)
-    {
+    public void setCaption(String caption) {
         this.caption = caption;
     }
 
-    public String getCaption()
-    {
+    public String getCaption() {
         return caption;
     }
-    
-    public boolean equals (Object o)
-    {
-        if (o.getClass() != this.getClass())
-        {
+
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
             return false;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

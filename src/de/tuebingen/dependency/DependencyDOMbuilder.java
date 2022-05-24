@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -41,62 +41,62 @@ import org.w3c.dom.Element;
 import de.tuebingen.tokenizer.Word;
 
 public class DependencyDOMbuilder {
-	
-	private static Document dependency;
-	
-	public static Document buildAllDep(List<Word> tok, String sentence, List<Map<Integer, Dependency>> deps){
-		Map<Integer, String> words = new HashMap<Integer, String>();
-		for(int i = 0 ; i < tok.size() ; i++){
-			words.put(tok.get(i).getEnd(), tok.get(i).getWord());
-		}
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder constructor    = factory.newDocumentBuilder();
-			dependency                     = constructor.newDocument();
-			dependency.setXmlVersion("1.0");
-			dependency.setXmlStandalone(true);
-			
-			Element root = dependency.createElement("dependencies");
-			root.setAttribute("sentence", sentence);
-			
-			// for each derivation tree
-			for(int j = 0 ; j < deps.size() ; j++) {
-				Map<Integer, Dependency> dep = deps.get(j);
-				Element e = buildDepDOM(words, dep, j);
-				root.appendChild(e);
-			}
-			
-			// finally we do not forget the root
-			dependency.appendChild(root);
-			return dependency;
 
-		} catch (ParserConfigurationException e) {
-			System.err.println(e);
-			//System.err.println(e.getStackTrace());
-			return null;
-		}
-	}
-	
-	public static Element buildDepDOM(Map<Integer, String> words, Map<Integer, Dependency> dep, int j) {
+    private static Document dependency;
 
-		Element oneDep = dependency.createElement("sentence");
-		oneDep.setAttribute("id", "_"+j);
-		
-		for(int i = 0 ; i < words.size() ; i++) {
-			int id   = i+1;
-			if (dep.containsKey(id)) { // the word is an anchor
-				int head   = dep.get(id).getHead();
-				String cat = dep.get(id).getCat();
-				Element w = dependency.createElement("word");
-				w.setAttribute("id",   id+"");
-				w.setAttribute("head", head+"");
-				w.setAttribute("form", words.get(id));
-				w.setAttribute("deprel", cat);
-				oneDep.appendChild(w);
-			} //otherwise it is not an anchor, we just ignore it
-		}
-			
-		return oneDep;
-	}
+    public static Document buildAllDep(List<Word> tok, String sentence, List<Map<Integer, Dependency>> deps) {
+        Map<Integer, String> words = new HashMap<Integer, String>();
+        for (int i = 0; i < tok.size(); i++) {
+            words.put(tok.get(i).getEnd(), tok.get(i).getWord());
+        }
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder constructor = factory.newDocumentBuilder();
+            dependency = constructor.newDocument();
+            dependency.setXmlVersion("1.0");
+            dependency.setXmlStandalone(true);
+
+            Element root = dependency.createElement("dependencies");
+            root.setAttribute("sentence", sentence);
+
+            // for each derivation tree
+            for (int j = 0; j < deps.size(); j++) {
+                Map<Integer, Dependency> dep = deps.get(j);
+                Element e = buildDepDOM(words, dep, j);
+                root.appendChild(e);
+            }
+
+            // finally we do not forget the root
+            dependency.appendChild(root);
+            return dependency;
+
+        } catch (ParserConfigurationException e) {
+            System.err.println(e);
+            //System.err.println(e.getStackTrace());
+            return null;
+        }
+    }
+
+    public static Element buildDepDOM(Map<Integer, String> words, Map<Integer, Dependency> dep, int j) {
+
+        Element oneDep = dependency.createElement("sentence");
+        oneDep.setAttribute("id", "_" + j);
+
+        for (int i = 0; i < words.size(); i++) {
+            int id = i + 1;
+            if (dep.containsKey(id)) { // the word is an anchor
+                int head = dep.get(id).getHead();
+                String cat = dep.get(id).getCat();
+                Element w = dependency.createElement("word");
+                w.setAttribute("id", id + "");
+                w.setAttribute("head", head + "");
+                w.setAttribute("form", words.get(id));
+                w.setAttribute("deprel", cat);
+                oneDep.appendChild(w);
+            } //otherwise it is not an anchor, we just ignore it
+        }
+
+        return oneDep;
+    }
 
 }

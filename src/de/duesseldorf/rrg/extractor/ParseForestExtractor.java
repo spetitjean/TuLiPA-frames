@@ -69,11 +69,11 @@ public class ParseForestExtractor {
         System.out.println("goal items: " + goals);
         //}
         goals.stream().forEach((goal) -> {
-		System.out.println("goal item: " + goal);
-		ExtractionStep initExtrStep = initialExtractionStep(
-								    (RRGParseItem) goal);
-		Set<RRGParseTree> resultingTrees = extract(initExtrStep);
-		addToResultingParses(resultingTrees);
+            System.out.println("goal item: " + goal);
+            ExtractionStep initExtrStep = initialExtractionStep(
+                    (RRGParseItem) goal);
+            Set<RRGParseTree> resultingTrees = extract(initExtrStep);
+            addToResultingParses(resultingTrees);
         });
         return ParseForestPostProcessor
                 .postProcessParseTreeSet(resultingParses);
@@ -108,11 +108,11 @@ public class ParseForestExtractor {
         if (verbosePrintsToStdOut) {
             System.out.println(extractionstep);
         }
-	// System.out.println("Extraction step");
-	// System.out.println(extractionstep);
-	//System.out.println("Backpointers");
-	//System.out.println(backPointers);
-	
+        // System.out.println("Extraction step");
+        // System.out.println(extractionstep);
+        //System.out.println("Backpointers");
+        //System.out.println(backPointers);
+
         // distinguish different operations here
         // NLS
         parsesInThisStep.addAll(extractNLS(
@@ -242,12 +242,12 @@ public class ParseForestExtractor {
 
             RRGParseItem predictWrappingAntecedentItem = (RRGParseItem) predictWrappingantecedentItemsingletonList
                     .iterator().next();
-	    if(extractionstep.getGAInParseTree() == null){
-		System.err.println("Weird NullPointerException, should be caught in a cleaner way");
-		return parsesInThisPWStep;
-	    }
-	    GornAddress ddaughterAbsAddress = new GornAddress(
-		     extractionstep.getGAInParseTree());
+            if (extractionstep.getGAInParseTree() == null) {
+                System.err.println("Weird NullPointerException, should be caught in a cleaner way");
+                return parsesInThisPWStep;
+            }
+            GornAddress ddaughterAbsAddress = new GornAddress(
+                    extractionstep.getGAInParseTree());
             // insert the subtree stored in the RRGParseTree at the correct GA
             // (seems to work)
             // continue extraction from there with same GA	    
@@ -445,7 +445,7 @@ public class ParseForestExtractor {
                             auxRootItem.getTreeInstance(),
                             extractionstep.getGAInParseTree().mother(), position);
                 } catch (UnifyException e) {
-		    continue;
+                    continue;
                 }
                 nextStep = new ExtractionStep(auxRootItem,
                         extractionstep.getGAInParseTree().mother(),
@@ -562,18 +562,17 @@ public class ParseForestExtractor {
             // System.out.println(
             // "into that tree: " + extractionstep.getCurrentParseTree());
             // System.out.println("at GA " + GAtoReplaceAt);
-	    try{
-		RRGParseTree nextStepParseTree = extractionstep
-                    .getCurrentParseTree().substitute(substTree, GAtoReplaceAt);
-		// System.out.println("result: " + nextStepParseTree);
-		ExtractionStep nextStep = new ExtractionStep(substAntecedentItem,
-                    extractionstep.getGAInParseTree(), nextStepParseTree, 0);
-		parsesInThisSUBSTStep.addAll(extract(nextStep));
-	    }
-	    catch (UnifyException e) {
-		continue;
-	    }
-	}
+            try {
+                RRGParseTree nextStepParseTree = extractionstep
+                        .getCurrentParseTree().substitute(substTree, GAtoReplaceAt);
+                // System.out.println("result: " + nextStepParseTree);
+                ExtractionStep nextStep = new ExtractionStep(substAntecedentItem,
+                        extractionstep.getGAInParseTree(), nextStepParseTree, 0);
+                parsesInThisSUBSTStep.addAll(extract(nextStep));
+            } catch (UnifyException e) {
+                continue;
+            }
+        }
         return parsesInThisSUBSTStep;
     }
 
@@ -588,15 +587,15 @@ public class ParseForestExtractor {
             }
             RRGParseItem moveupAntecedentItem = (RRGParseItem) moveupAntecedentItemSingletonList
                     .iterator().next();
-	    if (extractionstep.getGAInParseTree() != null){
-		GornAddress newMoveUpGA = extractionstep.getGAInParseTree()
-                    .ithDaughter(moveupAntecedentItem.getNode().getGornaddress()
-				 .isIthDaughter()
-				 + extractionstep.getGoToRightWhenGoingDown());
-		ExtractionStep nextStep = new ExtractionStep(moveupAntecedentItem,
-							     newMoveUpGA, extractionstep.getCurrentParseTree(), 0);
-		parsesInThisMoveUpStep.addAll(extract(nextStep));
-	    }
+            if (extractionstep.getGAInParseTree() != null) {
+                GornAddress newMoveUpGA = extractionstep.getGAInParseTree()
+                        .ithDaughter(moveupAntecedentItem.getNode().getGornaddress()
+                                .isIthDaughter()
+                                + extractionstep.getGoToRightWhenGoingDown());
+                ExtractionStep nextStep = new ExtractionStep(moveupAntecedentItem,
+                        newMoveUpGA, extractionstep.getCurrentParseTree(), 0);
+                parsesInThisMoveUpStep.addAll(extract(nextStep));
+            }
         }
         return parsesInThisMoveUpStep;
     }

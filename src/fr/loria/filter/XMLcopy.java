@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -40,21 +40,21 @@ import de.tuebingen.util.MyEntityResolver;
 
 public class XMLcopy {
 
-	public static void produceOutXML(List<String> f, String uri, boolean verbose, String output) {
-		try {
-			XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-			TreeFilter tf = new TreeFilter(f);
-			tf.setParent(saxReader);
-			tf.setEntityResolver(new MyEntityResolver());
-	        tf.setContentHandler(new CopyContentHandler());
-	        System.setOut(new PrintStream(output, "utf8"));
-	        tf.parse(uri);
-		} catch (SAXException e) {
-			System.err.println("   " + e.getMessage());
-		} catch (IOException e) {
-			System.err.println("   " + e.getMessage());		
-		} catch (Exception e){
-			System.err.println("   " + e.getMessage());		
-		}
-	}
+    public static void produceOutXML(List<String> f, String uri, boolean verbose, String output) {
+        try {
+            XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+            TreeFilter tf = new TreeFilter(f);
+            tf.setParent(saxReader);
+            tf.setEntityResolver(new MyEntityResolver());
+            tf.setContentHandler(new CopyContentHandler());
+            System.setOut(new PrintStream(output, "utf8"));
+            tf.parse(uri);
+        } catch (SAXException e) {
+            System.err.println("   " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("   " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("   " + e.getMessage());
+        }
+    }
 }

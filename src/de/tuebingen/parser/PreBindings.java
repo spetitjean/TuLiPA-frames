@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -76,7 +76,7 @@
 //     	 this.rows    = r;
 //     	 this.columns = c;
 //      }
- 
+
 //      public PreBindings(Boolean share, PreBindings bcsp) {
 //     	 // "sharing" constructor needed by Gecode, cf documentation
 //     	 super(share, bcsp);
@@ -95,14 +95,14 @@
 //     	 // branching instruction needed by Gecode, cf doc
 //     	 branch(this, table, INT_VAR_SIZE_MIN, INT_VAL_MIN);
 //      }
- 
+
 //      public void doSearch(PreBindings s, List<Map<String, Integer>> sols, Map<Integer, String> id2constant){
 //     	 // searches for solutions in a depth-first search (DFS)
 //     	 DFSIterator<PreBindings> search = new DFSIterator<PreBindings>(s);
 
 //     	 // for counting the number of solutions
 //     	 int nbsol = 0;
-    	 
+
 //     	 while (search.hasNext()) {
 //     		 Space sol = (Space)search.next();
 //     		 //System.err.println(sol.toString());
@@ -111,10 +111,10 @@
 //     	 }
 //     	 System.out.println("There are "+nbsol+" solutions.");
 //      }
-     
+
 //      public Map<String, Integer> decode(Map<Integer, String> id2constant) {
 //     	 Map<String, Integer> res = new HashMap<String, Integer>();
-    	 
+
 //     	 for (int i = 0; i < rows ; ++i) {
 //     		 String constant = id2constant.get(i);
 //     		 for (int j = 0 ; j < columns ; ++j) {     		 
@@ -126,18 +126,18 @@
 //     	 //printCst(res);
 //     	 return res;
 //      }
-     
+
 //      public String toString() {
 //     	 // prints the table solutions in sdtout
 //     	 // in real we should decode it to extract the bindings
 //     	 // computed by gecode
 //     	 String res = "";
-         
+
 //     	 for (int i = 0; i < rows ; ++i) {
 //     		 char[] l = new char[columns];
 //     		 for (int j = 0 ; j < columns ; ++j) 
 //     			 l[j] = '\u00B7';
-    		 
+
 //     		 if (table.get(i).assigned()) { // a value has been computed
 //     			 l[table.get(i).val()] = '1';
 //     		 } else { // the search space has been narrowed
@@ -152,13 +152,13 @@
 //     	 }
 //     	 return res;
 //      }
- 
+
 //      public static List<Map<String, Integer>> computePreBindings(Map<String, Integer> occurences, int maxLength) {
 
 //     	 List<Map<String, Integer>>  sols = new LinkedList<Map<String, Integer>>();
 //     	 Map<Integer, String> id2constant = new Hashtable<Integer, String>();
 //     	 Map<Integer, Integer> constraints= new Hashtable<Integer,Integer>();
-    	 
+
 //     	 Set<String>    keys = occurences.keySet();
 //     	 Iterator<String> it = keys.iterator();
 //     	 int id = 0;
@@ -173,10 +173,10 @@
 //     	 // post the constraints
 //     	 bcsp.postCst(constraints);
 //     	 bcsp.doSearch(bcsp, sols, id2constant);
-    	 
+
 //     	 return sols;
 //      }
-     
+
 //      public static void printCst(Map<String, Integer> occurences){
 //     	 String res = "Constraints \n";
 //     	 Set<String>    keys = occurences.keySet();

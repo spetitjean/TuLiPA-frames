@@ -43,7 +43,7 @@ public class EdgeFeatureUnifier {
         // resultingTrees.addAll(parseTreesWithoutUnification);
         log.info("unifying edge features, removed "
                 + (parseTreesWithoutUnification.size()
-                        - successFullyUnifiedTrees.size())
+                - successFullyUnifiedTrees.size())
                 + " trees");
         log.info("there are " + successFullyUnifiedTrees.size()
                 + " trees left.");
@@ -55,9 +55,9 @@ public class EdgeFeatureUnifier {
     }
 
     private boolean unifyEdgeFeatures(RRGParseTree ununifiedTree) {
-	// System.out.println("Unifying edge features in ");
-	// System.out.println(ununifiedTree);
-	
+        // System.out.println("Unifying edge features in ");
+        // System.out.println(ununifiedTree);
+
         this.result = new RRGParseTree(ununifiedTree);
         result.setId(result.getId() + "_edgesUnified");
         boolean unificationWorked = unifyEdgeFeatures(new GornAddress());
@@ -137,7 +137,7 @@ public class EdgeFeatureUnifier {
 
             Value lowerRightMost = ((RRGNode) nodeWithGornAddress.getChildren()
                     .get(nodeWithGornAddress.getChildren().size() - 1))
-                            .getNodeFs().getFeat("r");
+                    .getNodeFs().getFeat("r");
             Value upperRightMost = nodeWithGornAddress.getNodeFs().getFeat("r");
 
             try {
@@ -155,8 +155,8 @@ public class EdgeFeatureUnifier {
                 // right
                 ((RRGNode) nodeWithGornAddress.getChildren()
                         .get(nodeWithGornAddress.getChildren().size() - 1))
-                                .getNodeFs().setFeatWithReplaceIfValNotNull("r",
-                                        newRightMost);
+                        .getNodeFs().setFeatWithReplaceIfValNotNull("r",
+                                newRightMost);
                 nodeWithGornAddress.getNodeFs()
                         .setFeatWithReplaceIfValNotNull("r", newRightMost);
             } catch (UnifyException e) {

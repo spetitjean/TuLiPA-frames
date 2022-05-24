@@ -6,7 +6,7 @@
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *         
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -18,7 +18,7 @@
  *
  *  This file is part of the TuLiPA-frames system
  *     https://github.com/spetitjean/TuLiPA-frames
- *     
+ *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -78,43 +78,33 @@ import fr.loria.io.XmlTagTreeReader;
 public class WorkbenchLoader {
     /**
      * Loads a grammar without separate file for frames and type hierarchy
-     * 
-     * @param op
-     *            The CommandlineOptions to be considered
-     * @param gram
-     *            Grammar
-     * @param lem
-     *            Lemma
-     * @param mo
-     *            Morphological Entrys
+     *
+     * @param op   The CommandlineOptions to be considered
+     * @param gram Grammar
+     * @param lem  Lemma
+     * @param mo   Morphological Entrys
      * @return Ideally A ready to go Grammar
      * @throws Exception
      */
     public static void loadSituation(CommandLineOptions op, String gram,
-            String lem, String mo) throws Exception {
+                                     String lem, String mo) throws Exception {
         loadSituation(op, gram, null, lem, mo, null);
     }
 
     /**
      * Loads a grammar with a separate file for frames and type hiearchy
-     * 
-     * @param op
-     *            The CommandlineOptions to be considered
-     * @param gram
-     *            Grammar
-     * @param fram
-     *            The separate frames not stored in the original grammar file
-     * @param lem
-     *            Lemma
-     * @param mo
-     *            Morphological Entrys
-     * @param tyHi
-     *            Type hierarchy
+     *
+     * @param op   The CommandlineOptions to be considered
+     * @param gram Grammar
+     * @param fram The separate frames not stored in the original grammar file
+     * @param lem  Lemma
+     * @param mo   Morphological Entrys
+     * @param tyHi Type hierarchy
      * @return Ideally A ready to go Grammar
      * @throws Exception
      */
     public static void loadSituation(CommandLineOptions op, String gram,
-            String fram, String lem, String mo, String tyHi) throws Exception {
+                                     String fram, String lem, String mo, String tyHi) throws Exception {
         Grammar g;
         Grammar frameG = null;
         TypeHierarchy tHi = null;
@@ -175,30 +165,30 @@ public class WorkbenchLoader {
                 rrgreader.close();
             }
 
-	    // 1a Semantic processing
-	    // frame part,
-	    if (frame != null) {
-		XMLTTMCTAGReader fxgr = new XMLTTMCTAGReader(frame);
-		// TODO probably, this needs to be modified
-		frameG = new TTMCTAG(fxgr.getFrames());
-		//needsAnchoring = fxgr.needsAnchoring();
-		//frameG.setNeedsAnchoring(needsAnchoring);
-		fxgr.close();
-		// for (String s : frameG.getLemmas().keySet()) {
-		// System.out.print(s + "\t" + frameG.getLemmas().get(s));
-		// }
-	    }
-	    
-	    // 1b Type hierarchy processing
-	    if (typeHierarchy != null) {
-		XMLTypeHierarchyReader thr = new XMLTypeHierarchyReader(
-									typeHierarchy);
-		tHi = thr.getTypeHierarchy();
-		
-		thr.close();
-	    }
+            // 1a Semantic processing
+            // frame part,
+            if (frame != null) {
+                XMLTTMCTAGReader fxgr = new XMLTTMCTAGReader(frame);
+                // TODO probably, this needs to be modified
+                frameG = new TTMCTAG(fxgr.getFrames());
+                //needsAnchoring = fxgr.needsAnchoring();
+                //frameG.setNeedsAnchoring(needsAnchoring);
+                fxgr.close();
+                // for (String s : frameG.getLemmas().keySet()) {
+                // System.out.print(s + "\t" + frameG.getLemmas().get(s));
+                // }
+            }
 
-	    
+            // 1b Type hierarchy processing
+            if (typeHierarchy != null) {
+                XMLTypeHierarchyReader thr = new XMLTypeHierarchyReader(
+                        typeHierarchy);
+                tHi = thr.getTypeHierarchy();
+
+                thr.close();
+            }
+
+
             // 2. Lemmas processing
             if (g.needsAnchoring() && !(op.check("l"))) {
                 CommandLineProcesses.error(
@@ -310,7 +300,7 @@ public class WorkbenchLoader {
             String input = grammar;
             String output = input.substring(0, input.lastIndexOf('.'))
                     + "-pol.xml";
-            String[] files = { input, output };
+            String[] files = {input, output};
             // Polarity file to be computed only if it does not already exist:
             File out = new File(output);
             File in = new File(input);
@@ -353,7 +343,7 @@ public class WorkbenchLoader {
         boolean verbose = op.check("v");
         String sentence = op.check("s") ? op.getVal("s") : null;
         String axiom = op.check("a") ? op.getVal("a") : "s"; // default axiom is
-                                                             // s
+        // s
         String gram = op.check("g") ? op.getVal("g") : null;
         String outFile = op.check("o") ? op.getVal("x") : "";
         boolean withLeftContext = !op.check("global");
@@ -559,8 +549,8 @@ public class WorkbenchLoader {
             }
 
             Map<String, TagTree> grammar = xmlreader.getTrees(); // the actual
-                                                                 // filtering
-                                                                 // operation
+            // filtering
+            // operation
             /*
              * Iterator<String> git = grammar.keySet().iterator(); while
              * (git.hasNext()) { String t = git.next();

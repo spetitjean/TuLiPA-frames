@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -33,19 +33,15 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-public class RHS
-{
+public class RHS {
     ArrayList<OpDisjunction> ops;
-    
-    public RHS(Node n)
-    {
+
+    public RHS(Node n) {
         ops = new ArrayList<OpDisjunction>();
         NodeList children = n.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++)
-        {
+        for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
-            if (child instanceof Element)
-            {
+            if (child instanceof Element) {
                 ops.add(new OpDisjunction(child));
             }
         }

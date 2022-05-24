@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -30,47 +30,46 @@
 package de.tuebingen.rcg;
 
 /**
- * A simple (RCG) predicate label, just labeled with a String 
- * 
- * @author wmaier
+ * A simple (RCG) predicate label, just labeled with a String
  *
+ * @author wmaier
  */
 public class PredStringLabel implements PredLabel {
 
-	private String label;
+    private String label;
 
-	public PredStringLabel(String label) {
-		this.label = label;
-	}
-	
-	public PredStringLabel(PredStringLabel l) {
-		this.label = new String(l.label);
-	}
+    public PredStringLabel(String label) {
+        this.label = label;
+    }
 
-	public String getName() {
-		return label;
-	}
+    public PredStringLabel(PredStringLabel l) {
+        this.label = new String(l.label);
+    }
 
-	public void setName(String name) {
-		this.label = name;
-	}
+    public String getName() {
+        return label;
+    }
+
+    public void setName(String name) {
+        this.label = name;
+    }
 
 
-	public int hashCode() {
-	    return label.hashCode();
-	}
+    public int hashCode() {
+        return label.hashCode();
+    }
 
-	public boolean equals(Object o) {
-		return o.hashCode() == this.hashCode();
-	}
-	
-	public String toString() {
-		return label;
-	}
+    public boolean equals(Object o) {
+        return o.hashCode() == this.hashCode();
+    }
 
-	@Override
-	public Object clone() {
-		return new PredStringLabel(new String(label));
-	}
+    public String toString() {
+        return label;
+    }
+
+    @Override
+    public Object clone() {
+        return new PredStringLabel(new String(label));
+    }
 
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,20 +31,20 @@ package de.tuebingen.tree;
 
 /**
  * An interface representing a tree.
- * @author wmaier
  *
+ * @author wmaier
  */
 
 public interface Tree {
 
-	public abstract int numNodes(Node n);
+    public abstract int numNodes(Node n);
 
-	public abstract String getId();
-	
-	public abstract void setId(String id);
+    public abstract String getId();
 
-	public abstract Node getRoot();
+    public abstract void setId(String id);
 
-	public abstract void setRoot(Node root);
+    public abstract Node getRoot();
+
+    public abstract void setRoot(Node root);
 
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -83,8 +83,7 @@ public class TagTreeContentHandler implements ContentHandler {
     }
 
     /**
-     * @param locator
-     *            to use
+     * @param locator to use
      * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
      */
     public void setDocumentLocator(Locator value) {
@@ -104,20 +103,17 @@ public class TagTreeContentHandler implements ContentHandler {
     }
 
     /**
-     * @param chosen
-     *            namespace prefix
-     * @param URI
-     *            of the name-space
+     * @param chosen namespace prefix
+     * @param URI    of the name-space
      * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void startPrefixMapping(String prefix, String URI)
             throws SAXException {
     }
 
     /**
-     * @param chose
-     *            namespace prefix
+     * @param chose namespace prefix
      * @see org.xml.sax.ContentHandler#endPrefixMapping(java.lang.String)
      */
     public void endPrefixMapping(String prefix) throws SAXException {
@@ -126,15 +122,13 @@ public class TagTreeContentHandler implements ContentHandler {
     /**
      * @param nameSpaceURI.
      * @param localName.
-     * @param rawName
-     *            for version 1.0 <code>nameSpaceURI + ":" + localName</code>
-     * @throws SAXException
-     *             (error such as not DTD compliant)
+     * @param rawName       for version 1.0 <code>nameSpaceURI + ":" + localName</code>
+     * @throws SAXException (error such as not DTD compliant)
      * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     public void startElement(String nameSpaceURI, String localName,
-            String rawName, Attributes attributs) throws SAXException {
+                             String rawName, Attributes attributs) throws SAXException {
 
         if (!"".equals(nameSpaceURI) && verbose) {
             System.err.println(" Namespace detected : " + nameSpaceURI);
@@ -207,7 +201,7 @@ public class TagTreeContentHandler implements ContentHandler {
             }
             if (!semantics) { // we are not processing semantic info
                 if (currentADisj == null) { // we are not processing an atomic
-                                            // disjunction
+                    // disjunction
                     // we set the current feat of the current avm (stack of avms
                     // and of features)
                     Fs feats = currentAVM.get(currentAVM.size() - 1);
@@ -217,30 +211,30 @@ public class TagTreeContentHandler implements ContentHandler {
                     currentADisj.add(val);
             } else {
                 switch (semType) {
-                case LABEL:
-                    ((SemPred) currentLit.get(currentLit.size() - 1))
-                            .setLabel(val);
-                    break;
-                case PRED:
-                    ((SemPred) currentLit.get(currentLit.size() - 1))
-                            .setPred(val);
-                    break;
-                case ARGS:
-                    ((SemPred) currentLit.get(currentLit.size() - 1))
-                            .addArg(val);
-                    break;
-                case DOM:
-                    switch (argNum) {
-                    case 1:
-                        ((SemDom) currentLit.get(currentLit.size() - 1))
-                                .setArg1(val);
+                    case LABEL:
+                        ((SemPred) currentLit.get(currentLit.size() - 1))
+                                .setLabel(val);
                         break;
-                    case 2:
-                        ((SemDom) currentLit.get(currentLit.size() - 1))
-                                .setArg2(val);
+                    case PRED:
+                        ((SemPred) currentLit.get(currentLit.size() - 1))
+                                .setPred(val);
                         break;
-                    }
-                    break;
+                    case ARGS:
+                        ((SemPred) currentLit.get(currentLit.size() - 1))
+                                .addArg(val);
+                        break;
+                    case DOM:
+                        switch (argNum) {
+                            case 1:
+                                ((SemDom) currentLit.get(currentLit.size() - 1))
+                                        .setArg1(val);
+                                break;
+                            case 2:
+                                ((SemDom) currentLit.get(currentLit.size() - 1))
+                                        .setArg2(val);
+                                break;
+                        }
+                        break;
                 }
             }
         } else if (localName.equals("vAlt")) {
@@ -274,12 +268,12 @@ public class TagTreeContentHandler implements ContentHandler {
 
     /**
      * Evenement recu a chaque fermeture de balise.
-     * 
+     *
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-     *      java.lang.String, java.lang.String)
+     * java.lang.String, java.lang.String)
      */
     public void endElement(String nameSpaceURI, String localName,
-            String rawName) throws SAXException {
+                           String rawName) throws SAXException {
         if (!"".equals(nameSpaceURI)) { // name space non null
             System.err.print(" Namespace detected : " + localName);
         }
@@ -299,11 +293,11 @@ public class TagTreeContentHandler implements ContentHandler {
 
             }
             currentNode.get(currentNode.size() - 1).findCategory(); // also
-                                                                    // propagates
-                                                                    // the cat
-                                                                    // over the
-                                                                    // feature
-                                                                    // structure
+            // propagates
+            // the cat
+            // over the
+            // feature
+            // structure
             currentNode.remove(currentNode.size() - 1);
         } else if (localName.equals("vAlt")) {
             Value val = new Value(currentADisj);
@@ -345,13 +339,10 @@ public class TagTreeContentHandler implements ContentHandler {
 
     /**
      * for DATA
-     * 
-     * @param ch
-     *            characters
-     * @param start
-     *            1st character to process
-     * @param end
-     *            last character to process
+     *
+     * @param ch    characters
+     * @param start 1st character to process
+     * @param end   last character to process
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char[] ch, int start, int end) throws SAXException {
@@ -360,22 +351,21 @@ public class TagTreeContentHandler implements ContentHandler {
         // System.err.println("#PCDATA : " + s);
 
         switch (dataType) {
-        case NONE:
-            break;
-        case FAMILY:
-            if (currentTree != null) // cf the SAX filter
-                currentTree.setFamily(s);
-            break;
-        case CLASS:
-            if (currentTree != null) // cf the SAX filter
-                currentTree.add2Trace(s);
-            break;
+            case NONE:
+                break;
+            case FAMILY:
+                if (currentTree != null) // cf the SAX filter
+                    currentTree.setFamily(s);
+                break;
+            case CLASS:
+                if (currentTree != null) // cf the SAX filter
+                    currentTree.add2Trace(s);
+                break;
         }
     }
 
     /**
-     * @param ch
-     *            characters
+     * @param ch    characters
      * @param start
      * @param end
      * @see org.xml.sax.ContentHandler#ignorableWhitespace(char[], int, int)
@@ -391,7 +381,7 @@ public class TagTreeContentHandler implements ContentHandler {
      * @param target
      * @param data
      * @see org.xml.sax.ContentHandler#processingInstruction(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void processingInstruction(String target, String data)
             throws SAXException {

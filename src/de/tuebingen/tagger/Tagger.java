@@ -3,8 +3,8 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>	
- *     
+ *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -39,12 +39,11 @@ import de.tuebingen.tokenizer.Word;
 /**
  * An interface which subsumes all POS/Hypertaggers, also classes
  * which call external taggers
- * 
- * @author wmaier, parmenti
  *
+ * @author wmaier, parmenti
  */
 public interface Tagger {
 
-	public void doTagging(List<Word> words) throws TaggerException, IOException, InterruptedException;
-	// tagging consists of extending the Word objects by adding the POS-tag
+    public void doTagging(List<Word> words) throws TaggerException, IOException, InterruptedException;
+    // tagging consists of extending the Word objects by adding the POS-tag
 }

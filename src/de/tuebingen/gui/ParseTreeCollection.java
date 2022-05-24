@@ -5,7 +5,7 @@
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -57,11 +57,11 @@ public class ParseTreeCollection {
     Frame frameSem;
 
     public ParseTreeCollection(XMLViewTree derivationTree,
-			       XMLViewTree derivedTree, DerivedTree dTree, String semantics, List<SemLit> lsl,
-            Frame frameSem, boolean noUtool) {
+                               XMLViewTree derivedTree, DerivedTree dTree, String semantics, List<SemLit> lsl,
+                               Frame frameSem, boolean noUtool) {
         this.derivationTree = derivationTree;
         this.derivedTree = derivedTree;
-	this.originalDerivedTree = dTree;
+        this.originalDerivedTree = dTree;
         elementaryTrees = null;
         derivationSteps = null;
         this.semantics = semantics;

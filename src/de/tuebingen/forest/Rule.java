@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -30,47 +30,50 @@
 package de.tuebingen.forest;
 
 public class Rule {
-	
-	private Tidentifier lhs;
-	private Combination rhs;
-	
-	public Rule(Tidentifier ti){
-		lhs = ti;
-		rhs = new Combination();
-	}
 
-        //ADDED_BY_TS
-        public Rule (Rule toCopy) {
-	
-	    lhs = toCopy.getLhs();
-	    rhs = new Combination(toCopy.getRhs());
-        }
-        //END_ADDED_BY_TS
-	
-	public Tidentifier getLhs() {
-		return lhs;
-	}
-	public void setLhs(Tidentifier lhs) {
-		this.lhs = lhs;
-	}
-	public Combination getRhs() {
-		return rhs;
-	}
-	public void setRhs(Combination rhs) {
-		this.rhs = rhs;
-	}
-	
-	public int hashCode() {
-		return this.toString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return this.hashCode()==o.hashCode();
-	}
-	
-	public String toString(){
-		String res = "";
-		res += rhs.toString() + "\n";
-		return res;
-	}
+    private Tidentifier lhs;
+    private Combination rhs;
+
+    public Rule(Tidentifier ti) {
+        lhs = ti;
+        rhs = new Combination();
+    }
+
+    //ADDED_BY_TS
+    public Rule(Rule toCopy) {
+
+        lhs = toCopy.getLhs();
+        rhs = new Combination(toCopy.getRhs());
+    }
+    //END_ADDED_BY_TS
+
+    public Tidentifier getLhs() {
+        return lhs;
+    }
+
+    public void setLhs(Tidentifier lhs) {
+        this.lhs = lhs;
+    }
+
+    public Combination getRhs() {
+        return rhs;
+    }
+
+    public void setRhs(Combination rhs) {
+        this.rhs = rhs;
+    }
+
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
+
+    public String toString() {
+        String res = "";
+        res += rhs.toString() + "\n";
+        return res;
+    }
 }

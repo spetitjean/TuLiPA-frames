@@ -21,7 +21,6 @@ import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.UnifyException;
 
 
-
 public class ParseTreePostProcessor {
 
     private RRGTree tree;
@@ -36,7 +35,7 @@ public class ParseTreePostProcessor {
 
         // data structure for seen corefs
         // Might be an option:
-	tree.setFrameSem(postProcessFrame(tree.getFrameSem(),tree.getEnv()));
+        tree.setFrameSem(postProcessFrame(tree.getFrameSem(), tree.getEnv()));
         // rename the env of the tree:
 
 
@@ -44,7 +43,7 @@ public class ParseTreePostProcessor {
         // go to all feature structures of nodes (recursive)
         postProcessRec((RRGNode) tree.getRoot());
 
-	return tree;
+        return tree;
     }
 
     private void postProcessRec(RRGNode root) {
@@ -54,32 +53,31 @@ public class ParseTreePostProcessor {
         }
     }
 
-    private Frame postProcessFrame(Frame frame, Environment env){
-	try{
-	    frame = ElementaryTree.updateFrameSemWithMerge(frame, env, true);
-	}
-	catch (UnifyException e){
-	}
-	for (Fs fs: frame.getFeatureStructures()){
-	    renameFeatureStructure(fs);
-	}
-	Set<Relation> rels = frame.getRelations();
-	Set<Relation> new_rels = new HashSet();
-	for (Relation rel: rels){
-	    List<Value> new_args = new LinkedList<Value>();
- 
-	    for (Value arg: rel.getArguments()){
-		arg = findPrettyCoref(arg);
-		new_args.add(arg);
-		
-	    }
-	    new_rels.add(new Relation(rel.getName(),new_args));
+    private Frame postProcessFrame(Frame frame, Environment env) {
+        try {
+            frame = ElementaryTree.updateFrameSemWithMerge(frame, env, true);
+        } catch (UnifyException e) {
+        }
+        for (Fs fs : frame.getFeatureStructures()) {
+            renameFeatureStructure(fs);
+        }
+        Set<Relation> rels = frame.getRelations();
+        Set<Relation> new_rels = new HashSet();
+        for (Relation rel : rels) {
+            List<Value> new_args = new LinkedList<Value>();
 
-	}
-	frame.setRelations(new_rels);
-	return frame;
+            for (Value arg : rel.getArguments()) {
+                arg = findPrettyCoref(arg);
+                new_args.add(arg);
+
+            }
+            new_rels.add(new Relation(rel.getName(), new_args));
+
+        }
+        frame.setRelations(new_rels);
+        return frame;
     }
-    
+
     private Fs renameFeatureStructure(Fs inputFs) {
         // replace the coref
         if (inputFs.getCoref() != null) {
@@ -91,13 +89,13 @@ public class ParseTreePostProcessor {
         Map<String, Value> toReplace = new HashMap<String, Value>();
         for (Entry<String, Value> avpair : inputFs.getAVlist().entrySet()) {
             switch (avpair.getValue().getType()) {
-            case AVM:
-                Fs prettyFs = renameFeatureStructure(
-                        avpair.getValue().getAvmVal());
-                toReplace.put(avpair.getKey(), new Value(prettyFs));
-            case VAR:
-                toReplace.put(avpair.getKey(),
-                        findPrettyCoref(avpair.getValue()));
+                case AVM:
+                    Fs prettyFs = renameFeatureStructure(
+                            avpair.getValue().getAvmVal());
+                    toReplace.put(avpair.getKey(), new Value(prettyFs));
+                case VAR:
+                    toReplace.put(avpair.getKey(),
+                            findPrettyCoref(avpair.getValue()));
             }
         }
         toReplace.entrySet().forEach((avPair) -> inputFs
@@ -107,7 +105,7 @@ public class ParseTreePostProcessor {
 
     /**
      * TODO: some corefs are AVMs themselves. Seems to mostly work at the moment
-     * 
+     *
      * @param coref
      * @return
      */

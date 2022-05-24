@@ -19,7 +19,7 @@ public class RRGLocalWebGUIs {
         }
     }
 
-    public static int numberOfRunningGUIs(){
+    public static int numberOfRunningGUIs() {
         return localWebGUIs.size();
     }
 }

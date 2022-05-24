@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -31,45 +31,45 @@ package de.tuebingen.converter;
 
 public class CatPairs {
 
-	private String topCat;
-	private String botCat;
-	
-	public CatPairs(String t, String b){
-		topCat = t;
-		botCat = b;
-	}
-	
-	public CatPairs(CatPairs cp){
-		topCat = new String(cp.getTopCat());
-		botCat = new String(cp.getBotCat());
-	}
+    private String topCat;
+    private String botCat;
 
-	public String getTopCat() {
-		return topCat;
-	}
+    public CatPairs(String t, String b) {
+        topCat = t;
+        botCat = b;
+    }
 
-	public void setTopCat(String topCat) {
-		this.topCat = topCat;
-	}
+    public CatPairs(CatPairs cp) {
+        topCat = new String(cp.getTopCat());
+        botCat = new String(cp.getBotCat());
+    }
 
-	public String getBotCat() {
-		return botCat;
-	}
+    public String getTopCat() {
+        return topCat;
+    }
 
-	public void setBotCat(String botCat) {
-		this.botCat = botCat;
-	}
-	
-	public int hashCode() {
-		return toString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return this.hashCode() == o.hashCode();
-	}
-	
-	public String toString(){
-		return "top category: " + topCat + ", bot category: " + botCat;
-	}
-	
+    public void setTopCat(String topCat) {
+        this.topCat = topCat;
+    }
+
+    public String getBotCat() {
+        return botCat;
+    }
+
+    public void setBotCat(String botCat) {
+        this.botCat = botCat;
+    }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
+
+    public String toString() {
+        return "top category: " + topCat + ", bot category: " + botCat;
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <jdellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -31,17 +31,15 @@ package de.tuebingen.disambiguate;
 
 import java.util.*;
 
-public class PolarityAutomaton
-{  
+public class PolarityAutomaton {
     ArrayList<PolarityAutomatonState> states;
     String axiom;
     boolean verbose;
-    
-    public PolarityAutomaton(List<String> toksentence, List<PolarizedToken> tokens, String axiom, boolean verbose, List<String> lexicals, Map<String, List<String>> coancNodes)
-    {
-    	this.axiom = axiom;
-    	this.verbose = verbose;
-    	int statesNum = 0;
+
+    public PolarityAutomaton(List<String> toksentence, List<PolarizedToken> tokens, String axiom, boolean verbose, List<String> lexicals, Map<String, List<String>> coancNodes) {
+        this.axiom = axiom;
+        this.verbose = verbose;
+        int statesNum = 0;
         states = new ArrayList<PolarityAutomatonState>();
         //build an initial state that will be the entry point for traversal
         states.add(new PolarityAutomatonState(new Polarities(), statesNum++, ""));
@@ -54,44 +52,40 @@ public class PolarityAutomaton
         int tokNum = 0;
         for (String tok : toksentence)//(PolarizedToken token : tokens)
         {
-        	
-        	PolarizedToken token = tokens.get(tokNum);
-        	tokNum+=1;
+
+            PolarizedToken token = tokens.get(tokNum);
+            tokNum += 1;
             //every state reached by the previous token must allow for processing the next token
-            for (PolarityAutomatonState previousState : previousStates)
-            {
+            for (PolarityAutomatonState previousState : previousStates) {
                 //get all the tuples for this token
-            	HashSet<PolarizedTuple> tuples = new HashSet<PolarizedTuple>();       	
-                for (String lemmaID : token.getLemmas().keySet())
-                {
+                HashSet<PolarizedTuple> tuples = new HashSet<PolarizedTuple>();
+                for (String lemmaID : token.getLemmas().keySet()) {
                     PolarizedLemma lemma = token.getLemmas().get(lemmaID);
-                    for (PolarizedTuple tuple: lemma.getTuples().values())
-                    {
-                    	tuples.add(tuple);
+                    for (PolarizedTuple tuple : lemma.getTuples().values()) {
+                        tuples.add(tuple);
                     }
                 }
                 // on top of the tuples, we check the possibility to be 
                 // either a lexical item in a tree or a coanchor
                 if (lexicals.contains(tok))
-                	tuples.add(new PolarizedTuple("", new Polarities(token.getToken(), token.getToken(), Polarities.PLUS)));
-                
+                    tuples.add(new PolarizedTuple("", new Polarities(token.getToken(), token.getToken(), Polarities.PLUS)));
+
                 if (coancNodes.containsKey(tok)) {
-                	Iterator<String> it = coancNodes.get(token.getToken()).iterator();
-                	while (it.hasNext()) {
-                		String cat = it.next();
-                		tuples.add(new PolarizedTuple("", new Polarities(cat, cat, Polarities.PLUS)));
-                	}
+                    Iterator<String> it = coancNodes.get(token.getToken()).iterator();
+                    while (it.hasNext()) {
+                        String cat = it.next();
+                        tuples.add(new PolarizedTuple("", new Polarities(cat, cat, Polarities.PLUS)));
+                    }
                 }
-                
+
                 //build new states reachable by edges labeled with the tuple IDs
-                for (PolarizedTuple tuple : tuples)
-                {
-	                Polarities addedPolarities = tuple.getPol();
-	                Polarities newStatePolarities = Polarities.add(previousState.polarities, addedPolarities);
-	                PolarityAutomatonState newState = new PolarityAutomatonState(newStatePolarities, statesNum++, tuple.getTupleID());
-	                states.add(newState);
-	                newStates.add(newState);
-	                previousState.edges.put(tuple.getTupleID(),states.size() - 1);
+                for (PolarizedTuple tuple : tuples) {
+                    Polarities addedPolarities = tuple.getPol();
+                    Polarities newStatePolarities = Polarities.add(previousState.polarities, addedPolarities);
+                    PolarityAutomatonState newState = new PolarityAutomatonState(newStatePolarities, statesNum++, tuple.getTupleID());
+                    states.add(newState);
+                    newStates.add(newState);
+                    previousState.edges.put(tuple.getTupleID(), states.size() - 1);
                 }
             }
             //go on to the next token
@@ -100,74 +94,62 @@ public class PolarityAutomaton
         }
         //print information about automaton in verbose mode
         //System.err.println("\t@@ Global polarity automaton size: " + states.size());
-        if (verbose) 
-        {
-        	System.err.println("Polarity automaton size: " + states.size());
-        	//System.err.println(this.toString()); // Be careful: when the automaton gets big, this can make java run out of memory!
+        if (verbose) {
+            System.err.println("Polarity automaton size: " + states.size());
+            //System.err.println(this.toString()); // Be careful: when the automaton gets big, this can make java run out of memory!
         }
     }
-    
-    public List<List<String>> getPossibleTupleSets()
-    { 
+
+    public List<List<String>> getPossibleTupleSets() {
         //the valid paths
-        List<List<String>> validTupleSets = new ArrayList<List<String>>(); 
+        List<List<String>> validTupleSets = new ArrayList<List<String>>();
         //all paths (FIFO queue)
         List<List<String>> processedTupleSets = new ArrayList<List<String>>();
         //paths have following structure: [tupleID, tupleID, tupleID, ..., stateID]
         //initial path (trigger) starts at starting state
-        ArrayList<String> firstTupleSet = new ArrayList<String>();             
+        ArrayList<String> firstTupleSet = new ArrayList<String>();
         firstTupleSet.add("0");
         processedTupleSets.add(firstTupleSet);
         //until we cannot build any further paths
-        while (processedTupleSets.size() > 0)
-        {
+        while (processedTupleSets.size() > 0) {
             //store how many incomplete tuple sets where on the FIFO queue
             int numberProcessed = processedTupleSets.size();
-            for (int i = 0; i < numberProcessed; i++)
-            {
-            	//we retrieve the next tuple set in the FIFO:
+            for (int i = 0; i < numberProcessed; i++) {
+                //we retrieve the next tuple set in the FIFO:
                 List<String> nextTupleSet = processedTupleSets.remove(0);
                 //we retrieve the corresponding state:
                 // but first we save a copy (c.f. destructive traversal)
                 List<String> tupleSet = new ArrayList<String>();
-                for(String s : nextTupleSet) {
-                	tupleSet.add(s);
+                for (String s : nextTupleSet) {
+                    tupleSet.add(s);
                 }
                 PolarityAutomatonState state = states.get(Integer.parseInt(nextTupleSet.remove(nextTupleSet.size() - 1)));
                 // if. we reached the end of an automaton path ...
-                if (state.edges.size() == 0) 
-                { 
+                if (state.edges.size() == 0) {
                     //... we can check the polarities
                     boolean valid = true;
-                    for (String label : state.polarities.getCharges().keySet())
-                    {
-                    	if (state.polarities.getCharges().get(label) != null) 
-                    	{
-                    	    //polarity of the axiom symbol must be +1
-	                    	if (label.equals(axiom)) 
-	                    	{
-	                    		if (state.polarities.getCharges().get(label) != 1) {
-	                    			valid = false;
-	                    			break;
-	                    		}
-	                    	}
-	                    	//polarity of all other symbols must be neutral
-	                    	else 
-	                    	{
-	                    		if (state.polarities.getCharges().get(label) != 0) {
-	                    			valid = false;
-	                    			break;
-	                    		}
-	                        }
-                    	} 
-                    	else 
-                    	{
-                    		if (verbose) System.err.println("Label " + label + " has no polarities!");
-                    	}
+                    for (String label : state.polarities.getCharges().keySet()) {
+                        if (state.polarities.getCharges().get(label) != null) {
+                            //polarity of the axiom symbol must be +1
+                            if (label.equals(axiom)) {
+                                if (state.polarities.getCharges().get(label) != 1) {
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            //polarity of all other symbols must be neutral
+                            else {
+                                if (state.polarities.getCharges().get(label) != 0) {
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (verbose) System.err.println("Label " + label + " has no polarities!");
+                        }
                     }
                     //if the polarities indicate a valid tuple set
-                    if (valid) 
-                    {      	
+                    if (valid) {
                         //delete last staple ID
                         tupleSet.remove(tupleSet.size() - 1);
                         //tuple IDs remaining on list constitute a valid set of tuples
@@ -175,12 +157,10 @@ public class PolarityAutomaton
                     }
                 }
                 //we go on traversing the automaton to build complete paths
-                for (String edge : state.edges.keySet())
-                {  
+                for (String edge : state.edges.keySet()) {
                     //a new path is built and initialized with the path leading to the current state
                     List<String> newSet = new ArrayList<String>();
-                    for (String s : nextTupleSet)
-                    {
+                    for (String s : nextTupleSet) {
                         newSet.add(s);
                     }
                     //the next tuple ID is added...
@@ -194,14 +174,12 @@ public class PolarityAutomaton
         }
         return validTupleSets;
     }
-    
-    public String toString() 
-    {
-    	String res = "";
-    	for (int i = 0 ; i < states.size() ; i++) 
-    	{
-    		res += states.get(i).toString();
-    	}
-    	return res;
+
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < states.size(); i++) {
+            res += states.get(i).toString();
+        }
+        return res;
     }
 }

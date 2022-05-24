@@ -12,7 +12,7 @@ import java.util.Set;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -44,7 +44,7 @@ public class Backpointer {
      * Given that the antecedents created the item that this Backpointer object
      * belongs to, add the information that this item was created using the
      * antecedents and the Operation {@code op}.
-     * 
+     *
      * @param op
      * @param antecedents
      */
@@ -59,10 +59,9 @@ public class Backpointer {
     }
 
     /**
-     * 
      * @param op
      * @return the set with all sets of antecedents that created the item using
-     *         the {@code Operation} {@code op}.
+     * the {@code Operation} {@code op}.
      */
     public Set<Set<RRGParseItem>> getAntecedents(Operation op) {
         Set<Set<RRGParseItem>> res = store.get(op);

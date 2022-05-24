@@ -6,31 +6,30 @@ import de.duesseldorf.util.GornAddress;
 
 /**
  * File ExtractionStep.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class ExtractionStep {
     public GornAddress GAInParseTree;
@@ -39,7 +38,7 @@ public class ExtractionStep {
     public int goToRightWhenGoingDown;
 
     public ExtractionStep(RRGParseItem currentItem, GornAddress GAInParseTree,
-            RRGParseTree currentParseTree, int goToRightWhenGoingDown) {
+                          RRGParseTree currentParseTree, int goToRightWhenGoingDown) {
         this.GAInParseTree = GAInParseTree;
         this.currentItem = currentItem;
         this.currentParseTree = currentParseTree;

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -30,34 +30,33 @@
 package de.tuebingen.rcg;
 
 /**
- * Thrown on instantiation failures of RangeLists. 
- * @author wmaier
+ * Thrown on instantiation failures of RangeLists.
  *
+ * @author wmaier
  */
 public class RCGInstantiationException extends RCGException {
 
-	public String getMessage() {
-		return super.getMessage();
-	}
+    public String getMessage() {
+        return super.getMessage();
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public RCGInstantiationException() {
-		super();
-	}
+    public RCGInstantiationException() {
+        super();
+    }
 
-	public RCGInstantiationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public RCGInstantiationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public RCGInstantiationException(String message) {
-		super(message);
-	}
+    public RCGInstantiationException(String message) {
+        super(message);
+    }
 
-	public RCGInstantiationException(Throwable cause) {
-		super(cause);
-	}
+    public RCGInstantiationException(Throwable cause) {
+        super(cause);
+    }
 
-	
-	
+
 }

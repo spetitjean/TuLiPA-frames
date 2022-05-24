@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,12 +31,11 @@ package de.tuebingen.util;
 
 /**
  * @author wmaier
- *
  */
 public class MathUtilities {
 
-	public static int max(int a, int b) {
-		return a>b?a:b;
-	}
-	
+    public static int max(int a, int b) {
+        return a > b ? a : b;
+    }
+
 }

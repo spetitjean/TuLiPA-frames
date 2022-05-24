@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -65,7 +65,6 @@ public class RRG implements Grammar {
     }
 
     /**
-     * 
      * @return true iff at least one tree in the grammar has an anchor node
      */
     private boolean lookForAnchors() {
@@ -75,9 +74,8 @@ public class RRG implements Grammar {
     }
 
     /**
-     * 
      * @return true iff each and every tree in the set of trees has at least one
-     *         lexical node, false otherwise
+     * lexical node, false otherwise
      */
     private boolean lookForLexicalisation() {
         boolean res = trees.parallelStream()
@@ -149,7 +147,7 @@ public class RRG implements Grammar {
     }
 
     public void resetAnchoredTrees() {
-	this.anchoredTrees = new HashSet<RRGTree>();
+        this.anchoredTrees = new HashSet<RRGTree>();
     }
 
 }

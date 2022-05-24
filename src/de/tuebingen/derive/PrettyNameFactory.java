@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -38,9 +38,9 @@ public class PrettyNameFactory {
 
     private int index;
     private Map<String, String> dictionary;
-    private String[] availableNames = { "A", "B", "C", "D", "E", "F", "G", "H",
+    private String[] availableNames = {"A", "B", "C", "D", "E", "F", "G", "H",
             "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-            "V", "W", "X", "Y", "Z" };
+            "V", "W", "X", "Y", "Z"};
     private int nameCtr;
 
     public PrettyNameFactory() {

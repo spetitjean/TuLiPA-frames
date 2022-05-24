@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,76 +33,76 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Lemma {
-	
-	private String name;
-	private String cat;
-	private List<Anchor> anchors;
-	
-	public Lemma() {
-		name    = null;
-		cat     = null;
-		anchors = null;
-	}
-	
-	public Lemma(Lemma l){
-		name    = l.getName();
-		cat     = l.getCat();
-		anchors = new LinkedList<Anchor>(); 
-		for(int i = 0 ; i < l.getAnchors().size() ; i++) {
-			anchors.add(new Anchor(l.getAnchors().get(i)));
-		}
-	}
-	
-	public Lemma (String n, String c) {
-		name = n;
-		cat  = c;
-		anchors = null;
-	}
-	
-	public void addAnchor(Anchor a) {
-		if (anchors == null)
-			anchors = new LinkedList<Anchor>();
-		anchors.add(a);
-	}
 
-	public String getName() {
-		return name;
-	}
+    private String name;
+    private String cat;
+    private List<Anchor> anchors;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Lemma() {
+        name = null;
+        cat = null;
+        anchors = null;
+    }
 
-	public String getCat() {
-		return cat;
-	}
+    public Lemma(Lemma l) {
+        name = l.getName();
+        cat = l.getCat();
+        anchors = new LinkedList<Anchor>();
+        for (int i = 0; i < l.getAnchors().size(); i++) {
+            anchors.add(new Anchor(l.getAnchors().get(i)));
+        }
+    }
 
-	public void setCat(String cat) {
-		this.cat = cat;
-	}
+    public Lemma(String n, String c) {
+        name = n;
+        cat = c;
+        anchors = null;
+    }
 
-	public List<Anchor> getAnchors() {
-		return anchors;
-	}
+    public void addAnchor(Anchor a) {
+        if (anchors == null)
+            anchors = new LinkedList<Anchor>();
+        anchors.add(a);
+    }
 
-	public void setAnchors(List<Anchor> anchors) {
-		this.anchors = anchors;
-	}
-	
-	public List<CoAnchor> getCoAnchors() {
-		List<CoAnchor> lca = new LinkedList<CoAnchor>();
-		for(Anchor a : anchors) {
-			lca.addAll(a.getCoanchors());
-		}
-		return lca;
-	}
-	
-	public String toString(){
-		String res = "";
-		for (int i=0 ; i < anchors.size() ; i++){
-			res += res + anchors.get(i).toString();
-		}
-		return "Lemma : "+name+" - cat : "+cat+" - anchors : \n"+res;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCat() {
+        return cat;
+    }
+
+    public void setCat(String cat) {
+        this.cat = cat;
+    }
+
+    public List<Anchor> getAnchors() {
+        return anchors;
+    }
+
+    public void setAnchors(List<Anchor> anchors) {
+        this.anchors = anchors;
+    }
+
+    public List<CoAnchor> getCoAnchors() {
+        List<CoAnchor> lca = new LinkedList<CoAnchor>();
+        for (Anchor a : anchors) {
+            lca.addAll(a.getCoanchors());
+        }
+        return lca;
+    }
+
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < anchors.size(); i++) {
+            res += res + anchors.get(i).toString();
+        }
+        return "Lemma : " + name + " - cat : " + cat + " - anchors : \n" + res;
+    }
 
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -37,184 +37,181 @@ import de.tuebingen.util.TextUtilities;
 
 public class ConstraintItem {
 
-	private boolean active;
-	private ConstraintVector vect;
+    private boolean active;
+    private ConstraintVector vect;
 
-	// active
-	private Clause cl;
-	private int dotpos;
+    // active
+    private Clause cl;
+    private int dotpos;
 
-	// passive
-	private PredLabel pl;
-	private boolean completed;
+    // passive
+    private PredLabel pl;
+    private boolean completed;
 
-	public ConstraintItem() {
-		active = false;
-		completed = false;
-		cl = null;
-		dotpos = 0;
-		pl = null;
-		vect = null;
-	}
-	
-	public ConstraintItem(ConstraintItem ci) {
-		this();
-		active    = ci.isActive();
-		completed = ci.isCompleted();
-		cl        = ci.getCl();
-		dotpos    = ci.getDotpos();
-		pl        = ci.getPl();
-		// this is necessary for the top-down parser (I think) 
-		if (ci.vect != null) 
-			vect = new ConstraintVector(ci.getVect());
-		else
-			vect = null;
-	}
-	
-	public ConstraintItem(ConstraintVector v) {
-		this();
-		vect = v;
-	}
+    public ConstraintItem() {
+        active = false;
+        completed = false;
+        cl = null;
+        dotpos = 0;
+        pl = null;
+        vect = null;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public ConstraintItem(ConstraintItem ci) {
+        this();
+        active = ci.isActive();
+        completed = ci.isCompleted();
+        cl = ci.getCl();
+        dotpos = ci.getDotpos();
+        pl = ci.getPl();
+        // this is necessary for the top-down parser (I think)
+        if (ci.vect != null)
+            vect = new ConstraintVector(ci.getVect());
+        else
+            vect = null;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public ConstraintItem(ConstraintVector v) {
+        this();
+        vect = v;
+    }
 
-	public ConstraintVector getVect() {
-		return vect;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setVect(ConstraintVector vect) {
-		this.vect = vect;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	public Clause getCl() {
-		return cl;
-	}
+    public ConstraintVector getVect() {
+        return vect;
+    }
 
-	public void setCl(Clause cl) {
-		this.cl = cl;
-	}
+    public void setVect(ConstraintVector vect) {
+        this.vect = vect;
+    }
 
-	public int getDotpos() {
-		return dotpos;
-	}
+    public Clause getCl() {
+        return cl;
+    }
 
-	public void setDotpos(int dotpos) {
-		this.dotpos = dotpos;
-	}
+    public void setCl(Clause cl) {
+        this.cl = cl;
+    }
 
-	public PredLabel getPl() {
-		return pl;
-	}
+    public int getDotpos() {
+        return dotpos;
+    }
 
-	public void setPl(PredLabel pl) {
-		this.pl = pl;
-	}
+    public void setDotpos(int dotpos) {
+        this.dotpos = dotpos;
+    }
 
-	public boolean isCompleted() {
-		return completed;
-	}
+    public PredLabel getPl() {
+        return pl;
+    }
 
-	public void setCompleted(boolean completed) {
-		this.completed = completed;
-	}
-	
-	public int getHash() {
-		// this methods returns a hash value for a given 
-		// _completed passive_ item, and -1 otherwise
-		// NB: the hash value is computed using the predicate name
-		//     and the values of the arguments' boundaries
-		int res = 0;
-		if (this.pl == null) {
-			res = -1;
-		} else {
-			String pred = this.pl.toString();
-			//System.err.println(" ### " + pred.toString());
-			List<String> bounds = this.vect.boundariesConstraints();
-			//System.err.println(" ### " + bounds.toString());
-			String hash = TextUtilities.append(pred, TextUtilities.appendList(bounds));
-			res = hash.hashCode();
-			//System.err.println(" ### The hash is " + hash + " (" + res + ")");
-		}
-		return res;
-	}
-	
-	public int getFirstBound() {
-		return this.vect.getFirstBoundValue();
-	}
-	
-	public int hashCode() {
-		return toStringRenamed().hashCode();
-		//return toShortString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return (o instanceof ConstraintItem) && this.hashCode() == o.hashCode();
-	}
-	
-	public String toShortString() {
-		StringBuffer res = new StringBuffer();
-		res.append("[");
-		if (active) {
-			res.append(cl.toShortString());
-			res.append(", ");
-			res.append(dotpos);
-			res.append(", ");
-		}
-		else {
-			res.append(pl.toString());
-			res.append(", ");
-			res.append(completed);
-			res.append(", ");
-		}
-		res.append(vect.toShortString());
-		res.append("]");
-		return res.toString();		
-	}
-	
-	public String toStringRenamed() {
-		StringBuffer res = new StringBuffer();
-		res.append("[");
-		if (active) {
-			//res.append(cl.toStringRenamed(vect.getMapNames()));
-			res.append(cl.toShortString());
-			res.append(", ");
-			res.append(dotpos);
-			res.append(", ");
-		}
-		else {
-			res.append(pl.toString());
-			res.append(", ");
-			res.append(completed);
-			res.append(", ");
-		}
-		res.append(vect.toStringRenamed());
-		res.append("]");
-		return res.toString();
-	}
-	
-	public String toString() {
-		StringBuffer res = new StringBuffer();
-		res.append("[");
-		if (active) {
-			res.append(cl.print());
-			res.append(", ");
-			res.append(dotpos);
-			res.append(", ");
-		}
-		else {
-			res.append(pl.toString());
-			res.append(", ");
-			res.append(completed);
-			res.append(", ");
-		}
-		res.append(vect.print());
-		res.append("]");
-		return res.toString();
-	}
+    public void setPl(PredLabel pl) {
+        this.pl = pl;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public int getHash() {
+        // this methods returns a hash value for a given
+        // _completed passive_ item, and -1 otherwise
+        // NB: the hash value is computed using the predicate name
+        //     and the values of the arguments' boundaries
+        int res = 0;
+        if (this.pl == null) {
+            res = -1;
+        } else {
+            String pred = this.pl.toString();
+            //System.err.println(" ### " + pred.toString());
+            List<String> bounds = this.vect.boundariesConstraints();
+            //System.err.println(" ### " + bounds.toString());
+            String hash = TextUtilities.append(pred, TextUtilities.appendList(bounds));
+            res = hash.hashCode();
+            //System.err.println(" ### The hash is " + hash + " (" + res + ")");
+        }
+        return res;
+    }
+
+    public int getFirstBound() {
+        return this.vect.getFirstBoundValue();
+    }
+
+    public int hashCode() {
+        return toStringRenamed().hashCode();
+        //return toShortString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return (o instanceof ConstraintItem) && this.hashCode() == o.hashCode();
+    }
+
+    public String toShortString() {
+        StringBuffer res = new StringBuffer();
+        res.append("[");
+        if (active) {
+            res.append(cl.toShortString());
+            res.append(", ");
+            res.append(dotpos);
+            res.append(", ");
+        } else {
+            res.append(pl.toString());
+            res.append(", ");
+            res.append(completed);
+            res.append(", ");
+        }
+        res.append(vect.toShortString());
+        res.append("]");
+        return res.toString();
+    }
+
+    public String toStringRenamed() {
+        StringBuffer res = new StringBuffer();
+        res.append("[");
+        if (active) {
+            //res.append(cl.toStringRenamed(vect.getMapNames()));
+            res.append(cl.toShortString());
+            res.append(", ");
+            res.append(dotpos);
+            res.append(", ");
+        } else {
+            res.append(pl.toString());
+            res.append(", ");
+            res.append(completed);
+            res.append(", ");
+        }
+        res.append(vect.toStringRenamed());
+        res.append("]");
+        return res.toString();
+    }
+
+    public String toString() {
+        StringBuffer res = new StringBuffer();
+        res.append("[");
+        if (active) {
+            res.append(cl.print());
+            res.append(", ");
+            res.append(dotpos);
+            res.append(", ");
+        } else {
+            res.append(pl.toString());
+            res.append(", ");
+            res.append(completed);
+            res.append(", ");
+        }
+        res.append(vect.print());
+        res.append("]");
+        return res.toString();
+    }
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -32,24 +32,19 @@ package de.tuebingen.gui.tree.view;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class SelectionAreaExtension extends TreeViewExtension
-{
-	public void paintOnTreePanel(TreeViewPanel panel, Graphics2D canvas)
-	{	
-		canvas.setColor(Color.RED);
-		int width = panel.t.getTotalTreeWidth();
-		int height = panel.t.getTotalTreeHeight();
-		for (int i = 0; i < width; i += 5)
-		{
-			for (int j = 0; j < height; j += 5)
-			{
-				System.err.println(i + "," + j);
-				int nodeID = panel.t.getNodeAtCoordinates(i,j);
-				if (nodeID != -1)
-				{
-					canvas.drawLine(i, j, panel.t.treeNodes.get(nodeID).x, panel.t.treeNodes.get(nodeID).y);
-				}
-			}
-		}
-	}
+public class SelectionAreaExtension extends TreeViewExtension {
+    public void paintOnTreePanel(TreeViewPanel panel, Graphics2D canvas) {
+        canvas.setColor(Color.RED);
+        int width = panel.t.getTotalTreeWidth();
+        int height = panel.t.getTotalTreeHeight();
+        for (int i = 0; i < width; i += 5) {
+            for (int j = 0; j < height; j += 5) {
+                System.err.println(i + "," + j);
+                int nodeID = panel.t.getNodeAtCoordinates(i, j);
+                if (nodeID != -1) {
+                    canvas.drawLine(i, j, panel.t.treeNodes.get(nodeID).x, panel.t.treeNodes.get(nodeID).y);
+                }
+            }
+        }
+    }
 }

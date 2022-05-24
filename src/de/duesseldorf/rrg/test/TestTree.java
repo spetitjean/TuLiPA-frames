@@ -14,31 +14,30 @@ import de.duesseldorf.util.GornAddress;
 
 /**
  * File TestTree.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2018
- * 
- * 
+ * <p>
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 public class TestTree {
 
@@ -103,7 +102,7 @@ public class TestTree {
                 .println("oneone > two should be >0: " + two.compareTo(oneone));
     }
 
-    private static void testTreeCloning() {
+    private static void testTreeCloning() throws UnifyException {
         // 1. build root tree - we later substitute to the daughter of the root
         RRGNode root = new RRGNode.Builder().type(RRGNodeType.STD)
                 .name("ptree1_root").cat("RP").build();

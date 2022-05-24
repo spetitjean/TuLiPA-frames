@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,52 +31,51 @@ package de.tuebingen.tree;
 
 /**
  * @author wmaier
- *
  */
 public class Label {
 
-	public static final char SEP_EDGE = '-';
-	
-	private String label;
-	private String edge;
-	
-	public Label() {
-		this("");
-	}
-	
-	public Label(String label) {
-		this(label, "");
-	}
-	
-	public Label(String label, String edge) {
-		this.label = label;
-		this.edge = edge;
-	}
+    public static final char SEP_EDGE = '-';
 
-	public String getEdge() {
-		return edge;
-	}
+    private String label;
+    private String edge;
 
-	public void setEdge(String edge) {
-		this.edge = edge;
-	}
+    public Label() {
+        this("");
+    }
 
-	public String getLabel() {
-		return label;
-	}
-	
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public Label(String label) {
+        this(label, "");
+    }
 
-	public static Label parseLabel(String label) {
-		Label ret = new Label(label); 
-		int edgeind = label.lastIndexOf(Label.SEP_EDGE);
-		if (edgeind > -1) {
-			ret.setLabel(label.substring(0, edgeind));
-			ret.setEdge(label.substring(edgeind + 1));
-		}
-		return ret;
-	}
-	
+    public Label(String label, String edge) {
+        this.label = label;
+        this.edge = edge;
+    }
+
+    public String getEdge() {
+        return edge;
+    }
+
+    public void setEdge(String edge) {
+        this.edge = edge;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public static Label parseLabel(String label) {
+        Label ret = new Label(label);
+        int edgeind = label.lastIndexOf(Label.SEP_EDGE);
+        if (edgeind > -1) {
+            ret.setLabel(label.substring(0, edgeind));
+            ret.setEdge(label.substring(edgeind + 1));
+        }
+        return ret;
+    }
+
 }

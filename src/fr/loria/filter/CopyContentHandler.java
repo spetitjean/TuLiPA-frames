@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -32,66 +32,66 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class CopyContentHandler extends DefaultHandler {
-	
-	private String space = "  ";
-	private int level = 0;
-	private boolean ok = false;
 
-	public void startDocument() {
-		String tmp = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-		tmp += "<!DOCTYPE grammar SYSTEM \"xmg-tag.dtd,xml\">\n";
-		System.out.print(tmp);
-	}
+    private String space = "  ";
+    private int level = 0;
+    private boolean ok = false;
 
-	public void endDocument() {
-	}
-		  
-	public void startElement(String uri, String localName, String qName, Attributes attributes) {
-		this.printSpaces();
-		if (localName.equals("entry"))
-			ok = true;
-		String tmp = "<" + localName;
-		for (int i = 0; i < attributes.getLength(); i++) {
-			tmp += " " + attributes.getLocalName(i) + "=\"" + attributes.getValue(i) + "\"";
-		}
-		if (localName.equals("family"))
-			tmp += ">";
-		else if (localName.equals("class"))
-			tmp += ">";
-		else
-			tmp += ">\n";
-		System.out.print(tmp);
-		level+=2;
-	}
-		  
-	public void endElement(String uri, String localName, String qName) {
-		level-=2;
-		if (!localName.equals("family") && !localName.equals("class")) 
-			this.printSpaces();
-		String tmp = "</" + localName + ">\n";
-		System.out.print(tmp);
-		if (localName.equals("entry"))
-			ok = false;
-	}
+    public void startDocument() {
+        String tmp = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+        tmp += "<!DOCTYPE grammar SYSTEM \"xmg-tag.dtd,xml\">\n";
+        System.out.print(tmp);
+    }
 
-	public void characters(char[] ch, int start, int length) {
-		if (ok) {
-			String tmp = new String(ch, start, length);
-			System.out.print(tmp);
-		}
-	}
+    public void endDocument() {
+    }
 
-	public void ignorableWhitespace(char[] ch, int start, int length) {
-		//System.out.print(new String(ch, start, length));
-	}
-	
-	private void printSpaces() {
-		// method used for indentation
-		String res = "";
-		for (int i = 0 ; i < level ; i++) {
-			res += space;
-		}
-		System.out.print(res);
-	}
-	
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+        this.printSpaces();
+        if (localName.equals("entry"))
+            ok = true;
+        String tmp = "<" + localName;
+        for (int i = 0; i < attributes.getLength(); i++) {
+            tmp += " " + attributes.getLocalName(i) + "=\"" + attributes.getValue(i) + "\"";
+        }
+        if (localName.equals("family"))
+            tmp += ">";
+        else if (localName.equals("class"))
+            tmp += ">";
+        else
+            tmp += ">\n";
+        System.out.print(tmp);
+        level += 2;
+    }
+
+    public void endElement(String uri, String localName, String qName) {
+        level -= 2;
+        if (!localName.equals("family") && !localName.equals("class"))
+            this.printSpaces();
+        String tmp = "</" + localName + ">\n";
+        System.out.print(tmp);
+        if (localName.equals("entry"))
+            ok = false;
+    }
+
+    public void characters(char[] ch, int start, int length) {
+        if (ok) {
+            String tmp = new String(ch, start, length);
+            System.out.print(tmp);
+        }
+    }
+
+    public void ignorableWhitespace(char[] ch, int start, int length) {
+        //System.out.print(new String(ch, start, length));
+    }
+
+    private void printSpaces() {
+        // method used for indentation
+        String res = "";
+        for (int i = 0; i < level; i++) {
+            res += space;
+        }
+        System.out.print(res);
+    }
+
 }

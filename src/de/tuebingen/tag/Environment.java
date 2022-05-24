@@ -4,7 +4,7 @@
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
  *     Johannes Dellert <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *     Johannes Dellert, 2007
@@ -44,14 +44,13 @@ import de.tuebingen.derive.PrettyNameFactory;
 
 /**
  * Environment - version 1
- * 
+ * <p>
  * Class providing an environment to compute unifications An environment is a
  * table associating to each variable either:
  * - itself if it is unbound
  * - a Value if it is bound (this value may be a variable of a constant)
- * 
- * @author parmenti
  *
+ * @author parmenti
  */
 public class Environment {
 
@@ -65,13 +64,12 @@ public class Environment {
     }
 
     /**
-     * 
      * @param var
      * @return This method return either:
-     *         1. the constant to which var is bound
-     *         2. or the last variable occuring in a path of bindings
-     *         between variables
-     *         3. or the variable itself if it is unbound
+     * 1. the constant to which var is bound
+     * 2. or the last variable occuring in a path of bindings
+     * between variables
+     * 3. or the variable itself if it is unbound
      */
     public Value deref(Value var) {
 
@@ -107,7 +105,7 @@ public class Environment {
 
     /**
      * Puts a binding of the variable var to the Value val in this Environment.
-     * 
+     *
      * @param var
      * @param val
      */
@@ -127,7 +125,7 @@ public class Environment {
     /**
      * Follow the trace of xand add it to the trace list, as long as x is bound
      * to something in the environment.
-     * 
+     *
      * @param var
      * @param trace
      */
@@ -165,7 +163,7 @@ public class Environment {
 
     /**
      * Method merging e1 and e2, returning the result
-     * 
+     *
      * @param e1
      * @param e2
      * @return
@@ -181,7 +179,7 @@ public class Environment {
 
     /**
      * method merging env into nenv
-     * 
+     *
      * @throws UnifyException
      */
     public static void addBindings(Environment env, Environment nenv)
@@ -219,7 +217,7 @@ public class Environment {
 
     /**
      * Method used to set up the variable and semantic label renaming
-     * 
+     * <p>
      * NB1: variables bound to constants (ie values) are not pretty renamed
      * NB2: free variables are not in the environment and thus cannot be pretty
      * renamed

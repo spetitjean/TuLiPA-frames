@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -76,11 +76,9 @@ public class TextUtilities {
      * Appends each element of that list to a single string by calling the
      * toString method of each element. Inserts the @param separator after each
      * element.
-     * 
-     * @param <T>
-     * 
-     * @param ls
      *
+     * @param <T>
+     * @param ls
      * @return
      */
     static public <T> String appendList(List<T> ls, String separator) {

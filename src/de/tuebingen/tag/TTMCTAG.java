@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007

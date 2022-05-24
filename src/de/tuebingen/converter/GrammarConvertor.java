@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -48,28 +48,26 @@ import de.tuebingen.tag.TagTree;
 import de.tuebingen.tag.Tuple;
 
 /**
- * 
  * @author parmenti
- *
  */
 public class GrammarConvertor {
 
     private List<Tuple> ttgrammar; // the anchored tt-mctag grammar
     private RCG rcggrammar; // the corresponding rcg
     private LinkedList<PredLabel> agenda; // the list of predicates to be
-                                          // processed
+    // processed
     private LinkedList<PredLabel> processed; // the list of predicates already
-                                             // processed
+    // processed
     private Map<String, TagTree> treeDict; // the dictionary of trees (for
-                                           // direct access)
+    // direct access)
     private boolean verbose; // with or without debugging info
     private Integer k_lpasize; // maximum size of the LPA (if any)
     private boolean auto_adj; // to authorize auto-adjunctions
     private Integer depth; // to limit the depth of the conversion (i.e. to stop
-                           // creating new clauses after a given limit)
+    // creating new clauses after a given limit)
 
     public GrammarConvertor(List<Tuple> tt, boolean b, List<String> in,
-            Map<String, TagTree> treeHash) {
+                            Map<String, TagTree> treeHash) {
         verbose = b;
         ttgrammar = tt;
         rcggrammar = new RCG();
@@ -82,31 +80,31 @@ public class GrammarConvertor {
     }
 
     public GrammarConvertor(List<Tuple> tt, boolean b, List<String> in,
-            Map<String, TagTree> treeHash, boolean a) {
+                            Map<String, TagTree> treeHash, boolean a) {
         this(tt, b, in, treeHash);
         auto_adj = a;
     }
 
     public GrammarConvertor(List<Tuple> tt, boolean b, List<String> in,
-            Map<String, TagTree> treeHash, boolean a, int k) {
+                            Map<String, TagTree> treeHash, boolean a, int k) {
         this(tt, b, in, treeHash, a);
         if (k >= 0)
             k_lpasize = new Integer(k);
     }
 
     public GrammarConvertor(List<Tuple> tt, boolean b, List<String> in,
-            Map<String, TagTree> treeHash, boolean a, int k, int limit) {
+                            Map<String, TagTree> treeHash, boolean a, int k, int limit) {
         this(tt, b, in, treeHash, a, k);
         if (limit >= 0)
             depth = new Integer(limit); // the depth should maybe be
-                                        // proportional to the size of the
-                                        // sentence ? e.g. (in.size() * 3)
+        // proportional to the size of the
+        // sentence ? e.g. (in.size() * 3)
     }
 
     public void buildAllClauses(String axiom) {
         /**
          * Method used to build the RCG clauses from a list of anchored tuples
-         * 
+         *
          * @param axiom
          *            the axiom (category) of the grammar
          */
@@ -192,21 +190,21 @@ public class GrammarConvertor {
                             .println("Conversion's depth: " + nplab.getDepth());
                 if (depth == null || nplab.getDepth() <= depth) {
                     switch (nplab.getType()) {
-                    case 0: // tree clause
-                        TagTree tt = treeDict.get(nplab.getTreeid());
-                        buildTreeClauses(nplab.getDepth(), tt, nplab.getLpa(),
-                                partition.getArguments(),
-                                partition.getAllaux());
-                        break;
-                    case 1: // adj branching clause
-                        buildAdjBranchingClauses(nplab, nplab.getLpa(),
-                                partition.getAuxiliaries());
-                        break;
-                    case 2: // sub branching clause
-                        buildSubBranchingClauses(nplab,
-                                partition.getInitials());
-                        break;
-                    default: // skip
+                        case 0: // tree clause
+                            TagTree tt = treeDict.get(nplab.getTreeid());
+                            buildTreeClauses(nplab.getDepth(), tt, nplab.getLpa(),
+                                    partition.getArguments(),
+                                    partition.getAllaux());
+                            break;
+                        case 1: // adj branching clause
+                            buildAdjBranchingClauses(nplab, nplab.getLpa(),
+                                    partition.getAuxiliaries());
+                            break;
+                        case 2: // sub branching clause
+                            buildSubBranchingClauses(nplab,
+                                    partition.getInitials());
+                            break;
+                        default: // skip
                     }
                 }
             } else {
@@ -220,18 +218,16 @@ public class GrammarConvertor {
 
     /**
      * Method used to build clauses associated with elementary trees
-     * 
-     * @param t,
-     *            lpa, args, adjsets
-     *            t - a tree identifier (String)
-     *            lpa - the list of pending arguments (List<String>)
-     *            args - the list of argument trees (List<Object>)
-     *            adjsets - the list of adjunction sets (hashtable)
-     * 
+     *
+     * @param t, lpa, args, adjsets
+     *           t - a tree identifier (String)
+     *           lpa - the list of pending arguments (List<String>)
+     *           args - the list of argument trees (List<Object>)
+     *           adjsets - the list of adjunction sets (hashtable)
      */
     public boolean buildTreeClauses(int cur_depth, TagTree t, List<Object> lpa,
-            Hashtable<Object, LinkedList<Object>> tuplesDict,
-            Hashtable<Object, LinkedList<Object>> adjsets) {
+                                    Hashtable<Object, LinkedList<Object>> tuplesDict,
+                                    Hashtable<Object, LinkedList<Object>> adjsets) {
 
         if (verbose) {
             System.err.println("ELEMENTARY");
@@ -369,7 +365,7 @@ public class GrammarConvertor {
     }
 
     public boolean buildAdjBranchingClauses(PredComplexLabel nplab,
-            List<Object> lpa, Hashtable<Object, LinkedList<Object>> hadjsets) {
+                                            List<Object> lpa, Hashtable<Object, LinkedList<Object>> hadjsets) {
         /**
          * Processing of adjunction branching predicates
          */
@@ -486,7 +482,7 @@ public class GrammarConvertor {
     }
 
     public boolean buildSubBranchingClauses(PredComplexLabel nplab,
-            Hashtable<Object, LinkedList<Object>> substsets) {
+                                            Hashtable<Object, LinkedList<Object>> substsets) {
         /**
          * Processing of substitution branching predicates
          */
@@ -593,8 +589,8 @@ public class GrammarConvertor {
     }
 
     public boolean checkAdjWord(String treeid, String tupleId,
-            String tupleAncPos, TagNode nn, TagNode lex, TagTree tr,
-            List<Object> lpa) {
+                                String tupleAncPos, TagNode nn, TagNode lex, TagTree tr,
+                                List<Object> lpa) {
         // return true if the adjunction is allowed, false otherwise
         boolean res = true;
         if (tupleAncPos != null && tr.getTupleAncPos() != null) {
@@ -644,7 +640,7 @@ public class GrammarConvertor {
     }
 
     public boolean checkSubstWord(String treeid, String tupleId,
-            String tupleAncPos, TagNode nn, TagNode lex, TagTree tr) {
+                                  String tupleAncPos, TagNode nn, TagNode lex, TagTree tr) {
         boolean res = true;
         // if we try to substitute the head of another tuple anchored by the
         // same word, we return false
@@ -657,7 +653,7 @@ public class GrammarConvertor {
                 int posi2 = ((TagNode) tr.getLexAnc()).getWord().getEnd();
                 int posi = lex.getWord().getEnd();
                 if (nn.getAddress().compareTo(lex.getAddress()) < 0) { // "left
-                                                                       // substitution"
+                    // substitution"
                     res = (posi2 < posi);
                 } else { // "right substitution"
                     res = (posi < posi2);

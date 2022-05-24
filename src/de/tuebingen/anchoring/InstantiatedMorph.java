@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,40 +33,40 @@ import de.tuebingen.lexicon.MorphEntry;
 import de.tuebingen.tokenizer.Word;
 
 public class InstantiatedMorph extends MorphEntry {
-	
-	private Word       inToken;
-	
-	public InstantiatedMorph(InstantiatedMorph other) {
-		super((MorphEntry) other);
-		inToken = other.getInToken();
-	}
-	
-	public InstantiatedMorph(String lex){
-		super(lex);
-		inToken = null;
-	}
-	
-	public InstantiatedMorph(String lex, Word w){
-		super(lex);
-		inToken = w;
-	}
-	
-	public InstantiatedMorph(Word w){
-		super(w.getWord());
-		inToken = w;
-	}
-	
-	public InstantiatedMorph(MorphEntry m, Word w){
-		super(m);
-		inToken = w;
-	}
 
-	public Word getInToken() {
-		return inToken;
-	}
+    private Word inToken;
 
-	public void setInToken(Word inToken) {
-		this.inToken = inToken;
-	}
+    public InstantiatedMorph(InstantiatedMorph other) {
+        super((MorphEntry) other);
+        inToken = other.getInToken();
+    }
+
+    public InstantiatedMorph(String lex) {
+        super(lex);
+        inToken = null;
+    }
+
+    public InstantiatedMorph(String lex, Word w) {
+        super(lex);
+        inToken = w;
+    }
+
+    public InstantiatedMorph(Word w) {
+        super(w.getWord());
+        inToken = w;
+    }
+
+    public InstantiatedMorph(MorphEntry m, Word w) {
+        super(m);
+        inToken = w;
+    }
+
+    public Word getInToken() {
+        return inToken;
+    }
+
+    public void setInToken(Word inToken) {
+        this.inToken = inToken;
+    }
 
 }

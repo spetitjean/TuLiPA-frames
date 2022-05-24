@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,60 +33,60 @@ import de.tuebingen.lexicon.Lemma;
 import de.tuebingen.lexicon.Lemmaref;
 
 public class InstantiatedLemma extends Lemma {
-	/**
-	 * An instantiated lemma is a lemma associated with a morphological item
-	 * 
-	 * @author parmenti
-	 */	
-	private InstantiatedMorph lexItem; 
-	private Lemmaref   lref;
-	
-	public InstantiatedLemma(InstantiatedLemma other) {
-		super((Lemma) other);
-		lref    = new Lemmaref(other.getLref());
-		lexItem = new InstantiatedMorph(other.getLexItem());
-	}
-	
-	public InstantiatedLemma(){
-		super();
-	}
-	
-	public InstantiatedLemma(Lemma l){
-		super(l);
-	}
-	
-	public InstantiatedLemma(Lemma l, InstantiatedMorph m){
-		super(l);
-		this.lexItem = new InstantiatedMorph(m);
-	}
-	
-	public InstantiatedLemma(Lemma l, InstantiatedMorph m, Lemmaref le){
-		super(l);
-		this.lexItem = new InstantiatedMorph(m);
-		this.lref    = new Lemmaref(le);
-	}
-	
-	public Lemmaref getLref() {
-		return lref;
-	}
+    /**
+     * An instantiated lemma is a lemma associated with a morphological item
+     *
+     * @author parmenti
+     */
+    private InstantiatedMorph lexItem;
+    private Lemmaref lref;
 
-	public void setLref(Lemmaref lref) {
-		this.lref = lref;
-	}
+    public InstantiatedLemma(InstantiatedLemma other) {
+        super((Lemma) other);
+        lref = new Lemmaref(other.getLref());
+        lexItem = new InstantiatedMorph(other.getLexItem());
+    }
 
-	public InstantiatedMorph getLexItem() {
-		return lexItem;
-	}
+    public InstantiatedLemma() {
+        super();
+    }
 
-	public void setLexItem(InstantiatedMorph lexItem) {
-		this.lexItem = lexItem;
-	}
-	
-	public String toString(){
-		String r1  = super.toString();
-		String res = lexItem.getLex()+"\n "; 
-		res += lexItem.toString();
-		return "Instantiated Lemma : "+res+" "+r1+"\n";
-	}
-	
+    public InstantiatedLemma(Lemma l) {
+        super(l);
+    }
+
+    public InstantiatedLemma(Lemma l, InstantiatedMorph m) {
+        super(l);
+        this.lexItem = new InstantiatedMorph(m);
+    }
+
+    public InstantiatedLemma(Lemma l, InstantiatedMorph m, Lemmaref le) {
+        super(l);
+        this.lexItem = new InstantiatedMorph(m);
+        this.lref = new Lemmaref(le);
+    }
+
+    public Lemmaref getLref() {
+        return lref;
+    }
+
+    public void setLref(Lemmaref lref) {
+        this.lref = lref;
+    }
+
+    public InstantiatedMorph getLexItem() {
+        return lexItem;
+    }
+
+    public void setLexItem(InstantiatedMorph lexItem) {
+        this.lexItem = lexItem;
+    }
+
+    public String toString() {
+        String r1 = super.toString();
+        String res = lexItem.getLex() + "\n ";
+        res += lexItem.toString();
+        return "Instantiated Lemma : " + res + " " + r1 + "\n";
+    }
+
 }

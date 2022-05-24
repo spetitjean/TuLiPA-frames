@@ -9,7 +9,7 @@ public class FSPrintingTools {
     /**
      * returns a naive string representation of a (probably recursive) typed or
      * untyped FS
-     * 
+     *
      * @param fs
      * @return
      */
@@ -22,7 +22,7 @@ public class FSPrintingTools {
     }
 
     private static String printFS(Fs fs, int recursiondepth,
-            HashSet<Value> seen, boolean printTypeConstraints) {
+                                  HashSet<Value> seen, boolean printTypeConstraints) {
         StringBuffer sb = new StringBuffer();
         recursiondepth++;
         if (fs.isTyped()) {
@@ -76,9 +76,7 @@ public class FSPrintingTools {
     }
 
     /**
-     * 
-     * @param spaces
-     *            amount of nbsp's
+     * @param spaces amount of nbsp's
      * @return
      */
     private static String nonBreakingSpace(int spaces) {
@@ -90,7 +88,7 @@ public class FSPrintingTools {
     }
 
     public static String printFrame(Frame frameSem,
-            boolean printTypeConstraints) {
+                                    boolean printTypeConstraints) {
         StringBuffer sb = new StringBuffer();
         for (Fs fs : frameSem.getFeatureStructures()) {
             sb.append(printFS(fs, printTypeConstraints));

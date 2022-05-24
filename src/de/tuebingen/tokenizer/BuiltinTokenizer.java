@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -33,7 +33,6 @@ import java.io.IOException;
 
 /**
  * @author wmaier
- *
  */
 public class BuiltinTokenizer extends Tokenizer {
 

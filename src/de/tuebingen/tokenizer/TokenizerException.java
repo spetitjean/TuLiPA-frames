@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,43 +31,45 @@ package de.tuebingen.tokenizer;
 
 /**
  * Indicates a problem within the tokenizer.
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class TokenizerException extends Exception {
 
-	private static final long serialVersionUID = 2305202443769388502L;
+    private static final long serialVersionUID = 2305202443769388502L;
 
-	/**
-	 *  An exception within the tokenizer has occured 
-	 */
-	public TokenizerException() {
-	}
+    /**
+     * An exception within the tokenizer has occured
+     */
+    public TokenizerException() {
+    }
 
-	/**
-	 *  An exception within the tokenizer has occured 
-	 * @param arg0 a suitable message
-	 */
-	public TokenizerException(String arg0) {
-		super(arg0);
-	}
+    /**
+     * An exception within the tokenizer has occured
+     *
+     * @param arg0 a suitable message
+     */
+    public TokenizerException(String arg0) {
+        super(arg0);
+    }
 
-	/**
-	 *  An exception within the tokenizer has occured 
-	 * @param arg0
-	 */
-	public TokenizerException(Throwable arg0) {
-		super(arg0);
-	}
+    /**
+     * An exception within the tokenizer has occured
+     *
+     * @param arg0
+     */
+    public TokenizerException(Throwable arg0) {
+        super(arg0);
+    }
 
-	/**
-	 *  An exception within the tokenizer has occured 
-	 * @param arg0
-	 * @param arg1
-	 */
-	public TokenizerException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    /**
+     * An exception within the tokenizer has occured
+     *
+     * @param arg0
+     * @param arg1
+     */
+    public TokenizerException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
 }

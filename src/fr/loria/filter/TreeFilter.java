@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -36,48 +36,44 @@ import org.xml.sax.SAXException;
 
 
 public class TreeFilter extends XMLFilterImpl {
-	
-	private List<String> toFilter; // list of trees to consider
-	private boolean     eraseMode;
-	
-	public TreeFilter(List<String> subgrammar) {
-		toFilter  = subgrammar;
-		eraseMode = false;
-	}
 
-	public void startElement (String namespaceUri, String localName, String qualifiedName, Attributes attributes) throws SAXException
-	{
-		if (!eraseMode) {
-			if (localName.equals("entry")){
-				String treeId = attributes.getValue("name");
-				if (toFilter.contains(treeId)) {
-					super.startElement(namespaceUri, localName, qualifiedName, attributes);
-				} else
-					eraseMode = !eraseMode;  // eraseMode switched on
-			}
-			else 
-				super.startElement(namespaceUri, localName, qualifiedName, attributes);
-		}
-		// no else since in erase mode, we do not keep anything
-	}
-	
-	public void endElement (String namespaceUri, String localName, String qualifiedName) throws SAXException
-	{
-		if (localName.equals("entry")){
-			if (!eraseMode) 
-				super.endElement(namespaceUri, localName, qualifiedName);
-			else
-				eraseMode = !eraseMode; // eraseMode switched off
-		}
-		else {
-			// we only keep end tags in non erase mode
-			if (!eraseMode)
-				super.endElement(namespaceUri, localName, qualifiedName);
-		}
-	}
-	
-	public void setToFilter(List<String> toFilter) {
-		this.toFilter = toFilter;
-	}
-	
+    private List<String> toFilter; // list of trees to consider
+    private boolean eraseMode;
+
+    public TreeFilter(List<String> subgrammar) {
+        toFilter = subgrammar;
+        eraseMode = false;
+    }
+
+    public void startElement(String namespaceUri, String localName, String qualifiedName, Attributes attributes) throws SAXException {
+        if (!eraseMode) {
+            if (localName.equals("entry")) {
+                String treeId = attributes.getValue("name");
+                if (toFilter.contains(treeId)) {
+                    super.startElement(namespaceUri, localName, qualifiedName, attributes);
+                } else
+                    eraseMode = !eraseMode;  // eraseMode switched on
+            } else
+                super.startElement(namespaceUri, localName, qualifiedName, attributes);
+        }
+        // no else since in erase mode, we do not keep anything
+    }
+
+    public void endElement(String namespaceUri, String localName, String qualifiedName) throws SAXException {
+        if (localName.equals("entry")) {
+            if (!eraseMode)
+                super.endElement(namespaceUri, localName, qualifiedName);
+            else
+                eraseMode = !eraseMode; // eraseMode switched off
+        } else {
+            // we only keep end tags in non erase mode
+            if (!eraseMode)
+                super.endElement(namespaceUri, localName, qualifiedName);
+        }
+    }
+
+    public void setToFilter(List<String> toFilter) {
+        this.toFilter = toFilter;
+    }
+
 }

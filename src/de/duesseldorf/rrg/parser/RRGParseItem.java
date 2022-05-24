@@ -129,10 +129,10 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             return getTree().getId().compareTo(o.getTree().getId());
         }
         if (this.start != o.start) {
-	    return this.start - o.start;
+            return this.start - o.start;
         }
         if (this.end != o.end) {
-	    return this.end - o.end;
+            return this.end - o.end;
         }
         return this.hashCode() - o.hashCode();
     }

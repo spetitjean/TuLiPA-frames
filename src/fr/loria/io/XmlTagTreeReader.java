@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -44,94 +44,95 @@ import de.tuebingen.lexicon.MorphEntry;
 import de.tuebingen.util.MyEntityResolver;
 
 public class XmlTagTreeReader {
-	
-	public static final int POL     = 0;
-	public static final int GRAMMAR = 1;
-	public static final int LEMMA   = 2;
-	public static final int MORPH   = 3;
-	
-	private Map<String, Polarities> polarities;
-	private List<String> lexNodes;
-	private Map<String, TagTree> trees;
-	private Map<String, List<MorphEntry>> morphs;
-	private Map<String, List<Lemma>> lemmas;
-	private Map<String, List<String>> families;
-	private Map<String, List<String>> coanchors;
-	private int inGrammarSize = 0;
-	
-	public XmlTagTreeReader() {}
-	
-	public XmlTagTreeReader(int which, String uri, boolean verbose) throws SAXException, IOException {
-		XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-		saxReader.setEntityResolver(new MyEntityResolver());
-		//System.err.println("@@@@@@@@@@@@@@ File " + uri);
-		switch (which) {
-		case POL:
-	        saxReader.setContentHandler(new TagContentHandler(verbose));
-	        saxReader.parse(uri);
-	        polarities = ((TagContentHandler) saxReader.getContentHandler()).getPolarities();
-	        lexNodes   = ((TagContentHandler) saxReader.getContentHandler()).getLexNodes();
-	        families   = ((TagContentHandler) saxReader.getContentHandler()).getFamilies();
-	        inGrammarSize=((TagContentHandler) saxReader.getContentHandler()).getInGrammarSize();
-			break;
-		case GRAMMAR:
-	        saxReader.setContentHandler(new TagTreeContentHandler(verbose));
-	        saxReader.parse(uri);
-	        trees = ((TagTreeContentHandler) saxReader.getContentHandler()).getSchema();			
-			break;
-		case LEMMA:
-			saxReader.setContentHandler(new LemmaContentHandler(verbose));
-	        saxReader.parse(uri);
-	        lemmas = ((LemmaContentHandler) saxReader.getContentHandler()).getLemma();
-	        coanchors = ((LemmaContentHandler) saxReader.getContentHandler()).getCoanchors();
-			break;
-		case MORPH:
-	        saxReader.setContentHandler(new MorphContentHandler(verbose));
-	        saxReader.parse(uri);
-	        morphs = ((MorphContentHandler) saxReader.getContentHandler()).getMorphs();
-			break;
-		}
-	}
-	
-	public void filter(List<String> f, String uri, boolean verbose) throws SAXException, IOException {
-		XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-		TreeFilter tf = new TreeFilter(f);
-		tf.setParent(saxReader);
-		tf.setEntityResolver(new MyEntityResolver());
-		tf.setContentHandler(new TagTreeContentHandler(verbose));
-		tf.parse(uri);
-		trees = ((TagTreeContentHandler) tf.getContentHandler()).getSchema();
-	}
-	
-	public Map<String, Polarities> getPolarities() {
-		return polarities;
-	}
 
-	public List<String> getLexNodes() {
-		return lexNodes;
-	}
+    public static final int POL = 0;
+    public static final int GRAMMAR = 1;
+    public static final int LEMMA = 2;
+    public static final int MORPH = 3;
 
-	public Map<String, TagTree> getTrees() {
-		return trees;
-	}
+    private Map<String, Polarities> polarities;
+    private List<String> lexNodes;
+    private Map<String, TagTree> trees;
+    private Map<String, List<MorphEntry>> morphs;
+    private Map<String, List<Lemma>> lemmas;
+    private Map<String, List<String>> families;
+    private Map<String, List<String>> coanchors;
+    private int inGrammarSize = 0;
 
-	public Map<String, List<MorphEntry>> getMorphs() {
-		return morphs;
-	}
+    public XmlTagTreeReader() {
+    }
 
-	public Map<String, List<Lemma>> getLemmas() {
-		return lemmas;
-	}
+    public XmlTagTreeReader(int which, String uri, boolean verbose) throws SAXException, IOException {
+        XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+        saxReader.setEntityResolver(new MyEntityResolver());
+        //System.err.println("@@@@@@@@@@@@@@ File " + uri);
+        switch (which) {
+            case POL:
+                saxReader.setContentHandler(new TagContentHandler(verbose));
+                saxReader.parse(uri);
+                polarities = ((TagContentHandler) saxReader.getContentHandler()).getPolarities();
+                lexNodes = ((TagContentHandler) saxReader.getContentHandler()).getLexNodes();
+                families = ((TagContentHandler) saxReader.getContentHandler()).getFamilies();
+                inGrammarSize = ((TagContentHandler) saxReader.getContentHandler()).getInGrammarSize();
+                break;
+            case GRAMMAR:
+                saxReader.setContentHandler(new TagTreeContentHandler(verbose));
+                saxReader.parse(uri);
+                trees = ((TagTreeContentHandler) saxReader.getContentHandler()).getSchema();
+                break;
+            case LEMMA:
+                saxReader.setContentHandler(new LemmaContentHandler(verbose));
+                saxReader.parse(uri);
+                lemmas = ((LemmaContentHandler) saxReader.getContentHandler()).getLemma();
+                coanchors = ((LemmaContentHandler) saxReader.getContentHandler()).getCoanchors();
+                break;
+            case MORPH:
+                saxReader.setContentHandler(new MorphContentHandler(verbose));
+                saxReader.parse(uri);
+                morphs = ((MorphContentHandler) saxReader.getContentHandler()).getMorphs();
+                break;
+        }
+    }
 
-	public Map<String, List<String>> getFamilies() {
-		return families;
-	}
+    public void filter(List<String> f, String uri, boolean verbose) throws SAXException, IOException {
+        XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+        TreeFilter tf = new TreeFilter(f);
+        tf.setParent(saxReader);
+        tf.setEntityResolver(new MyEntityResolver());
+        tf.setContentHandler(new TagTreeContentHandler(verbose));
+        tf.parse(uri);
+        trees = ((TagTreeContentHandler) tf.getContentHandler()).getSchema();
+    }
 
-	public Map<String, List<String>> getCoanchors() {
-		return coanchors;
-	}
+    public Map<String, Polarities> getPolarities() {
+        return polarities;
+    }
 
-	public int getInGrammarSize() {
-		return inGrammarSize;
-	}
+    public List<String> getLexNodes() {
+        return lexNodes;
+    }
+
+    public Map<String, TagTree> getTrees() {
+        return trees;
+    }
+
+    public Map<String, List<MorphEntry>> getMorphs() {
+        return morphs;
+    }
+
+    public Map<String, List<Lemma>> getLemmas() {
+        return lemmas;
+    }
+
+    public Map<String, List<String>> getFamilies() {
+        return families;
+    }
+
+    public Map<String, List<String>> getCoanchors() {
+        return coanchors;
+    }
+
+    public int getInGrammarSize() {
+        return inGrammarSize;
+    }
 }

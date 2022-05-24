@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -40,9 +40,8 @@ import de.tuebingen.tag.SemLit;
 /**
  * Class referring to Values within AVMs A value can be a String, an integer, an
  * AVM, an atomic disjunction or a variable
- * 
- * @author parmenti
  *
+ * @author parmenti
  */
 public class Value implements SemLit {
 
@@ -66,9 +65,8 @@ public class Value implements SemLit {
 
     /**
      * Create a new Integer Value
-     * 
-     * @param i
-     *            is the Integer value of the new Value.
+     *
+     * @param i is the Integer value of the new Value.
      */
     public Value(int i) {
         sVal = null;
@@ -81,12 +79,10 @@ public class Value implements SemLit {
 
     /**
      * Create a new value that is either a variable or a string
-     * 
-     * @param stype
-     *            is either Value.VAR, or Value.VAL.
-     * @param s
-     *            is either the variable stored in this value, or the atomic
-     *            (String)
+     *
+     * @param stype is either Value.VAR, or Value.VAL.
+     * @param s     is either the variable stored in this value, or the atomic
+     *              (String)
      */
     public Value(Kind stype, String s) {
         if (stype == Kind.VAR) {
@@ -105,9 +101,8 @@ public class Value implements SemLit {
 
     /**
      * Create a new value that is a AVM
-     * 
-     * @param fs
-     *            The AVM
+     *
+     * @param fs The AVM
      */
     public Value(Fs fs) {
         sVal = null;
@@ -120,9 +115,8 @@ public class Value implements SemLit {
 
     /**
      * Create a new value that is a atomic disjunction
-     * 
-     * @param ad
-     *            The atomic disjunction
+     *
+     * @param ad The atomic disjunction
      */
     public Value(LinkedList<Value> ad) {
         sVal = null;
@@ -135,7 +129,7 @@ public class Value implements SemLit {
 
     /**
      * Create a new value that is the atomic disjunction a, bound by coref
-     * 
+     *
      * @param ad
      * @param coref
      */
@@ -208,35 +202,35 @@ public class Value implements SemLit {
         boolean res = false;
         if (((Value) v).getType() == this.getType()) {
             switch (this.getType()) {
-            case VAL:
-                res = (this.getSVal().equals(((Value) v).getSVal()));
-                break;
-            case INT:
-                res = (this.getIVal() == ((Value) v).getIVal());
-                break;
-            case AVM:
-                res = (this.getAvmVal().equals(((Value) v).getAvmVal()));
-                break;
-            case ADISJ:
-                if (((Value) v).getAdisj().size() == this.getAdisj().size()) {
-                    String[] adS = new String[this.getAdisj().size()];
-                    String[] otS = new String[((Value) v).getAdisj().size()];
-                    for (int i = 0; i < ((Value) v).getAdisj().size(); i++) {
-                        adS[i] = this.getAdisj().get(i).toString();
-                        otS[i] = this.getAdisj().get(i).toString();
+                case VAL:
+                    res = (this.getSVal().equals(((Value) v).getSVal()));
+                    break;
+                case INT:
+                    res = (this.getIVal() == ((Value) v).getIVal());
+                    break;
+                case AVM:
+                    res = (this.getAvmVal().equals(((Value) v).getAvmVal()));
+                    break;
+                case ADISJ:
+                    if (((Value) v).getAdisj().size() == this.getAdisj().size()) {
+                        String[] adS = new String[this.getAdisj().size()];
+                        String[] otS = new String[((Value) v).getAdisj().size()];
+                        for (int i = 0; i < ((Value) v).getAdisj().size(); i++) {
+                            adS[i] = this.getAdisj().get(i).toString();
+                            otS[i] = this.getAdisj().get(i).toString();
+                        }
+                        Arrays.sort(adS);
+                        Arrays.sort(otS);
+                        res = true;
+                        for (int i = 0; i < adS.length; i++) {
+                            res &= adS[i].equals(otS[i]);
+                        }
                     }
-                    Arrays.sort(adS);
-                    Arrays.sort(otS);
-                    res = true;
-                    for (int i = 0; i < adS.length; i++) {
-                        res &= adS[i].equals(otS[i]);
-                    }
-                }
-                break;
-            case VAR:
-                res = (this.getVarVal().equals(((Value) v).getVarVal()));
-                break;
-            default:// skip
+                    break;
+                case VAR:
+                    res = (this.getVarVal().equals(((Value) v).getVarVal()));
+                    break;
+                default:// skip
             }
         }
         return res;
@@ -304,7 +298,6 @@ public class Value implements SemLit {
     }
 
     /**
-     * 
      * @return a variable if the Value is a variable, null otherwise.
      */
     public String getVarVal() {
@@ -335,9 +328,8 @@ public class Value implements SemLit {
     }
 
     /**
-     * @param finalUpdate
-     *            only plays a role when the value is an ADISJ or is bound to an
-     *            ADISJ in the environment
+     * @param finalUpdate only plays a role when the value is an ADISJ or is bound to an
+     *                    ADISJ in the environment
      */
     public void update(Environment env, boolean finalUpdate) {
         if (this.is(Kind.VAR)) {

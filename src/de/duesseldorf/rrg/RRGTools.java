@@ -11,7 +11,7 @@ public class RRGTools {
 
     /**
      * temporary fix: copied from method below and added idMap
-     * 
+     *
      * @param trees
      * @return
      */
@@ -34,11 +34,11 @@ public class RRGTools {
                 boolean traceWeakEquals = treeFromResource.getIds()
                         .size() == treeFromResult.getIds().size()
                         && treeFromResource.getIds()
-                                .containsAll(treeFromResult.getIds());
+                        .containsAll(treeFromResult.getIds());
                 if (traceWeakEquals) {
                     boolean nodesWeakEquals = ((RRGNode) treeFromResult
                             .getRoot()).weakEquals(
-                                    (RRGNode) treeFromResource.getRoot());
+                            (RRGNode) treeFromResource.getRoot());
                     if (nodesWeakEquals) {
                         treeIsAlreadyIn = true;
                         // log.info("found double tree: " + treeFromResource);
@@ -59,7 +59,7 @@ public class RRGTools {
     /**
      * return the set of trees that is the input set of trees but without
      * lookalikes that are detected by the weakEquals method
-     * 
+     *
      * @param trees
      * @return
      */

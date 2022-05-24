@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -33,12 +33,11 @@ import java.io.IOException;
 
 /**
  * @author wmaier
- *
  */
 public class FileTokenizer extends Tokenizer {
-	
-	public FileTokenizer(String tokenizerFile) throws TokenizerException, IOException {
-		FiniteStateReader r = new FiniteStateReader(tokenizerFile, false);
-		setT(r.getTransducer());
-	}
+
+    public FileTokenizer(String tokenizerFile) throws TokenizerException, IOException {
+        FiniteStateReader r = new FiniteStateReader(tokenizerFile, false);
+        setT(r.getTransducer());
+    }
 }

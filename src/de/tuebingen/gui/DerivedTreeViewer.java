@@ -5,7 +5,7 @@
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -59,9 +59,9 @@ import de.tuebingen.tag.TagTree;
 public class DerivedTreeViewer {
 
     public static ArrayList<ParseTreeCollection> getViewTreesFromDOM(Document d,
-            Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
-            boolean derivationStepOutput, boolean debugMode,
-            boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
+                                                                     Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
+                                                                     boolean derivationStepOutput, boolean debugMode,
+                                                                     boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
 
         try {
             // XMLTreeViewer.displayTree(d.getDocumentElement());
@@ -95,7 +95,7 @@ public class DerivedTreeViewer {
                     continue;
                 }
                 Node startNode = startNodes.item(i);
-		
+
                 XMLViewTree viewTree = ViewTreeBuilder
                         .makeViewableDerivationTree(startNode, treeDict);
                 ArrayList<ElementaryTree> eTrees = null;
@@ -152,7 +152,7 @@ public class DerivedTreeViewer {
                     // dTree.semantics, dTree.frames, dTree.getFrameSem(),
                     // noUtool);
                     ParseTreeCollection trees = new ParseTreeCollection(
-			    viewTree, derivedTree, dTree, semanticsString,
+                            viewTree, derivedTree, dTree, semanticsString,
                             dTree.semantics, dTree.getFrameSem(), noUtool);
                     if (eTrees != null) {
                         ArrayList<XMLViewTree> viewElemTrees = new ArrayList<XMLViewTree>();
@@ -188,7 +188,7 @@ public class DerivedTreeViewer {
             return viewTrees;
         } catch (
 
-        Exception e) {
+                Exception e) {
             System.err.println("Error while reading XML File:");
             System.err.println(e.toString());
             StackTraceElement[] stack = e.getStackTrace();
@@ -201,9 +201,9 @@ public class DerivedTreeViewer {
     }
 
     public static void displayTreesfromDOM(final String s, Document d,
-            Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
-            boolean derivationStepOutput, boolean debugMode,
-            boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
+                                           Map<String, TagTree> treeDict, boolean elementaryTreeOutput,
+                                           boolean derivationStepOutput, boolean debugMode,
+                                           boolean needsAnchoring, List<String> semlabels, boolean noUtool) {
 
         ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
                 treeDict, elementaryTreeOutput, derivationStepOutput, debugMode,
@@ -236,8 +236,8 @@ public class DerivedTreeViewer {
     }
 
     public static void dumpParsesfromDOM(Document d,
-            Map<String, TagTree> treeDict, File dumpFile,
-            boolean needsAnchoring, List<String> semlabels) throws IOException {
+                                         Map<String, TagTree> treeDict, File dumpFile,
+                                         boolean needsAnchoring, List<String> semlabels) throws IOException {
         ArrayList<ParseTreeCollection> viewTrees = getViewTreesFromDOM(d,
                 treeDict, false, false, false, needsAnchoring, semlabels,
                 false);

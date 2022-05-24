@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *
@@ -56,7 +56,7 @@ public class ViewTreeBuilder {
      * XMLViewTree for display
      */
     public static XMLViewTree makeViewableDerivationTree(Node derivTree,
-            Map<String, TagTree> dict) throws Exception {
+                                                         Map<String, TagTree> dict) throws Exception {
         Document D = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                 .newDocument();
         Node initialTree = D
@@ -217,7 +217,7 @@ public class ViewTreeBuilder {
     }
 
     private static void createSubtreeStructure(XMLViewTree tree, Node xmlNode,
-            TreeViewNode node) {
+                                               TreeViewNode node) {
         for (int i = 0; i < xmlNode.getChildNodes().getLength(); i++) {
             Node currentChild = xmlNode.getChildNodes().item(i);
             if (contentNode(currentChild)) {
@@ -237,7 +237,7 @@ public class ViewTreeBuilder {
     }
 
     private static void handleAttributes(XMLViewTree tree, Node xmlNode,
-            int nodeID) {
+                                         int nodeID) {
         if (xmlNode.getAttributes() != null) {
             for (int j = 0; j < xmlNode.getAttributes().getLength(); j++) {
                 XMLViewTreeAttribute attr = new XMLViewTreeAttribute();
@@ -377,7 +377,7 @@ public class ViewTreeBuilder {
     }
 
     public static void recursivelyAddFeatures(Node currentNode,
-            DerivedTree dTree) {
+                                              DerivedTree dTree) {
         if (currentNode instanceof Element) {
             Fs features = dTree.features.get(currentNode);
             if (features != null) {
@@ -395,7 +395,7 @@ public class ViewTreeBuilder {
     }
 
     public static void recursivelyAddTopBotFeatures(Node currentNode,
-            ElementaryTree eTree) {
+                                                    ElementaryTree eTree) {
         if (currentNode instanceof Element) {
             Fs features = eTree.topFeatures.get(currentNode);
             if (features != null) {
@@ -421,7 +421,7 @@ public class ViewTreeBuilder {
     }
 
     public static void recursivelyAddTopBotFeatures(Node currentNode,
-            DerivedTree eTree) {
+                                                    DerivedTree eTree) {
         if (currentNode instanceof Element) {
             Fs features = eTree.topFeatures.get(currentNode);
             if (features != null) {
@@ -447,7 +447,7 @@ public class ViewTreeBuilder {
     }
 
     public static ArrayList<Node> extractFeatureAtts(Fs features, Document D,
-            String prefix) {
+                                                     String prefix) {
         ArrayList<Node> atts = new ArrayList<Node>();
         for (String key : features.getKeys()) {
             String value;

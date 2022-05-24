@@ -4,7 +4,7 @@
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
- *          
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -544,6 +544,6 @@ public class XMLTreeDisplay extends JFrame implements ListSelectionListener,
         // dirty: there should be a better way to access tree panels
         return (TreeViewPanel) ((JScrollPane) displayTab
                 .getComponent(displayTab.getSelectedIndex())).getComponent(0)
-                        .getComponentAt(0, 0);
+                .getComponentAt(0, 0);
     }
 }

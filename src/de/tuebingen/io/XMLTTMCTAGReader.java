@@ -5,7 +5,7 @@
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     David Arps, 2017
  *     Simon Petitjean, 2017
@@ -34,9 +34,8 @@
 /**
  * Class for loading an MCTAG grammar in XML format
  * (following the DTD
- * 
+ *
  * @author parmenti
- * 
  */
 package de.tuebingen.io;
 
@@ -88,7 +87,7 @@ public class XMLTTMCTAGReader extends FileReader {
 
     /**
      * Generate a parser for an XML file containing an XMG MC-TAG grammar
-     * 
+     *
      * @param grammar
      *            the XML file
      */
@@ -148,11 +147,11 @@ public class XMLTTMCTAGReader extends FileReader {
     /**
      * Retrieve the tuples Object from the DOM document
      * corresponding to the input XML file
-     * 
+     *
      * @author parmenti
-     * 
+     *
      * @return a list of Tuple Objects
-     * 
+     *
      */
     public Map<String, List<Tuple>> getTuples() {
         Map<String, List<Tuple>> sets = new HashMap<String, List<Tuple>>();
@@ -202,7 +201,7 @@ public class XMLTTMCTAGReader extends FileReader {
     }
 
     public static void updateHash(Map<String, List<Tuple>> tuples, String key,
-            Tuple t) {
+                                  Tuple t) {
         List<Tuple> ltu = tuples.get(key);
         if (ltu == null) {
             ltu = new LinkedList<Tuple>();
@@ -212,15 +211,15 @@ public class XMLTTMCTAGReader extends FileReader {
     }
 
     public static List<TagTree> getTrees(Element e, String tupleId,
-            List<Boolean> na, NameFactory nf) {
+                                         List<Boolean> na, NameFactory nf) {
         /**
          * Extract trees inside a given mcset (XML Element)
          *
          * @param e
          *            Element from which trees has to be extracted
-         * 
+         *
          * @return a list of TagTrees
-         * 
+         *
          */
         List<TagTree> res = new LinkedList<TagTree>();
 
@@ -248,12 +247,12 @@ public class XMLTTMCTAGReader extends FileReader {
 
     /**
      * Process an entry XML tag and extract a TagTree
-     * 
+     *
      * @param e
      *            the DOM Element corresponding to the entry
      */
     public static TagTree getEntry(Element e, List<Boolean> na,
-            NameFactory nf) {
+                                   NameFactory nf) {
         TagTree res = new TagTree();
         // 1. Processing of the tree
         // System.err.println("Tree part ");
@@ -347,12 +346,12 @@ public class XMLTTMCTAGReader extends FileReader {
     /**
      * A relation element has an attribute with the relation name and daughters
      * for each of the arguments
-     * 
+     *
      * @param n
      * @return
      */
     private static Relation getRelation(Element n,
-            Hashtable<String, Value> toAdd, NameFactory nf) {
+                                        Hashtable<String, Value> toAdd, NameFactory nf) {
         String name = n.getAttribute("name");
         List<Value> arguments = new LinkedList<Value>();
 
@@ -369,7 +368,7 @@ public class XMLTTMCTAGReader extends FileReader {
     /**
      * Function used to read the XML semantic representation associated with a
      * Tree
-     * 
+     *
      * @param e
      * @return the list of semantic literals labelling the tree
      */
@@ -467,15 +466,15 @@ public class XMLTTMCTAGReader extends FileReader {
                 if (el.getTagName().equals("sym")) {
                     Value semval = getSingleValue(el, nf);
                     switch (argnum) {
-                    case 1:
-                        ((SemDom) sem).setArg1(semval);
-                        argnum++;
-                        break;
-                    case 2:
-                        ((SemDom) sem).setArg2(semval);
-                        argnum++;
-                        break;
-                    default:// skip
+                        case 1:
+                            ((SemDom) sem).setArg1(semval);
+                            argnum++;
+                            break;
+                        case 2:
+                            ((SemDom) sem).setArg2(semval);
+                            argnum++;
+                            break;
+                        default:// skip
                     }
                 }
             }
@@ -486,14 +485,14 @@ public class XMLTTMCTAGReader extends FileReader {
 
     /**
      * Process a tree XML tag and extract a TagTree
-     * 
+     *
      * @param e
      *            the DOM Element corresponding to a tree
-     * 
+     *
      * @return the TagTree object
      */
     public static TagTree getATree(Element e, List<Boolean> na,
-            NameFactory nf) {
+                                   NameFactory nf) {
         TagTree res = new TagTree(e.getAttribute("id"));
         NodeList l = e.getChildNodes();
         for (int i = 0; i < l.getLength(); i++) {
@@ -513,13 +512,13 @@ public class XMLTTMCTAGReader extends FileReader {
     }
 
     public static de.tuebingen.tree.Node getNode(Element e, List<Boolean> na,
-            NameFactory nf) {
+                                                 NameFactory nf) {
         /**
          * Process (recursively) a node XML tag and extract a TagNode
-         * 
+         *
          * @param e
          *            the DOM Element corresponding to a node
-         * 
+         *
          */
         TagNode res = new TagNode();
         LinkedList<de.tuebingen.tree.Node> children = new LinkedList<de.tuebingen.tree.Node>();
@@ -581,7 +580,7 @@ public class XMLTTMCTAGReader extends FileReader {
 
     /**
      * Method used to read Value objects from XML DOM elements
-     * 
+     *
      * @param e
      *            the DOM element from which to extract the value
      * @param type
@@ -596,10 +595,10 @@ public class XMLTTMCTAGReader extends FileReader {
      * @return a Value object
      */
     public static Value getVal(Element e, int type,
-            Hashtable<String, Value> toAdd, String key, NameFactory nf) {
+                               Hashtable<String, Value> toAdd, String key, NameFactory nf) {
         /**
          * Process a f XML tag to extract a feature value (class Value)
-         * 
+         *
          * @param e
          *            the DOM Element corresponding to the f feature
          */
@@ -662,10 +661,10 @@ public class XMLTTMCTAGReader extends FileReader {
     public static Value getSingleValue(Element e, NameFactory nf) {
         /**
          * Process a sym XML tag to extract a feature value or variable
-         * 
+         *
          * @param e
          *            the DOM Element corresponding to the sym tag
-         * 
+         *
          */
         Value res = null;
 

@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -42,7 +42,6 @@ import de.tuebingen.tree.Node;
 
 /**
  * @author wmaier, parmenti
- *
  */
 public class TagNode implements Node {
 
@@ -71,7 +70,7 @@ public class TagNode implements Node {
     public static final int NOCST = ArgContent.STD_RANGE; // no constraint
     public static final int NADJ = ArgContent.NADJ_RANGE; // null adjunction
     public static final int MADJ = ArgContent.MADJ_RANGE; // mandatory
-                                                          // adjunction
+    // adjunction
 
     private int type;
     private boolean noadj; // is true when adjunction is forbidden on the node
@@ -86,8 +85,8 @@ public class TagNode implements Node {
     private ArgContent cRange; // const range (for lex nodes)
     private Word word; // words (for anchored lex nodes)
     private boolean isAncLex; // true for lex nodes containing the main anchor
-                              // (for RCg conversion using positions of main
-                              // anchors)
+    // (for RCg conversion using positions of main
+    // anchors)
     private int adjStatus;
 
     public TagNode() {
@@ -161,27 +160,27 @@ public class TagNode implements Node {
     public String typeToString() {
         String res = "";
         switch (type) {
-        case ANCHOR:
-            res = "anchor";
-            break;
-        case FOOT:
-            res = "foot";
-            break;
-        case SUBST:
-            res = "subst";
-            break;
-        case NOADJ:
-            res = "no_adjunction";
-            break;
-        case LEX:
-            res = "lex";
-            break;
-        case COANCHOR:
-            res = "co-anchor";
-            break;
-        case STD:
-            res = "std";
-            break;
+            case ANCHOR:
+                res = "anchor";
+                break;
+            case FOOT:
+                res = "foot";
+                break;
+            case SUBST:
+                res = "subst";
+                break;
+            case NOADJ:
+                res = "no_adjunction";
+                break;
+            case LEX:
+                res = "lex";
+                break;
+            case COANCHOR:
+                res = "co-anchor";
+                break;
+            case STD:
+                res = "std";
+                break;
         }
         return res;
     }
@@ -189,30 +188,30 @@ public class TagNode implements Node {
     public List<ArgContent> giveArgs() {
         List<ArgContent> args = new LinkedList<ArgContent>();
         switch (type) {
-        case ANCHOR: // anchor
-            if (!noadj) {
+            case ANCHOR: // anchor
+                if (!noadj) {
+                    args.add(this.getLRange());
+                    args.add(this.getRRange());
+                } // else skip no-adj nodes
+                break;
+            case FOOT: // foot
+                args.add(this.getCRange());
+                break;
+            case SUBST: // subst
+                args.add(this.getSRange());
+                break;
+            case LEX: // lex
+                args.add(this.getCRange());
+                break;
+            case COANCHOR: // co-anchor
                 args.add(this.getLRange());
                 args.add(this.getRRange());
-            } // else skip no-adj nodes
-            break;
-        case FOOT: // foot
-            args.add(this.getCRange());
-            break;
-        case SUBST: // subst
-            args.add(this.getSRange());
-            break;
-        case LEX: // lex
-            args.add(this.getCRange());
-            break;
-        case COANCHOR: // co-anchor
-            args.add(this.getLRange());
-            args.add(this.getRRange());
-            break;
-        case STD: // std
-            args.add(this.getLRange());
-            args.add(this.getRRange());
-            break;
-        default: // skip no-adj nodes
+                break;
+            case STD: // std
+                args.add(this.getLRange());
+                args.add(this.getRRange());
+                break;
+            default: // skip no-adj nodes
         }
         return args;
     }
@@ -376,7 +375,7 @@ public class TagNode implements Node {
     }
 
     public int getAdjStatus() {
-	return adjStatus;
+        return adjStatus;
     }
 
     public void setAdjStatus(int adjStatus) {

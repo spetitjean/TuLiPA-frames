@@ -47,7 +47,7 @@ public class XMLRRGTreeRetriever {
 
     /**
      * @param xmlTreeRoot Not the Element representing the root of the syntax tree, but
-     *                 the Element one level above
+     *                    the Element one level above
      * @return
      */
     public static RRGTree retrieveTree(Element xmlTreeRoot, NodeList frameRoot, NameFactory nf) {

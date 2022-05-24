@@ -2,9 +2,9 @@
  *  File SimplePosTag.java
  *
  *  Authors:
- *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>	
- *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>   
- *     
+ *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
+ *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -33,57 +33,57 @@ package de.tuebingen.tagger;
 
 /**
  * @author wmaier, parmenti
- *
  */
 public class SimplePosTag implements PosTag {
 
-	private String flex;  // the lexical item from the input string
-	private String tag;   // the cat assigned by the tagger
-	private String lemma; // the lemma assigned by the tagger
+    private String flex;  // the lexical item from the input string
+    private String tag;   // the cat assigned by the tagger
+    private String lemma; // the lemma assigned by the tagger
 
-	public SimplePosTag(){}
-	
-	public SimplePosTag(String f, String t, String l) {
-		flex  = f;
-		tag   = t;
-		lemma = l;
-	}
-	
-	public String getFlex() {
-		return flex;
-	}
+    public SimplePosTag() {
+    }
 
-	public void setFlex(String flex) {
-		this.flex = flex;
-	}
+    public SimplePosTag(String f, String t, String l) {
+        flex = f;
+        tag = t;
+        lemma = l;
+    }
 
-	public String getTag() {
-		return tag;
-	}
+    public String getFlex() {
+        return flex;
+    }
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
+    public void setFlex(String flex) {
+        this.flex = flex;
+    }
 
-	public void setTag(Object tag) {
-		this.tag = tag.toString();
-	}
+    public String getTag() {
+        return tag;
+    }
 
-	public String getLemma() {
-		return lemma;
-	}
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-	public void setLemma(String lemma) {
-		this.lemma = lemma;
-	}
+    public void setTag(Object tag) {
+        this.tag = tag.toString();
+    }
 
-	public String toString() {
-		String res = " ";
-		if (flex != null && tag != null && lemma != null) {
-			res += "("       + flex  + ", " ;
-			res += "pos: "   + tag   + ", " ;
-			res += "lemma: " + lemma + ") ";
-		}
-		return res;
-	}
+    public String getLemma() {
+        return lemma;
+    }
+
+    public void setLemma(String lemma) {
+        this.lemma = lemma;
+    }
+
+    public String toString() {
+        String res = " ";
+        if (flex != null && tag != null && lemma != null) {
+            res += "(" + flex + ", ";
+            res += "pos: " + tag + ", ";
+            res += "lemma: " + lemma + ") ";
+        }
+        return res;
+    }
 }

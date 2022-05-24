@@ -5,7 +5,7 @@ package de.duesseldorf.rrg.parser;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *

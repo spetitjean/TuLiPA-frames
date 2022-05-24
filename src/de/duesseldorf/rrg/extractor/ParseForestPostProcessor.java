@@ -17,29 +17,28 @@ public class ParseForestPostProcessor {
      * @return
      */
     static RRGParseResult postProcessParseTreeSet(
-            Set<RRGParseTree> resultingParses)  {
+            Set<RRGParseTree> resultingParses) {
 
         System.out.printf("\n% 12d\tresulting trees after extraction%n",
                 resultingParses.size());
 
-	// 0 features percolation
-	Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
-	for (RRGParseTree parsetree : resultingParses){
-	    try{
-		if (((RRGNode)parsetree.getRoot()).postUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)){
-		    if(((RRGNode)parsetree.getRoot()).postPostUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)){
-			((RRGNode)parsetree.getRoot()).updateFS(parsetree.getEnv(),false);
-			percolatedParseTrees.add(parsetree);
-		    }
-		}
-	    }
-	    catch(UnifyException e){
-		System.err.println("Failed percolation");
-	    }
-	}
+        // 0 features percolation
+        Set<RRGParseTree> percolatedParseTrees = new ConcurrentSkipListSet<RRGParseTree>();
+        for (RRGParseTree parsetree : resultingParses) {
+            try {
+                if (((RRGNode) parsetree.getRoot()).postUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)) {
+                    if (((RRGNode) parsetree.getRoot()).postPostUpdateFeatures(parsetree.getEnv(), new NameFactory(), false)) {
+                        ((RRGNode) parsetree.getRoot()).updateFS(parsetree.getEnv(), false);
+                        percolatedParseTrees.add(parsetree);
+                    }
+                }
+            } catch (UnifyException e) {
+                System.err.println("Failed percolation");
+            }
+        }
 
-	resultingParses = percolatedParseTrees;
-	
+        resultingParses = percolatedParseTrees;
+
         // 1 edge features
         // edge feature unification
         RRGParseResult resultingParsesEdgesUnified = new EdgeFeatureUnifier(

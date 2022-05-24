@@ -2,9 +2,9 @@
  *  File TaggerException.java
  *
  *  Authors:
- *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>	
+ *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -33,13 +33,12 @@ package de.tuebingen.tagger;
 
 /**
  * @author wmaier
- *
  */
 public class TaggerException extends Exception {
 
-	private static final long serialVersionUID = 1L;
-	
-	public TaggerException(String msg) {
-		super(msg);
-	}
+    private static final long serialVersionUID = 1L;
+
+    public TaggerException(String msg) {
+        super(msg);
+    }
 }

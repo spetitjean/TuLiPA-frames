@@ -19,7 +19,7 @@ import de.tuebingen.anchoring.NameFactory;
  *
  *  Authors:
  *     David Arps <david.arps@hhu.de
- *     
+ *
  *  Copyright:
  *     David Arps, 2018
  *
@@ -50,7 +50,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     private Fs nodeFs;
 
     private RRGNode(RRGNodeType type, String name, String category,
-            GornAddress ga, List<Node> children, Fs nodeFs) {
+                    GornAddress ga, List<Node> children, Fs nodeFs) {
         this.children = children;
         this.type = type;
         this.name = name;
@@ -74,7 +74,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     /**
      * Add the node {@code node} as the {@code position}'s child of
      * {@code this}.
-     * 
+     *
      * @param node
      * @param position
      */
@@ -83,7 +83,6 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     }
 
     /**
-     * 
      * @return the syntactic category of a node or its terminal label
      */
     public String getCategory() {
@@ -136,7 +135,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
     /**
      * returns true iff the node category and node type is the same
      * and weakEquals is true for all children of this
-     * 
+     *
      * @param other
      * @return
      */
@@ -167,7 +166,7 @@ public class RRGNode implements Node, Comparable<RRGNode> {
 
     /**
      * @return a String representation of this node, without children and
-     *         without feature structures
+     * without feature structures
      */
     public String toStringWithoutFs() {
         StringBuffer sb = new StringBuffer();
@@ -312,10 +311,10 @@ public class RRGNode implements Node, Comparable<RRGNode> {
 
 
     public void updateFS(Environment env, boolean finalUpdate)
-	throws UnifyException {
-	
-	this.setNodeFs(Fs.updateFS(this.getNodeFs(), env, finalUpdate));
-        
+            throws UnifyException {
+
+        this.setNodeFs(Fs.updateFS(this.getNodeFs(), env, finalUpdate));
+
         // if the node has children, we update them
         if (this.getChildren() != null) {
             for (int j = 0; j < this.getChildren().size(); j++) {
@@ -324,13 +323,12 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         }
     }
 
-    public boolean postUpdateFeatures(Environment eEnv, NameFactory nf, boolean finalUpdate)
-    {
+    public boolean postUpdateFeatures(Environment eEnv, NameFactory nf, boolean finalUpdate) {
         // update vars by environment
         Fs fs = this.getNodeFs();
-	// System.out.println("in postUpdateFeatures");
-	// System.out.println(fs);
-	// System.out.println(this);
+        // System.out.println("in postUpdateFeatures");
+        // System.out.println(fs);
+        // System.out.println(this);
         if (fs != null) {
             if (fs.collect_corefs(eEnv, nf, new HashSet<Value>()) == false) {
                 return false;
@@ -339,66 +337,65 @@ public class RRGNode implements Node, Comparable<RRGNode> {
         }
         // update child node features
         for (int i = 0; i < this.getChildren().size(); i++) {
-            if(!((RRGNode)this.getChildren().get(i)).postUpdateFeatures(eEnv, nf, finalUpdate))
-		return false;
+            if (!((RRGNode) this.getChildren().get(i)).postUpdateFeatures(eEnv, nf, finalUpdate))
+                return false;
         }
-	return true;
+        return true;
     }
 
     public Boolean postPostUpdateFeatures(Environment eEnv, NameFactory nf, boolean finalUpdate)
-	throws UnifyException
-    {
+            throws UnifyException {
         // update vars by environment
         Fs fs = this.getNodeFs();
         if (fs != null) {
-	    Fs newFs=fs.update_corefs(eEnv, new HashSet<Value>());
-	    if(newFs==null){
-		return false;}
-	    this.setNodeFs(newFs);
+            Fs newFs = fs.update_corefs(eEnv, new HashSet<Value>());
+            if (newFs == null) {
+                return false;
+            }
+            this.setNodeFs(newFs);
         }
         // update child node features
         for (int i = 0; i < this.getChildren().size(); i++) {
-            if(!((RRGNode)this.getChildren().get(i)).postPostUpdateFeatures( eEnv, nf, finalUpdate))
-		return false;
+            if (!((RRGNode) this.getChildren().get(i)).postPostUpdateFeatures(eEnv, nf, finalUpdate))
+                return false;
         }
-	return true;
-	
+        return true;
+
     }
 
 
-    
-    public RRGNode copyNode(NameFactory nf){
-    	RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs(), nf));
-    	if (this.getChildren() != null){
+    public RRGNode copyNode(NameFactory nf) {
+        RRGNode newNode = new RRGNode(this.getType(), this.getName(), this.getCategory(), this.getGornaddress(), new LinkedList<Node>(), new Fs(this.getNodeFs(), nf));
+        if (this.getChildren() != null) {
             for (int j = 0; j < this.getChildren().size(); j++) {
-                newNode.addRightmostChild(((RRGNode)this.getChildren().get(j)).copyNode(nf));
-    	    }
-    	}
-    	return newNode;
+                newNode.addRightmostChild(((RRGNode) this.getChildren().get(j)).copyNode(nf));
+            }
+        }
+        return newNode;
     }
 
-    public RRGNode copyNode(){
-	return this.copyNode(new NameFactory());
+    public RRGNode copyNode() {
+        return this.copyNode(new NameFactory());
     }
 
     /**
      * remove the feature "cat" from the node fs and from the node fs's from all the
      * children of the current node
      */
-    public void removeCategory(){
-	// before removing, update the RRGNode category
-	if (this.type != RRGNodeType.LEX){
-	    //System.out.println("Setting cat: ");
-	    //System.out.println(this.nodeFs.getCategoryOrWord());
-	    this.setCategory(this.nodeFs.getCategory());
-	    }
-	this.nodeFs.removeCategory();
-	if (this.getChildren() != null){
+    public void removeCategory() {
+        // before removing, update the RRGNode category
+        if (this.type != RRGNodeType.LEX) {
+            //System.out.println("Setting cat: ");
+            //System.out.println(this.nodeFs.getCategoryOrWord());
+            this.setCategory(this.nodeFs.getCategory());
+        }
+        this.nodeFs.removeCategory();
+        if (this.getChildren() != null) {
             for (int j = 0; j < this.getChildren().size(); j++) {
-                ((RRGNode)this.getChildren().get(j)).removeCategory();
-    	    }
-    	}
+                ((RRGNode) this.getChildren().get(j)).removeCategory();
+            }
+        }
     }
 
-    
+
 }

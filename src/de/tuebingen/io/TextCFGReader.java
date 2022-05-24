@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2009
  *
@@ -45,120 +45,119 @@ import de.tuebingen.rcg.RCG;
 
 /**
  * A reader for context-free grammars in the following format:
- *
+ * <p>
  * # start S
- * # nonterm N V 
- * S -> N V 
+ * # nonterm N V
+ * S -> N V
  * N -> Peter
  * V -> schläft
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class TextCFGReader extends BufferedReader implements RCGReader {
 
-	public final static String LRSEP = "->";
-	
-	public List<String> nonterm;
-	
-	public TextCFGReader(File f) throws FileNotFoundException {
-		super(new FileReader(f));
-		nonterm = new ArrayList<String>();
-	}
-	
-	public Clause stringToClause(String line) throws Exception {
-		Clause ret = null;
-		int sepind = line.indexOf(LRSEP);
-		if (sepind > 0) {
-			String lhs = line.substring(0, sepind - 1).trim();
-			int rhsstart = sepind + LRSEP.length() + 1;
-			String rhs = "";
-			if (rhsstart < line.length())
-				rhs = line.substring(rhsstart).trim();
-			System.err.println("lhs: " + lhs + ", rhs: " + rhs);
-			
-			if (nonterm.indexOf(lhs) > -1) {
-				ret = new Clause();
-				Predicate lhsp = new Predicate(new PredStringLabel(lhs));
-				String[] rhssp = rhs.split(" "); 
-				Argument lhsarg = new Argument();
-				if (rhssp.length > 0) {
-					Predicate rhspred = null;
-					for (String s : rhssp) {
-						if (nonterm.contains(s)) {
-							ArgContent ac = new ArgContent(ArgContent.VAR,s);
-							lhsarg.addArg(ac);
-							rhspred = new Predicate(new PredStringLabel(s));
-							rhspred.addArg(new Argument(ac));
-							ret.addToRhs(rhspred);
-						} else {
-							lhsarg.addArg(new ArgContent(ArgContent.TERM,s));
-						}
-					}
-				} else {
-					lhsarg.addArg(new ArgContent(ArgContent.EPSILON, ""));
-				}
-				lhsp.addArg(lhsarg);
-				ret.setLhs(lhsp);
-			} else {
-				throw new Exception("Could not parse " + line + ": Lhs is not marked as a nonterminal!");
-			}
-		} else {
-			throw new Exception("Could not parse " + line + ": Separator '" + LRSEP + "' not found.");
-		}
-		return ret;
-	}
-	
+    public final static String LRSEP = "->";
 
-	public RCG getRCG() throws Exception {
-		RCG ret = new RCG();
-		String line = "";
-		while ((line = super.readLine()) != null) {
-			if (line.length() < 2) {
-				continue;
-			}
-			line = line.trim();
-			if (line.charAt(0) == '#') {
-				line = line.substring(1).trim();
-				if (line.indexOf("start") == 0) {
-					line = line.substring(5).trim();
-					if (line.length() > 0) 
-						ret.setStartPredicate(new PredStringLabel(line));
-				} else if (line.indexOf("nonterm") == 0) {
-					line = line.substring(7).trim();
-					if (line.length() > 0) {
-						for (String s : line.split(" ")) 
-							nonterm.add(s);
-					}
-				}
-			} else if (line.charAt(0) != '%') {
-				if (nonterm.size() > 0) {
-					Clause c = stringToClause(line);
-					if (c != null) ret.addClause(c, null);
-				} else {
-					throw new Exception("Cannot read CFG: Must specify nonterminals before specifying the grammar.");
-				}
-			}
-		}
-		if (!ret.startPredicateDefined()) {
-			ret.setStartPredicate(new PredStringLabel("S"));
-		}
-		if (ret.getClausesForLabel(ret.getStartPredicateLabel()) == null) {
-			throw new Exception("Cannot read CFG: No predicate with start predicate label found.");
-		}
-		return ret;		
-	}
-	
-	
-	/*
-	 * just for testing
-	 */
-	public static void main(String[] args) throws Exception {
-		TextCFGReader r = new TextCFGReader(new File("/home/wmaier/workspace/tulipa/trunk/test/cfg/example.cfg"));
-		RCG g = r.getRCG();
-		System.out.println(g.toString());
-		r.close();
-	}
-	
+    public List<String> nonterm;
+
+    public TextCFGReader(File f) throws FileNotFoundException {
+        super(new FileReader(f));
+        nonterm = new ArrayList<String>();
+    }
+
+    public Clause stringToClause(String line) throws Exception {
+        Clause ret = null;
+        int sepind = line.indexOf(LRSEP);
+        if (sepind > 0) {
+            String lhs = line.substring(0, sepind - 1).trim();
+            int rhsstart = sepind + LRSEP.length() + 1;
+            String rhs = "";
+            if (rhsstart < line.length())
+                rhs = line.substring(rhsstart).trim();
+            System.err.println("lhs: " + lhs + ", rhs: " + rhs);
+
+            if (nonterm.indexOf(lhs) > -1) {
+                ret = new Clause();
+                Predicate lhsp = new Predicate(new PredStringLabel(lhs));
+                String[] rhssp = rhs.split(" ");
+                Argument lhsarg = new Argument();
+                if (rhssp.length > 0) {
+                    Predicate rhspred = null;
+                    for (String s : rhssp) {
+                        if (nonterm.contains(s)) {
+                            ArgContent ac = new ArgContent(ArgContent.VAR, s);
+                            lhsarg.addArg(ac);
+                            rhspred = new Predicate(new PredStringLabel(s));
+                            rhspred.addArg(new Argument(ac));
+                            ret.addToRhs(rhspred);
+                        } else {
+                            lhsarg.addArg(new ArgContent(ArgContent.TERM, s));
+                        }
+                    }
+                } else {
+                    lhsarg.addArg(new ArgContent(ArgContent.EPSILON, ""));
+                }
+                lhsp.addArg(lhsarg);
+                ret.setLhs(lhsp);
+            } else {
+                throw new Exception("Could not parse " + line + ": Lhs is not marked as a nonterminal!");
+            }
+        } else {
+            throw new Exception("Could not parse " + line + ": Separator '" + LRSEP + "' not found.");
+        }
+        return ret;
+    }
+
+
+    public RCG getRCG() throws Exception {
+        RCG ret = new RCG();
+        String line = "";
+        while ((line = super.readLine()) != null) {
+            if (line.length() < 2) {
+                continue;
+            }
+            line = line.trim();
+            if (line.charAt(0) == '#') {
+                line = line.substring(1).trim();
+                if (line.indexOf("start") == 0) {
+                    line = line.substring(5).trim();
+                    if (line.length() > 0)
+                        ret.setStartPredicate(new PredStringLabel(line));
+                } else if (line.indexOf("nonterm") == 0) {
+                    line = line.substring(7).trim();
+                    if (line.length() > 0) {
+                        for (String s : line.split(" "))
+                            nonterm.add(s);
+                    }
+                }
+            } else if (line.charAt(0) != '%') {
+                if (nonterm.size() > 0) {
+                    Clause c = stringToClause(line);
+                    if (c != null) ret.addClause(c, null);
+                } else {
+                    throw new Exception("Cannot read CFG: Must specify nonterminals before specifying the grammar.");
+                }
+            }
+        }
+        if (!ret.startPredicateDefined()) {
+            ret.setStartPredicate(new PredStringLabel("S"));
+        }
+        if (ret.getClausesForLabel(ret.getStartPredicateLabel()) == null) {
+            throw new Exception("Cannot read CFG: No predicate with start predicate label found.");
+        }
+        return ret;
+    }
+
+
+    /*
+     * just for testing
+     */
+    public static void main(String[] args) throws Exception {
+        TextCFGReader r = new TextCFGReader(new File("/home/wmaier/workspace/tulipa/trunk/test/cfg/example.cfg"));
+        RCG g = r.getRCG();
+        System.out.println(g.toString());
+        r.close();
+    }
+
 
 }

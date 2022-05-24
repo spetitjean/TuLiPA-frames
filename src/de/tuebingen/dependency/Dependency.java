@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -30,34 +30,34 @@
 package de.tuebingen.dependency;
 
 public class Dependency {
-	
-	private int   head;
-	private String cat;
-	
-	public Dependency(int h){
-		head = h;
-		cat  = null;
-	}
-	
-	public Dependency(int h, String c){
-		head = h;
-		cat  = c;
-	}
 
-	public int getHead() {
-		return head;
-	}
+    private int head;
+    private String cat;
 
-	public void setHead(int head) {
-		this.head = head;
-	}
+    public Dependency(int h) {
+        head = h;
+        cat = null;
+    }
 
-	public String getCat() {
-		return cat;
-	}
+    public Dependency(int h, String c) {
+        head = h;
+        cat = c;
+    }
 
-	public void setCat(String cat) {
-		this.cat = cat;
-	}
+    public int getHead() {
+        return head;
+    }
+
+    public void setHead(int head) {
+        this.head = head;
+    }
+
+    public String getCat() {
+        return cat;
+    }
+
+    public void setCat(String cat) {
+        this.cat = cat;
+    }
 
 }

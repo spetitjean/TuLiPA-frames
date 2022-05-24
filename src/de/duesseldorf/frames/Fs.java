@@ -6,7 +6,7 @@
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *     David Arps, 2017
@@ -49,9 +49,8 @@ import de.tuebingen.tag.TagNode;
 
 /**
  * Represents an attribute value matrix.
- * 
- * @author wmaier, parmenti
  *
+ * @author wmaier, parmenti
  */
 public class Fs {
 
@@ -125,12 +124,11 @@ public class Fs {
             AVlist = new Hashtable<String, Value>();
         } else {
             this.is_typed = fs.isTyped();
-	    if(fs.getType() == null){
-		this.type = null;
-		this.is_typed = false;
-	    }
-	    else
-		this.type = new Type(fs.getType());
+            if (fs.getType() == null) {
+                this.type = null;
+                this.is_typed = false;
+            } else
+                this.type = new Type(fs.getType());
             if (type != null && type.getVar() != null) {
                 this.type.setVar(new Value(fs.getType().getVar(), nf));
             }
@@ -156,11 +154,9 @@ public class Fs {
      * method that stores a new pair (key, val) into the avm.
      * NB: if the key already is in the AVM or if the val is null, the new entry
      * is not stored
-     * 
-     * @param key,
-     *            val
-     *            key is the key (String) and val the value (Val)
-     * 
+     *
+     * @param key, val
+     *             key is the key (String) and val the value (Val)
      */
     public void setFeatWithoutReplace(String key, Value val) {
         if (AVlist.containsKey(key)) {
@@ -180,7 +176,7 @@ public class Fs {
 
     /**
      * like setFeat, but if the val is already in there, the new val is stored
-     * 
+     *
      * @param key
      * @param val
      */
@@ -225,8 +221,8 @@ public class Fs {
                 return AVlist.get("cat").getSVal();
             else if (AVlist.get("cat").is(Value.Kind.ADISJ))
                 return AVlist.get("cat").getAdisj().get(1).toString(); // arbitrary
-                                                                       // for
-                                                                       // now
+                // for
+                // now
             else
                 return "";
         } else {
@@ -235,8 +231,8 @@ public class Fs {
     }
 
     public String getCategoryOrWord() {
-	// for lexical nodes, get the value of cat or other attributes (lex?)
-	String wordLabel = "lex";
+        // for lexical nodes, get the value of cat or other attributes (lex?)
+        String wordLabel = "lex";
         if (AVlist.containsKey(wordLabel)) {
             if (AVlist.get(wordLabel).is(Value.Kind.VAL))
                 return AVlist.get(wordLabel).getSVal();
@@ -244,20 +240,18 @@ public class Fs {
                 return AVlist.get(wordLabel).getAdisj().get(1).toString();
             else
                 return "";
-        }
-	else {
-	    if (AVlist.containsKey("cat")) {
-		if (AVlist.get("cat").is(Value.Kind.VAL))
-		    return AVlist.get("cat").getSVal();
-		else if (AVlist.get("cat").is(Value.Kind.ADISJ))
-		    return AVlist.get("cat").getAdisj().get(1).toString();
-		else
-		    return "";
-	    }
-	    else {
-		return "";
-	    }
-	    
+        } else {
+            if (AVlist.containsKey("cat")) {
+                if (AVlist.get("cat").is(Value.Kind.VAL))
+                    return AVlist.get("cat").getSVal();
+                else if (AVlist.get("cat").is(Value.Kind.ADISJ))
+                    return AVlist.get("cat").getAdisj().get(1).toString();
+                else
+                    return "";
+            } else {
+                return "";
+            }
+
         }
     }
 
@@ -298,21 +292,21 @@ public class Fs {
 
         if (isAux) { // for auxiliary trees
             switch (fs) {
-            case TagNode.TOP:
-                if (AVlist.containsKey("top") && AVlist.get("top").getAvmVal()
-                        .getFeat("cat") != null) {
-                    res = AVlist.get("top").getAvmVal().getFeat("cat")
-                            .getSVal();
-                }
-                break;
-            case TagNode.BOT:
-                if (AVlist.containsKey("bot") && AVlist.get("bot").getAvmVal()
-                        .getFeat("cat") != null) {
-                    res = AVlist.get("bot").getAvmVal().getFeat("cat")
-                            .getSVal();
-                }
-                break;
-            default:// skip
+                case TagNode.TOP:
+                    if (AVlist.containsKey("top") && AVlist.get("top").getAvmVal()
+                            .getFeat("cat") != null) {
+                        res = AVlist.get("top").getAvmVal().getFeat("cat")
+                                .getSVal();
+                    }
+                    break;
+                case TagNode.BOT:
+                    if (AVlist.containsKey("bot") && AVlist.get("bot").getAvmVal()
+                            .getFeat("cat") != null) {
+                        res = AVlist.get("bot").getAvmVal().getFeat("cat")
+                                .getSVal();
+                    }
+                    break;
+                default:// skip
             }
         } else { // for substitution trees
             if (AVlist.containsKey("top")
@@ -327,7 +321,7 @@ public class Fs {
      * Method used to get a feature value for restricting the adjunction
      * sets
      * while converting the TT-MCTAG to RCG
-     * 
+     * <p>
      * if f is neither in the Fs or, if its value is not a constant then it
      * returns null
      */
@@ -335,40 +329,40 @@ public class Fs {
 
         String res = null;
         switch (fs) {
-        case TagNode.TOP:
-            if (AVlist.containsKey("top")
-                    && AVlist.get("top").getAvmVal().getFeat(f) != null) {
-                switch (AVlist.get("top").getAvmVal().getFeat(f).getType()) {
-                case INT:
-                    res = AVlist.get("top").getAvmVal().getFeat(f).getIVal()
-                            + "";
-                    break;
-                case VAL:
-                    res = AVlist.get("top").getAvmVal().getFeat(f).getSVal();
-                    break;
-                default:// skip
+            case TagNode.TOP:
+                if (AVlist.containsKey("top")
+                        && AVlist.get("top").getAvmVal().getFeat(f) != null) {
+                    switch (AVlist.get("top").getAvmVal().getFeat(f).getType()) {
+                        case INT:
+                            res = AVlist.get("top").getAvmVal().getFeat(f).getIVal()
+                                    + "";
+                            break;
+                        case VAL:
+                            res = AVlist.get("top").getAvmVal().getFeat(f).getSVal();
+                            break;
+                        default:// skip
+                    }
                 }
-            }
-            break;
-        case TagNode.BOT:
-            if (AVlist.containsKey("bot")
-                    && AVlist.get("bot").getAvmVal().getFeat(f) != null) {
-                switch (AVlist.get("bot").getAvmVal().getFeat(f).getType()) {
-                case INT:
-                    res = AVlist.get("bot").getAvmVal().getFeat(f).getIVal()
-                            + "";
-                    break;
-                case VAL:
-                    res = AVlist.get("bot").getAvmVal().getFeat(f).getSVal();
-                    break;
-                default:// skip
+                break;
+            case TagNode.BOT:
+                if (AVlist.containsKey("bot")
+                        && AVlist.get("bot").getAvmVal().getFeat(f) != null) {
+                    switch (AVlist.get("bot").getAvmVal().getFeat(f).getType()) {
+                        case INT:
+                            res = AVlist.get("bot").getAvmVal().getFeat(f).getIVal()
+                                    + "";
+                            break;
+                        case VAL:
+                            res = AVlist.get("bot").getAvmVal().getFeat(f).getSVal();
+                            break;
+                        default:// skip
+                    }
                 }
-            }
-            break;
-        default:
-            if (AVlist.containsKey(f) && AVlist.get(f) != null) {
-                res = AVlist.get(f).getSVal();
-            }
+                break;
+            default:
+                if (AVlist.containsKey(f) && AVlist.get(f) != null) {
+                    res = AVlist.get(f).getSVal();
+                }
         }
         return res;
     }
@@ -416,7 +410,7 @@ public class Fs {
     }
 
     public String toStringRec(Set<Value> seen, boolean withType,
-            boolean withCoref) {
+                              boolean withCoref) {
         String res = "";
         if (withCoref && coref != null && coref.is(Value.Kind.VAR)) {
             res += "{" + coref.getVarVal() + "}";
@@ -444,7 +438,7 @@ public class Fs {
      * @return
      */
     private String attrsToString(Set<Value> seen, boolean withType,
-            boolean withCoref) {
+                                 boolean withCoref) {
         String res = "";
 
         Set<String> keys = AVlist.keySet();
@@ -495,7 +489,7 @@ public class Fs {
      * bindings)
      */
     private static Fs updateFS(Fs fs, Environment env, boolean finalUpdate,
-            Set<Value> seen) throws UnifyException {
+                               Set<Value> seen) throws UnifyException {
         // System.err.println("updating [" + fs.toString() + "] env: " +
         // env.toString());
         //System.out.println("\nUpdating "+fs);
@@ -506,32 +500,32 @@ public class Fs {
             Value typevar = fs.getType().getVar();
             Type newType = fs.getType();
             switch (typevar.getType()) {
-            case VAL:
-                // here we should unify the value with the type of the fs (after
-                // converting it to a type)
+                case VAL:
+                    // here we should unify the value with the type of the fs (after
+                    // converting it to a type)
 
-                // convert the value to a type
-                Set<String> elementaryTypes = new HashSet<String>();
-                elementaryTypes.add(typevar.getSVal());
-                Type otherType = new Type(elementaryTypes, typevar,
-                        fs.getType().getTypeConstraints());
-                newType = Situation.getTypeHierarchy()
-                        .leastSpecificSubtype(fs.getType(), otherType, env);
-                Value newtypevar = new Value(new Fs());
-                newType.setVar(newtypevar);
-                break;
-            case VAR:
-                // System.out.println("Trying deref on: " + typevar + " ("
-                // + typevar.getType() + ")");
-                Value typevarderef = env.deref(typevar);
-                if (!typevarderef.equals(typevar)) {
-                    newType = new Type(fs.getType().getElementaryTypes(),
-                            ValueTools.unify(typevarderef, typevar, env),
+                    // convert the value to a type
+                    Set<String> elementaryTypes = new HashSet<String>();
+                    elementaryTypes.add(typevar.getSVal());
+                    Type otherType = new Type(elementaryTypes, typevar,
                             fs.getType().getTypeConstraints());
-                } else {
-                    newType = new Type(fs.getType().getElementaryTypes(),
-                            typevarderef, fs.getType().getTypeConstraints());
-                }
+                    newType = Situation.getTypeHierarchy()
+                            .leastSpecificSubtype(fs.getType(), otherType, env);
+                    Value newtypevar = new Value(new Fs());
+                    newType.setVar(newtypevar);
+                    break;
+                case VAR:
+                    // System.out.println("Trying deref on: " + typevar + " ("
+                    // + typevar.getType() + ")");
+                    Value typevarderef = env.deref(typevar);
+                    if (!typevarderef.equals(typevar)) {
+                        newType = new Type(fs.getType().getElementaryTypes(),
+                                ValueTools.unify(typevarderef, typevar, env),
+                                fs.getType().getTypeConstraints());
+                    } else {
+                        newType = new Type(fs.getType().getElementaryTypes(),
+                                typevarderef, fs.getType().getTypeConstraints());
+                    }
             }
             if (!(vderef.equals(fs.getCoref()))) { // it is bound:
                 res = new Fs(newType, ValueTools.unify(vderef, coref, env));
@@ -565,39 +559,39 @@ public class Fs {
             // k+":"+fval.toString());
 
             switch (fval.getType()) {
-            case VAL: // for semantic labels
-                fval.update(env, finalUpdate);
-                res.setFeatWithoutReplace(k, fval);
-                break;
-            case VAR:
-                // if the feature value is a variable,
-                // we look if it is bound to something in the environment
-                Value v = env.deref(fval);
-
-                if (!(v.equals(fval))) { // it is bound:
-                    res.setFeatWithoutReplace(k,
-                            ValueTools.unify(fval, v, env));
-                } else { // it is not:
-                    // System.err.println("Variable not bound ... " + k +
-                    // ":"
-                    // + fval.toString());
+                case VAL: // for semantic labels
+                    fval.update(env, finalUpdate);
                     res.setFeatWithoutReplace(k, fval);
-                    // This was added for testing
-                    // env.bind(k,fval);
-                }
-                break;
-            case AVM: // the value is an avm, we go on updating
-                // System.out.println("Updating FS [rec] ");
-                Value replace = new Value(
-                        updateFS(fval.getAvmVal(), env, finalUpdate, seen));
-                res.setFeatWithoutReplace(k, replace);
-                break;
-            case ADISJ:
-                fval.update(env, finalUpdate);
-                res.setFeatWithoutReplace(k, fval);
-                break;
-            default:
-                res.setFeatWithoutReplace(k, fval);
+                    break;
+                case VAR:
+                    // if the feature value is a variable,
+                    // we look if it is bound to something in the environment
+                    Value v = env.deref(fval);
+
+                    if (!(v.equals(fval))) { // it is bound:
+                        res.setFeatWithoutReplace(k,
+                                ValueTools.unify(fval, v, env));
+                    } else { // it is not:
+                        // System.err.println("Variable not bound ... " + k +
+                        // ":"
+                        // + fval.toString());
+                        res.setFeatWithoutReplace(k, fval);
+                        // This was added for testing
+                        // env.bind(k,fval);
+                    }
+                    break;
+                case AVM: // the value is an avm, we go on updating
+                    // System.out.println("Updating FS [rec] ");
+                    Value replace = new Value(
+                            updateFS(fval.getAvmVal(), env, finalUpdate, seen));
+                    res.setFeatWithoutReplace(k, replace);
+                    break;
+                case ADISJ:
+                    fval.update(env, finalUpdate);
+                    res.setFeatWithoutReplace(k, fval);
+                    break;
+                default:
+                    res.setFeatWithoutReplace(k, fval);
             }
         }
         return res;
@@ -650,7 +644,7 @@ public class Fs {
     }
 
     public static List<Fs> mergeFS(List<Fs> frames, Environment env,
-            NameFactory nf) {
+                                   NameFactory nf) {
         // System.out.println("Starting merging frames");
         List<Fs> newFrames = new LinkedList<Fs>();
         List<Fs> cleanFrames = new LinkedList<Fs>();
@@ -744,7 +738,7 @@ public class Fs {
     }
 
     public boolean collect_corefs(Environment env, NameFactory nf,
-            Set<Value> seen) {
+                                  Set<Value> seen) {
         Fs New = this;
 
         if (New.coref != null) {
@@ -778,9 +772,9 @@ public class Fs {
                     New = FsTools.unify(env.deref(valCoref).getAvmVal(), New,
                             env, new HashSet<Value>());
                 } // catch (Exception e) {
-                  // e.printStackTrace();
-                  // return false;
-                  // }
+                // e.printStackTrace();
+                // return false;
+                // }
                 catch (UnifyException e) {
                     // System.err.println("Exception during update of " + New);
                     return false;

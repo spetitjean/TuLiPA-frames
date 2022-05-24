@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -128,8 +128,8 @@ public class Tuple {
             return (// e.getMessage()
                     // + "\nSomething in tuple.toString went wrong. This is
                     // whats left...\n"
-            "Tuple's id: " + id + "\n original Id: " + getOriginalId()
-                    + "\n Tuple family: " + family);
+                    "Tuple's id: " + id + "\n original Id: " + getOriginalId()
+                            + "\n Tuple family: " + family);
         }
     }
 

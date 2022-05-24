@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2009
  *
@@ -36,21 +36,21 @@ import de.tuebingen.parserconstraints.RCGParserConstraintEarley;
 
 public class ForestExtractorFactory {
 
-	public static ForestExtractor getForestExtractor(RCGParser p) throws Exception {
-		
-		if (p instanceof RCGParserBoullier2) {
-			return new ExtractForest();
-		}
-		
-		if (p instanceof RCGParserConstraintEarley) {
-			return new ExtractTreeForest();
-		}
-		
-		if (p instanceof SimpleRCGParserEarley) {
-			return new ExtractTreeForest();
-		}
-		
-		throw new Exception("No forest extractor available for " + p.getClass().toString());
-	}
-	
+    public static ForestExtractor getForestExtractor(RCGParser p) throws Exception {
+
+        if (p instanceof RCGParserBoullier2) {
+            return new ExtractForest();
+        }
+
+        if (p instanceof RCGParserConstraintEarley) {
+            return new ExtractTreeForest();
+        }
+
+        if (p instanceof SimpleRCGParserEarley) {
+            return new ExtractTreeForest();
+        }
+
+        throw new Exception("No forest extractor available for " + p.getClass().toString());
+    }
+
 }

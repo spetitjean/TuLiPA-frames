@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -33,69 +33,69 @@ import java.util.List;
 
 /**
  * Implements a simple tree with string-labeled nodes
- * @author wmaier
  *
+ * @author wmaier
  */
 public class SimpleTree implements Tree {
 
-	private String id;
-	private Node root;
-	private List<Node> terminals;
-	
-	public SimpleTree() {
-		this("", null);
-	}
-	
-	public SimpleTree(Node root) {
-		this("", root);
-	}
-	
-	public SimpleTree(String id, Node root) {
-		this.id = id;
-		this.root = root;
-	}
-	
-	public Node getRoot() {
-		return root;
-	}
+    private String id;
+    private Node root;
+    private List<Node> terminals;
 
-	public void setRoot(Node root) {
-		this.root = root;
-	}
+    public SimpleTree() {
+        this("", null);
+    }
 
-	public void setTerminals(List<Node> terminals) {
-		this.terminals = terminals;		
-	}
+    public SimpleTree(Node root) {
+        this("", root);
+    }
 
-	public List<Node> getTerminals() {
-		return terminals;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
+    public SimpleTree(String id, Node root) {
+        this.id = id;
+        this.root = root;
+    }
 
-	public int numNodes(Node n) {
-		int ret = 1;
-		if (n.getChildren() != null) {
-			List<Node> l = n.getChildren();
-			for (int i=0 ; i < l.size() ; i++){
-				ret += numNodes(l.get(i));
-			}
-		}
-		return ret;
-	}
+    public Node getRoot() {
+        return root;
+    }
 
-	public String toString() {
-		if (root != null) {
-			return root.toString();
-		} else {
-			return "";
-		}
-	}
+    public void setRoot(Node root) {
+        this.root = root;
+    }
+
+    public void setTerminals(List<Node> terminals) {
+        this.terminals = terminals;
+    }
+
+    public List<Node> getTerminals() {
+        return terminals;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int numNodes(Node n) {
+        int ret = 1;
+        if (n.getChildren() != null) {
+            List<Node> l = n.getChildren();
+            for (int i = 0; i < l.size(); i++) {
+                ret += numNodes(l.get(i));
+            }
+        }
+        return ret;
+    }
+
+    public String toString() {
+        if (root != null) {
+            return root.toString();
+        } else {
+            return "";
+        }
+    }
 
 }

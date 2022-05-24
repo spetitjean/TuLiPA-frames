@@ -1,31 +1,30 @@
 /**
  * File TypeHierarchyReader.java
- * 
+ * <p>
  * Authors:
  * David Arps <david.arps@hhu.de>
  * Simon Petitjean <petitjean@phil.hhu.de>
- * 
+ * <p>
  * Copyright
  * David Arps, 2017
  * Simon Petitjean, 2017
- * 
+ * <p>
  * This file is part of the TuLiPA-frames system
  * https://github.com/spetitjean/TuLiPA-frames
- * 
- * 
+ * <p>
+ * <p>
  * TuLiPA is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p>
  * TuLiPA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 package de.duesseldorf.io;
 
@@ -55,7 +54,7 @@ import de.tuebingen.util.XMLUtilities;
  * Parse the file. Then walk through the parsed Type Hierarchy Document
  * according to its
  * specifications. Collect all the elementary types belonging to each type.
- * 
+ *
  * @author david
  */
 public class XMLTypeHierarchyReader extends FileReader {
@@ -124,20 +123,20 @@ public class XMLTypeHierarchyReader extends FileReader {
      * <type val="@1"/>
      * <val val="@0"/>
      * </constraint>
-     * 
+     *
      * The attribute val in the type element can also be a single elementary
      * type.
      * The attribute val in the val element cal also be a String.
      * If the constraint considers more than one attribute, these are collected
      * under a path element like so:
-     * 
+     *
      * <constraint>
      * <path>
      * <attr val="initial_state"/>
      * <attr val="theme"/>
      * </path>
      * ...
-     * 
+     *
      * @param constraintsForEntry
      * @return
      */
@@ -198,7 +197,7 @@ public class XMLTypeHierarchyReader extends FileReader {
 
     /**
      * only testing...
-     * 
+     *
      * @param args
      * @throws IOException
      */

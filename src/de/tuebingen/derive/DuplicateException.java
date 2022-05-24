@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -31,10 +31,10 @@ package de.tuebingen.derive;
 
 public class DuplicateException extends Exception {
 
-	public DuplicateException(String string) {
-		super(string); 
-	}
+    public DuplicateException(String string) {
+        super(string);
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

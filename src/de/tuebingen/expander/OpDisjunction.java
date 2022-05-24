@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -33,33 +33,25 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-public class OpDisjunction
-{
+public class OpDisjunction {
     HashSet<Operation> ops;
-    
-    public OpDisjunction(Node n)
-    {
+
+    public OpDisjunction(Node n) {
         ops = new HashSet<Operation>();
-        if (n.getNodeName().equals("disj"))
-        {
+        if (n.getNodeName().equals("disj")) {
             NodeList children = n.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++)
-            {
+            for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
-                if (child instanceof Element)
-                {
+                if (child instanceof Element) {
                     ops.add(new Operation(child));
                 }
             }
-        }
-        else if (n.getNodeName().equals("operation"))
-        {
+        } else if (n.getNodeName().equals("operation")) {
             ops.add(new Operation(n));
         }
     }
-    
-    public String toString()
-    {
-    	return ops.toString();
+
+    public String toString() {
+        return ops.toString();
     }
 }

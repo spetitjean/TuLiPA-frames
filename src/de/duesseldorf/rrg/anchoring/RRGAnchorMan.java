@@ -33,7 +33,6 @@ public class RRGAnchorMan {
      * that (i) have an anchor node that matches the input, (ii) have no anchors
      * and no lexical nodes at all or (iii) have a lex node that matches a part
      * of the input
-     *
      */
     public Set<RRGTree> anchor() {
         Map<String, List<MorphEntry>> morphEntries = Situation.getGrammar()
@@ -45,7 +44,7 @@ public class RRGAnchorMan {
             TreeSelector ts = new TreeSelector(tokenizedSentenceAsWords, false);
             // TreeSelector adds all RRGTrees as anchoredTrees to the RRG that
             // contain an anchor node (and have lemmas in the input sentence?)
-            ts.retrieve(new LinkedList<String>());	    
+            ts.retrieve(new LinkedList<String>());
         }
 
 
@@ -74,7 +73,7 @@ public class RRGAnchorMan {
                 result.add(tree);
             }
         });
-	return result;
+        return result;
 
         // System.out.println(morphEntries.values());
         // System.out.println(lemmas.values());

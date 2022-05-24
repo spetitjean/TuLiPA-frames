@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -36,106 +36,109 @@ import java.util.*;
 
 /**
  * Represents a single word of the input sentence.
+ *
  * @author wmaier
  */
 
 public class Word {
-	
-	private int start;
-	private int end;
-	private String word;
-	private List<PosTag> postag;
-	private boolean hasStrangeToken;
-	
-	public Word() {
-		this(null);
-	}
 
-	public Word(String word) {
-		this(word, 0, 0);
-	}
-	
-	public Word(String word, int start, int end) {
-		this(word, start, end, new LinkedList<PosTag>());
-	}
-	
-	public Word(String word, int start, int end, List<PosTag> postags) {
-		this.word = word;
-		this.start = start;
-		this.end = end;
-		this.postag = postags;
-	}
-	
-	public int getStart() {
-		return start;
-	}
+    private int start;
+    private int end;
+    private String word;
+    private List<PosTag> postag;
+    private boolean hasStrangeToken;
 
-	public void setStart(int start) {
-		this.start = start;
-	}
+    public Word() {
+        this(null);
+    }
 
-	public int getEnd() {
-	    return end;
-	}
+    public Word(String word) {
+        this(word, 0, 0);
+    }
 
-	public void setEnd(int end) {
-		this.end = end;
-	}
+    public Word(String word, int start, int end) {
+        this(word, start, end, new LinkedList<PosTag>());
+    }
 
-	public String getWord() {
-		return word;
-	}
+    public Word(String word, int start, int end, List<PosTag> postags) {
+        this.word = word;
+        this.start = start;
+        this.end = end;
+        this.postag = postags;
+    }
 
-	public void setWord(String word) {
-		this.word = word;
-	}
+    public int getStart() {
+        return start;
+    }
 
-	public List<PosTag> getTag() {
-		return postag;
-	}
-	
-	public Map<String, String> getTagAsAMap() {
-		// returns the mapping lemma <-> cat for each POS-tag
-		Map<String, String> tags = new HashMap<String, String>();
-		for(int i = 0 ; i < postag.size() ; i++){
-			SimplePosTag ptag = (SimplePosTag) postag.get(i); 
-			tags.put(ptag.getLemma(), ptag.getTag());
-		}
-		if (postag.size() == 0) {tags = null;}
-		return tags;
-	}
+    public void setStart(int start) {
+        this.start = start;
+    }
 
-	public void setTag(List<PosTag> posTag) {
-		this.postag = posTag;
-	}
-	
-	public void setATag(PosTag posTag) {
-		List<PosTag> ptag = this.getTag();
-		ptag.add(posTag);
-	}
+    public int getEnd() {
+        return end;
+    }
 
-	public void setStrangeToken(boolean b) {
-		this.hasStrangeToken = b;
-	}
-	
-	public boolean hasStrangeToken() {
-		return hasStrangeToken;
-	}
-	
-	public String posToString(){
-		String res = "";
-		for(int i = 0 ; postag != null && i < postag.size() ; i++){
-			res += postag.get(i).toString() + " ";
-		}
-		return res;
-	}
+    public void setEnd(int end) {
+        this.end = end;
+    }
 
-	public String toString() {
-		String ret = "'" + word + "'" + this.posToString() + "[" + start + "," + end + "]";
-		if (hasStrangeToken) {
-			ret += "#";
-		}
-		return ret;
-	}
-	
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public List<PosTag> getTag() {
+        return postag;
+    }
+
+    public Map<String, String> getTagAsAMap() {
+        // returns the mapping lemma <-> cat for each POS-tag
+        Map<String, String> tags = new HashMap<String, String>();
+        for (int i = 0; i < postag.size(); i++) {
+            SimplePosTag ptag = (SimplePosTag) postag.get(i);
+            tags.put(ptag.getLemma(), ptag.getTag());
+        }
+        if (postag.size() == 0) {
+            tags = null;
+        }
+        return tags;
+    }
+
+    public void setTag(List<PosTag> posTag) {
+        this.postag = posTag;
+    }
+
+    public void setATag(PosTag posTag) {
+        List<PosTag> ptag = this.getTag();
+        ptag.add(posTag);
+    }
+
+    public void setStrangeToken(boolean b) {
+        this.hasStrangeToken = b;
+    }
+
+    public boolean hasStrangeToken() {
+        return hasStrangeToken;
+    }
+
+    public String posToString() {
+        String res = "";
+        for (int i = 0; postag != null && i < postag.size(); i++) {
+            res += postag.get(i).toString() + " ";
+        }
+        return res;
+    }
+
+    public String toString() {
+        String ret = "'" + word + "'" + this.posToString() + "[" + start + "," + end + "]";
+        if (hasStrangeToken) {
+            ret += "#";
+        }
+        return ret;
+    }
+
 }

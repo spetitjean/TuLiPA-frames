@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <jdellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -31,52 +31,44 @@ package de.tuebingen.disambiguate;
 
 import java.util.*;
 
-public class PolarityAutomatonState
-{
-	int stateId;
-	String tupleId;
+public class PolarityAutomatonState {
+    int stateId;
+    String tupleId;
     Polarities polarities;
     //automata are deterministic: edge labels are assigned the IDs of the states they lead to
     HashMap<String, Integer> edges;
-    
-    public PolarityAutomatonState(Polarities polarities, int i, String tid)
-    {
-    	this.tupleId = tid;
-    	this.stateId = i;
+
+    public PolarityAutomatonState(Polarities polarities, int i, String tid) {
+        this.tupleId = tid;
+        this.stateId = i;
         this.polarities = polarities;
         this.edges = new HashMap<String, Integer>();
     }
-    
-    public int getStateId() 
-    {
-		return stateId;
-	}
 
-	public void setStateId(int stateId) 
-	{
-		this.stateId = stateId;
-	}
+    public int getStateId() {
+        return stateId;
+    }
 
-	public String getTupleId() 
-	{
-		return tupleId;
-	}
+    public void setStateId(int stateId) {
+        this.stateId = stateId;
+    }
 
-	public void setTupleId(String tupleId) 
-	{
-		this.tupleId = tupleId;
-	}
+    public String getTupleId() {
+        return tupleId;
+    }
 
-	public String toString() 
-	{
-    	String res = "";
-    	res += "State " + stateId + " (" + tupleId + ")\n";
-    	res += polarities.toString() + "\n";
-    	for(String s : edges.keySet()) 
-    	{
-    		res += "edge to " + s + ", " + edges.get(s) + "\n";
-    	}
-    	res += "\n";
-    	return res;
+    public void setTupleId(String tupleId) {
+        this.tupleId = tupleId;
+    }
+
+    public String toString() {
+        String res = "";
+        res += "State " + stateId + " (" + tupleId + ")\n";
+        res += polarities.toString() + "\n";
+        for (String s : edges.keySet()) {
+            res += "edge to " + s + ", " + edges.get(s) + "\n";
+        }
+        res += "\n";
+        return res;
     }
 }

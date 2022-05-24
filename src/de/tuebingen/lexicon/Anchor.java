@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -36,113 +36,113 @@ import de.duesseldorf.frames.Fs;
 
 public class Anchor {
 
-	private String tree_id;
-	private List<CoAnchor> coanchors;
-	private List<Equation> equations;
-	private Fs filter; 
-	private List<LexSem> semantics;
-	
-	public Anchor(String t) {
-		tree_id   = t;
-		coanchors = null;
-		equations = null;
-		filter    = null;
-		semantics = null;
-	}
-	
-	public Anchor(Anchor anc) {
-		tree_id = anc.getTree_id();
-		coanchors = new LinkedList<CoAnchor>();
-		for(int i = 0 ; anc.getCoanchors() != null && i < anc.getCoanchors().size() ; i++){
-			coanchors.add(new CoAnchor(anc.getCoanchors().get(i)));
-		}
-		equations = new LinkedList<Equation>();
-		for(int i = 0 ; anc.getEquations() != null && i < anc.getEquations().size() ; i++) {
-			equations.add(new Equation(anc.getEquations().get(i)));
-		}
-		filter = new Fs(anc.getFilter());
-		semantics = new LinkedList<LexSem>();
-		if (anc.getSemantics() != null) {
-			for(int i = 0 ; i < anc.getSemantics().size() ; i++){
-				semantics.add(new LexSem(anc.getSemantics().get(i)));
-			}
-		}
-	}
-	
-	public void addEquation(Equation eq) {
-		if (equations == null)
-			equations = new LinkedList<Equation>();
-		equations.add(eq);
-	}
-	
-	public void addSem(LexSem ls) {
-		if (semantics == null)
-			semantics = new LinkedList<LexSem>();
-		semantics.add(ls);
-	}
-	
-	public void addCoAnchor(CoAnchor ca) {
-		if (coanchors == null)
-			coanchors = new LinkedList<CoAnchor>();
-		coanchors.add(ca);
-	}
+    private String tree_id;
+    private List<CoAnchor> coanchors;
+    private List<Equation> equations;
+    private Fs filter;
+    private List<LexSem> semantics;
 
-	public Fs getFilter() {
-		return filter;
-	}
+    public Anchor(String t) {
+        tree_id = t;
+        coanchors = null;
+        equations = null;
+        filter = null;
+        semantics = null;
+    }
 
-	public void setFilter(Fs filter) {
-		this.filter = filter;
-	}
+    public Anchor(Anchor anc) {
+        tree_id = anc.getTree_id();
+        coanchors = new LinkedList<CoAnchor>();
+        for (int i = 0; anc.getCoanchors() != null && i < anc.getCoanchors().size(); i++) {
+            coanchors.add(new CoAnchor(anc.getCoanchors().get(i)));
+        }
+        equations = new LinkedList<Equation>();
+        for (int i = 0; anc.getEquations() != null && i < anc.getEquations().size(); i++) {
+            equations.add(new Equation(anc.getEquations().get(i)));
+        }
+        filter = new Fs(anc.getFilter());
+        semantics = new LinkedList<LexSem>();
+        if (anc.getSemantics() != null) {
+            for (int i = 0; i < anc.getSemantics().size(); i++) {
+                semantics.add(new LexSem(anc.getSemantics().get(i)));
+            }
+        }
+    }
 
-	public String getTree_id() {
-		return tree_id;
-	}
+    public void addEquation(Equation eq) {
+        if (equations == null)
+            equations = new LinkedList<Equation>();
+        equations.add(eq);
+    }
 
-	public void setTree_id(String tree_id) {
-		this.tree_id = tree_id;
-	}
+    public void addSem(LexSem ls) {
+        if (semantics == null)
+            semantics = new LinkedList<LexSem>();
+        semantics.add(ls);
+    }
 
-	public List<CoAnchor> getCoanchors() {
-		return coanchors;
-	}
+    public void addCoAnchor(CoAnchor ca) {
+        if (coanchors == null)
+            coanchors = new LinkedList<CoAnchor>();
+        coanchors.add(ca);
+    }
 
-	public void setCoanchors(List<CoAnchor> coanchors) {
-		this.coanchors = coanchors;
-	}
+    public Fs getFilter() {
+        return filter;
+    }
 
-	public List<Equation> getEquations() {
-		return equations;
-	}
+    public void setFilter(Fs filter) {
+        this.filter = filter;
+    }
 
-	public void setEquations(List<Equation> equations) {
-		this.equations = equations;
-	}
-	
-	public List<LexSem> getSemantics() {
-		return semantics;
-	}
+    public String getTree_id() {
+        return tree_id;
+    }
 
-	public void setSemantics(List<LexSem> semantics) {
-		this.semantics = semantics;
-	}
+    public void setTree_id(String tree_id) {
+        this.tree_id = tree_id;
+    }
 
-	public String toString(){
-		String res = "";
-		String res1= "";
-		String res2= "";
-		for (int i=0 ; coanchors != null && i < coanchors.size() ; i++){
-			res  += coanchors.get(i).toString();
-		}
-		for (int i=0 ; equations != null && i < equations.size() ; i++){
-			res1 += equations.get(i).toString();
-		}
-		if (semantics != null) {
-			for (int i=0 ; i < semantics.size() ; i++){
-				res2 += semantics.get(i).toString();
-			}
-		}
-		return "  anchor : "+tree_id+"\n  coanchors : "+res+"\n  equations : "+res1+"\n  filter : ["+filter.toString()+"]\n semantics : " + res2 + "\n"; 
-	}
-	
+    public List<CoAnchor> getCoanchors() {
+        return coanchors;
+    }
+
+    public void setCoanchors(List<CoAnchor> coanchors) {
+        this.coanchors = coanchors;
+    }
+
+    public List<Equation> getEquations() {
+        return equations;
+    }
+
+    public void setEquations(List<Equation> equations) {
+        this.equations = equations;
+    }
+
+    public List<LexSem> getSemantics() {
+        return semantics;
+    }
+
+    public void setSemantics(List<LexSem> semantics) {
+        this.semantics = semantics;
+    }
+
+    public String toString() {
+        String res = "";
+        String res1 = "";
+        String res2 = "";
+        for (int i = 0; coanchors != null && i < coanchors.size(); i++) {
+            res += coanchors.get(i).toString();
+        }
+        for (int i = 0; equations != null && i < equations.size(); i++) {
+            res1 += equations.get(i).toString();
+        }
+        if (semantics != null) {
+            for (int i = 0; i < semantics.size(); i++) {
+                res2 += semantics.get(i).toString();
+            }
+        }
+        return "  anchor : " + tree_id + "\n  coanchors : " + res + "\n  equations : " + res1 + "\n  filter : [" + filter.toString() + "]\n semantics : " + res2 + "\n";
+    }
+
 }

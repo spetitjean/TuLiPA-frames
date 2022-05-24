@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -32,72 +32,72 @@ package de.tuebingen.disambiguate;
 import java.util.*;
 
 public class PolarizedLemma {
-	
-	private String                      lemmaID;
-	private Map<String, PolarizedTuple>  tuples;
-	private List<String>               lexicals; 
-	
-	public PolarizedLemma(String l) {
-		lemmaID  = l;
-		tuples   = new HashMap<String, PolarizedTuple>();
-		lexicals = new LinkedList<String>();
-	}
 
-	public void addTuple(PolarizedTuple t) {
-		// No suffix needed since lemma + tupleID (i.e. family) is a unique key 
-		if (!(tuples.containsKey(t.getTupleID()))) {
-			tuples.put(t.getTupleID(), t);
-			lexicals.addAll(t.getLexicals());
-		} else
-			System.err.println("*** Polarized tuple already encountered. ***");
-	}
-	
-	public Iterator<String> iterator() {
-		return tuples.keySet().iterator();
-	}
-	
-	public Map<String, Map<String, Integer>> getCharges() {
-		Map<String, Map<String, Integer>> res = new HashMap<String, Map<String, Integer>>();
-		Iterator<String> it = tuples.keySet().iterator();
-		while(it.hasNext()) {
-			String nexttuple = it.next();
-			Map<String, Integer> polarities = tuples.get(nexttuple).getPol().getCharges(); 
-			res.put(nexttuple, polarities);
-		}
-		return res;
-	}
+    private String lemmaID;
+    private Map<String, PolarizedTuple> tuples;
+    private List<String> lexicals;
 
-	public String getLemmaID() {
-		return lemmaID;
-	}
-	
-	public void setLemmaID(String lemmaID) {
-		this.lemmaID = lemmaID;
-	}
+    public PolarizedLemma(String l) {
+        lemmaID = l;
+        tuples = new HashMap<String, PolarizedTuple>();
+        lexicals = new LinkedList<String>();
+    }
 
-	public Map<String, PolarizedTuple> getTuples() {
-		return tuples;
-	}
-	
-	public void setTuples(Map<String, PolarizedTuple> tuples) {
-		this.tuples = tuples;
-	}
+    public void addTuple(PolarizedTuple t) {
+        // No suffix needed since lemma + tupleID (i.e. family) is a unique key
+        if (!(tuples.containsKey(t.getTupleID()))) {
+            tuples.put(t.getTupleID(), t);
+            lexicals.addAll(t.getLexicals());
+        } else
+            System.err.println("*** Polarized tuple already encountered. ***");
+    }
 
-	public List<String> getLexicals() {
-		return lexicals;
-	}
+    public Iterator<String> iterator() {
+        return tuples.keySet().iterator();
+    }
 
-	public String toString() {
-		String res = "";
-		res += "Lemma " + lemmaID + "\n";
-		res += "Tuples : \n";
-		Set<String> keys = tuples.keySet();
-		Iterator<String> it = keys.iterator();
-		while (it.hasNext()) {
-			String next = it.next();
-			res += tuples.get(next).toString();
-		}
-		return res;
-	}
+    public Map<String, Map<String, Integer>> getCharges() {
+        Map<String, Map<String, Integer>> res = new HashMap<String, Map<String, Integer>>();
+        Iterator<String> it = tuples.keySet().iterator();
+        while (it.hasNext()) {
+            String nexttuple = it.next();
+            Map<String, Integer> polarities = tuples.get(nexttuple).getPol().getCharges();
+            res.put(nexttuple, polarities);
+        }
+        return res;
+    }
+
+    public String getLemmaID() {
+        return lemmaID;
+    }
+
+    public void setLemmaID(String lemmaID) {
+        this.lemmaID = lemmaID;
+    }
+
+    public Map<String, PolarizedTuple> getTuples() {
+        return tuples;
+    }
+
+    public void setTuples(Map<String, PolarizedTuple> tuples) {
+        this.tuples = tuples;
+    }
+
+    public List<String> getLexicals() {
+        return lexicals;
+    }
+
+    public String toString() {
+        String res = "";
+        res += "Lemma " + lemmaID + "\n";
+        res += "Tuples : \n";
+        Set<String> keys = tuples.keySet();
+        Iterator<String> it = keys.iterator();
+        while (it.hasNext()) {
+            String next = it.next();
+            res += tuples.get(next).toString();
+        }
+        return res;
+    }
 
 }

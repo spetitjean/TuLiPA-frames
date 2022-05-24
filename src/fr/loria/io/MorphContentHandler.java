@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -75,8 +75,7 @@ public class MorphContentHandler implements ContentHandler {
     }
 
     /**
-     * @param locator
-     *            to use
+     * @param locator to use
      * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
      */
     public void setDocumentLocator(Locator value) {
@@ -96,20 +95,17 @@ public class MorphContentHandler implements ContentHandler {
     }
 
     /**
-     * @param chosen
-     *            namespace prefix
-     * @param URI
-     *            of the name-space
+     * @param chosen namespace prefix
+     * @param URI    of the name-space
      * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void startPrefixMapping(String prefix, String URI)
             throws SAXException {
     }
 
     /**
-     * @param chose
-     *            namespace prefix
+     * @param chose namespace prefix
      * @see org.xml.sax.ContentHandler#endPrefixMapping(java.lang.String)
      */
     public void endPrefixMapping(String prefix) throws SAXException {
@@ -118,15 +114,13 @@ public class MorphContentHandler implements ContentHandler {
     /**
      * @param nameSpaceURI.
      * @param localName.
-     * @param rawName
-     *            for version 1.0 <code>nameSpaceURI + ":" + localName</code>
-     * @throws SAXException
-     *             (error such as not DTD compliant)
+     * @param rawName       for version 1.0 <code>nameSpaceURI + ":" + localName</code>
+     * @throws SAXException (error such as not DTD compliant)
      * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     public void startElement(String nameSpaceURI, String localName,
-            String rawName, Attributes attributs) throws SAXException {
+                             String rawName, Attributes attributs) throws SAXException {
 
         if (!"".equals(nameSpaceURI) && verbose) {
             System.err.println(" Namespace detected : " + nameSpaceURI);
@@ -176,12 +170,12 @@ public class MorphContentHandler implements ContentHandler {
 
     /**
      * Evenement recu a chaque fermeture de balise.
-     * 
+     *
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-     *      java.lang.String, java.lang.String)
+     * java.lang.String, java.lang.String)
      */
     public void endElement(String nameSpaceURI, String localName,
-            String rawName) throws SAXException {
+                           String rawName) throws SAXException {
         if (!"".equals(nameSpaceURI)) { // name space non null
             System.err.print(" Namespace detected : " + localName);
         }
@@ -193,7 +187,7 @@ public class MorphContentHandler implements ContentHandler {
             currentADisj = null;
         } else if (localName.equals("fs")) {
             if (currentFeats.size() == 1) { // extern fs -> attaches to a
-                                            // lemmaref
+                // lemmaref
                 currentLem
                         .setFeatures(currentFeats.get(currentFeats.size() - 1));
                 currentFeats.remove(currentFeats.size() - 1);
@@ -211,13 +205,10 @@ public class MorphContentHandler implements ContentHandler {
 
     /**
      * for DATA
-     * 
-     * @param ch
-     *            characters
-     * @param start
-     *            1st character to process
-     * @param end
-     *            last character to process
+     *
+     * @param ch    characters
+     * @param start 1st character to process
+     * @param end   last character to process
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char[] ch, int start, int end) throws SAXException {
@@ -226,8 +217,7 @@ public class MorphContentHandler implements ContentHandler {
     }
 
     /**
-     * @param ch
-     *            characters
+     * @param ch    characters
      * @param start
      * @param end
      * @see org.xml.sax.ContentHandler#ignorableWhitespace(char[], int, int)
@@ -243,7 +233,7 @@ public class MorphContentHandler implements ContentHandler {
      * @param target
      * @param data
      * @see org.xml.sax.ContentHandler#processingInstruction(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void processingInstruction(String target, String data)
             throws SAXException {

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -31,43 +31,43 @@ package fr.loria.disambiguation;
 import java.util.*;
 
 public class TreePath {
-	
-	private List<List<String>> trees;  // tree collected along the path
-	private int state;                 // state reached
-	
-	public TreePath() {
-		trees = new LinkedList<List<String>>();
-	}
-	
-	public TreePath(int i) {
-		this();
-		state = i;
-	}
-	
-	public void add(List<String> others) {
-		trees.add(others);
-	}
-	
-	public void copyTrees(List<List<String>> others) {
-		for (List<String> ls : others) {
-			this.add(ls);
-		}
-	}
 
-	public List<List<String>> getTrees() {
-		return trees;
-	}
+    private List<List<String>> trees;  // tree collected along the path
+    private int state;                 // state reached
 
-	public void setTrees(List<List<String>> trees) {
-		this.trees = trees;
-	}
+    public TreePath() {
+        trees = new LinkedList<List<String>>();
+    }
 
-	public int getState() {
-		return state;
-	}
+    public TreePath(int i) {
+        this();
+        state = i;
+    }
 
-	public void setState(int state) {
-		this.state = state;
-	}
-	
+    public void add(List<String> others) {
+        trees.add(others);
+    }
+
+    public void copyTrees(List<List<String>> others) {
+        for (List<String> ls : others) {
+            this.add(ls);
+        }
+    }
+
+    public List<List<String>> getTrees() {
+        return trees;
+    }
+
+    public void setTrees(List<List<String>> trees) {
+        this.trees = trees;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
 }

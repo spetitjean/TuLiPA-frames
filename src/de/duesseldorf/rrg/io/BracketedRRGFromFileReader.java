@@ -30,7 +30,7 @@ public class BracketedRRGFromFileReader {
     /**
      * create a Reader for the trees file and go through it line by line,
      * creating an RRG object consisting of lexicalised trees.
-     * 
+     *
      * @return
      */
     public RRG parseRRG() {
@@ -63,7 +63,7 @@ public class BracketedRRGFromFileReader {
                     // log.info("created tree: " + treeFromCurrentLine);
                     String lexLabel = new LinkedList<String>(
                             treeFromCurrentLine.getLexNodes().keySet()).get(0)
-                                    .toString();
+                            .toString();
                     treeFromCurrentLine.setId(lexLabel + "_" + treeIdCount);
                     treeIdCount++;
                     resultingTrees.add(treeFromCurrentLine);

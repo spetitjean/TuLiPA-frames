@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -34,58 +34,58 @@ import java.util.List;
 
 public class CoAnchor {
 
-	private String   node_id;
-	private String       cat;
-	private List<String> lex;
-	
-	public CoAnchor(String n){
-		node_id = n;
-		lex = null;
-	}
-	
-	public CoAnchor(CoAnchor other) {
-		node_id = other.getNode_id();
-		lex = new LinkedList<String>();
-		for(int i = 0 ; i < other.getLex().size() ; i++){
-			lex.add(other.getLex().get(i));
-		}
-	}
-	
-	public void addLex(String l) {
-		if (lex == null)
-			lex = new LinkedList<String>();
-		lex.add(l);
-	}
+    private String node_id;
+    private String cat;
+    private List<String> lex;
 
-	public String getNode_id() {
-		return node_id;
-	}
+    public CoAnchor(String n) {
+        node_id = n;
+        lex = null;
+    }
 
-	public void setNode_id(String node_id) {
-		this.node_id = node_id;
-	}
+    public CoAnchor(CoAnchor other) {
+        node_id = other.getNode_id();
+        lex = new LinkedList<String>();
+        for (int i = 0; i < other.getLex().size(); i++) {
+            lex.add(other.getLex().get(i));
+        }
+    }
 
-	public List<String> getLex() {
-		return lex;
-	}
+    public void addLex(String l) {
+        if (lex == null)
+            lex = new LinkedList<String>();
+        lex.add(l);
+    }
 
-	public void setLex(List<String> lex) {
-		this.lex = lex;
-	}
-	
-	public String getCat() {
-		return cat;
-	}
+    public String getNode_id() {
+        return node_id;
+    }
 
-	public void setCat(String cat) {
-		this.cat = cat;
-	}
+    public void setNode_id(String node_id) {
+        this.node_id = node_id;
+    }
 
-	public String toString(){
-		String res = "";
-		for (int i=0; i< lex.size() ; i++){
-			res += " "+lex.get(i);
-		}
-		return "    coanchor : "+node_id+" - lex : "+res+" (cat: " + cat + ")\n";
-	}
+    public List<String> getLex() {
+        return lex;
+    }
+
+    public void setLex(List<String> lex) {
+        this.lex = lex;
+    }
+
+    public String getCat() {
+        return cat;
+    }
+
+    public void setCat(String cat) {
+        this.cat = cat;
+    }
+
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < lex.size(); i++) {
+            res += " " + lex.get(i);
+        }
+        return "    coanchor : " + node_id + " - lex : " + res + " (cat: " + cat + ")\n";
+    }
 }

@@ -8,9 +8,7 @@ public class SystemLogger {
     private boolean printOn;
 
     /**
-     * 
-     * @param outStream
-     *            e.g. System.out or System.err
+     * @param outStream e.g. System.out or System.err
      */
     public SystemLogger(PrintStream outStream, boolean printOn) {
         this.outputstream = System.out;

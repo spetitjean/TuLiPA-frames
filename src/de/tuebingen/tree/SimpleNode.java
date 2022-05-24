@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -35,153 +35,152 @@ import java.util.List;
 
 /**
  * Represents a simple node in a tree.
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class SimpleNode implements Node {
 
-	private String name;
-	private Node parent;
-	private List<Node> children;
-	private int left;
-	private int right;
-	private List<Node> terminals;
-	private Label label;
-	
-	private boolean complement;
-	private boolean head;
-	
-	public SimpleNode(String name) {
-		this(name, null);
-	}
-	
-	public SimpleNode(String name, Node parent) {
-		this(name, parent, new ArrayList<Node>());
-	}
-	
-	public SimpleNode(String name, Node parent, List<Node> children) {
-		this.name = name;
-		this.children = children;
-		this.parent = null;
-		this.terminals = new ArrayList<Node>();
-		this.complement = false;
-		this.head = false;
-	}
-	
-	public List<Node> getTerminals() {
-		return terminals;
-	}
-	
-	public List<Node> getTerminals(int left, int right) {
-		return terminals.subList(left,right);
-	}
+    private String name;
+    private Node parent;
+    private List<Node> children;
+    private int left;
+    private int right;
+    private List<Node> terminals;
+    private Label label;
 
-	public void setTerminals(List<Node> terminals) {
-		this.terminals = terminals;
-	}
-	
-	public void addAllTerminals(List<Node> terminals) {
-		this.terminals.addAll(terminals);
-	}
+    private boolean complement;
+    private boolean head;
 
-	public int getLeft() {
-		return left;
-	}
+    public SimpleNode(String name) {
+        this(name, null);
+    }
 
-	public void setLeft(int left) {
-		this.left = left;
-	}
+    public SimpleNode(String name, Node parent) {
+        this(name, parent, new ArrayList<Node>());
+    }
 
-	public int getRight() {
-		return right;
-	}
+    public SimpleNode(String name, Node parent, List<Node> children) {
+        this.name = name;
+        this.children = children;
+        this.parent = null;
+        this.terminals = new ArrayList<Node>();
+        this.complement = false;
+        this.head = false;
+    }
 
-	public void setRight(int right) {
-		this.right = right;
-	}
+    public List<Node> getTerminals() {
+        return terminals;
+    }
 
-	public List<Node> getChildren() {
-		return children;
-	}
+    public List<Node> getTerminals(int left, int right) {
+        return terminals.subList(left, right);
+    }
 
-	public void setChildren(List<Node> children) {
-		this.children = children;
-	}
+    public void setTerminals(List<Node> terminals) {
+        this.terminals = terminals;
+    }
 
-	public void addChild(Node node) {
-		children.add(node);
-	}
+    public void addAllTerminals(List<Node> terminals) {
+        this.terminals.addAll(terminals);
+    }
 
-	public boolean hasChildren() {
-		return children != null && !children.isEmpty();
-	}
-	
-	public boolean isRoot() {
-		return (getParent() == null);
-	}
+    public int getLeft() {
+        return left;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setLeft(int left) {
+        this.left = left;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public int getRight() {
+        return right;
+    }
 
-	public Node getParent() {
-		return parent;
-	}
+    public void setRight(int right) {
+        this.right = right;
+    }
 
-	public void setParent(Node parent) {
-		this.parent = parent;
-	}
+    public List<Node> getChildren() {
+        return children;
+    }
 
-	public boolean isComplement() {
-		return complement;
-	}
+    public void setChildren(List<Node> children) {
+        this.children = children;
+    }
 
-	public void setComplement(boolean complement) {
-		this.complement = complement;
-	}
+    public void addChild(Node node) {
+        children.add(node);
+    }
 
-	public boolean isHead() {
-		return head;
-	}
+    public boolean hasChildren() {
+        return children != null && !children.isEmpty();
+    }
 
-	public void setHead(boolean head) {
-		this.head = head;
-	}
+    public boolean isRoot() {
+        return (getParent() == null);
+    }
 
-	public void setLabel(Label label) {
-		this.label = label;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Label getLabel() {
-		return label;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String toString() {
-		String ret = name;
-		if (complement) {
-			ret += "-C";
-		}
-		//ret += "[" + getLeft() + "-" + getRight() + "]";
+    public Node getParent() {
+        return parent;
+    }
+
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
+
+    public boolean isComplement() {
+        return complement;
+    }
+
+    public void setComplement(boolean complement) {
+        this.complement = complement;
+    }
+
+    public boolean isHead() {
+        return head;
+    }
+
+    public void setHead(boolean head) {
+        this.head = head;
+    }
+
+    public void setLabel(Label label) {
+        this.label = label;
+    }
+
+    public Label getLabel() {
+        return label;
+    }
+
+    public String toString() {
+        String ret = name;
+        if (complement) {
+            ret += "-C";
+        }
+        //ret += "[" + getLeft() + "-" + getRight() + "]";
 		/*ret += "[";
 		for (int i = 0; i < this.getTerminals().size(); ++i) {
 			ret += getTerminals().get(i).getName() + " ";
 		}
 		ret += "]";*/
-		if (hasChildren()) {
-			ret += " ";
-			Iterator<Node> it = children.iterator();
-			while (it.hasNext()) {
-				Node n = it.next();
-				ret += n.toString();
-			}
-			ret = "(" + ret + ")";
-		} 
-		return ret;
-	}
+        if (hasChildren()) {
+            ret += " ";
+            Iterator<Node> it = children.iterator();
+            while (it.hasNext()) {
+                Node n = it.next();
+                ret += n.toString();
+            }
+            ret = "(" + ret + ")";
+        }
+        return ret;
+    }
 
 }

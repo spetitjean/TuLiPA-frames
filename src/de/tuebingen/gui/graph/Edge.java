@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -29,39 +29,32 @@
  */
 package de.tuebingen.gui.graph;
 
-public class Edge
-{
+public class Edge {
     private String label;
     private int goal;
-    
-    public Edge(String label, int goal)
-    {
+
+    public Edge(String label, int goal) {
         this.label = label;
         this.goal = goal;
     }
-    
-    public void setLabel(String caption)
-    {
+
+    public void setLabel(String caption) {
         this.label = caption;
     }
-    
-    public String getLabel()
-    {
+
+    public String getLabel() {
         return label;
     }
-    
-    public void setGoal(int goal)
-    {
+
+    public void setGoal(int goal) {
         this.goal = goal;
     }
-    
-    public int getGoal()
-    {
+
+    public int getGoal() {
         return goal;
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         return "(" + label + "," + goal + ")";
     }
 }

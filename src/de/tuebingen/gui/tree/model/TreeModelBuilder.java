@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -29,8 +29,7 @@
  */
 package de.tuebingen.gui.tree.model;
 
-public abstract class TreeModelBuilder<T> 
-{        
-	//tree model constructor to be implemented
-	public abstract TreeModel createTreeModel(T t);
+public abstract class TreeModelBuilder<T> {
+    //tree model constructor to be implemented
+    public abstract TreeModel createTreeModel(T t);
 }

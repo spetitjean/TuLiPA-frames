@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2009
  *
@@ -37,15 +37,15 @@ import de.tuebingen.forest.Tidentifier;
 import de.tuebingen.rcg.RCG;
 
 public abstract class ForestExtractor {
-	
-	abstract public void extract();
 
-	abstract public void init(boolean verbose, RCG rcgg, ForestExtractorInitializer forestExtractorInitializer);
+    abstract public void extract();
 
-	abstract public String printForest();
+    abstract public void init(boolean verbose, RCG rcgg, ForestExtractorInitializer forestExtractorInitializer);
 
-	abstract public Map<Tidentifier, List<Rule>> getForest();
-	
-	abstract public List<Tidentifier> getStart();
-	
+    abstract public String printForest();
+
+    abstract public Map<Tidentifier, List<Rule>> getForest();
+
+    abstract public List<Tidentifier> getStart();
+
 }

@@ -34,7 +34,7 @@
 
 // import java.util.LinkedList;
 // import java.util.List;
-	 
+
 // import org.gecode.*;
 
 // //To inpect the solutions with the GUI, uncomment below:
@@ -56,7 +56,7 @@
 // 		this.rows    = r;
 // 		this.columns = c;
 // 	}
-	 
+
 // 	public BindingsCSP(Boolean share, BindingsCSP bcsp) {
 // 		// "sharing" constructor needed by Gecode, cf documentation
 // 		super(share, bcsp);
@@ -94,23 +94,23 @@
 // 		// we ensure that the boundaries are set
 // 		rel(this, table.get(0), IRT_EQ, 0);
 // 		rel(this, table.get(c.length-1), IRT_EQ, c[0].length-1);
-		
+
 // 		// branching instruction needed by Gecode, cf doc
 // 		branch(this, table, INT_VAR_SIZE_MIN, INT_VAL_MIN);
 // 	}
-	 
+
 // 	public void doSearch(BindingsCSP s, List<int[][]> sols){
 // 		// searches for solutions in a deep-first search (DFS)
 // 		// XXX: Watch out, this seems to cause a stack overflow
 // 		DFSIterator<BindingsCSP> search = new DFSIterator<BindingsCSP>(s);
-			
+
 // 		//To inspect the solutions with the GUI, uncomment below:
 // 		//Gist gist = new Gist(s, false);
 // 		//gist.exploreAll();
 
 // 		// for counting the number of solutions
 // 		int nbsol = 0;
-		
+
 // 		while (search.hasNext()) {
 // 			Space sol = (Space)search.next();
 // 			//System.err.println(sol.toString());
@@ -119,12 +119,12 @@
 // 		}
 // 		System.err.println("There are "+nbsol+" solutions.");
 // 	}
-	     
+
 // 	public int[][] storeSol(){
 // 		int[][] res = new int[rows][columns];
 // 		for (int i = 0; i < rows ; ++i) {
 // 			for (int j = 0 ; j < columns ; ++j) { 
-				
+
 // 				if (table.get(i).assigned()) { // a value has been computed
 // 					res[i][table.get(i).val()] = 1;
 // 				}
@@ -132,18 +132,18 @@
 // 		}
 // 		return res;
 // 	}
-	
+
 // 	public String toString() {
 // 		// prints the table solutions in sdtout
 // 		// in real we should decode it to extract the bindings
 // 		// computed by gecode
 // 		String res = "";
-		
+
 // 		for (int i = 0; i < rows ; ++i) {
 // 			char[] l = new char[columns];
 // 			for (int j = 0 ; j < columns ; ++j) 
 // 				l[j] = '\u00B7';
-		     
+
 // 			if (table.get(i).assigned()) { // a value has been computed
 // 				l[table.get(i).val()] = '1';
 // 		    } else { // the search space has been narrowed
@@ -153,23 +153,23 @@
 // 		    		for (int j : r)
 // 		    			l[j] = 'q';
 // 		   	}
-		     	
+
 // 			res += new String(l);
 // 			res += "\n";
 // 		}
 // 		return res;
 // 	}
-	 
+
 // 	public static List<int[][]> computeBindings(int[][] constraints) {
 // 		/*
 // 		   This program is an example of the computing of the bindings between
 // 		   [Jens][verspricht][Emma] and [L1][L2][L3][verspricht][R3][R2]
-	
+
 // 		   (version 2)
 
 // 		   We will think in terms of range integers, ie we will consider as 
 // 		   input arguments (called respectively I1 and I2):
-		   
+
 // 		     0[Jens]1[verspricht]2[Emma]3
 
 // 		   and
@@ -178,7 +178,7 @@
 
 // 		   What we are looking for is the list of value assignations to 
 // 		   all Lij and Rkl such that the following constraints (C) hold:
-		   
+
 // 		     Ai <= Aj  for all (i,j) in [1..3]X[1..3] such that i <= j
 
 // 		     A4 = 1 and A5 = 2 (cf input I1)
@@ -235,9 +235,9 @@
 
 // 		   NB: for this assignation, there are 6 solutions.
 // 		 */
-		
+
 // 		LinkedList<int[][]> solutions = new LinkedList<int[][]>();
-		
+
 // 		BindingsCSP bcsp = new BindingsCSP(constraints.length,constraints[0].length);
 // 		// print the constraints
 // 		//printCst(constraints, "Constraints matrix:");
@@ -246,7 +246,7 @@
 // 		bcsp.doSearch(bcsp, solutions);
 // 		return solutions;
 // 	}
-	
+
 // 	public static void printCst(int[][] constraints, String s) {
 // 		System.err.println(s);
 // 		for (int i = 0 ; i < constraints.length ; i++) {

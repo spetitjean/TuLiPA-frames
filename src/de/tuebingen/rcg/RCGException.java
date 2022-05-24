@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,28 +31,27 @@ package de.tuebingen.rcg;
 
 /**
  * Thrown if some RCG-related Error occurs.
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public class RCGException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public RCGException() {
-		super();
-	}
+    public RCGException() {
+        super();
+    }
 
-	public RCGException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public RCGException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public RCGException(String message) {
-		super(message);
-	}
+    public RCGException(String message) {
+        super(message);
+    }
 
-	public RCGException(Throwable cause) {
-		super(cause);
-	}
+    public RCGException(Throwable cause) {
+        super(cause);
+    }
 
 }

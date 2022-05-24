@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *
@@ -50,7 +50,7 @@ public class XMLTreeViewer {
             XMLViewTree viewTree = ViewTreeBuilder.createViewTree(D);
             ArrayList<ParseTreeCollection> trees = new ArrayList<ParseTreeCollection>();
             ParseTreeCollection viewTreeContainer = new ParseTreeCollection(
-			     viewTree, viewTree, null, "", null, null, false);
+                    viewTree, viewTree, null, "", null, null, false);
             trees.add(viewTreeContainer);
             XMLTreeDisplay display = new XMLTreeDisplay(trees);
             display.setSize(1000, 750);
@@ -75,7 +75,7 @@ public class XMLTreeViewer {
         viewTree.calculateCoordinates();
         ArrayList<ParseTreeCollection> trees = new ArrayList<ParseTreeCollection>();
         ParseTreeCollection viewTreeContainer = new ParseTreeCollection(
-									viewTree, viewTree, null, "", null, null, false);
+                viewTree, viewTree, null, "", null, null, false);
         trees.add(viewTreeContainer);
         XMLTreeDisplay display = new XMLTreeDisplay(trees);
         display.setSize(1000, 750);

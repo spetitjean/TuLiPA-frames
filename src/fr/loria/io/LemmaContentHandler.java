@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -91,8 +91,7 @@ public class LemmaContentHandler implements ContentHandler {
     }
 
     /**
-     * @param locator
-     *            to use
+     * @param locator to use
      * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
      */
     public void setDocumentLocator(Locator value) {
@@ -112,20 +111,17 @@ public class LemmaContentHandler implements ContentHandler {
     }
 
     /**
-     * @param chosen
-     *            namespace prefix
-     * @param URI
-     *            of the name-space
+     * @param chosen namespace prefix
+     * @param URI    of the name-space
      * @see org.xml.sax.ContentHandler#startPrefixMapping(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void startPrefixMapping(String prefix, String URI)
             throws SAXException {
     }
 
     /**
-     * @param chose
-     *            namespace prefix
+     * @param chose namespace prefix
      * @see org.xml.sax.ContentHandler#endPrefixMapping(java.lang.String)
      */
     public void endPrefixMapping(String prefix) throws SAXException {
@@ -134,15 +130,13 @@ public class LemmaContentHandler implements ContentHandler {
     /**
      * @param nameSpaceURI.
      * @param localName.
-     * @param rawName
-     *            for version 1.0 <code>nameSpaceURI + ":" + localName</code>
-     * @throws SAXException
-     *             (error such as not DTD compliant)
+     * @param rawName       for version 1.0 <code>nameSpaceURI + ":" + localName</code>
+     * @throws SAXException (error such as not DTD compliant)
      * @see org.xml.sax.ContentHandler#startElement(java.lang.String,
-     *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     * java.lang.String, java.lang.String, org.xml.sax.Attributes)
      */
     public void startElement(String nameSpaceURI, String localName,
-            String rawName, Attributes attributs) throws SAXException {
+                             String rawName, Attributes attributs) throws SAXException {
 
         if (!"".equals(nameSpaceURI) && verbose) {
             System.err.println(" Namespace detected : " + nameSpaceURI);
@@ -157,7 +151,7 @@ public class LemmaContentHandler implements ContentHandler {
             String cat = attributs.getValue("cat");
             currentLemma = new Lemma(currentName, cat);
             nf = new NameFactory(); // usually not needed (no variables in the
-                                    // lemma entries)
+            // lemma entries)
         } else if (localName.equals("anchor")) {
             String tid = attributs.getValue("tree_id");
 
@@ -228,12 +222,12 @@ public class LemmaContentHandler implements ContentHandler {
 
     /**
      * Evenement recu a chaque fermeture de balise.
-     * 
+     *
      * @see org.xml.sax.ContentHandler#endElement(java.lang.String,
-     *      java.lang.String, java.lang.String)
+     * java.lang.String, java.lang.String)
      */
     public void endElement(String nameSpaceURI, String localName,
-            String rawName) throws SAXException {
+                           String rawName) throws SAXException {
         if (!"".equals(nameSpaceURI)) { // name space non null
             System.err.print(" Namespace detected : " + localName);
         }
@@ -248,16 +242,16 @@ public class LemmaContentHandler implements ContentHandler {
             currentFeats.remove(currentFeats.size() - 1);
         } else if (localName.equals("fs")) {
             if (currentFeats.size() == 1) { // extern fs -> attaches to
-                                            // something
+                // something
                 switch (fsType) {
-                case FILTER:
-                    currentAnchor.setFilter(
-                            currentFeats.get(currentFeats.size() - 1));
-                    break;
-                case EQUATION:
-                    currentEq.setFeatures(
-                            currentFeats.get(currentFeats.size() - 1));
-                    break;
+                    case FILTER:
+                        currentAnchor.setFilter(
+                                currentFeats.get(currentFeats.size() - 1));
+                        break;
+                    case EQUATION:
+                        currentEq.setFeatures(
+                                currentFeats.get(currentFeats.size() - 1));
+                        break;
                 }
                 currentFeats.remove(currentFeats.size() - 1);
             } else { // intern fs -> is a feature value
@@ -285,13 +279,10 @@ public class LemmaContentHandler implements ContentHandler {
 
     /**
      * for DATA
-     * 
-     * @param ch
-     *            characters
-     * @param start
-     *            1st character to process
-     * @param end
-     *            last character to process
+     *
+     * @param ch    characters
+     * @param start 1st character to process
+     * @param end   last character to process
      * @see org.xml.sax.ContentHandler#characters(char[], int, int)
      */
     public void characters(char[] ch, int start, int end) throws SAXException {
@@ -301,8 +292,7 @@ public class LemmaContentHandler implements ContentHandler {
     }
 
     /**
-     * @param ch
-     *            characters
+     * @param ch    characters
      * @param start
      * @param end
      * @see org.xml.sax.ContentHandler#ignorableWhitespace(char[], int, int)
@@ -318,7 +308,7 @@ public class LemmaContentHandler implements ContentHandler {
      * @param target
      * @param data
      * @see org.xml.sax.ContentHandler#processingInstruction(java.lang.String,
-     *      java.lang.String)
+     * java.lang.String)
      */
     public void processingInstruction(String target, String data)
             throws SAXException {
@@ -331,7 +321,7 @@ public class LemmaContentHandler implements ContentHandler {
     }
 
     public static void update(Map<String, List<String>> table, String lex,
-            String cat) {
+                              String cat) {
         List<String> values = table.get(lex);
         if (!table.containsKey(lex)) {
             values = new LinkedList<String>();

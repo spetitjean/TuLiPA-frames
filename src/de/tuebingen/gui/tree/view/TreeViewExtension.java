@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -31,7 +31,6 @@ package de.tuebingen.gui.tree.view;
 
 import java.awt.*;
 
-public abstract class TreeViewExtension 
-{
-	public abstract void paintOnTreePanel(TreeViewPanel panel, Graphics2D canvas);
+public abstract class TreeViewExtension {
+    public abstract void paintOnTreePanel(TreeViewPanel panel, Graphics2D canvas);
 }

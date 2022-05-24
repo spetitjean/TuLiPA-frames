@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2008
  *
@@ -33,52 +33,46 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-public class Rule
-{
+public class Rule {
     String id;
     String treeName;
-    
+
     ArrayList<RHS> rhs;
-    
-    public Rule(String id, String treeName)
-    {
+
+    public Rule(String id, String treeName) {
         this.id = id;
         this.treeName = treeName;
         rhs = new ArrayList<RHS>();
     }
-    
-    public Rule(Node n)
-    {
+
+    public Rule(Node n) {
         this.id = n.getAttributes().getNamedItem("id").getNodeValue();
         this.treeName = n.getAttributes().getNamedItem("tree_name").getNodeValue();
-        rhs = new ArrayList<RHS>();       
+        rhs = new ArrayList<RHS>();
         NodeList children = n.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++)
-        {
+        for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
-            if (child instanceof Element)
-            {
+            if (child instanceof Element) {
                 rhs.add(new RHS(child));
             }
         }
     }
-    
-    public ArrayList<Element> apply(Element n, Document D, HashMap<String, Rule> rules, int recDepth, boolean verbose)
-    {
+
+    public ArrayList<Element> apply(Element n, Document D, HashMap<String, Rule> rules, int recDepth, boolean verbose) {
         ArrayList<Element> allPossibleTrees = new ArrayList<Element>();
-        for (RHS r : rhs)
-        {
-        	if (verbose) System.err.println((produceSpaces(recDepth)) + "rhs(" + r.ops.size() + ")\n" + (produceSpaces(recDepth)) + "{");
+        for (RHS r : rhs) {
+            if (verbose)
+                System.err.println((produceSpaces(recDepth)) + "rhs(" + r.ops.size() + ")\n" + (produceSpaces(recDepth)) + "{");
             ArrayList<Element> possibleTrees = new ArrayList<Element>();
             possibleTrees.add((Element) n.cloneNode(true));
-            for (OpDisjunction disj : r.ops)
-            {    	
+            for (OpDisjunction disj : r.ops) {
                 ArrayList<Element> possibleSubTrees = new ArrayList<Element>();
                 ArrayList<Element> possibleSubTreeOperations = new ArrayList<Element>();
-                if (verbose) System.err.println((produceSpaces(recDepth + 2)) + "disj(" + disj + ")\n" + (produceSpaces(recDepth + 2)) + "{");
-                for (Operation op : disj.ops)
-                {
-                	if (verbose) System.err.println(produceSpaces(recDepth + 4) + "op(" + op + ")\n" + (produceSpaces(recDepth + 4)) + "{");
+                if (verbose)
+                    System.err.println((produceSpaces(recDepth + 2)) + "disj(" + disj + ")\n" + (produceSpaces(recDepth + 2)) + "{");
+                for (Operation op : disj.ops) {
+                    if (verbose)
+                        System.err.println(produceSpaces(recDepth + 4) + "op(" + op + ")\n" + (produceSpaces(recDepth + 4)) + "{");
                     Rule nextRule = rules.get(op.id);
                     Element nextNode = D.createElement("tree");
                     nextNode.setAttribute("id", nextRule.treeName);
@@ -86,8 +80,7 @@ public class Rule
                     //insert the op nodes in between for compatibility
                     int subTreeNumber = possibleSubTrees.size();
                     if (verbose) System.err.println((produceSpaces(recDepth + 4)) + "} subtrees: " + subTreeNumber);
-                    for (int i = 0; i < subTreeNumber; i++)
-                    {
+                    for (int i = 0; i < subTreeNumber; i++) {
                         Element subNode = possibleSubTrees.remove(0);
                         Element opNode = D.createElement(op.type);
                         opNode.setAttribute("node", op.node);
@@ -99,11 +92,9 @@ public class Rule
                 if (verbose) System.err.println((produceSpaces(recDepth + 2)) + "}");
                 //go through all the possible trees and extend them to all the combinatorical variants
                 int oldSize = possibleTrees.size();
-                for (int i = 0; i < oldSize; i++)
-                {
+                for (int i = 0; i < oldSize; i++) {
                     Element superNode = possibleTrees.remove(0);
-                    for (Element subNode : possibleSubTreeOperations)
-                    {
+                    for (Element subNode : possibleSubTreeOperations) {
                         Element superCopy = (Element) superNode.cloneNode(true);
                         Element subNodeCopy = (Element) subNode.cloneNode(true);
                         superCopy.appendChild(subNodeCopy);
@@ -116,14 +107,12 @@ public class Rule
         }
         return allPossibleTrees;
     }
-    
-    public String produceSpaces(int number)
-    {
-    	String spaces = "";
-    	for (int i = 0; i < number; i++)
-    	{
-    		spaces += "  ";
-    	}
-    	return spaces;
+
+    public String produceSpaces(int number) {
+        String spaces = "";
+        for (int i = 0; i < number; i++) {
+            spaces += "  ";
+        }
+        return spaces;
     }
 }

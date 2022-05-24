@@ -5,7 +5,7 @@
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -91,8 +91,8 @@ public class ElementaryTree {
     }
 
     public ElementaryTree(Node root, String foot, String anchor,
-            HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
-            List<SemLit> semantics) {
+                          HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
+                          List<SemLit> semantics) {
         this.id = "";
         this.root = root;
         this.foot = foot;
@@ -100,7 +100,7 @@ public class ElementaryTree {
         this.topFeatures = topFeatures;
         this.bottomFeatures = bottomFeatures;
         this.semantics = semantics;
-	this.frameSem = new Frame();
+        this.frameSem = new Frame();
     }
 
     // public ElementaryTree(Node root, String foot, String anchor,
@@ -120,8 +120,8 @@ public class ElementaryTree {
     // HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
     // List<SemLit> semantics, List<Fs> oldframes, Frame frameSem) {
     public ElementaryTree(Node root, String foot, String anchor,
-            HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
-            List<SemLit> semantics, Frame frameSem) {
+                          HashMap<Node, Fs> topFeatures, HashMap<Node, Fs> bottomFeatures,
+                          List<SemLit> semantics, Frame frameSem) {
         this.id = "";
         this.root = root;
         this.foot = foot;
@@ -165,7 +165,7 @@ public class ElementaryTree {
     }
 
     public Node convertTAGNodeToXML(String address, de.tuebingen.tree.Node node,
-            Document D) {
+                                    Document D) {
         TagNode tagNode = (TagNode) node;
         String nodeName = tagNode.getCategory();
         // can't have nodes without names because of XML
@@ -287,8 +287,8 @@ public class ElementaryTree {
     }
 
     public Node copyNodeStructureWithoutNameFactory(Node n, Document D,
-            HashMap<Node, Fs> newTopFeatures,
-            HashMap<Node, Fs> newBottomFeatures) {
+                                                    HashMap<Node, Fs> newTopFeatures,
+                                                    HashMap<Node, Fs> newBottomFeatures) {
 
         Node newN = D.importNode(n, false).cloneNode(false);
         if (topFeatures.get(n) != null) {
@@ -308,8 +308,8 @@ public class ElementaryTree {
 
     // this copy method keeps the feature structure references
     public Node copyNodeStructure(NameFactory nf, Node n, Document D,
-            HashMap<Node, Fs> newTopFeatures,
-            HashMap<Node, Fs> newBottomFeatures) {
+                                  HashMap<Node, Fs> newTopFeatures,
+                                  HashMap<Node, Fs> newBottomFeatures) {
 
         Node newN = D.importNode(n, false).cloneNode(false);
         if (topFeatures.get(n) != null) {
@@ -339,7 +339,7 @@ public class ElementaryTree {
     }
 
     public void applyOperations(ArrayList<Object[]> operations,
-            DerivedTree dTree, ArrayList<ElementaryTree> steps)
+                                DerivedTree dTree, ArrayList<ElementaryTree> steps)
             throws UnifyException {
         // first store the nodes to operate on (addresses will be misled by
         // adjunctions)
@@ -402,7 +402,7 @@ public class ElementaryTree {
                 ElementaryTree newStep = (new ElementaryTree(dTree.root, "", "",
                         dTree.topFeatures, dTree.bottomFeatures,
                         dTree.semantics, dTree.getFrameSem()))
-                                .createDumpingInstance(root.getOwnerDocument());
+                        .createDumpingInstance(root.getOwnerDocument());
                 newStep.setID("Step " + steps.size());
                 steps.add(newStep);
             }
@@ -412,7 +412,7 @@ public class ElementaryTree {
 
     /**
      * returns true if derived tree root has been changed
-     * 
+     *
      * @param adjoinedTree
      * @param adjoinNode
      * @param dTree
@@ -420,7 +420,7 @@ public class ElementaryTree {
      * @throws UnifyException
      */
     public boolean adjoin(ElementaryTree adjoinedTree, Node adjoinNode,
-            DerivedTree dTree) throws UnifyException {
+                          DerivedTree dTree) throws UnifyException {
         Node rootNode = adjoinedTree.root;
         if (adjoinedTree.foot.length() == 0) {
             System.err.println("ERROR: Adjoined tree has no foot node!");
@@ -506,7 +506,7 @@ public class ElementaryTree {
 
     // returns true if derived tree root has been changed
     public boolean substitute(ElementaryTree substTree, Node substNode,
-            DerivedTree dTree) throws UnifyException {
+                              DerivedTree dTree) throws UnifyException {
         if (verbose) {
             System.err.println(
                     "Substitution: " + substTree.hashCode() + ", " + substNode);
@@ -541,7 +541,7 @@ public class ElementaryTree {
     }
 
     public static void updateSem(List<SemLit> semlist, Environment env,
-            boolean finalUpdate) {
+                                 boolean finalUpdate) {
         for (SemLit sl : semlist) {
             sl.update(env, finalUpdate);
         }
@@ -549,14 +549,14 @@ public class ElementaryTree {
 
     /**
      * updating the variables in the frames with respect to a variable
-     * 
+     *
      * @param frames
      * @param env
      * @param finalUpdate
      * @throws UnifyException
      */
     public static List<Fs> updateFrames(List<Fs> frames, Environment env,
-            boolean finalUpdate) throws UnifyException {
+                                        boolean finalUpdate) throws UnifyException {
         List<Fs> newFrames = new ArrayList<Fs>();
         for (Fs fs : frames) {
             // System.out.println("Before: " + fs);
@@ -577,7 +577,7 @@ public class ElementaryTree {
 
     /**
      * similar to the old updateFs method. changes the variables in the frameSem
-     * 
+     *
      * @param frameSem
      * @param env
      * @param finalUpdate
@@ -585,7 +585,7 @@ public class ElementaryTree {
      * @throws UnifyException
      */
     public static Frame updateFrameSem(Frame frameSem, Environment env,
-            boolean finalUpdate) throws UnifyException {
+                                       boolean finalUpdate) throws UnifyException {
 
         List<Fs> newFs = new LinkedList<Fs>();
         if (frameSem != null && frameSem.getFeatureStructures() != null)
@@ -612,7 +612,7 @@ public class ElementaryTree {
 
     /**
      * Like updateFrameSem, but merging the frames in the end
-     * 
+     *
      * @param frameSem
      * @param env
      * @param finalUpdate
@@ -620,7 +620,7 @@ public class ElementaryTree {
      * @throws UnifyException
      */
     public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
-            boolean finalUpdate) throws UnifyException {
+                                                boolean finalUpdate) throws UnifyException {
         NameFactory nf = new NameFactory();
         List<Fs> newFs = new LinkedList<Fs>();
         // System.out.println("Environment before update: "+env);

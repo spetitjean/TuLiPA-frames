@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -33,47 +33,47 @@ import de.duesseldorf.frames.Fs;
 
 public class Equation {
 
-	private String type;    // top or bot
-	private String node_id;
-	private Fs features;
-	
-	public Equation(String t, String n){
-		type = t;
-		node_id = n;
-		features = null;
-	}
-	
-	public Equation(Equation eq) {
-		type = eq.getType();
-		node_id = eq.getNode_id();
-		features = new Fs(eq.getFeatures());
-	}
+    private String type;    // top or bot
+    private String node_id;
+    private Fs features;
 
-	public String getType() {
-		return type;
-	}
+    public Equation(String t, String n) {
+        type = t;
+        node_id = n;
+        features = null;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public Equation(Equation eq) {
+        type = eq.getType();
+        node_id = eq.getNode_id();
+        features = new Fs(eq.getFeatures());
+    }
 
-	public String getNode_id() {
-		return node_id;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setNode_id(String node_id) {
-		this.node_id = node_id;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Fs getFeatures() {
-		return features;
-	}
+    public String getNode_id() {
+        return node_id;
+    }
 
-	public void setFeatures(Fs features) {
-		this.features = features;
-	}
-	
-	public String toString(){
-		return "\n\t"+node_id+" -> "+type+"."+features.toString(); 
-	}
+    public void setNode_id(String node_id) {
+        this.node_id = node_id;
+    }
+
+    public Fs getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(Fs features) {
+        this.features = features;
+    }
+
+    public String toString() {
+        return "\n\t" + node_id + " -> " + type + "." + features.toString();
+    }
 }

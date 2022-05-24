@@ -142,7 +142,7 @@ public class DominanceGraph {
 
     /**
      * returns a String that is a version of pred without fnacy letters
-     * 
+     *
      * @param pred
      * @return
      */

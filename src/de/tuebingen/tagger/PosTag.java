@@ -2,9 +2,9 @@
  *  File PosTag.java
  *
  *  Authors:
- *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>	
- *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>   
- *     
+ *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
+ *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -34,13 +34,14 @@ package de.tuebingen.tagger;
 
 /**
  * A single linguistic TAG for a word
- * @author wmaier
  *
+ * @author wmaier
  */
 public interface PosTag {
 
-	public Object getTag();
-	public void setTag(Object tag);
-	
-	
+    public Object getTag();
+
+    public void setTag(Object tag);
+
+
 }

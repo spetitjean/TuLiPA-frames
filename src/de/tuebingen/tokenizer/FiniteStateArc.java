@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,73 +31,74 @@ package de.tuebingen.tokenizer;
 
 /**
  * Represents a single arc in a Finite State Automaton/Transducer.
+ *
  * @author wmaier
  */
 
 public class FiniteStateArc {
-	
-	private Object from;
-	private Object to;
+
+    private Object from;
+    private Object to;
     private Object input;
     private Object output;
     // for traversal only
-	private boolean visited;
-    
+    private boolean visited;
+
     public FiniteStateArc(Object from, Object to, Object input) {
-    	// default is identity transduction
-    	this(from, to, input, input);
+        // default is identity transduction
+        this(from, to, input, input);
     }
-    
+
     public FiniteStateArc(Object from, Object to, Object input, Object output) {
-		this.from = from;
-		this.to = to;
-		this.input = input;
-		this.output = output;
-		this.visited = false;
-	}
-	
-	public Object getFrom() {
-		return from;
-	}
+        this.from = from;
+        this.to = to;
+        this.input = input;
+        this.output = output;
+        this.visited = false;
+    }
 
-	public void setFrom(Object from) {
-		this.from = from;
-	}
+    public Object getFrom() {
+        return from;
+    }
 
-	public Object getTo() {
-		return to;
-	}
+    public void setFrom(Object from) {
+        this.from = from;
+    }
 
-	public void setTo(Object to) {
-		this.to = to;
-	}
+    public Object getTo() {
+        return to;
+    }
 
-	public Object getInput() {
-		return input;
-	}
+    public void setTo(Object to) {
+        this.to = to;
+    }
 
-	public void setInput(Object label) {
-		this.input = label;
-	}
-	
-	public Object getOutput() {
-		return output;
-	}
-	
-	public void setOutput(Object output) {
-		this.output = output;
-	}
-	
-	public boolean visited() {
-		return visited;
-	}
-	
-	public void setVisited(boolean visited) {
-		this.visited = visited;
-	}
-	
-	public String toString() {
-		return from.toString() + " " + to.toString() + " " + input.toString() + " " + output.toString();
-	}
-	
+    public Object getInput() {
+        return input;
+    }
+
+    public void setInput(Object label) {
+        this.input = label;
+    }
+
+    public Object getOutput() {
+        return output;
+    }
+
+    public void setOutput(Object output) {
+        this.output = output;
+    }
+
+    public boolean visited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public String toString() {
+        return from.toString() + " " + to.toString() + " " + input.toString() + " " + output.toString();
+    }
+
 }

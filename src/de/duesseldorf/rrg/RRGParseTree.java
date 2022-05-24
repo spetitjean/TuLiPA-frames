@@ -142,17 +142,17 @@ public class RRGParseTree extends RRGTree {
         if (wrappingPossible) {
             resultingTree.setNode(targetAddress, newTargetNode);
             resultingTree.wrappingSubTrees.put(jumpBackitem, targetNode);
-	    System.out.println("Adding to wrappingSubTrees");
-	    System.out.println(targetNode);
-        
+            System.out.println("Adding to wrappingSubTrees");
+            System.out.println(targetNode);
+
         }
         resultingTree.getFrameSem().addOtherFrame(wrappingTree.getFrameSem());
         return resultingTree;
     }
 
     public RRGParseTree insertWrappedTreeForGeneralizedWrapping(RRGParseItem wrapRootItem, GornAddress ddaughterAddress, RRGParseItem ddaughterItem) {
-	
-	System.out.println("wrappingSubTrees");
+
+        System.out.println("wrappingSubTrees");
         System.out.println(wrappingSubTrees);
         RRGNode wrappedNode = wrappingSubTrees.get(wrapRootItem);
         // what to do when wrappedNode is null?
@@ -178,22 +178,22 @@ public class RRGParseTree extends RRGTree {
      */
     public RRGParseTree insertWrappedTree(RRGTree wrappedTree,
                                           GornAddress ddaughterAddress, RRGParseItem ddaughterItem, boolean internalWrapping) {
-	System.out.println("begining of wrapping");
-	System.out.println("internalWrapping: "+internalWrapping);
-	System.out.println(this);
-	System.out.println(wrappedTree);
+        System.out.println("begining of wrapping");
+        System.out.println("internalWrapping: " + internalWrapping);
+        System.out.println(this);
+        System.out.println(wrappedTree);
         RRGParseTree resultingTree = new RRGParseTree(this);
         GornAddress dmother = ddaughterAddress.mother();
-	// System.err.println("this");
-	// System.err.println(this);
-	// System.err.println("wrappedTree");
-	// System.err.println(wrappedTree);
-	// System.err.println("ddaughterAddress");
-	// System.err.println(ddaughterAddress);
-	// System.err.println("dmother");
-	// System.err.println(dmother);
-	// System.err.println("----------------");
-	int position = ddaughterAddress.isIthDaughter();
+        // System.err.println("this");
+        // System.err.println(this);
+        // System.err.println("wrappedTree");
+        // System.err.println(wrappedTree);
+        // System.err.println("ddaughterAddress");
+        // System.err.println(ddaughterAddress);
+        // System.err.println("dmother");
+        // System.err.println(dmother);
+        // System.err.println("----------------");
+        int position = ddaughterAddress.isIthDaughter();
 
         // insert the children
         RRGNode targetNode = resultingTree.findNode(dmother);
@@ -203,7 +203,7 @@ public class RRGParseTree extends RRGTree {
             newTargetNode = RRGTreeTools.unifyNodes(targetNode,
                     (RRGNode) wrappedTree.getRoot(), getEnv());
         } catch (UnifyException | NullPointerException e) {
-	    wrappingPossible = false;
+            wrappingPossible = false;
         }
         if (wrappingPossible) {
 
@@ -222,11 +222,11 @@ public class RRGParseTree extends RRGTree {
                 newTargetNode.addXchild(rootChildren.get(i), position);
             }
             if (internalWrapping) {
-		System.out.println(wrappedTree.getLexNodes().keySet());
-		System.out.println(wrappedTree);
+                System.out.println(wrappedTree.getLexNodes().keySet());
+                System.out.println(wrappedTree);
                 resultingTree.ids.add("INTERNAL_WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
-		System.out.println("middle of wrapping");
-		System.out.println(resultingTree.ids);
+                System.out.println("middle of wrapping");
+                System.out.println(resultingTree.ids);
             } else {
                 resultingTree.ids.add("WRAPPING::" + wrappedTree.getId() + "::" + wrappedTree.getLexNodes().keySet());
             }
@@ -238,23 +238,22 @@ public class RRGParseTree extends RRGTree {
                         "ERROR: Not able to merge environments during wrapping");
             }
         } else {
-	    if (dmother != null && wrappedTree != null){
-		System.err.println(
-				   "could not complete a wrapping of target tree into wrapping tree at node "
-				   + dmother.toString() + "\nwrapped tree:\n"
-				   + wrappedTree.toString() + "\ntarget tree:\n"
-				   + this.toString());
-	    }
-	    else{
-		System.err.println(
-				   "could not complete a wrapping of target tree into wrapping tree"); 
-	    }
+            if (dmother != null && wrappedTree != null) {
+                System.err.println(
+                        "could not complete a wrapping of target tree into wrapping tree at node "
+                                + dmother.toString() + "\nwrapped tree:\n"
+                                + wrappedTree.toString() + "\ntarget tree:\n"
+                                + this.toString());
+            } else {
+                System.err.println(
+                        "could not complete a wrapping of target tree into wrapping tree");
+            }
             return resultingTree;
         }
         //TODO why is it this.getFrameSem() and not resultingTree.getFrameSem()?
         this.getFrameSem().addOtherFrame(wrappedTree.getFrameSem());
-	System.out.println("end of wrapping");
-	System.out.println(resultingTree.ids);
+        System.out.println("end of wrapping");
+        System.out.println(resultingTree.ids);
         return resultingTree;
     }
 
@@ -388,7 +387,7 @@ public class RRGParseTree extends RRGTree {
             System.err.println("at GA " + address);
             System.err.println("target tree: " + this);
             System.err.println("subst tree: " + substitutionTree);
-	    throw new UnifyException("node unif not possible during substitution", e);
+            throw new UnifyException("node unif not possible during substitution", e);
 
             //System.exit(0);
         }

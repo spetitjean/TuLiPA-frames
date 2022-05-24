@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Johannes Dellert
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2009
  *
@@ -31,30 +31,25 @@ package de.tuebingen.parser.simple;
 
 import de.tuebingen.rcg.Clause;
 
-public class IncrementalEarleyGoalItem extends IncrementalEarleyItem
-{
-    public IncrementalEarleyGoalItem(Clause cl)
-    {
+public class IncrementalEarleyGoalItem extends IncrementalEarleyItem {
+    public IncrementalEarleyGoalItem(Clause cl) {
         super(cl);
     }
-    
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof IncrementalEarleyItem)
-        {
+
+    public boolean equals(Object obj) {
+        if (obj instanceof IncrementalEarleyItem) {
             //System.err.println("eq " + this + " = " + obj);
             IncrementalEarleyItem o = (IncrementalEarleyItem) obj;
             if (!o.cl.equals(cl)) return false;
             if (o.i != i) return false;
-            if (o.j != j) return false;  
+            if (o.j != j) return false;
             if (o.pos != pos) return false;
             return true;
         }
         return false;
     }
-    
-    public String mainString()
-    {
-        return "[" + cl.toString() + "," + pos + ",<" + i + "," + j + ">=" + el + "]"; 
+
+    public String mainString() {
+        return "[" + cl.toString() + "," + pos + ",<" + i + "," + j + ">=" + el + "]";
     }
 }

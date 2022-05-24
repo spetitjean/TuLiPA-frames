@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -35,12 +35,11 @@ import de.tuebingen.rcg.RCG;
 
 /**
  * An interface for RCG readers from various formats.
- * 
- * @author wmaier
  *
+ * @author wmaier
  */
 public interface RCGReader extends Readable, Closeable {
 
-	public abstract RCG getRCG() throws Exception;
+    public abstract RCG getRCG() throws Exception;
 
 }

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2009
  *
@@ -33,14 +33,14 @@ import java.util.LinkedList;
 
 public class ForestExtractorInitializer extends LinkedList<Object> {
 
-	public ForestExtractorInitializer() {
-		
-	}
-	
-	public void addField(Object field) {
-		add(field);
-	}
-	
-	private static final long serialVersionUID = 1L;
-	
+    public ForestExtractorInitializer() {
+
+    }
+
+    public void addField(Object field) {
+        add(field);
+    }
+
+    private static final long serialVersionUID = 1L;
+
 }

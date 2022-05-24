@@ -19,7 +19,7 @@ public class FrameUpdater {
 
     /**
      * assigns new names to the varaibles in the frame, based on the NameFactory
-     * 
+     *
      * @return
      */
     public Frame rename() {

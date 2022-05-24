@@ -15,15 +15,14 @@ import de.duesseldorf.util.GornAddress;
  * and creates an RRGTree object out of it.
  * Example:
  * greatly (NUC_ADV (ADV <>))
- * 
+ * <p>
  * becomes
- * 
+ * <p>
  * eps NUC_ADV NUC_ADV (STD)
  * .0 ADV ADV (STD)
  * ..0.0 greatly greatly (LEX)
- * 
- * @author david
  *
+ * @author david
  */
 public class TreeFromBracketedStringRetriever {
 
@@ -39,7 +38,7 @@ public class TreeFromBracketedStringRetriever {
      * placeholder <> for the lex. element.
      * Important: Lexical Elements can only ever have one daugherj (because of
      * the way they are appended to the tree
-     * 
+     *
      * @param tabSeparatedLine
      */
     public TreeFromBracketedStringRetriever(String tabSeparatedLine) {
@@ -48,10 +47,9 @@ public class TreeFromBracketedStringRetriever {
     }
 
     /**
-     * 
      * Out: An RRGTree object lexicalized with the lexical element in the
      * tabseparatedline
-     * 
+     *
      * @param nextLine
      * @return
      */
@@ -148,16 +146,13 @@ public class TreeFromBracketedStringRetriever {
     }
 
     /**
-     * 
-     * @param nodeStringFromResource
-     *            the node label to create a node from
-     * @param nodeIsRoot
-     *            if the node is a root, NP and N nodes are STD and not SUBST
-     *            nodes
+     * @param nodeStringFromResource the node label to create a node from
+     * @param nodeIsRoot             if the node is a root, NP and N nodes are STD and not SUBST
+     *                               nodes
      * @return
      */
     private RRGNode createNodeFromString(String nodeStringFromResource,
-            boolean couldBeASubstNode) {
+                                         boolean couldBeASubstNode) {
         Fs nodeFs = new Fs();
         // note that the lexical element is not handled here
         List<String> substNodeLabels = Arrays.asList("CL", "NP", "NUC_ADV",

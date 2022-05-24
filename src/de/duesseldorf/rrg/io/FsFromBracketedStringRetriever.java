@@ -15,7 +15,7 @@ public class FsFromBracketedStringRetriever {
      * format: Core*[OP=CLAUSE,OTHER=[SOMEATTR=SOMEVAL]]
      * This doess not capture fs of a "depth" > 1 at the momemnt
      * possibly going recursive, though in practice the fs will be rather small
-     * 
+     *
      * @param fsString
      * @return
      */
@@ -49,7 +49,7 @@ public class FsFromBracketedStringRetriever {
                 // extract a simple value
                 int endOfSimpleValIndex = fsString.contains(",")
                         && (fsString.indexOf(",") < fsString.indexOf("]"))
-                                ? fsString.indexOf(",") : fsString.indexOf("]");
+                        ? fsString.indexOf(",") : fsString.indexOf("]");
                 String simpleValStr = fsString.substring(0,
                         endOfSimpleValIndex);
                 val = new Value(Value.Kind.VAL, simpleValStr);

@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -31,11 +31,11 @@ package de.tuebingen.tag;
 
 /**
  * Interface for modeling semantic literals (associated with trees in the grammar)
- * @author parmenti
  *
+ * @author parmenti
  */
 public interface SemLit {
-	
-	public void update(Environment env, boolean finalUpdate);
+
+    public void update(Environment env, boolean finalUpdate);
 
 }

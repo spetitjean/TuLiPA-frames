@@ -5,7 +5,7 @@
  *     Yannick Parmentier  <parmenti@loria.fr>
  *     Laura Kallmeyer  <kallmeyer@sfs.uni-tuebingen.de>
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2009
  *     Laura Kallmeyer, 2009
@@ -37,45 +37,45 @@ import java.util.*;
 
 public class ItemKey {
 
-	// to distinguish between active and passive items
-	public static final int ACTIVE  = 1;
-	public static final int PASSIVE = 2;
+    // to distinguish between active and passive items
+    public static final int ACTIVE = 1;
+    public static final int PASSIVE = 2;
 
-	private int typeMap;
-	private Map<Object, List<ConstraintItem>> itemMap;
-	
-	public ItemKey(int type) {
-		typeMap = type;
-		itemMap = new HashMap<Object, List<ConstraintItem>>();
-	}
-	
-	public int add2map(ConstraintItem ci) {
-		int res = 0;
-		switch(typeMap) {
-		case (ACTIVE):
-			int dot = ci.getDotpos();
-			res = this.update(new Integer(dot), ci);
-			break;
-		case (PASSIVE):
-			int fbound = ci.getVect().getFirstBoundValue();
-			// fbound = -1 means unknown left bound
-			res = this.update(new Integer(fbound), ci);
-			break;
-		}
-		return res;
-	}
-	
-	public int update(Object o, ConstraintItem ci) {
-		int res = 0;
-		List<ConstraintItem> lci = itemMap.get(o);
-		if (lci == null) {
-			lci = new LinkedList<ConstraintItem>();
-			itemMap.put(o, lci);
-		}
-		if (lci.contains(ci)) 
-			res = 1; // res != 0 means update not possible
-		else
-			lci.add(ci);
-		return res;
-	}
+    private int typeMap;
+    private Map<Object, List<ConstraintItem>> itemMap;
+
+    public ItemKey(int type) {
+        typeMap = type;
+        itemMap = new HashMap<Object, List<ConstraintItem>>();
+    }
+
+    public int add2map(ConstraintItem ci) {
+        int res = 0;
+        switch (typeMap) {
+            case (ACTIVE):
+                int dot = ci.getDotpos();
+                res = this.update(new Integer(dot), ci);
+                break;
+            case (PASSIVE):
+                int fbound = ci.getVect().getFirstBoundValue();
+                // fbound = -1 means unknown left bound
+                res = this.update(new Integer(fbound), ci);
+                break;
+        }
+        return res;
+    }
+
+    public int update(Object o, ConstraintItem ci) {
+        int res = 0;
+        List<ConstraintItem> lci = itemMap.get(o);
+        if (lci == null) {
+            lci = new LinkedList<ConstraintItem>();
+            itemMap.put(o, lci);
+        }
+        if (lci.contains(ci))
+            res = 1; // res != 0 means update not possible
+        else
+            lci.add(ci);
+        return res;
+    }
 }

@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -40,61 +40,61 @@ import de.tuebingen.rcg.PredLabel;
 import de.tuebingen.tag.TagTree;
 
 public class PredLabelKey {
-	
-	private PredLabel      pl;
-	private List<Argument> al;
 
-	public PredLabelKey(PredLabel p, List<Argument> a) {
-		pl = p;
-		al = a;
-	}
-	
-	public PredLabel getPl() {
-		return pl;
-	}
+    private PredLabel pl;
+    private List<Argument> al;
 
-	public void setPl(PredLabel pl) {
-		this.pl = pl;
-	}
+    public PredLabelKey(PredLabel p, List<Argument> a) {
+        pl = p;
+        al = a;
+    }
 
-	public List<Argument> getAl() {
-		return al;
-	}
+    public PredLabel getPl() {
+        return pl;
+    }
 
-	public void setAl(List<Argument> al) {
-		this.al = al;
-	}
-	
+    public void setPl(PredLabel pl) {
+        this.pl = pl;
+    }
 
-	public int hashCode() {
-		return toString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return this.hashCode() == o.hashCode();
-	}
-	
-	public String toString(){
-		String res="";
-		res += pl.toString()+" ( ";
-		for(int i = 0 ; i < al.size() ; i++){
-			res += al.get(i)+" ";
-		}
-		res += " )";
-		return res;
-	}
-	
-	// for pretty printing
-	public String toString(Map<String, TagTree> dict){
-		String res="";
-		if (pl instanceof PredComplexLabel)
-			res += ((PredComplexLabel) pl).toString(dict)+" ( ";
-		else
-			res += pl.toString()+" ( ";
-		for(int i = 0 ; i < al.size() ; i++){
-			res += al.get(i)+" ";
-		}
-		res += " )";
-		return res;
-	}
+    public List<Argument> getAl() {
+        return al;
+    }
+
+    public void setAl(List<Argument> al) {
+        this.al = al;
+    }
+
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
+
+    public String toString() {
+        String res = "";
+        res += pl.toString() + " ( ";
+        for (int i = 0; i < al.size(); i++) {
+            res += al.get(i) + " ";
+        }
+        res += " )";
+        return res;
+    }
+
+    // for pretty printing
+    public String toString(Map<String, TagTree> dict) {
+        String res = "";
+        if (pl instanceof PredComplexLabel)
+            res += ((PredComplexLabel) pl).toString(dict) + " ( ";
+        else
+            res += pl.toString() + " ( ";
+        for (int i = 0; i < al.size(); i++) {
+            res += al.get(i) + " ";
+        }
+        res += " )";
+        return res;
+    }
 }

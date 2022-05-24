@@ -6,7 +6,7 @@
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps, 2017
  *     Simon Petitjean, 2017
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -65,7 +65,6 @@ import de.tuebingen.util.Pair;
 
 /**
  * @author wmaier, parmenti
- *
  */
 
 public class TagTree implements Tree {
@@ -114,9 +113,7 @@ public class TagTree implements Tree {
     private int position;
 
     /**
-     * 
-     * @param i
-     *            the id of the TagTree
+     * @param i the id of the TagTree
      */
     public TagTree(String i) {
         id = i;
@@ -216,7 +213,7 @@ public class TagTree implements Tree {
 
     /**
      * aka isAuxiliary!
-     * 
+     *
      * @return
      */
     public boolean hasFoot() {
@@ -236,7 +233,7 @@ public class TagTree implements Tree {
         if (hasFoot() && hasLex()) {
             res = ((TagNode) lexAnc).getAddress()
                     .compareTo(((TagNode) foot).getAddress()) < 0 ? true
-                            : false;
+                    : false;
         }
         return res;
     }
@@ -246,7 +243,7 @@ public class TagTree implements Tree {
         if (hasFoot() && hasLex()) {
             res = ((TagNode) foot).getAddress()
                     .compareTo(((TagNode) lexAnc).getAddress()) < 0 ? true
-                            : false;
+                    : false;
         }
         return res;
     }
@@ -309,7 +306,7 @@ public class TagTree implements Tree {
         anc.setCategory(lex.getWord()); // the lexical item
         anc.setWord(lex); // the word
         anc.setAncLex(true); // to distinguish lex nodes corresponding to main
-                             // anchors
+        // anchors
         anc.setAddress(((TagNode) anchor).getAddress() + ".1"); // Gorn address
         lexAnc = anc;
         ch.add(anc);
@@ -318,7 +315,7 @@ public class TagTree implements Tree {
 
     /**
      * returns true if the coanchor has been processed false otherwise
-     * 
+     *
      * @param n
      * @param ca
      * @return
@@ -340,7 +337,7 @@ public class TagTree implements Tree {
                         coanc.setType(TagNode.LEX); // lex node
                         coanc.setCategory(ca.getLex().get(0)); // the word
                         coanc.setAddress(tn.getAddress() + ".1"); // Gorn
-                                                                  // address
+                        // address
                         ch.add(coanc);
                         tn.setChildren(ch);
                         res = true;
@@ -400,7 +397,7 @@ public class TagTree implements Tree {
             lexNodes.add(n);
             // System.out.println("Added " + n + " to LexNodes");
         } else if (((TagNode) n).getType() == TagNode.COANCHOR) { // coanchor
-                                                                  // node
+            // node
             coAnchors.add(n);
         }
         // in all cases we have to get through the children
@@ -485,7 +482,6 @@ public class TagTree implements Tree {
 
     /**
      * Method used to gather the lex items (for forest checking)
-     * 
      */
     public void lookupLex(Node n, List<String> lex) {
         TagNode nn = (TagNode) n;
@@ -566,7 +562,7 @@ public class TagTree implements Tree {
     }
 
     public static boolean checkFeat(String f, int fs, TagNode loc,
-            TagNode adj) {
+                                    TagNode adj) {
         boolean res = true;
         String localF = loc.getFeatVal(f, fs);
         String adjF = adj.getFeatVal(f, fs);
@@ -577,8 +573,8 @@ public class TagTree implements Tree {
     }
 
     public void computePsi(boolean auto_adj, Node n,
-            Hashtable<Object, LinkedList<Object>> psi, List<String> lpa2,
-            List<Object> lpa, Hashtable<Object, LinkedList<Object>> adjsets) {
+                           Hashtable<Object, LinkedList<Object>> psi, List<String> lpa2,
+                           List<Object> lpa, Hashtable<Object, LinkedList<Object>> adjsets) {
         /**
          * Computes the psi hashtable mapping nodes with adjoinable trees
          */
@@ -615,8 +611,8 @@ public class TagTree implements Tree {
                     if (adjids.contains(tid)) {
                         if (lpa.contains(tid)) {
                             if (nodeid.equals("0")) { // t is in the lpa =>
-                                                      // attaches to the root
-                                                      // node
+                                // attaches to the root
+                                // node
                                 AdjunctionSets.update(psi, tid, nodeid);
                             }
                         } else { // t is not in the lpa => attaches everywhere
@@ -663,69 +659,68 @@ public class TagTree implements Tree {
             }
         } else {
             switch (nn.getType()) {
-            case TagNode.FOOT: // foot node
-                nn.setCRange(new ArgContent(ArgContent.SEPARATOR, ","));
-                largs.add(nn.getCRange());
-                break;
-            case TagNode.SUBST: // subst node
-                nn.setSRange(new ArgContent(ArgContent.VAR,
-                        "S" + nn.getAddress(), ArgContent.SUBST_RANGE));
-                largs.add(nn.getSRange());
-                break;
-            case TagNode.LEX: // lex node
-                if (nn.getCategory() != null
-                        && !(nn.getCategory().equals(""))) {
-                    nn.setCRange(
-                            new ArgContent(ArgContent.TERM, nn.getCategory()));
+                case TagNode.FOOT: // foot node
+                    nn.setCRange(new ArgContent(ArgContent.SEPARATOR, ","));
                     largs.add(nn.getCRange());
-                }
-                break;
-            case TagNode.STD:
-                nn.setLRange(
-                        new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getLRange());
-                nn.setRRange(
-                        new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getRRange());
-                break;
-            // NB: after anchoring, anchor and coanchor should have children!
-            // for robustness, the cases are added
-            case TagNode.COANCHOR: // coanchor node
-                // if it hasn't been anchored, it means its daughter is an empty
-                // node
-                nn.setLRange(
-                        new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getLRange());
-                nn.setRRange(
-                        new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getRRange());
-                break;
-            case TagNode.ANCHOR:
-                nn.setLRange(
-                        new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getLRange());
-                nn.setRRange(
-                        new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
-                                nn.getAdjStatus(), nn.getCategory()));
-                largs.add(nn.getRRange());
-                break;
-            default: // skip (no-adj frontier nodes)
+                    break;
+                case TagNode.SUBST: // subst node
+                    nn.setSRange(new ArgContent(ArgContent.VAR,
+                            "S" + nn.getAddress(), ArgContent.SUBST_RANGE));
+                    largs.add(nn.getSRange());
+                    break;
+                case TagNode.LEX: // lex node
+                    if (nn.getCategory() != null
+                            && !(nn.getCategory().equals(""))) {
+                        nn.setCRange(
+                                new ArgContent(ArgContent.TERM, nn.getCategory()));
+                        largs.add(nn.getCRange());
+                    }
+                    break;
+                case TagNode.STD:
+                    nn.setLRange(
+                            new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getLRange());
+                    nn.setRRange(
+                            new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getRRange());
+                    break;
+                // NB: after anchoring, anchor and coanchor should have children!
+                // for robustness, the cases are added
+                case TagNode.COANCHOR: // coanchor node
+                    // if it hasn't been anchored, it means its daughter is an empty
+                    // node
+                    nn.setLRange(
+                            new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getLRange());
+                    nn.setRRange(
+                            new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getRRange());
+                    break;
+                case TagNode.ANCHOR:
+                    nn.setLRange(
+                            new ArgContent(ArgContent.VAR, "X" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getLRange());
+                    nn.setRRange(
+                            new ArgContent(ArgContent.VAR, "Y" + nn.getAddress(),
+                                    nn.getAdjStatus(), nn.getCategory()));
+                    largs.add(nn.getRRange());
+                    break;
+                default: // skip (no-adj frontier nodes)
             }
         }
     }
 
     /**
-     * @param predlabs
-     *            predlabs is an hashtable associating a node id with a complex
-     *            predicate
+     * @param predlabs predlabs is an hashtable associating a node id with a complex
+     *                 predicate
      */
     public void buildRHS(Node n, Hashtable<String, PredLabel> predlabs,
-            LinkedList<Predicate> preds) {
+                         LinkedList<Predicate> preds) {
         TagNode nn = (TagNode) n;
 
         if (predlabs.containsKey(nn.getAddress())) {
@@ -806,7 +801,7 @@ public class TagTree implements Tree {
         if (nn.getAddress() != null && nn.getAddress().equals(nodeId)) {
             // node found
             res.addFirst(((TagNode) n).getLabel()); // pointer to the Fs
-                                                    // labelling the node
+            // labelling the node
         } else { // node not found
             if (n.getChildren() != null) {
                 for (int i = 0; i < n.getChildren().size(); i++) {
@@ -833,7 +828,7 @@ public class TagTree implements Tree {
         for (Node n : lexNodes) {
             TagNode tn = (TagNode) n;
             String nCat = tn.getCategory(); // NB: lexical items are stored as
-                                            // cat values
+            // cat values
             if (!nCat.equals(""))
                 p.setPol(nCat, nCat, Polarities.MINUS);
         }
@@ -1009,9 +1004,9 @@ public class TagTree implements Tree {
         for (Node n : lexNodes) {
             TagNode tn = (TagNode) n;
             String nCat = tn.getCategory(); // NB: lexical items are stored as
-                                            // cat values
+            // cat values
             lex.add(nCat);
-	}
+        }
         return lex;
     }
 

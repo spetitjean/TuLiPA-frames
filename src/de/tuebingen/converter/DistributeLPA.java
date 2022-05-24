@@ -62,7 +62,7 @@
 //     	trees = dist.trees;
 //     	csp = new VarArray<IntVar>(this, share, dist.csp);
 //     }
-    
+
 //     public void postCstr(int[][] constr) {
 //     	for (int i = 0 ; i < trees ; i++) {
 //     		for (int j = 0 ; j < nodes ; j++) {
@@ -78,35 +78,35 @@
 
 //     public void doSearch(DistributeLPA s, LinkedList<Object> result){
 //     	DFSIterator<DistributeLPA> search = new DFSIterator<DistributeLPA>(s);
-    	
+
 //     	while (search.hasNext()) {
 //     		Space sol = (Space)search.next();
 //     		//System.out.println(sol.toString());
 //     		result.add(((DistributeLPA) sol).store());
 //     	}
 //     }
-    
+
 //     public int[][] store(){
 //     	int[][] res = new int[trees][nodes];
 //     	for (int i = 0; i < trees ; ++i) {
 //     		for (int j = 0 ; j < nodes ; ++j) 
 //     			res[i][j] = 0;
-	     
+
 //     		if (csp.get(i).assigned()) {
 //     			res[i][csp.get(i).val()] = 1;
 //     		}
 //     	}
 //     	return res;
 //     }
-    
+
 //     public String toString() {
 //     	String res = ""+trees+" X "+nodes+"\n";
-    	
+
 //     	for (int i = 0; i < trees ; i++) {
 //     		char[] l = new char[nodes];
 //     		for (int j = 0 ; j < nodes ; j++) 
 //     			l[j] = '0';
-	     
+
 //     		if (csp.get(i).assigned()) {
 //     			l[csp.get(i).val()] = '1';
 //     		} 
@@ -123,5 +123,5 @@
 //     	dist.doSearch(dist, solutions);
 //     	return solutions;
 //     }    
-	   
+
 // }

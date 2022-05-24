@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -38,85 +38,85 @@ import de.tuebingen.rcg.Argument;
 import de.tuebingen.rcg.RCG;
 
 public class ClauseKey implements Comparable<Object> {
-	
-	private int             cindex;
-	private List<Argument> arglist;
 
-	public ClauseKey(int i, List<Argument> la){
-		cindex  = i;
-		arglist = la;
-	}
-	
-	public ClauseKey(ClauseKey c){
-		cindex = c.getCindex();
-		arglist = new ArrayList<Argument>();
-		for(int i = 0 ; i < c.getArglist().size() ; i++){
-			arglist.add(c.getArglist().get(i));
-		}
-	}
+    private int cindex;
+    private List<Argument> arglist;
 
-	public int getCindex() {
-		return cindex;
-	}
+    public ClauseKey(int i, List<Argument> la) {
+        cindex = i;
+        arglist = la;
+    }
 
-	public void setCindex(int cindex) {
-		this.cindex = cindex;
-	}
+    public ClauseKey(ClauseKey c) {
+        cindex = c.getCindex();
+        arglist = new ArrayList<Argument>();
+        for (int i = 0; i < c.getArglist().size(); i++) {
+            arglist.add(c.getArglist().get(i));
+        }
+    }
 
-	public List<Argument> getArglist() {
-		return arglist;
-	}
+    public int getCindex() {
+        return cindex;
+    }
 
-	public void setArglist(List<Argument> arglist) {
-		this.arglist = arglist;
-	}
-	
-	public String getArgs() {
-		String res = "";
-		res += "(";
-		for(int i = 0 ; i < arglist.size() ; i++){
-			res += arglist.get(i)+" ";
-		}
-		res += " )";
-		return res;
-	}
+    public void setCindex(int cindex) {
+        this.cindex = cindex;
+    }
 
-	public int hashCode() {
-		return toString().hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		return this.hashCode() == o.hashCode();
-	}
-	
-	public int compareTo(Object o) {
-		if (o instanceof ClauseKey) {
-			int cindex2 = ((ClauseKey) o).cindex;
-			if (cindex2 > cindex) return -1;
-			if (cindex2 < cindex) return 1;
-		}
-		return 0;
-	}
-	
-	public String toString(){
-		String res="";
-		res += "Clause number "+ cindex +" instantiated with ( ";
-		for(int i = 0 ; i < arglist.size() ; i++){
-			res += arglist.get(i)+" ";
-		}
-		res += " )";
-		return res;
-	}
-	
-	public String toString(RCG g){
-		String res="";
-		res += "Clause "+ g.getClause(cindex) +" instantiated with ( ";
-		for(int i = 0 ; i < arglist.size() ; i++){
-			res += arglist.get(i)+" ";
-		}
-		res += " )";
-		return res;
-		
-	}
-	
+    public List<Argument> getArglist() {
+        return arglist;
+    }
+
+    public void setArglist(List<Argument> arglist) {
+        this.arglist = arglist;
+    }
+
+    public String getArgs() {
+        String res = "";
+        res += "(";
+        for (int i = 0; i < arglist.size(); i++) {
+            res += arglist.get(i) + " ";
+        }
+        res += " )";
+        return res;
+    }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
+
+    public int compareTo(Object o) {
+        if (o instanceof ClauseKey) {
+            int cindex2 = ((ClauseKey) o).cindex;
+            if (cindex2 > cindex) return -1;
+            if (cindex2 < cindex) return 1;
+        }
+        return 0;
+    }
+
+    public String toString() {
+        String res = "";
+        res += "Clause number " + cindex + " instantiated with ( ";
+        for (int i = 0; i < arglist.size(); i++) {
+            res += arglist.get(i) + " ";
+        }
+        res += " )";
+        return res;
+    }
+
+    public String toString(RCG g) {
+        String res = "";
+        res += "Clause " + g.getClause(cindex) + " instantiated with ( ";
+        for (int i = 0; i < arglist.size(); i++) {
+            res += arglist.get(i) + " ";
+        }
+        res += " )";
+        return res;
+
+    }
+
 }

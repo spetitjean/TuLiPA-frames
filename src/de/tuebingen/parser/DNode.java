@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -30,54 +30,57 @@
 package de.tuebingen.parser;
 
 public class DNode {
-	
-	private ClauseKey instantiation;
-	private DNode             other;
-	
-	public DNode(ClauseKey ck){
-		instantiation = ck;
-	}
-	
-	public void addDNode(ClauseKey ck) {
-		if (!instantiation.equals(ck)) {
-			if (other == null)
-				other = new DNode(ck);
-			else 
-				other.addDNode(ck);
-		}
-	}
-	
-	public boolean equals(DNode another) {
-		boolean res = instantiation.equals(another.getInstantiation());
-		if (other != null)
-			res &= other.equals(another);
-		return res;
-	}
-	
-	public boolean isAmbiguous() {
-		return (other != null);
-	}
-	
-	public ClauseKey getInstantiation() {
-		return instantiation;
-	}
-	public void setInstantiation(ClauseKey instantiation) {
-		this.instantiation = instantiation;
-	}
-	public DNode getDerivStep() {
-		return other;
-	}
-	public void setDerivStep(DNode derivStep) {
-		this.other = derivStep;
-	}
-	
-	public String toString() {
-		String res = "";
-		res += instantiation.getCindex();
-		res += instantiation.getArgs();
-		if (other != null)
-			res += " | " + other.toString();
-		return res;
-	}
-	
+
+    private ClauseKey instantiation;
+    private DNode other;
+
+    public DNode(ClauseKey ck) {
+        instantiation = ck;
+    }
+
+    public void addDNode(ClauseKey ck) {
+        if (!instantiation.equals(ck)) {
+            if (other == null)
+                other = new DNode(ck);
+            else
+                other.addDNode(ck);
+        }
+    }
+
+    public boolean equals(DNode another) {
+        boolean res = instantiation.equals(another.getInstantiation());
+        if (other != null)
+            res &= other.equals(another);
+        return res;
+    }
+
+    public boolean isAmbiguous() {
+        return (other != null);
+    }
+
+    public ClauseKey getInstantiation() {
+        return instantiation;
+    }
+
+    public void setInstantiation(ClauseKey instantiation) {
+        this.instantiation = instantiation;
+    }
+
+    public DNode getDerivStep() {
+        return other;
+    }
+
+    public void setDerivStep(DNode derivStep) {
+        this.other = derivStep;
+    }
+
+    public String toString() {
+        String res = "";
+        res += instantiation.getCindex();
+        res += instantiation.getArgs();
+        if (other != null)
+            res += " | " + other.toString();
+        return res;
+    }
+
 }

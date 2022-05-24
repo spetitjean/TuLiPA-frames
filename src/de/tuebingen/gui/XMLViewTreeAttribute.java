@@ -3,12 +3,12 @@
  *
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *
  *  Last modified:
- *	   Di 16. Okt 10:53:37 CEST 2007     
+ *	   Di 16. Okt 10:53:37 CEST 2007
  *
  *  This file is part of the TuLiPA system
  *     http://www.sfb441.uni-tuebingen.de/emmy-noether-kallmeyer/tulipa
@@ -29,13 +29,11 @@
  */
 package de.tuebingen.gui;
 
-public class XMLViewTreeAttribute
-{
+public class XMLViewTreeAttribute {
     String name;
     String value;
-    
-    public XMLViewTreeAttribute()
-    {
+
+    public XMLViewTreeAttribute() {
         name = "";
         value = "";
     }

@@ -4,7 +4,7 @@
  *  Authors:
  *     Johannes Dellert  <johannes.dellert@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
- *     
+ *
  *  Copyright:
  *     Johannes Dellert, 2007
  *     David Arps, 2017
@@ -149,11 +149,11 @@ public class XMLViewTree extends TreeView {
                     parent = treeNodes.get(nodes.get(j)).getParent();
                     xOffset = (int) (treeNodes.get(parent).x
                             + treeNodes.get(parent).subTreeWidth
-                                    * ((double) (treeNodes
-                                            .get(nodes.get(j)).subTreeWidth)
-                                            / treeNodes.get(parent).subTreeWidth
-                                            - 0.5)
-                                    * treeNodesDistance);
+                            * ((double) (treeNodes
+                            .get(nodes.get(j)).subTreeWidth)
+                            / treeNodes.get(parent).subTreeWidth
+                            - 0.5)
+                            * treeNodesDistance);
                 }
                 if (i > 0) {
                     treeNodes.get(nodes.get(j)).x = xOffset - subtreeWidth / 2;

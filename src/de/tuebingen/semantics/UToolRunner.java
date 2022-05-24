@@ -42,7 +42,7 @@ public class UToolRunner {
 
             // System.setProperty( "file.encoding", "UTF-8" ); // not needed
 
-            String[] args = { "solve", "-O", "term-prolog", "./temp.clls" };
+            String[] args = {"solve", "-O", "term-prolog", "./temp.clls"};
             utoolMain(args);
             String[] output = outputWriter.toString().split("---");
             tempFile.delete();

@@ -228,7 +228,7 @@ public class RRGParser {
                 }
             }
         }
-        if(fillerItem) {
+        if (fillerItem) {
             System.out.println("Got to internal wrapping not implemented second case!!!" + currentItem);
         }
     }

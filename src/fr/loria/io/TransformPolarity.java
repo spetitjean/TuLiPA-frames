@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -52,30 +52,30 @@ import de.tuebingen.util.MyEntityResolver;
 
 
 public class TransformPolarity {
-	
-	public void xsltprocess(String[] args) throws TransformerException, TransformerConfigurationException, FileNotFoundException, IOException {
-	    // 1. Instantiate a TransformerFactory.
-	    SAXTransformerFactory tFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
-	    
-	    // 2. Use the TransformerFactory to process the stylesheet Source and
-	    //    generate a Transformer.
-	    InputStream is = getClass().getResourceAsStream("xmg2pol.xsl");
-	    Transformer transformer = tFactory.newTransformer (new StreamSource(is));
-	    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "polarities.dtd,xml");
-	    transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
-	    
-	    // 3. Use the Transformer to transform an XML Source and send the
-	    //    output to a Result object.
-	    try {
-		    String input = args[0];
-		    String output= args[1];
-		    SAXSource saxs = new SAXSource(new InputSource(input));
-			XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-			saxReader.setEntityResolver(new MyEntityResolver());
-			saxs.setXMLReader(saxReader);
-		    transformer.transform(saxs, new StreamResult(new OutputStreamWriter(new FileOutputStream(output), "utf-8")));
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-	}
+
+    public void xsltprocess(String[] args) throws TransformerException, TransformerConfigurationException, FileNotFoundException, IOException {
+        // 1. Instantiate a TransformerFactory.
+        SAXTransformerFactory tFactory = (SAXTransformerFactory) TransformerFactory.newInstance();
+
+        // 2. Use the TransformerFactory to process the stylesheet Source and
+        //    generate a Transformer.
+        InputStream is = getClass().getResourceAsStream("xmg2pol.xsl");
+        Transformer transformer = tFactory.newTransformer(new StreamSource(is));
+        transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "polarities.dtd,xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+
+        // 3. Use the Transformer to transform an XML Source and send the
+        //    output to a Result object.
+        try {
+            String input = args[0];
+            String output = args[1];
+            SAXSource saxs = new SAXSource(new InputSource(input));
+            XMLReader saxReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+            saxReader.setEntityResolver(new MyEntityResolver());
+            saxs.setXMLReader(saxReader);
+            transformer.transform(saxs, new StreamResult(new OutputStreamWriter(new FileOutputStream(output), "utf-8")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

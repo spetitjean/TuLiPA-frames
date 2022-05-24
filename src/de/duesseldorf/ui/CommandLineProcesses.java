@@ -5,7 +5,7 @@
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
- *         
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -16,7 +16,7 @@
  *
  *  This file is part of the TuLiPA-frames system
  *     https://github.com/spetitjean/TuLiPA-frames
- *     
+ *
  *  TuLiPA is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -217,7 +217,6 @@ public class CommandLineProcesses {
     }
 
     /**
-     * 
      * @return
      */
     public static String printHelp() {
@@ -230,7 +229,6 @@ public class CommandLineProcesses {
     }
 
     /**
-     * 
      * @return returns user information about TuLiPa
      */
     public static String printUsage() {

@@ -5,7 +5,7 @@
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *     David Arps, 2017
@@ -83,23 +83,20 @@ public class TreeSelector {
     private List<Word> tokens; // tokens (as Words)
     private List<Tuple> anctuples; // anchored tuples
     private Map<String, TagTree> treeHash; // dictionary to retrieve anchored
-                                           // trees at forest processing time
+    // trees at forest processing time
     private Map<String, List<String>> tupleHash; // dictionary mapping a tuple
-                                                 // id with tree ids
+    // id with tree ids
     private List<PolarizedToken> ptokens; // polarized tokens (for lexical
-                                          // disambiguation)
+    // disambiguation)
     private List<String> lexNodes; // lexical items in the trees (for polarity
-                                   // computation)
+    // computation)
     private Map<String, List<String>> coancNodes; // coanchors in the trees (for
-                                                  // polarity computation)
+    // polarity computation)
     private Map<String, Integer> ambiguity;
 
     /**
-     * 
-     * @param w
-     *            list of words
-     * @param v
-     *            verbose mode?
+     * @param w list of words
+     * @param v verbose mode?
      */
     public TreeSelector(List<Word> w, boolean v) {
         verbose = v;
@@ -140,18 +137,14 @@ public class TreeSelector {
     }
 
     /**
-     * 
-     * @param lm
-     *            lm is a mapping between a morph name and morph entries
-     * @param ll
-     *            is a mapping between a tuple name and tuple entries
-     * @param lt
-     *            is where to store the semantic labels
+     * @param lm      lm is a mapping between a morph name and morph entries
+     * @param ll      is a mapping between a tuple name and tuple entries
+     * @param lt      is where to store the semantic labels
      * @param slabels
      */
     public void retrieve(Map<String, List<MorphEntry>> lm,
-            Map<String, List<Lemma>> ll, Map<String, List<Tuple>> lt,
-            List<String> slabels) {
+                         Map<String, List<Lemma>> ll, Map<String, List<Tuple>> lt,
+                         List<String> slabels) {
         for (int i = 0; i < tokens.size(); i++) {
             String s = tokens.get(i).getWord();
             ambiguity.put(s, 0); // init
@@ -174,8 +167,8 @@ public class TreeSelector {
     }
 
     private void retrieveLemma(PolarizedToken ptk, InstantiatedMorph m,
-            Map<String, List<Lemma>> ll, Map<String, List<Tuple>> lt,
-            List<String> slabels) {
+                               Map<String, List<Lemma>> ll, Map<String, List<Tuple>> lt,
+                               List<String> slabels) {
 
         // m is a morph entry coupled with a lexical item from the input
         // sentence
@@ -235,7 +228,7 @@ public class TreeSelector {
     }
 
     private void retrieveTuples(PolarizedLemma plm, InstantiatedLemma il,
-            Map<String, List<Tuple>> lt, List<String> slabels) {
+                                Map<String, List<Tuple>> lt, List<String> slabels) {
 
         // il is a lemma entry coupled with the lemma reference from the input
         // morph
@@ -342,21 +335,21 @@ public class TreeSelector {
                         .getTreesByFamily(family);
                 // consider all trees for the family currently relevant
                 for (RRGTree tree : treesInTheFamily) {
-		    tree = new RRGTree(tree);
+                    tree = new RRGTree(tree);
                     boolean match = true;
-                    RRGNode anchorNode = tree.getAnchorNode();		    
+                    RRGNode anchorNode = tree.getAnchorNode();
                     if (anchorNode != null) {
                         try {
                             Fs morphAncFS = new Fs();
                             morphAncFS.replaceFeat("cat",
                                     new Value(Value.Kind.VAL, il.getCat()));
                             Fs treeAncFS = anchorNode.getNodeFs();
-			    Environment e = new Environment(5); 
-			    Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
+                            Environment e = new Environment(5);
+                            Fs anchorFS = FsTools.unify(morphAncFS, treeAncFS,
                                     e);
-			    // anchorNode.getNodeFs().removeCategory();
+                            // anchorNode.getNodeFs().removeCategory();
 
-			    // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
+                            // anchorNode.getNodeFs().setFeatWithoutReplace("cat",
                             // new Value(Value.Kind.VAL,
                             // anchorFS.getCategory()));
                         } catch (UnifyException e) {
@@ -366,58 +359,56 @@ public class TreeSelector {
                         if (match) {
                             // build an RRGNode and attach it below the anchor
                             // node
-			    List<Tuple> allLexSem = new LinkedList();
-			    // Trying to retrieve the frame information
-			    if(la.get(k).getSemantics().size() >0){
-				// get all frames of the semantic class associated to the lemma
-				if (Situation.getFrameGrammar() != null){
-				    allLexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass());
-				}
-				else{
-				    System.err.println("Warning: could not retrieve frames associated to lemma (no frame grammar given)");
-				}
-			    }
-			    if (allLexSem.size() >0){
-				// allLexSem contains all possible frames paired with this tree
-				// -> for each frame, create an instance of the tree
-				for (Tuple oneLexSem: allLexSem){
-				    NameFactory nf = new NameFactory();
-				    Environment env = new Environment(5);
-				    Frame oneFrame = new Frame(oneLexSem.getHead().getFrameSem(),nf);
-				    //RRGTree oneTree = new RRGTree(tree);
-				    RRGTree oneTree = tree.getInstance();
-				    // we got the frames
-				    // now we need the interface from the tree and the interface from the frame
-				    // unify both interfaces
-				    // update all variables to link syntactic and semantic arguments
-				    Fs frameIface = new Fs(oneLexSem.getHead().getIface(),nf);
-				    // let us give different names to the trees depending on the frames
-				    oneTree.setId(oneTree.getId()+"+"+oneLexSem.getId());
-				    try{
-					FsTools.unify(frameIface,
-						      oneTree.getIface(), env);
-					oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
-					//oneTree.setFrameSem(oneFrame);
-					oneTree.getFrameSem().addOtherFrame(oneFrame);
-					anchorRRG(il, oneTree, env);
-				    }
-				    catch (UnifyException e) {
-					// System.err.println("\nUnification of the interfaces failed:\nFrame interface:");
-					// System.err.println(frameIface);
-					// System.err.println("Tree interface:");
-					// System.err.println(oneTree.getIface());
-					System.err.println("\n-----------------------\nTree "+oneTree.getId()+" dropped (incompatible interfaces in tree and frame)");
-				    }   
-				}
+                            List<Tuple> allLexSem = new LinkedList();
+                            // Trying to retrieve the frame information
+                            if (la.get(k).getSemantics().size() > 0) {
+                                // get all frames of the semantic class associated to the lemma
+                                if (Situation.getFrameGrammar() != null) {
+                                    allLexSem = Situation.getFrameGrammar().getGrammar().get(la.get(k).getSemantics().get(0).getSemclass());
+                                } else {
+                                    System.err.println("Warning: could not retrieve frames associated to lemma (no frame grammar given)");
+                                }
+                            }
+                            if (allLexSem.size() > 0) {
+                                // allLexSem contains all possible frames paired with this tree
+                                // -> for each frame, create an instance of the tree
+                                for (Tuple oneLexSem : allLexSem) {
+                                    NameFactory nf = new NameFactory();
+                                    Environment env = new Environment(5);
+                                    Frame oneFrame = new Frame(oneLexSem.getHead().getFrameSem(), nf);
+                                    //RRGTree oneTree = new RRGTree(tree);
+                                    RRGTree oneTree = tree.getInstance();
+                                    // we got the frames
+                                    // now we need the interface from the tree and the interface from the frame
+                                    // unify both interfaces
+                                    // update all variables to link syntactic and semantic arguments
+                                    Fs frameIface = new Fs(oneLexSem.getHead().getIface(), nf);
+                                    // let us give different names to the trees depending on the frames
+                                    oneTree.setId(oneTree.getId() + "+" + oneLexSem.getId());
+                                    try {
+                                        FsTools.unify(frameIface,
+                                                oneTree.getIface(), env);
+                                        oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
+                                        //oneTree.setFrameSem(oneFrame);
+                                        oneTree.getFrameSem().addOtherFrame(oneFrame);
+                                        anchorRRG(il, oneTree, env);
+                                    } catch (UnifyException e) {
+                                        // System.err.println("\nUnification of the interfaces failed:\nFrame interface:");
+                                        // System.err.println(frameIface);
+                                        // System.err.println("Tree interface:");
+                                        // System.err.println(oneTree.getIface());
+                                        System.err.println("\n-----------------------\nTree " + oneTree.getId() + " dropped (incompatible interfaces in tree and frame)");
+                                    }
+                                }
 
-			    }
-			    // there is no frame to be paired with this tree, anchor it 
-			    else{
-				Environment env = new Environment(5);
-				//tree.setFrameSem(new Frame());
-				//System.out.println("Anchoring "+il);
-				anchorRRG(il, tree, env);
-			    }
+                            }
+                            // there is no frame to be paired with this tree, anchor it
+                            else {
+                                Environment env = new Environment(5);
+                                //tree.setFrameSem(new Frame());
+                                //System.out.println("Anchoring "+il);
+                                anchorRRG(il, tree, env);
+                            }
 
                         }
                     }
@@ -441,78 +432,76 @@ public class TreeSelector {
     }
 
 
-    private void anchorRRG(InstantiatedLemma il, RRGTree tree, Environment env){
-	RRGNode anchorNode = tree.getAnchorNode();
-	RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
-	    .name(il.getCat())
-	    .cat(il.getLexItem().getLex())
-	    .type(RRGNodeType.LEX)
-	    .gornaddress(anchorNode.getGornaddress()
-			 .ithDaughter(0));
-	// System.out.println("anchor: " + anchorNode);
-	// System.out.println("lex: " +
-	// lexnodeBuilder.build());
-	RRGNode lexNode = lexnodeBuilder.build();
-	//System.out.println(tree);
-	try{
-	    // lexNode.setNodeFs(
-	    // 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
-	    //     new Environment(5))
-	    // 		  );
+    private void anchorRRG(InstantiatedLemma il, RRGTree tree, Environment env) {
+        RRGNode anchorNode = tree.getAnchorNode();
+        RRGNode.Builder lexnodeBuilder = new RRGNode.Builder()
+                .name(il.getCat())
+                .cat(il.getLexItem().getLex())
+                .type(RRGNodeType.LEX)
+                .gornaddress(anchorNode.getGornaddress()
+                        .ithDaughter(0));
+        // System.out.println("anchor: " + anchorNode);
+        // System.out.println("lex: " +
+        // lexnodeBuilder.build());
+        RRGNode lexNode = lexnodeBuilder.build();
+        //System.out.println(tree);
+        try {
+            // lexNode.setNodeFs(
+            // 		  FsTools.unify(lexNode.getNodeFs() , il.getLref().getFeatures(),
+            //     new Environment(5))
+            // 		  );
 
 
-	    Hashtable catTable = new Hashtable<String, Value>();
-	    catTable.put(new String("cat"), new Value(Value.Kind.VAL, il.getCat()));
-	    Fs catFs = new Fs(catTable);
-	    
-	    
-	    anchorNode.setNodeFs(
-				 FsTools.unify(anchorNode.getNodeFs() , il.getLref().getFeatures(),
-					       env)
-				 );
-	    
+            Hashtable catTable = new Hashtable<String, Value>();
+            catTable.put(new String("cat"), new Value(Value.Kind.VAL, il.getCat()));
+            Fs catFs = new Fs(catTable);
 
-	    ((RRGNode)tree.getRoot()).updateFS(env,false);
-	    RRGTree anchoredTree = new RRGTree(tree);
-	    anchoredTree
-		.addLexNodeToAnchor(lexNode);
 
-	    System.out.println(anchoredTree);
-	    
-	    // add the cat of the lemma (in case it is a variable in the tree)
-	    // This works but does not propagate, we need to create a Fs cat=il.getCat() and unify it with the Fs of the lemma
+            anchorNode.setNodeFs(
+                    FsTools.unify(anchorNode.getNodeFs(), il.getLref().getFeatures(),
+                            env)
+            );
 
-	    // problem: the category (shared variable) is not in the tree. Is it removed? 
-	    
-	    // il.getLref().getFeatures().replaceFeat("cat",
+
+            ((RRGNode) tree.getRoot()).updateFS(env, false);
+            RRGTree anchoredTree = new RRGTree(tree);
+            anchoredTree
+                    .addLexNodeToAnchor(lexNode);
+
+            System.out.println(anchoredTree);
+
+            // add the cat of the lemma (in case it is a variable in the tree)
+            // This works but does not propagate, we need to create a Fs cat=il.getCat() and unify it with the Fs of the lemma
+
+            // problem: the category (shared variable) is not in the tree. Is it removed?
+
+            // il.getLref().getFeatures().replaceFeat("cat",
             //                         new Value(Value.Kind.VAL, il.getCat()));
-	    anchoredTree.getAnchorNode().setNodeFs(
-				 FsTools.unify(anchorNode.getNodeFs() , catFs,
-					       env)
-				 );	    
+            anchoredTree.getAnchorNode().setNodeFs(
+                    FsTools.unify(anchorNode.getNodeFs(), catFs,
+                            env)
+            );
 
 
-	    
-	    ((RRGNode)anchoredTree.getRoot()).updateFS(env,false);
-	    System.err.println("\n-----------------------\nAdded tree "+tree);
-	    // anchoredTree
-	    //         .addLexNodeToAnchor(lexnodeBuilder.build());
-	    // System.out.println("ts RRG orig tree: " + tree);
-	    // System.out.println("ts RRG anch tree: " +
-	    // anchoredTree);
-	    ((RRG) Situation.getGrammar()).addAnchoredTree(anchoredTree);
-	    // System.err.println("Tree after updates: ");
-	    // System.err.println(anchoredTree);
-	    
-	}
-	catch (UnifyException e) {
-	    e.printStackTrace();
-	    System.err.println("Anchoring failed");
-	    System.err.println(anchorNode.getNodeFs());
-	    System.err.println(il.getLref().getFeatures());
+            ((RRGNode) anchoredTree.getRoot()).updateFS(env, false);
+            System.err.println("\n-----------------------\nAdded tree " + tree);
+            // anchoredTree
+            //         .addLexNodeToAnchor(lexnodeBuilder.build());
+            // System.out.println("ts RRG orig tree: " + tree);
+            // System.out.println("ts RRG anch tree: " +
+            // anchoredTree);
+            ((RRG) Situation.getGrammar()).addAnchoredTree(anchoredTree);
+            // System.err.println("Tree after updates: ");
+            // System.err.println(anchoredTree);
 
-	}   
-	
+        } catch (UnifyException e) {
+            e.printStackTrace();
+            System.err.println("Anchoring failed");
+            System.err.println(anchorNode.getNodeFs());
+            System.err.println(il.getLref().getFeatures());
+
+        }
+
     }
 
     /**
@@ -547,7 +536,7 @@ public class TreeSelector {
      * frameid is the number of the frame we are considering
      */
     private InstantiatedTuple anchor(PolarizedLemma plm, InstantiatedTuple t,
-            int i, List<String> slabels, int frameid)
+                                     int i, List<String> slabels, int frameid)
             throws AnchoringException {
 
         if (verbose)
@@ -629,7 +618,7 @@ public class TreeSelector {
                         + tt.getId() + " for filter " + ancfs.toString());
                 System.err.println(e);
                 throw new AnchoringException(); // we withdraw the current
-                                                // anchoring
+                // anchoring
             }
         } else if (ancfs == null) {
             uniface = iface;
@@ -656,7 +645,7 @@ public class TreeSelector {
                                 + " for equation " + eq.toString());
                 System.err.println(e);
                 throw new AnchoringException(); // we withdraw the current
-                                                // anchoring
+                // anchoring
             }
             if (tl != null) {
                 for (int k = 0; k < tl.size(); k++) {
@@ -670,7 +659,7 @@ public class TreeSelector {
                                 + eq.toString());
                         System.err.println(e);
                         throw new AnchoringException(); // we withdraw the
-                                                        // current anchoring
+                        // current anchoring
                     }
                 }
             }
@@ -679,7 +668,7 @@ public class TreeSelector {
                         + tt.getOriginalId() + " for equation " + eq.toString()
                         + " (node not found)");
                 throw new AnchoringException(); // we withdraw the current
-                                                // anchoring
+                // anchoring
             }
         }
         // System.err.println(" (after equation processing)");
@@ -777,7 +766,7 @@ public class TreeSelector {
                     // System.out.println("Fresh interface: "+frameInterface);
                     frameSem.addOtherFrame(new FrameUpdater(
                             tlist.get(frameid).getHead().getFrameSem(), nf)
-                                    .rename());
+                            .rename());
                     // System.out.println("Old Frame:
                     // "+tlist.get(frameid).getHead().getFrameSem());
                     // System.out.println("Fresh Frame: "+frameSem);
@@ -788,7 +777,7 @@ public class TreeSelector {
                                 + tt.getOriginalId());
                         System.err.println(e);
                         throw new AnchoringException(); // we withdraw the
-                                                        // current anchoring
+                        // current anchoring
                     }
                 }
             }
@@ -800,7 +789,7 @@ public class TreeSelector {
                                 tlist.get(frameid).getHead().getIface(), nf);
                         tt.setFrameSem(new FrameUpdater(
                                 tlist.get(frameid).getHead().getFrameSem(), nf)
-                                        .rename());
+                                .rename());
                         try {
                             tt.updateFS(tt.getRoot(), env, false);
                         } catch (UnifyException e) {
@@ -809,7 +798,7 @@ public class TreeSelector {
                                             + tt.getOriginalId());
                             System.err.println(e);
                             throw new AnchoringException(); // we withdraw the
-                                                            // current anchoring
+                            // current anchoring
                         }
                     }
                 }
@@ -933,7 +922,7 @@ public class TreeSelector {
                                         + lemmaSem.get(k).toString());
                         System.err.println(e);
                         throw new AnchoringException(); // we withdraw the
-                                                        // current anchoring
+                        // current anchoring
                     }
                 }
             }
@@ -961,7 +950,7 @@ public class TreeSelector {
                             + tl.get(j).getOriginalId());
                     System.err.println(e);
                     throw new AnchoringException(); // we withdraw the current
-                                                    // anchoring
+                    // anchoring
                 }
             }
         }
@@ -1031,7 +1020,7 @@ public class TreeSelector {
                 lex.setType(TagNode.LEX); // lex node
                 lex.setCategory(CoAnc.getCategory()); // the word
                 lex.setAddress(CoAnc.getAddress() + ".1"); // Gorn
-                                                           // address
+                // address
                 ch.add(lex);
                 CoAnc.setChildren(ch);
             }

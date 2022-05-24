@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -39,83 +39,82 @@ import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 /**
- * 
  * @author parmenti
- *
  */
 public class XMLMorphReader extends FileReader {
 
-	private File morphFile;
-	static Document morphDoc;	
+    private File morphFile;
+    static Document morphDoc;
 
-	public XMLMorphReader(File morph) throws FileNotFoundException {
-		/**
-		 * Generate a parser for an XML file containing an XMG MC-TAG grammar
-		 * 
-		 * @param grammar
-		 *            the XML file
-		 */
-		super(morph);
-		this.morphFile = morph;
-		morphDoc = XMLUtilities.parseXMLFile(morphFile, false);		
-	}			
+    public XMLMorphReader(File morph) throws FileNotFoundException {
+        /**
+         * Generate a parser for an XML file containing an XMG MC-TAG grammar
+         *
+         * @param grammar
+         *            the XML file
+         */
+        super(morph);
+        this.morphFile = morph;
+        morphDoc = XMLUtilities.parseXMLFile(morphFile, false);
+    }
 
-	public Map<String, List<MorphEntry>> getMorphs(){
-		Map<String, List<MorphEntry>> morphs = new HashMap<String, List<MorphEntry>>();
-	
-		Element root = morphDoc.getDocumentElement();  		
-		NodeList l = root.getElementsByTagName("morphs");
-		Element e = (Element) l.item(0);
-		NodeList ll = e.getChildNodes();
-			
-		for (int i=0; i < ll.getLength(); i++) {
-			Node n = ll.item(i);			
-			// according to the DTD, the XML chidlren
-			// of tag is morph
-			if (n.getNodeType() == Node.ELEMENT_NODE) {				
-				Element el = (Element) n;
-				if (el.getTagName().equals("morph")) {
-					String lex = el.getAttribute("lex");
-					MorphEntry mo = new MorphEntry(lex);
-					mo.setLemmarefs(getLemmarefs(el));
-					
-					List<MorphEntry> lme = morphs.get(mo.getLex());
-					if (lme == null) {
-						lme = new LinkedList<MorphEntry>();
-					}
-					lme.add(mo);
-					morphs.put(mo.getLex(), lme);
-				}
-			}
-		}
-		return morphs;
-	}
-		
-	public static List<Lemmaref> getLemmarefs(Element e){
-		List<Lemmaref> lrefs = new LinkedList<Lemmaref>();
-		
-		NodeList l = e.getChildNodes();
-		
-		for (int i=0 ; i < l.getLength() ; i++){
-			Node n = l.item(i);
-			if (n.getNodeType() == Node.ELEMENT_NODE) {				
-				Element el = (Element) n;
-				if (el.getTagName().equals("lemmaref")){
-					String name = el.getAttribute("name");
-					String cat  = el.getAttribute("cat");
-					Lemmaref lref = new Lemmaref(name, cat);
-					lref.setFeatures(XMLGrammarReadingTools.getNarg(el, XMLTTMCTAGReader.FROM_OTHER, new NameFactory()));
-					lrefs.add(lref);
-				}
-			}					
-		}
-		return lrefs;
-	}
+    public Map<String, List<MorphEntry>> getMorphs() {
+        Map<String, List<MorphEntry>> morphs = new HashMap<String, List<MorphEntry>>();
+
+        Element root = morphDoc.getDocumentElement();
+        NodeList l = root.getElementsByTagName("morphs");
+        Element e = (Element) l.item(0);
+        NodeList ll = e.getChildNodes();
+
+        for (int i = 0; i < ll.getLength(); i++) {
+            Node n = ll.item(i);
+            // according to the DTD, the XML chidlren
+            // of tag is morph
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) n;
+                if (el.getTagName().equals("morph")) {
+                    String lex = el.getAttribute("lex");
+                    MorphEntry mo = new MorphEntry(lex);
+                    mo.setLemmarefs(getLemmarefs(el));
+
+                    List<MorphEntry> lme = morphs.get(mo.getLex());
+                    if (lme == null) {
+                        lme = new LinkedList<MorphEntry>();
+                    }
+                    lme.add(mo);
+                    morphs.put(mo.getLex(), lme);
+                }
+            }
+        }
+        return morphs;
+    }
+
+    public static List<Lemmaref> getLemmarefs(Element e) {
+        List<Lemmaref> lrefs = new LinkedList<Lemmaref>();
+
+        NodeList l = e.getChildNodes();
+
+        for (int i = 0; i < l.getLength(); i++) {
+            Node n = l.item(i);
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element el = (Element) n;
+                if (el.getTagName().equals("lemmaref")) {
+                    String name = el.getAttribute("name");
+                    String cat = el.getAttribute("cat");
+                    Lemmaref lref = new Lemmaref(name, cat);
+                    lref.setFeatures(XMLGrammarReadingTools.getNarg(el, XMLTTMCTAGReader.FROM_OTHER, new NameFactory()));
+                    lrefs.add(lref);
+                }
+            }
+        }
+        return lrefs;
+    }
 
 }

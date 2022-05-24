@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *
@@ -36,27 +36,27 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class MyEntityResolver implements EntityResolver {
-	
-	public InputSource resolveEntity(String publicId, String systemId) throws SAXException { 
-		//System.out.println("DTD: "+systemId);
-		if (systemId.endsWith("xmg-mctag.dtd,xml")) {
-			InputStream is = getClass().getResourceAsStream("xmg-mctag.dtd,xml");
-			return new InputSource(is);
-		} else if (systemId.endsWith("xmg-tag.dtd,xml")) {
-			InputStream is = getClass().getResourceAsStream("xmg-tag.dtd,xml");
-			return new InputSource(is);
-		} else if (systemId.endsWith("tulipa-forest.dtd,xml")) {
-			InputStream is = getClass().getResourceAsStream("tulipa-forest.dtd,xml");
-			return new InputSource(is);
-		} else if (systemId.endsWith("rcg.dtd,xml")) {
-			InputStream is = getClass().getResourceAsStream("rcg.dtd,xml");
-			return new InputSource(is);
-		} else if (systemId.endsWith("polarities.dtd,xml")) {
-			InputStream is = getClass().getResourceAsStream("polarities.dtd,xml");
-			return new InputSource(is);
-		} else {
-			return null;
-		}
-	}
+
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+        //System.out.println("DTD: "+systemId);
+        if (systemId.endsWith("xmg-mctag.dtd,xml")) {
+            InputStream is = getClass().getResourceAsStream("xmg-mctag.dtd,xml");
+            return new InputSource(is);
+        } else if (systemId.endsWith("xmg-tag.dtd,xml")) {
+            InputStream is = getClass().getResourceAsStream("xmg-tag.dtd,xml");
+            return new InputSource(is);
+        } else if (systemId.endsWith("tulipa-forest.dtd,xml")) {
+            InputStream is = getClass().getResourceAsStream("tulipa-forest.dtd,xml");
+            return new InputSource(is);
+        } else if (systemId.endsWith("rcg.dtd,xml")) {
+            InputStream is = getClass().getResourceAsStream("rcg.dtd,xml");
+            return new InputSource(is);
+        } else if (systemId.endsWith("polarities.dtd,xml")) {
+            InputStream is = getClass().getResourceAsStream("polarities.dtd,xml");
+            return new InputSource(is);
+        } else {
+            return null;
+        }
+    }
 
 }

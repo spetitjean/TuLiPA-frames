@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier <parmenti@loria.fr>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -35,7 +35,7 @@
 // import java.util.LinkedList;
 // import java.util.List;
 // import java.util.Map;
-		 
+
 // import org.gecode.*;
 
 // import de.tuebingen.util.Pair;
@@ -45,7 +45,7 @@
 
 // @SuppressWarnings("restriction")
 // public class ConstraintVectorSolving extends org.gecode.Space {
-	
+
 // 	public int rows;                                // number of rows
 // 	public int columns;                             // number of columns
 // 	public VarArray<IntVar> table;                  // the table
@@ -60,7 +60,7 @@
 // 		this.rows    = r;
 // 		this.columns = c;
 // 	}
-	
+
 // 	public ConstraintVectorSolving(Boolean share, ConstraintVectorSolving csp) {
 // 		// sharing" constructor needed by Gecode, cf documentation
 // 		super(share, csp);
@@ -74,14 +74,14 @@
 // 		List<Constraint> lc = cv.getConstraints();
 // 		Pair bounds = cv.getBounds();
 // 		Map<Object, Object> bound2int = (Map<Object, Object>) bounds.getKey();
-		
+
 // 		//System.err.println("## Vect: " + cv.print());
 // 		//System.err.println("## Map: " + ConstraintVectorSolving.printMaps(bound2int));
-		
+
 // 		for (Constraint c : lc) {
-			
+
 // 			//System.err.println("## Posting c: " + c.toString());
-			
+
 // 			int type = c.getType();
 // 			String arg1 = c.getArg1();
 // 			String arg2 = c.getArg2();
@@ -143,18 +143,18 @@
 // 		// branching instruction needed by Gecode, cf doc
 // 		branch(this, table, INT_VAR_SIZE_MIN, INT_VAL_MIN);
 // 	}
-		 
+
 // 	public void searchAll(ConstraintVectorSolving s, List<int[][]> sols) {
 // 		// searches for solutions in a deep-first search (DFS)
 // 		DFSIterator<ConstraintVectorSolving> search = new DFSIterator<ConstraintVectorSolving>(s);
-				
+
 // 		//To inspect the solutions with the GUI, uncomment below:
 // 		//Gist gist = new Gist(s, false);
 // 		//gist.exploreAll();
 
 // 		// for counting the number of solutions
 // 		int nbsol = 0;
-			
+
 // 		while (search.hasNext()) {
 // 			Space sol = (Space)search.next();
 // 			//System.err.println(sol.toString());
@@ -163,29 +163,29 @@
 // 		}
 // 		System.err.println("There are "+nbsol+" solutions.");
 // 	}
-	
+
 // 	public int[][] storeSol(){
 // 		int[][] res = new int[rows][columns];
 // 		for (int i = 0; i < rows ; ++i) {
 // 			for (int j = 0 ; j < columns ; ++j)
 // 				res[i][j] = -1;
-				
+
 // 			if (table.get(i).assigned()) { // a value has been computed
 // 				res[i][table.get(i).val()] = 1;
 // 			} 
 // 		}
 // 		return res;
 // 	}
-	
+
 // 	public String toString() {
 // 		// prints the table solutions in sdtout
 // 		String res = "";
-		
+
 // 		for (int i = 0; i < rows ; ++i) {
 // 			char[] l = new char[columns];
 // 			for (int j = 0 ; j < columns ; ++j) 
 // 				l[j] = '\u00B7';
-		     
+
 // 			if (table.get(i).assigned()) { // a value has been computed
 // 				l[table.get(i).val()] = '1';
 // 		    } else { // the search space has been narrowed
@@ -195,21 +195,21 @@
 // 		    		for (int j : r)
 // 		    			l[j] = 'q';
 // 		   	}
-		     	
+
 // 			res += new String(l);
 // 			res += "\n";
 // 		}
 // 		return res;
 // 	}
-	
-	
+
+
 // 	public static boolean getPartial(boolean verbose, ConstraintVector cv, ConstraintVectorSolving s) {
 // 		// method used to get partial results to a constraint vector
 // 		// in practice, it searches for the root of the search tree
 // 		// this root encodes pre-computed values of variables (the one that are known)
 // 		// and leaves the others underspecified
 // 		DFSIterator<ConstraintVectorSolving> search = new DFSIterator<ConstraintVectorSolving>(s);
-		
+
 // 		boolean res = false;
 // 		// displays a string for now, will return the constraint vector cv updated
 // 		if (search.hasNext()) { 
@@ -223,7 +223,7 @@
 // 		return res;
 // 	}
 
-	
+
 // 	// NB: extend add constraints to the current vector while decode creates a new vector 
 // 	// for each solution that has been computed!
 // 	@SuppressWarnings("unchecked")
@@ -246,7 +246,7 @@
 // 		if (k>=0 && verbose) System.err.println(toShow);
 // 	}
 
-	
+
 // 	@SuppressWarnings("unchecked")
 // 	public static ConstraintVector decode(boolean verbose, ConstraintVector cv, int[][] sol, int k) {
 // 		ConstraintVector res = new ConstraintVector(cv);
@@ -270,20 +270,20 @@
 // 		if (k>=0 && verbose) System.err.println(toShow);
 // 		return res;
 // 	}
-	
+
 // 	public boolean hasSolution(ConstraintVectorSolving s) {
 // 		// searches for solutions in a deep-first search (DFS)
 // 		DFSIterator<ConstraintVectorSolving> search = new DFSIterator<ConstraintVectorSolving>(s);
 // 		return search.hasNext();
 // 	}
-		     
+
 // 	public static boolean hasSol(boolean verbose, ConstraintVector cv) {
 // 		ConstraintVectorSolving csp = new ConstraintVectorSolving(cv.getNbOfCstBounds(), cv.getSentence_length()+1);
 // 		// post the constraints
 // 		csp.postCst(cv);
 // 		return getPartial(verbose, cv, csp);
 // 	}
-		 
+
 // 	public static List<int[][]> computeSol(ConstraintVector cv) {
 // 		// method computing all solutions to the CSP
 // 		LinkedList<int[][]> solutions = new LinkedList<int[][]>();
@@ -293,7 +293,7 @@
 // 		csp.searchAll(csp, solutions);
 // 		return solutions;
 // 	}
-	
+
 // 	public static String printMaps(Map<Object, Object> map) {
 // 		String res = "";
 // 		for (Object s : map.keySet()) {

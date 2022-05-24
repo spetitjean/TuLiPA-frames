@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -31,67 +31,72 @@ package de.tuebingen.parser;
 
 import java.util.Hashtable;
 import java.util.List;
+
 import de.tuebingen.rcg.RCG;
 import de.tuebingen.tokenizer.Word;
 import de.tuebingen.tree.Grammar;
 
 /**
  * A class that forks to different RCG Parsers.
- * @author wmaier
  *
+ * @author wmaier
  */
 public abstract class RCGParser {
 
-	private Grammar grammar;
-	
-	/**
-	 * Construct a parser given a grammar. We can't construct empty parsers.
-	 * @param grammar - the grammar to use
-	 */
-	public RCGParser(Grammar grammar) {
-		this.grammar = grammar;
-	}
-	
-	public Grammar getGrammar() {
-		return grammar;
-	}
-	
-	public void setGrammar(RCG grammar) {
-		this.grammar = grammar;
-	}
+    private Grammar grammar;
 
-	/**
-	 * Recognize a sentence
-	 * @param input - list of words
-	 * @return true if the sentence has been recognized
-	 */
-	abstract public boolean recognize(List<Word> input);
+    /**
+     * Construct a parser given a grammar. We can't construct empty parsers.
+     *
+     * @param grammar - the grammar to use
+     */
+    public RCGParser(Grammar grammar) {
+        this.grammar = grammar;
+    }
 
-	
-	/**
-	 * Parse a sentence
-	 * @param input - a list of words
-	 * @return the result status of parsing (success or failed)
-	 */
-	abstract public boolean parse(List<Word> input);
+    public Grammar getGrammar() {
+        return grammar;
+    }
 
-	/**
-	 * Parse a sentence, with verbose mode switch
-	 */
-	abstract public boolean parseSentence(boolean v, List<Word> sentence);
-	
-	/**
-	 * Print the parse forest
-	 * @return
-	 */
-	abstract public String printForest();
-	
-	abstract public Hashtable<ClauseKey, DStep> getParse();
-	
-	abstract public List<ClauseKey> getEmptyRHS();
+    public void setGrammar(RCG grammar) {
+        this.grammar = grammar;
+    }
 
-	abstract public List<ClauseKey> getAnswers();
+    /**
+     * Recognize a sentence
+     *
+     * @param input - list of words
+     * @return true if the sentence has been recognized
+     */
+    abstract public boolean recognize(List<Word> input);
 
-	abstract public ForestExtractorInitializer getForestExtractorInitializer();
-	
+
+    /**
+     * Parse a sentence
+     *
+     * @param input - a list of words
+     * @return the result status of parsing (success or failed)
+     */
+    abstract public boolean parse(List<Word> input);
+
+    /**
+     * Parse a sentence, with verbose mode switch
+     */
+    abstract public boolean parseSentence(boolean v, List<Word> sentence);
+
+    /**
+     * Print the parse forest
+     *
+     * @return
+     */
+    abstract public String printForest();
+
+    abstract public Hashtable<ClauseKey, DStep> getParse();
+
+    abstract public List<ClauseKey> getEmptyRHS();
+
+    abstract public List<ClauseKey> getAnswers();
+
+    abstract public ForestExtractorInitializer getForestExtractorInitializer();
+
 }

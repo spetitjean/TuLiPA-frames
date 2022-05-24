@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Yannick Parmentier, 2008
  *
@@ -35,47 +35,47 @@ import java.util.List;
 
 public class Combination implements Iterable<TreeOp> {
 
-	private List<TreeOp> operations;
-	
-	public Combination(){
-		operations = new LinkedList<TreeOp>();
-	}
+    private List<TreeOp> operations;
 
-    	//ADDED_BY_TS
-	public Combination(Combination toCopy) {
+    public Combination() {
+        operations = new LinkedList<TreeOp>();
+    }
 
-	    operations = new LinkedList<TreeOp>(toCopy.getOperations());
-	}
-	//END_ADDED_BY_TS
-    
-	public void addOp(TreeOp to) {
-		operations.add(to);
-	}
-	
-	public int size(){
-		return operations.size();
-	}
-	
-	public List<TreeOp> getOperations() {
-		return operations;
-	}
+    //ADDED_BY_TS
+    public Combination(Combination toCopy) {
 
-	public void setOperations(List<TreeOp> operations) {
-		this.operations = operations;
-	}
+        operations = new LinkedList<TreeOp>(toCopy.getOperations());
+    }
+    //END_ADDED_BY_TS
 
-	public Iterator<TreeOp> iterator() {
-		return operations.iterator();
-	}
-	
-	public String toString() {
-		String res = "";
-		for(int i = 0 ; i < operations.size() ; i++) {
-			if (i > 0)
-				res += " ; ";
-			res += "(" + operations.get(i).toString() + ")";
-		}
-		return res;
-	}
+    public void addOp(TreeOp to) {
+        operations.add(to);
+    }
+
+    public int size() {
+        return operations.size();
+    }
+
+    public List<TreeOp> getOperations() {
+        return operations;
+    }
+
+    public void setOperations(List<TreeOp> operations) {
+        this.operations = operations;
+    }
+
+    public Iterator<TreeOp> iterator() {
+        return operations.iterator();
+    }
+
+    public String toString() {
+        String res = "";
+        for (int i = 0; i < operations.size(); i++) {
+            if (i > 0)
+                res += " ; ";
+            res += "(" + operations.get(i).toString() + ")";
+        }
+        return res;
+    }
 
 }

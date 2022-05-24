@@ -5,7 +5,7 @@
  *     Yannick Parmentier  <parmenti@sfs.uni-tuebingen.de>
  *     David Arps <david.arps@hhu.de>
  *     Simon Petitjean <petitjean@phil.hhu.de>
- *          
+ *
  *  Copyright:
  *     Yannick Parmentier, 2007
  *     David Arps, 2017
@@ -62,9 +62,7 @@ import de.tuebingen.lexicon.LexSem;
 import de.tuebingen.util.XMLUtilities;
 
 /**
- * 
  * @author parmenti
- *
  */
 public class XMLLemmaReader extends FileReader {
 
@@ -74,7 +72,7 @@ public class XMLLemmaReader extends FileReader {
     public XMLLemmaReader(File lemma) throws FileNotFoundException {
         /**
          * Generate a parser for an XML file containing an XMG MC-TAG grammar
-         * 
+         *
          * @param lemma
          *            the XML file
          */

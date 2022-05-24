@@ -4,7 +4,7 @@
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
  *     Yannick  Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *     Yannick Parmentier, 2007
@@ -56,11 +56,9 @@ public class XMLUtilities {
 
     /**
      * parse an XML file
-     * 
-     * @param f
-     *            the XML file
-     * @param validating
-     *            toggle validation
+     *
+     * @param f          the XML file
+     * @param validating toggle validation
      * @return the parsed document
      */
     public static Document parseXMLFile(File f, boolean validating) {
@@ -94,16 +92,15 @@ public class XMLUtilities {
     }
 
     /**
-     * 
      * If outfile is "stdout", print to stdout.
-     * 
+     *
      * @param document
      * @param outfile
      * @param dtd
      * @param system
      */
     public static void writeXML(Document document, String outfile, String dtd,
-            boolean system) {
+                                boolean system) {
         try {
             DOMSource domSource = new DOMSource(document);
             StringWriter writer = new StringWriter();
@@ -147,7 +144,7 @@ public class XMLUtilities {
     /**
      * Reference:
      * https://stackoverflow.com/questions/2325388/what-is-the-shortest-way-to-pretty-print-a-org-w3c-dom-document-to-stdout
-     * 
+     *
      * @param rootNode
      * @param spacer
      */

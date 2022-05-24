@@ -3,7 +3,7 @@
  *
  *  Authors:
  *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     
+ *
  *  Copyright:
  *     Wolfgang Maier, 2007
  *
@@ -44,16 +44,14 @@ import de.tuebingen.anchoring.InstantiatedTagTree;
 
 /**
  * @author wmaier, david
- *
  */
 public class CollectionUtilities {
 
     /**
-     * @author david
      * @param <T>
-     * @param setOfSets
-     *            a set of sets of things
+     * @param setOfSets a set of sets of things
      * @return true iff no set in the setOfSets contains any elements
+     * @author david
      */
     public static <T> boolean emtySetofSets(Set<Set<T>> setOfSets) {
         boolean result = true;
@@ -80,7 +78,7 @@ public class CollectionUtilities {
     }
 
     public static void addToValueSet(Map<Object, Set<Object>> m, Object key,
-            Object o) {
+                                     Object o) {
         Set<Object> c = null;
         if (m.containsKey(key)) {
             c = m.get(key);
@@ -121,7 +119,7 @@ public class CollectionUtilities {
     }
 
     public static long computeCartesianCard(List<List<List<String>>> sets,
-            List<String> tokens) {
+                                            List<String> tokens) {
         long res = 0;
         for (List<List<String>> llo : sets) {
             long tmp = 1;
@@ -148,7 +146,7 @@ public class CollectionUtilities {
     }
 
     public static long computeAmbig(List<List<String>> subg,
-            List<String> tokens) {
+                                    List<String> tokens) {
         long res = 1;
         Map<Integer, List<String>> lset = new HashMap<Integer, List<String>>();
         for (List<String> asub : subg) {
