@@ -1,11 +1,5 @@
 package de.duesseldorf.rrg.anchoring;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGNode;
@@ -14,7 +8,8 @@ import de.tuebingen.anchoring.TreeSelector;
 import de.tuebingen.lexicon.Lemma;
 import de.tuebingen.lexicon.MorphEntry;
 import de.tuebingen.tokenizer.Word;
-import edu.stanford.nlp.util.Sets;
+
+import java.util.*;
 
 public class RRGAnchorMan {
 
@@ -71,10 +66,10 @@ public class RRGAnchorMan {
                     && tree.getAnchorNode() == null;
             // anch node must be null and some word from the sentence must be in
             // the tree
+            HashSet<String> intersection = new HashSet<String>(tokenizedSentenceAsStrings);
+            intersection.retainAll(tree.getLexNodes().keySet());
             boolean lexNoAnch = tree.getAnchorNode() == null
-                    && !Sets.intersection(
-                            new HashSet<String>(tokenizedSentenceAsStrings),
-                            tree.getLexNodes().keySet()).isEmpty();
+                    && !intersection.isEmpty();
             if (noAnchNoLex || lexNoAnch) {
                 result.add(tree);
             }
