@@ -3,12 +3,10 @@ package de.duesseldorf.ui.webgui;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
-import jdk.jfr.ContentType;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
