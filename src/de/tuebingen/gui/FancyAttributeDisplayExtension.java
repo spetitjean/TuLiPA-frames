@@ -33,8 +33,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import de.tuebingen.gui.tree.view.TreeViewPanel;
-
 import de.tuebingen.gui.tree.view.*;
 
 public class FancyAttributeDisplayExtension extends TreeViewExtension

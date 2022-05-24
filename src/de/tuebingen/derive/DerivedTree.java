@@ -38,8 +38,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.Objects;
 
 
 import org.w3c.dom.Node;

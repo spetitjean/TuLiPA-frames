@@ -39,7 +39,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Vector;
 
-import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.frames.ValueTools;
 import de.tuebingen.forest.Rule;

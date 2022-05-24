@@ -35,13 +35,8 @@
  */
 package de.duesseldorf.ui;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

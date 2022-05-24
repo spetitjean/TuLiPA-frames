@@ -9,7 +9,6 @@ import de.duesseldorf.ui.ParsingInterface;
 import de.tuebingen.tag.Environment;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 /**

@@ -9,8 +9,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.BufferedReader ;
-
 
 
 public class MyHttpHandler implements HttpHandler {
