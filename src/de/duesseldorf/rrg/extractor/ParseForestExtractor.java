@@ -562,13 +562,18 @@ public class ParseForestExtractor {
             // System.out.println(
             // "into that tree: " + extractionstep.getCurrentParseTree());
             // System.out.println("at GA " + GAtoReplaceAt);
-            RRGParseTree nextStepParseTree = extractionstep
+	    try{
+		RRGParseTree nextStepParseTree = extractionstep
                     .getCurrentParseTree().substitute(substTree, GAtoReplaceAt);
-            // System.out.println("result: " + nextStepParseTree);
-            ExtractionStep nextStep = new ExtractionStep(substAntecedentItem,
+		// System.out.println("result: " + nextStepParseTree);
+		ExtractionStep nextStep = new ExtractionStep(substAntecedentItem,
                     extractionstep.getGAInParseTree(), nextStepParseTree, 0);
-            parsesInThisSUBSTStep.addAll(extract(nextStep));
-        }
+		parsesInThisSUBSTStep.addAll(extract(nextStep));
+	    }
+	    catch (UnifyException e) {
+		continue;
+	    }
+	}
         return parsesInThisSUBSTStep;
     }
 

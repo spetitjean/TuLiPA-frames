@@ -45,6 +45,7 @@ public enum XMLRRGTag {
     CTYPE("ctype"), // conjunctive type (typed FS)
     RELATION("relation"),// relation (frame)
     SYM("sym"), // and its value
+    VALT("vAlt"), // an atomic disjunction
 
     // attributes
     NAME("name"), // of an entry or node
