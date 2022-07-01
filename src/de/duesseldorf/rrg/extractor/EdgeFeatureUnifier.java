@@ -172,8 +172,7 @@ public class EdgeFeatureUnifier {
         // the LD-EDGE feature of a node that has daughters unifies with the left feature of the edge to the
 	// leftmost daughter and the feature RD-EDGE unifies with the right feature of
 	// the edge to the rightmost daughter.
-        if (nodeWithGornAddress.getChildren().size() > 0
-                && !nodeWithGornAddress.getType().equals(RRGNodeType.SUBST)) {
+        if (nodeWithGornAddress.getChildren().size() > 0) {
             // find outermost edge feature structures
             Value lowerLeftMost = ((RRGNode) nodeWithGornAddress.getChildren()
                     .get(0)).getNodeFs().getFeat("l");
