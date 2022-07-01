@@ -73,6 +73,8 @@ public class EdgeFeatureUnifier {
     }
 
     private boolean unifyEdgeFeatures(GornAddress gornAddress) {
+	// TODO: maybe hide the L, R, LD-EDGE and RD-EDGE features in the derived tree
+	
         RRGNode nodeWithGornAddress = result.findNode(gornAddress);
         if (nodeWithGornAddress == null) {
             // System.err.println("node in edgefeatureUnification null,
@@ -165,6 +167,49 @@ public class EdgeFeatureUnifier {
                 return false;
             }
         }
+
+	
+        // the LD-EDGE feature of a node that has daughters unifies with the left feature of the edge to the
+	// leftmost daughter and the feature RD-EDGE unifies with the right feature of
+	// the edge to the rightmost daughter.
+        if (nodeWithGornAddress.getChildren().size() > 0
+                && !nodeWithGornAddress.getType().equals(RRGNodeType.SUBST)) {
+            // find outermost edge feature structures
+            Value lowerLeftMost = ((RRGNode) nodeWithGornAddress.getChildren()
+                    .get(0)).getNodeFs().getFeat("l");
+            Value upperLeftMost = nodeWithGornAddress.getNodeFs().getFeat("ld-edge");
+
+            Value lowerRightMost = ((RRGNode) nodeWithGornAddress.getChildren()
+                    .get(nodeWithGornAddress.getChildren().size() - 1))
+                            .getNodeFs().getFeat("r");
+            Value upperRightMost = nodeWithGornAddress.getNodeFs().getFeat("rd-edge");
+
+            try {
+                // unify
+                Value newLeftMost = ValueTools.unifyOrReplace(lowerLeftMost,
+                        upperLeftMost, result.getEnv());
+                Value newRightMost = ValueTools.unifyOrReplace(lowerRightMost,
+                        upperRightMost, result.getEnv());
+                // replace if unification was successfull
+                // left
+                ((RRGNode) nodeWithGornAddress.getChildren().get(0)).getNodeFs()
+                        .setFeatWithReplaceIfValNotNull("l", newLeftMost);
+                nodeWithGornAddress.getNodeFs()
+                        .setFeatWithReplaceIfValNotNull("ld-edge", newLeftMost);
+                // right
+                ((RRGNode) nodeWithGornAddress.getChildren()
+                        .get(nodeWithGornAddress.getChildren().size() - 1))
+                                .getNodeFs().setFeatWithReplaceIfValNotNull("r",
+                                        newRightMost);
+                nodeWithGornAddress.getNodeFs()
+                        .setFeatWithReplaceIfValNotNull("rd-edge", newRightMost);
+            } catch (UnifyException e) {
+                // System.err.println(
+                // "ERROR while unifying outermost feature structures");
+                return false;
+            }
+        }
+	
         return true;
     }
 }
