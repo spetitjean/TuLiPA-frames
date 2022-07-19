@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
+import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.ui.webgui.RRGLocalWebGUI;
 import org.w3c.dom.Document;
 
@@ -831,6 +832,8 @@ public class ParsingInterface {
                     .toString());
             RRGAnchorMan anchorman = new RRGAnchorMan(toksentence);
             Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
+            FactorizingInterface Fi = new FactorizingInterface();
+            Fi.factorize(treesInvolvedInParsing);
             //System.err.println("\n---------------------\nTrees involved in parsing: "+treesInvolvedInParsing);
 
             if (!op.check("brack2XML")) {
