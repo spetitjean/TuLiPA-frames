@@ -3,17 +3,9 @@ package de.duesseldorf.factorizer;
  *  File FactorizingInterface.java
  *
  *  Authors:
- *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     David Arps <david.arps@hhu.de>
- *     Simon Petitjean <petitjean@phil.hhu.de>
  *     Julia Block <julia.block@hhu.de>
  *
  *  Copyright:
- *     Wolfgang Maier, 2007
- *     Yannick Parmentier, 2007
- *     David Arps, 2017
- *     Simon Petitjean, 2017
  *     Julia Block, 2022
  *
  * Last modified:
@@ -40,6 +32,7 @@ package de.duesseldorf.factorizer;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
+import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tree.Node;
 
 import java.util.*;
@@ -47,6 +40,8 @@ import java.util.*;
 public class FactorizingInterface {
 
     public List<EqClass> eqClasses = new ArrayList<>();
+
+    private NameFactory nf = new NameFactory();
 
     public void factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
@@ -78,7 +73,7 @@ public class FactorizingInterface {
                 return eqClass;
             }
         }
-        EqClass newClass = new EqClass(daughtersEq, root.getCategory(), root.getType());
+        EqClass newClass = new EqClass(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName());
         eqClasses.add(newClass);
         return newClass;
     }
@@ -86,7 +81,7 @@ public class FactorizingInterface {
     private EqClass checkLeaveClasses(RRGNode leave) {
         for (EqClass eqClass: getClassesByNumOfDaughters(0)) {
             if (eqClass.belongs(leave, new ArrayList<>())) {return eqClass;}
-        } EqClass newClass = new EqClass(new ArrayList<>(), leave.getCategory(), leave.getType());
+        } EqClass newClass = new EqClass(new ArrayList<>(), leave.getCategory(), leave.getType(), nf.getUniqueName());
         eqClasses.add(newClass);
         return newClass;
     }

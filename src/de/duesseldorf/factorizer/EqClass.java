@@ -1,19 +1,11 @@
 package de.duesseldorf.factorizer;
 /*
- *  File FactorizingInterface.java
+ *  File EqClass.java
  *
  *  Authors:
- *     Wolfgang Maier  <wo.maier@uni-tuebingen.de>
- *     Yannick Parmentier <parmenti@sfs.uni-tuebingen.de>
- *     David Arps <david.arps@hhu.de>
- *     Simon Petitjean <petitjean@phil.hhu.de>
  *     Julia Block <julia.block@hhu.de>
  *
  *  Copyright:
- *     Wolfgang Maier, 2007
- *     Yannick Parmentier, 2007
- *     David Arps, 2017
- *     Simon Petitjean, 2017
  *     Julia Block, 2022
  *
  * Last modified:
@@ -38,6 +30,7 @@ package de.duesseldorf.factorizer;
  */
 
 
+import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 
@@ -55,9 +48,12 @@ public class EqClass {
 
     public String cat;
 
-    public RRGNode.RRGNodeType type;
+    public RRGNodeType type;
 
-    public EqClass(ArrayList<EqClass> daughters, String cat, RRGNode.RRGNodeType type){
+    public String id;
+
+    public EqClass(ArrayList<EqClass> daughters, String cat, RRGNodeType type, String id){
+        this.id = id;
         daughterEQClasses = daughters;
         this.cat = cat;
         if(daughters.isEmpty()) {
@@ -75,22 +71,32 @@ public class EqClass {
 
     public boolean belongs(RRGNode node, ArrayList<EqClass> daughters) {
         if (daughters.isEmpty()) {
-            if(cat.equals(node.getCategory()) && daughterEQClasses.isEmpty()) {return true;}
+            if(cat.equals(node.getCategory())
+                    && daughterEQClasses.isEmpty()
+                    && checkType(node.getType())) {return true;}
 
         } else {
-            if(cat.equals(node.getCategory()) && daughters.equals(daughterEQClasses)) {return true;}
+            if(cat.equals(node.getCategory())
+                    && daughters.equals(daughterEQClasses)
+                    && checkType(node.getType())) {return true;}
         }
         return false;
     }
 
+    private boolean checkType(RRGNodeType type) {
+        if(type == this.type) {return true;}
+        return false;
+    }
+
+
     public String print() {
-        String out = "\n {Cat = "+ cat + ", daughters = ";
+        String out = "\n {Cat = "+ cat + " " + this.id + ", daughters = ";
         if(numDaughters == 0) {
             out += "No Daughters \n";
         }
-        int i = 0;
+        int i = 1;
         for(EqClass daughter : daughterEQClasses) {
-            out += "\n" + i + ". Daughter = " + daughter.cat + "\n";
+            out += "\n" + i + ". Daughter = " + daughter.cat + " " + id;
             i++;
         }
         out += "}";
