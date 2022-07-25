@@ -50,10 +50,9 @@ public class TreeFromBracketedStringRetriever {
      * Out: An RRGTree object lexicalized with the lexical element in the
      * tabseparatedline
      *
-     * @param nextLine
      * @return
      */
-    RRGTree createTree() {
+    public RRGTree createTree() {
         log.info("start parsing line: " + tabSeparatedLine);
         String[] split = tabSeparatedLine.split("\t");
         if (split.length != 2) {
@@ -147,8 +146,6 @@ public class TreeFromBracketedStringRetriever {
 
     /**
      * @param nodeStringFromResource the node label to create a node from
-     * @param nodeIsRoot             if the node is a root, NP and N nodes are STD and not SUBST
-     *                               nodes
      * @return
      */
     private RRGNode createNodeFromString(String nodeStringFromResource,
