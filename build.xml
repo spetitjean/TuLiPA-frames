@@ -18,7 +18,9 @@
         <pathelement location="lib/DTool.jar"/>
         <pathelement location="lib/postagger-2006-05-21.jar"/>
         <pathelement location="lib/Utool-src-3.1.1.jar"/>
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
+
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
