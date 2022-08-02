@@ -89,7 +89,8 @@ public class EqClass {
     }
 
 
-    public String print() {
+    @Override
+    public String toString() {
         String out = "\n {Cat = "+ cat + " " + this.id + ", daughters = ";
         if(numDaughters == 0) {
             out += "No Daughters \n";

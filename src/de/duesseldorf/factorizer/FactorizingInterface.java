@@ -47,14 +47,14 @@ public class FactorizingInterface {
         for(RRGTree tree : anchoredTrees) {
             EqClass finClass = checkDaughters((RRGNode)tree.getRoot());
         }
-        System.out.println("\n FACTORIZED TREES:" + printClasses());
+        System.out.println("\n FACTORIZED TREES:" + this);
     }
-
-    private String printClasses() {
+    @Override
+    public String toString() {
         String classes = "";
         int i = 0;
         for (EqClass eqClass : eqClasses) {
-            classes += "\n Tree "+ i + eqClass.print();
+            classes += "\n Tree "+ i + eqClass.toString();
             i++;
         }
         return classes;
