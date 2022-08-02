@@ -96,7 +96,7 @@ public class EqClass {
         }
         int i = 1;
         for(EqClass daughter : daughterEQClasses) {
-            out += "\n" + i + ". Daughter = " + daughter.cat + " " + id;
+            out += "\n" + i + ". Daughter = " + daughter.cat + " " + daughter.id;
             i++;
         }
         out += "}";
