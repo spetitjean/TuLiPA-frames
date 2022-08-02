@@ -70,6 +70,7 @@ public class FactorizingInterface {
         }
         for (EqClass eqClass: eqClasses) {
             if(eqClass.belongs(root, daughtersEq)) {
+                eqClass.add(root.getGornaddress(), new RRGTree(root, ""));
                 return eqClass;
             }
         }
@@ -80,8 +81,12 @@ public class FactorizingInterface {
 
     private EqClass checkLeaveClasses(RRGNode leave) {
         for (EqClass eqClass: getClassesByNumOfDaughters(0)) {
-            if (eqClass.belongs(leave, new ArrayList<>())) {return eqClass;}
+            if (eqClass.belongs(leave, new ArrayList<>())) {
+                eqClass.add(leave.getGornaddress(), new RRGTree(leave, ""));
+                return eqClass;
+            }
         } EqClass newClass = new EqClass(new ArrayList<>(), leave.getCategory(), leave.getType(), nf.getUniqueName());
+        newClass.add(leave.getGornaddress() , new RRGTree(leave,""));
         eqClasses.add(newClass);
         return newClass;
     }

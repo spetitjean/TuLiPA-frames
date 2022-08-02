@@ -33,8 +33,10 @@ package de.duesseldorf.factorizer;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.util.GornAddress;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 public class EqClass {
@@ -42,7 +44,9 @@ public class EqClass {
 
     public ArrayList<EqClass> daughterEQClasses;
 
-    public Set<RRGTree> factorizedTrees;
+    //public Set<RRGTree> factorizedTrees;
+
+    public Map<GornAddress, RRGTree> factorizedTrees;
 
     public int numDaughters;
 
@@ -65,8 +69,8 @@ public class EqClass {
     }
 
 
-    public void add(RRGTree rootTree) {
-        factorizedTrees.add(rootTree);
+    public void add(GornAddress address, RRGTree rootTree) {
+        factorizedTrees.put(address, rootTree);
     }
 
     public boolean belongs(RRGNode node, ArrayList<EqClass> daughters) {
