@@ -39,62 +39,99 @@ import java.util.*;
 
 public class FactorizingInterface {
 
-    public List<EqClass> eqClasses = new ArrayList<>();
+    //All characteristics of the node are equal AND the daughters
+    public List<EqClassBot> bottomEqClasses = new ArrayList<>();
+
+    //All characteristics of the node are equal AND the daughters AND the left sisters
+    public List<EqClassBot> topEqClasses = new ArrayList<>();
 
     private NameFactory nf = new NameFactory();
 
     public void factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
-            EqClass finClass = checkDaughters((RRGNode)tree.getRoot());
+            EqClassBot finClass = checkDaughters((RRGNode)tree.getRoot(), tree);
+            finClass.setRoot(true);
+            EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree);
+            topClass.setId(nf.getUniqueName());
+            topEqClasses.add(topClass);
         }
-        System.out.println("\n FACTORIZED TREES:" + this);
+        //System.out.println("\n FACTORIZED TREES:" + this);
+        System.out.println(topEqClasses);
     }
     @Override
     public String toString() {
         String classes = "";
         int i = 0;
-        for (EqClass eqClass : eqClasses) {
-            classes += "\n Tree "+ i + eqClass.toString();
+        for (EqClassBot eqClassBot : bottomEqClasses) {
+            classes += "\n Tree "+ i + eqClassBot.toString();
             i++;
         }
         return classes;
     }
 
-    private EqClass checkDaughters(RRGNode root) {
-        ArrayList<EqClass> daughtersEq = new ArrayList<EqClass>();
+    /**
+     * Recursively go through daughters, start with leaves and create EQ classes or sort Nodes into existing EQ classes
+     * @param root root node of the anchored tree
+     * @param tree anchored tree
+     * @return root EQ class of factorization
+     */
+    private EqClassBot checkDaughters(RRGNode root, RRGTree tree) {
+        ArrayList<EqClassBot> daughtersEq = new ArrayList<EqClassBot>();
+        EqClassBot rootClass = null;
         for (Node child: root.getChildren()) {
+            EqClassBot childClass;
             if(child.getChildren().size() > 0) {
-                daughtersEq.add(checkDaughters((RRGNode) child));
+                childClass = checkDaughters((RRGNode) child, tree);
             }
-            else {daughtersEq.add(checkLeaveClasses((RRGNode)child));}
+            else {
+                childClass = checkLeafClasses((RRGNode)child, tree);
+            }
+
+            // Create top eq class with left sisters
+            EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree);
+            topClass.setId(nf.getUniqueName());
+            daughtersEq.add(childClass);
+            topEqClasses.add(topClass);
         }
-        for (EqClass eqClass: eqClasses) {
-            if(eqClass.belongs(root, daughtersEq)) {
-                eqClass.add(root.getGornaddress(), new RRGTree(root, ""));
-                return eqClass;
+
+        for (EqClassBot eqClassBot : bottomEqClasses) {
+            if(eqClassBot.belongs(root, daughtersEq)) {
+                eqClassBot.add(root.getGornaddress(), tree);
+                return eqClassBot;
             }
         }
-        EqClass newClass = new EqClass(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName());
-        eqClasses.add(newClass);
+        rootClass = new EqClassBot(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName());
+        bottomEqClasses.add(rootClass);
+        return rootClass;
+    }
+
+
+    /**
+     * @param leaf current found leaf
+     * @param tree elementary tree of leaf
+     * @return EqClass of leaf, new if it doesn't belong in any existing class
+     */
+    private EqClassBot checkLeafClasses(RRGNode leaf, RRGTree tree) {
+        for (EqClassBot eqClassBot : getClassesByNumOfDaughters(0)) {
+            if (eqClassBot.belongs(leaf, new ArrayList<>())) {
+                eqClassBot.add(leaf.getGornaddress(), tree);
+                return eqClassBot;
+            }
+        } EqClassBot newClass = new EqClassBot(new ArrayList<>(), leaf.getCategory(), leaf.getType(), nf.getUniqueName());
+        newClass.add(leaf.getGornaddress() , tree);
+        bottomEqClasses.add(newClass);
         return newClass;
     }
 
-    private EqClass checkLeaveClasses(RRGNode leave) {
-        for (EqClass eqClass: getClassesByNumOfDaughters(0)) {
-            if (eqClass.belongs(leave, new ArrayList<>())) {
-                eqClass.add(leave.getGornaddress(), new RRGTree(leave, ""));
-                return eqClass;
-            }
-        } EqClass newClass = new EqClass(new ArrayList<>(), leave.getCategory(), leave.getType(), nf.getUniqueName());
-        newClass.add(leave.getGornaddress() , new RRGTree(leave,""));
-        eqClasses.add(newClass);
-        return newClass;
-    }
-
-    private ArrayList<EqClass> getClassesByNumOfDaughters(int numDaughters) {
-        ArrayList<EqClass> possClasses = new ArrayList<EqClass>();
-        for (EqClass eqClass: eqClasses) {
-            if(numDaughters == eqClass.numDaughters){possClasses.add(eqClass);}
+    /**
+     *
+     * @param numDaughters
+     * @return List of Eq classes with wanted number of daughters
+     */
+    private ArrayList<EqClassBot> getClassesByNumOfDaughters(int numDaughters) {
+        ArrayList<EqClassBot> possClasses = new ArrayList<EqClassBot>();
+        for (EqClassBot eqClassBot : bottomEqClasses) {
+            if(numDaughters == eqClassBot.numDaughters){possClasses.add(eqClassBot);}
         }
         return possClasses;
     }
