@@ -40,7 +40,7 @@ public class EqClassTop extends EqClassBot{
     public String toString() {
         String out = "{Cat = "+ cat + " " + this.getId() + ", left sisters = ";
         for(EqClassBot bot: leftSisters) {
-            out += bot.cat + " ";
+            out += bot.cat + " " + bot.getId() + ", ";
         }
         out += "\n";
         return out;
