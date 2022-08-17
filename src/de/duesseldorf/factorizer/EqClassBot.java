@@ -35,18 +35,17 @@ import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.util.GornAddress;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class EqClass {
+public class EqClassBot {
 
+    private ArrayList<EqClassBot> daughterEQClasses;
 
-    public ArrayList<EqClass> daughterEQClasses;
+    private ArrayList<EqClassTop> topClasses = new ArrayList<>();
 
-    //public Set<RRGTree> factorizedTrees;
+    private EqClassBot mother;
 
-    public Map<GornAddress, RRGTree> factorizedTrees;
+    public Map<GornAddress, RRGTree> factorizedTrees = new HashMap<>();
 
     public int numDaughters;
 
@@ -54,26 +53,70 @@ public class EqClass {
 
     public RRGNodeType type;
 
-    public String id;
+    private String id;
 
-    public EqClass(ArrayList<EqClass> daughters, String cat, RRGNodeType type, String id){
+    private boolean root = false;
+
+    public EqClassBot(ArrayList<EqClassBot> daughters, String cat, RRGNodeType type, String id){
         this.id = id;
         daughterEQClasses = daughters;
         this.cat = cat;
         if(daughters.isEmpty()) {
-            this.numDaughters = 0;
+            numDaughters = 0;
         } else {
-            this.numDaughters = daughters.size();
+            numDaughters = daughters.size();
         }
         this.type = type;
     }
 
+    public boolean isRoot(){return root;}
+
+    public void setRoot(boolean root){this.root = root;}
+
+    public String getId() {return id;}
+
+    public void setId(String id){this.id = id;}
+
+    public ArrayList<EqClassBot> getDaughterEQClasses() {
+        return this.daughterEQClasses;
+    }
+
+    public void addTopClasses(EqClassTop topClass) {
+        topClasses.add(topClass);
+    }
+
+    public ArrayList<EqClassTop> getTopClasses() {
+        return this.topClasses;
+    }
 
     public void add(GornAddress address, RRGTree rootTree) {
         factorizedTrees.put(address, rootTree);
     }
 
-    public boolean belongs(RRGNode node, ArrayList<EqClass> daughters) {
+    public void add(EqClassTop topClass){
+        topClasses.add(topClass);
+    }
+
+    public void setMother(EqClassBot mother) {
+        this.mother = mother;
+    }
+
+    public void makeTops() {
+
+    }
+
+    public EqClassBot getMother() {
+        if(mother.equals(null)) {return null;}
+        return mother;
+    }
+
+    /**
+     * Check if nodes belongs in this eq class, has to have right category, daughters and type
+     * @param node node to be checked
+     * @param daughters daughters of node
+     * @return true if node belongs to this Eq class
+     */
+    public boolean belongs(RRGNode node, ArrayList<EqClassBot> daughters) {
         if (daughters.isEmpty()) {
             if(cat.equals(node.getCategory())
                     && daughterEQClasses.isEmpty()
@@ -86,6 +129,7 @@ public class EqClass {
         }
         return false;
     }
+
 
     private boolean checkType(RRGNodeType type) {
         if(type == this.type) {return true;}
@@ -100,11 +144,34 @@ public class EqClass {
             out += "No Daughters \n";
         }
         int i = 1;
-        for(EqClass daughter : daughterEQClasses) {
+        for(EqClassBot daughter : daughterEQClasses) {
             out += "\n" + i + ". Daughter = " + daughter.cat + " " + daughter.id;
             i++;
         }
         out += "}";
+        return out;
+    }
+
+    public EqClassTop checkTopClasses(List <EqClassBot> leftSisters, GornAddress gornaddress, RRGTree tree) {
+        for(EqClassTop topClass : topClasses) {
+            if(topClass.belongs(leftSisters)) {
+                topClass.add(gornaddress, tree);
+                return topClass;
+            }
+        }
+        EqClassTop newClass = new EqClassTop(this, "",leftSisters);
+        newClass.add(gornaddress,tree);
+        add(newClass);
+        return newClass;
+    }
+
+    public String printTopClasses() {
+        String out = "";
+        int i = 1;
+        for(EqClassTop topClass: topClasses) {
+            out += "TopClass "+i+": Left Sisters: " + topClass.getLeftSisters()+ "\n";
+            i++;
+        }
         return out;
     }
 }
