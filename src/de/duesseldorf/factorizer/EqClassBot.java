@@ -139,13 +139,13 @@ public class EqClassBot {
 
     @Override
     public String toString() {
-        String out = "\n {Cat = "+ cat + " " + this.id + ", daughters = ";
+        String out = "{Cat = "+ cat + " " + this.id + ", daughters = ";
         if(numDaughters == 0) {
             out += "No Daughters \n";
         }
         int i = 1;
         for(EqClassBot daughter : daughterEQClasses) {
-            out += "\n" + i + ". Daughter = " + daughter.cat + " " + daughter.id;
+            out += i + ". Daughter = " + daughter.cat + " " + daughter.id + "\n";
             i++;
         }
         out += "}";
@@ -169,8 +169,7 @@ public class EqClassBot {
         String out = "";
         int i = 1;
         for(EqClassTop topClass: topClasses) {
-            out += "TopClass "+i+": Left Sisters: " + topClass.getLeftSisters()+ "\n";
-            i++;
+            out += topClass.toString();
         }
         return out;
     }
