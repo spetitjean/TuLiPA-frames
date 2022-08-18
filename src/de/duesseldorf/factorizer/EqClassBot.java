@@ -37,6 +37,9 @@ import de.duesseldorf.util.GornAddress;
 
 import java.util.*;
 
+/**
+ * Equivalence class that are equal in daughters
+ */
 public class EqClassBot {
 
     private ArrayList<EqClassBot> daughterEQClasses;
