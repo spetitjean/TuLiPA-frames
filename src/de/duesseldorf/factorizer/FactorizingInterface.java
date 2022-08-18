@@ -55,8 +55,8 @@ public class FactorizingInterface {
             topClass.setId(nf.getUniqueName());
             topEqClasses.add(topClass);
         }
-        //System.out.println("\n FACTORIZED TREES:" + this);
-        System.out.println(topEqClasses);
+        System.out.println("\n FACTORIZED TREES:" + this);
+        //System.out.println(topEqClasses);
     }
     @Override
     public String toString() {
@@ -77,6 +77,7 @@ public class FactorizingInterface {
      */
     private EqClassBot checkDaughters(RRGNode root, RRGTree tree) {
         ArrayList<EqClassBot> daughtersEq = new ArrayList<EqClassBot>();
+        ArrayList<EqClassTop> topClasses = new ArrayList<EqClassTop>();
         EqClassBot rootClass = null;
         for (Node child: root.getChildren()) {
             EqClassBot childClass;
@@ -91,17 +92,22 @@ public class FactorizingInterface {
             EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree);
             topClass.setId(nf.getUniqueName());
             daughtersEq.add(childClass);
-            topEqClasses.add(topClass);
+            topClasses.add(topClass);
         }
+        topClasses.stream().forEach(topClass -> topEqClasses.add(topClass));
 
-        for (EqClassBot eqClassBot : bottomEqClasses) {
-            if(eqClassBot.belongs(root, daughtersEq)) {
-                eqClassBot.add(root.getGornaddress(), tree);
-                return eqClassBot;
+        for (EqClassBot botClass : bottomEqClasses) {
+            if(botClass.belongs(root, daughtersEq)) {
+                botClass.add(root.getGornaddress(), tree);
+                topClasses.stream().forEach(topClass -> topClass.addMother(botClass));
+                return botClass;
             }
         }
         rootClass = new EqClassBot(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName());
+        rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
+        EqClassBot finalRootClass = rootClass;
+        topClasses.stream().forEach(topClass -> topClass.addMother(finalRootClass));
         return rootClass;
     }
 
