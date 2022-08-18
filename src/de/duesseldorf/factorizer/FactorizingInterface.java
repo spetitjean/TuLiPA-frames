@@ -94,12 +94,14 @@ public class FactorizingInterface {
             daughtersEq.add(childClass);
             topClasses.add(topClass);
         }
-        topClasses.stream().forEach(topClass -> topEqClasses.add(topClass));
+        //Add only new topClasses to general list
+        topClasses.stream().filter(tc -> !(topEqClasses.contains(tc))).forEach(topClass -> topEqClasses.add(topClass));
 
         for (EqClassBot botClass : bottomEqClasses) {
             if(botClass.belongs(root, daughtersEq)) {
                 botClass.add(root.getGornaddress(), tree);
-                topClasses.stream().forEach(topClass -> topClass.addMother(botClass));
+                topClasses.stream().forEach(topClass -> topClass.addMother(botClass, false));
+                topClasses.get(topClasses.size()-1).addMother(botClass, true);
                 return botClass;
             }
         }
@@ -107,7 +109,8 @@ public class FactorizingInterface {
         rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
         EqClassBot finalRootClass = rootClass;
-        topClasses.stream().forEach(topClass -> topClass.addMother(finalRootClass));
+        topClasses.stream().forEach(topClass -> topClass.addMother(finalRootClass, false));
+        topClasses.get(topClasses.size()-1).addMother(finalRootClass, true);
         return rootClass;
     }
 
