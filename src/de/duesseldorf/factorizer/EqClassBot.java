@@ -46,8 +46,6 @@ public class EqClassBot {
 
     private ArrayList<EqClassTop> topClasses = new ArrayList<>();
 
-    private EqClassBot mother;
-
     public Map<GornAddress, RRGTree> factorizedTrees = new HashMap<>();
 
     public int numDaughters;
@@ -100,18 +98,6 @@ public class EqClassBot {
         topClasses.add(topClass);
     }
 
-    public void setMother(EqClassBot mother) {
-        this.mother = mother;
-    }
-
-    public void makeTops() {
-
-    }
-
-    public EqClassBot getMother() {
-        if(mother.equals(null)) {return null;}
-        return mother;
-    }
 
     /**
      * Check if nodes belongs in this eq class, has to have right category, daughters and type
