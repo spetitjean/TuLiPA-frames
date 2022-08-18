@@ -3,13 +3,17 @@ package de.duesseldorf.factorizer;
 import de.duesseldorf.rrg.RRGNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EqClassTop extends EqClassBot{
 
     private List<EqClassBot> leftSisters;
 
-    private ArrayList<EqClassBot> possibleMothers = new ArrayList<>();
+    private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
+
+    //private ArrayList<EqClassBot> possibleMothers = new ArrayList<>();
 
     /**
      * Eq classes that are euqal in daughters and left sisters
@@ -42,12 +46,8 @@ public class EqClassTop extends EqClassBot{
         return false;
     }
 
-    public ArrayList<EqClassBot> getPossibleMothers() {
-        return possibleMothers;
-    }
-
-    public void addMother(EqClassBot bot){
-        if(!possibleMothers.contains(bot)){possibleMothers.add(bot);}
+    public void addMother(EqClassBot bot, Boolean rightestSister){
+        possibleMothers.put(bot, rightestSister);
     }
 
     @Override
