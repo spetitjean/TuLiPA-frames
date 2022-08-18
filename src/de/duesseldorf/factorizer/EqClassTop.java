@@ -9,9 +9,16 @@ public class EqClassTop extends EqClassBot{
 
     private List<EqClassBot> leftSisters;
 
-    private ArrayList<EqClassBot> possibleMothers;
+    private ArrayList<EqClassBot> possibleMothers = new ArrayList<>();
 
-
+    /**
+     * Eq classes that are euqal in daughters and left sisters
+     * @param daughters daughter bottom EQ classes
+     * @param cat category of the node
+     * @param type type of the node
+     * @param id
+     * @param leftSisters left sister bottom Eq classes
+     */
     public EqClassTop(ArrayList<EqClassBot> daughters, String cat, RRGNode.RRGNodeType type, String id, List<EqClassBot> leftSisters) {
         super(daughters, cat, type, id);
         this.leftSisters = leftSisters;
@@ -30,11 +37,18 @@ public class EqClassTop extends EqClassBot{
         return leftSisters;
     }
 
+    public boolean noLeftSisters() {
+        if(leftSisters.isEmpty()) {return true;}
+        return false;
+    }
+
     public ArrayList<EqClassBot> getPossibleMothers() {
         return possibleMothers;
     }
 
-    public void addMother(EqClassBot bot){possibleMothers.add(bot);}
+    public void addMother(EqClassBot bot){
+        if(!possibleMothers.contains(bot)){possibleMothers.add(bot);}
+    }
 
     @Override
     public String toString() {
