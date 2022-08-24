@@ -47,6 +47,8 @@ public class FactorizingInterface {
 
     private NameFactory nf = new NameFactory();
 
+
+
     public void factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
             EqClassBot finClass = checkDaughters((RRGNode)tree.getRoot(), tree);
@@ -143,5 +145,14 @@ public class FactorizingInterface {
             if(numDaughters == eqClassBot.numDaughters){possClasses.add(eqClassBot);}
         }
         return possClasses;
+    }
+
+    public ArrayList<EqClassBot> getLexClasses(String lex){
+        ArrayList<EqClassBot> lexClasses = new ArrayList<>();
+
+        for(EqClassBot leafClass : getClassesByNumOfDaughters(0)){
+            if(leafClass.cat.equals(lex)){lexClasses.add(leafClass);}
+        }
+        return lexClasses;
     }
 }
