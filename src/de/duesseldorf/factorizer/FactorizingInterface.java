@@ -43,7 +43,7 @@ public class FactorizingInterface {
     public List<EqClassBot> bottomEqClasses = new ArrayList<>();
 
     //All characteristics of the node are equal AND the daughters AND the left sisters
-    public List<EqClassBot> topEqClasses = new ArrayList<>();
+    public List<EqClassTop> topEqClasses = new ArrayList<>();
 
     private NameFactory nf = new NameFactory();
 
