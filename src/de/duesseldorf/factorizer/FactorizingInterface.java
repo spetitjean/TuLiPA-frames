@@ -40,16 +40,16 @@ import java.util.*;
 public class FactorizingInterface {
 
     //All characteristics of the node are equal AND the daughters
-    public List<EqClassBot> bottomEqClasses = new ArrayList<>();
+    public Set<EqClassBot> bottomEqClasses = new HashSet<>();
 
     //All characteristics of the node are equal AND the daughters AND the left sisters
-    public List<EqClassTop> topEqClasses = new ArrayList<>();
+    public Set<EqClassTop> topEqClasses = new HashSet<>();
 
     private NameFactory nf = new NameFactory();
 
 
 
-    public void factorize(Set<RRGTree> anchoredTrees) {
+    public Set<EqClassBot> factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
             EqClassBot finClass = checkDaughters((RRGNode)tree.getRoot(), tree);
             finClass.setRoot(true);
@@ -57,8 +57,9 @@ public class FactorizingInterface {
             topClass.setId(nf.getUniqueName());
             topEqClasses.add(topClass);
         }
-        System.out.println("\n FACTORIZED TREES:" + this);
+        //System.out.println("\n FACTORIZED TREES:" + this);
         //System.out.println(topEqClasses);
+        return bottomEqClasses;
     }
     @Override
     public String toString() {
@@ -139,8 +140,8 @@ public class FactorizingInterface {
      * @param numDaughters
      * @return List of Eq classes with wanted number of daughters
      */
-    private ArrayList<EqClassBot> getClassesByNumOfDaughters(int numDaughters) {
-        ArrayList<EqClassBot> possClasses = new ArrayList<EqClassBot>();
+    private Set<EqClassBot> getClassesByNumOfDaughters(int numDaughters) {
+        Set<EqClassBot> possClasses = new HashSet<>();
         for (EqClassBot eqClassBot : bottomEqClasses) {
             if(numDaughters == eqClassBot.numDaughters){possClasses.add(eqClassBot);}
         }
