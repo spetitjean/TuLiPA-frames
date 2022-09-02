@@ -32,6 +32,7 @@ package de.duesseldorf.factorizer;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.parser.RRGParseItem;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tree.Node;
 
@@ -49,7 +50,7 @@ public class FactorizingInterface {
 
 
 
-    public Set<EqClassBot> factorize(Set<RRGTree> anchoredTrees) {
+    public void factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
             EqClassBot finClass = checkDaughters((RRGNode)tree.getRoot(), tree);
             finClass.setRoot(true);
@@ -59,7 +60,6 @@ public class FactorizingInterface {
         }
         //System.out.println("\n FACTORIZED TREES:" + this);
         //System.out.println(topEqClasses);
-        return bottomEqClasses;
     }
     @Override
     public String toString() {
@@ -148,12 +148,20 @@ public class FactorizingInterface {
         return possClasses;
     }
 
-    public ArrayList<EqClassBot> getLexClasses(String lex){
-        ArrayList<EqClassBot> lexClasses = new ArrayList<>();
+    public Set<EqClassBot> getLexClasses(String lex){
+        Set<EqClassBot> lexClasses = new HashSet<>();
 
         for(EqClassBot leafClass : getClassesByNumOfDaughters(0)){
             if(leafClass.cat.equals(lex)){lexClasses.add(leafClass);}
         }
         return lexClasses;
+    }
+
+    public Set<EqClassBot> getSubstClasses(String cat) {
+        Set<EqClassBot> substClasses = new HashSet<>();
+        for(EqClassBot eqClass : bottomEqClasses) {
+            if(eqClass.cat.equals(cat) && eqClass.type.equals(RRGNode.RRGNodeType.SUBST)) {substClasses.add(eqClass);}
+        }
+        return substClasses;
     }
 }
