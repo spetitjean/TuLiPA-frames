@@ -1,5 +1,6 @@
 package de.duesseldorf.factorizer;
 
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.rrg.RRGNode;
 
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ public class EqClassTop extends EqClassBot{
      * @param id
      * @param leftSisters left sister bottom Eq classes
      */
-    public EqClassTop(ArrayList<EqClassBot> daughters, String cat, RRGNode.RRGNodeType type, String id, List<EqClassBot> leftSisters) {
-        super(daughters, cat, type, id);
+    public EqClassTop(ArrayList<EqClassBot> daughters, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassBot> leftSisters) {
+        super(daughters, cat, type, id, fs);
         this.leftSisters = leftSisters;
     }
 
     public EqClassTop(EqClassBot botClass, String id, List<EqClassBot> leftSisters) {
-        super(botClass.getDaughterEQClasses(), botClass.cat, botClass.type, id);
+        super(botClass.getDaughterEQClasses(), botClass.cat, botClass.type, id, botClass.getFs());
         this.leftSisters = leftSisters;
     }
     public boolean belongs(List<EqClassBot> leftSisters){
@@ -51,8 +52,12 @@ public class EqClassTop extends EqClassBot{
     }
 
     @Override
+    public boolean isBottomClass(){return false;}
+
+
+    @Override
     public String toString() {
-        String out = "{Cat = "+ cat + " " + this.getId() + ", left sisters = ";
+        String out = "{TOP Cat = "+ cat + " " + this.getId() + ", left sisters = ";
         for(EqClassBot bot: leftSisters) {
             out += bot.cat + " " + bot.getId() + ", ";
         }

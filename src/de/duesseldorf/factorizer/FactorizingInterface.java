@@ -108,7 +108,7 @@ public class FactorizingInterface {
                 return botClass;
             }
         }
-        rootClass = new EqClassBot(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName());
+        rootClass = new EqClassBot(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName(), root.getNodeFs());
         rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
         EqClassBot finalRootClass = rootClass;
@@ -129,7 +129,7 @@ public class FactorizingInterface {
                 eqClassBot.add(leaf.getGornaddress(), tree);
                 return eqClassBot;
             }
-        } EqClassBot newClass = new EqClassBot(new ArrayList<>(), leaf.getCategory(), leaf.getType(), nf.getUniqueName());
+        } EqClassBot newClass = new EqClassBot(new ArrayList<>(), leaf.getCategory(), leaf.getType(), nf.getUniqueName(), leaf.getNodeFs());
         newClass.add(leaf.getGornaddress() , tree);
         bottomEqClasses.add(newClass);
         return newClass;

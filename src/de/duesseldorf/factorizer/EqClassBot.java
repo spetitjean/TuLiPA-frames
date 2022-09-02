@@ -30,6 +30,7 @@ package de.duesseldorf.factorizer;
  */
 
 
+import de.duesseldorf.frames.Fs;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
@@ -56,9 +57,11 @@ public class EqClassBot {
 
     private String id;
 
+    private Fs fs;
+
     private boolean root = false;
 
-    public EqClassBot(ArrayList<EqClassBot> daughters, String cat, RRGNodeType type, String id){
+    public EqClassBot(ArrayList<EqClassBot> daughters, String cat, RRGNodeType type, String id, Fs fs){
         this.id = id;
         daughterEQClasses = daughters;
         this.cat = cat;
@@ -68,6 +71,7 @@ public class EqClassBot {
             numDaughters = daughters.size();
         }
         this.type = type;
+        this.fs = fs;
     }
 
     public boolean isRoot(){return root;}
@@ -97,6 +101,8 @@ public class EqClassBot {
     public void add(EqClassTop topClass){
         topClasses.add(topClass);
     }
+
+    public boolean isBottomClass(){return true;}
 
 
     /**
@@ -128,7 +134,7 @@ public class EqClassBot {
 
     @Override
     public String toString() {
-        String out = "{Cat = "+ cat + " " + this.id + ", daughters = ";
+        String out = "{BOTTOM Cat = "+ cat + " " + this.id + ", daughters = ";
         if(numDaughters == 0) {
             out += "No Daughters \n";
         }
@@ -162,4 +168,6 @@ public class EqClassBot {
         }
         return out;
     }
+
+    public Fs getFs() {return fs;}
 }
