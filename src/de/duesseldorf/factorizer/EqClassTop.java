@@ -2,6 +2,9 @@ package de.duesseldorf.factorizer;
 
 import de.duesseldorf.frames.Fs;
 import de.duesseldorf.rrg.RRGNode;
+import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.util.GornAddress;
+import de.tuebingen.anchoring.NameFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,29 +17,35 @@ public class EqClassTop extends EqClassBot{
 
     private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
 
-    //private ArrayList<EqClassBot> possibleMothers = new ArrayList<>();
+    private boolean root;
 
     /**
-     * Eq classes that are euqal in daughters and left sisters
+     * Eq classes that are equal in daughters and left sisters
      * @param daughters daughter bottom EQ classes
      * @param cat category of the node
      * @param type type of the node
      * @param id
      * @param leftSisters left sister bottom Eq classes
      */
-    public EqClassTop(ArrayList<EqClassBot> daughters, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassBot> leftSisters) {
-        super(daughters, cat, type, id, fs);
+    public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassBot> leftSisters, boolean root) {
+        super(daughters, factorizedTrees, cat, type, id, fs);
         this.leftSisters = leftSisters;
+        this.root = root;
     }
 
-    public EqClassTop(EqClassBot botClass, String id, List<EqClassBot> leftSisters) {
-        super(botClass.getDaughterEQClasses(), botClass.cat, botClass.type, id, botClass.getFs());
+    public EqClassTop(EqClassBot botClass, String id, List<EqClassBot> leftSisters, boolean root) {
+        super(botClass.getDaughterEQClasses(), botClass.factorizedTrees, botClass.cat, botClass.type, id, botClass.getFs());
         this.leftSisters = leftSisters;
+        this.root = root;
     }
-    public boolean belongs(List<EqClassBot> leftSisters){
-        if(leftSisters.equals(this.leftSisters)){return true;}
+    public boolean belongs(List<EqClassBot> leftSisters, boolean root){
+        if(leftSisters.equals(this.leftSisters) && root == this.root){
+            return true;
+        }
         return false;
     }
+
+    public boolean isRoot(){return root;}
 
     public List<EqClassBot> getLeftSisters() {
         return leftSisters;
@@ -63,5 +72,11 @@ public class EqClassTop extends EqClassBot{
         }
         out += "\n";
         return out;
+    }
+
+    @Override
+    public EqClassTop copyClass(NameFactory nf) {
+        EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), this.getFs(), this.getLeftSisters(), isRoot());
+        return newEqClass;
     }
 }
