@@ -15,6 +15,7 @@ public class EqClassTop extends EqClassBot{
 
     private List<EqClassBot> leftSisters;
 
+    //Boolean = is this class the rightmost sister
     private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
 
     private boolean root;
@@ -51,6 +52,10 @@ public class EqClassTop extends EqClassBot{
         return leftSisters;
     }
 
+    private Map<EqClassBot, Boolean> getPossibleMothers() {
+        return possibleMothers;
+    }
+
     public boolean noLeftSisters() {
         if(leftSisters.isEmpty()) {return true;}
         return false;
@@ -76,7 +81,58 @@ public class EqClassTop extends EqClassBot{
 
     @Override
     public EqClassTop copyClass(NameFactory nf) {
-        EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), this.getFs(), this.getLeftSisters(), isRoot());
+        List<EqClassBot> sisters = new ArrayList<>();
+        for(EqClassBot sis: leftSisters) {
+            sisters.add(sis.copyClass());
+        }
+        List<EqClassBot> daughters = new ArrayList<>();
+        for(EqClassBot kid: getDaughterEQClasses()) {
+            daughters.add(kid.copyClass());
+        }
+        EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), new Fs(this.getFs(), nf), this.getLeftSisters(), isRoot());
         return newEqClass;
+    }
+
+    public static class Builder extends EqClassBot.Builder<Builder> {
+
+        private List<EqClassBot> leftSisters = new ArrayList<>();
+
+        private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
+
+        private boolean root = false;
+
+
+        public Builder() {
+        }
+
+        public Builder(EqClassTop otherClass) {
+            super(otherClass);
+            this.leftSisters = otherClass.getLeftSisters();
+            this.possibleMothers = otherClass.getPossibleMothers();
+            this.root = otherClass.isRoot();
+        }
+
+        public Builder leftSisters(List<EqClassBot> leftSisters) {
+            this.leftSisters = leftSisters;
+            return this;
+        }
+        public Builder possibleMothers(Map<EqClassBot, Boolean> possibleMothers) {
+            this.possibleMothers = possibleMothers;
+            return this;
+        }
+
+        public Builder root(Boolean root) {
+            this.root = root;
+            return this;
+        }
+
+        public EqClassTop build() {
+            EqClassTop newClass = new EqClassTop(this.build().getDaughterEQClasses(), this.factorizedTrees, this.cat,
+                    this.type, this.build().getId(), this.build().getFs(), this.leftSisters, this.root);
+            for(Map.Entry<EqClassBot, Boolean> entry : this.possibleMothers.entrySet()) {
+                newClass.addMother(entry.getKey(), entry.getValue());
+            }
+            return newClass;
+        }
     }
 }
