@@ -30,10 +30,15 @@ package de.duesseldorf.factorizer;
  */
 
 
+import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
+import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.parser.RRGParseItem;
+import de.duesseldorf.util.GornAddress;
 import de.tuebingen.anchoring.NameFactory;
+import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 import java.util.*;
@@ -53,9 +58,7 @@ public class FactorizingInterface {
     public void factorize(Set<RRGTree> anchoredTrees) {
         for(RRGTree tree : anchoredTrees) {
             EqClassBot finClass = checkDaughters((RRGNode)tree.getRoot(), tree);
-            finClass.setRoot(true);
-            EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree);
-            topClass.setId(nf.getUniqueName());
+            EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree, nf);
             topEqClasses.add(topClass);
         }
         //System.out.println("\n FACTORIZED TREES:" + this);
@@ -92,8 +95,7 @@ public class FactorizingInterface {
             }
 
             // Create top eq class with left sisters
-            EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree);
-            topClass.setId(nf.getUniqueName());
+            EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree, nf);
             daughtersEq.add(childClass);
             topClasses.add(topClass);
         }
@@ -108,7 +110,8 @@ public class FactorizingInterface {
                 return botClass;
             }
         }
-        rootClass = new EqClassBot(daughtersEq, root.getCategory(), root.getType(), nf.getUniqueName(), root.getNodeFs());
+        rootClass = new EqClassBot(daughtersEq, new HashMap<GornAddress, RRGTree>(),root.getCategory(),
+                root.getType(), nf.getUniqueName(), root.getNodeFs());
         rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
         EqClassBot finalRootClass = rootClass;
@@ -129,7 +132,8 @@ public class FactorizingInterface {
                 eqClassBot.add(leaf.getGornaddress(), tree);
                 return eqClassBot;
             }
-        } EqClassBot newClass = new EqClassBot(new ArrayList<>(), leaf.getCategory(), leaf.getType(), nf.getUniqueName(), leaf.getNodeFs());
+        } EqClassBot newClass = new EqClassBot(new ArrayList<EqClassBot>(), new HashMap<GornAddress, RRGTree>(),
+                leaf.getCategory(), leaf.getType(), nf.getUniqueName(), leaf.getNodeFs());
         newClass.add(leaf.getGornaddress() , tree);
         bottomEqClasses.add(newClass);
         return newClass;
@@ -163,5 +167,31 @@ public class FactorizingInterface {
             if(eqClass.cat.equals(cat) && eqClass.type.equals(RRGNode.RRGNodeType.SUBST)) {substClasses.add(eqClass);}
         }
         return substClasses;
+    }
+
+    public EqClassBot unifyClasses(EqClassBot eqClass1, EqClassBot eqClass2,
+                                   Environment env) throws UnifyException {
+
+        EqClassBot.Builder resultBuilder = new EqClassBot.Builder(eqClass1);
+        if (!eqClass1.type.equals(eqClass2.type)) {
+            resultBuilder = resultBuilder.type(RRGNode.RRGNodeType.STD);
+        }
+        if (eqClass1.type.equals(RRGNode.RRGNodeType.SUBST)
+                || eqClass2.type.equals(RRGNode.RRGNodeType.SUBST)) {
+            resultBuilder = resultBuilder.type(RRGNode.RRGNodeType.SUBST);
+        }
+
+        if (!eqClass1.cat.equals(eqClass2.cat)) {
+            // System.err.println("node unification not possible! ");
+            // System.err.println(eqClass1);
+            // System.err.println(eqClass2);
+            throw new UnifyException();
+        }
+        // unify might throw another exception
+        Fs fsForResult = FsTools.unify(eqClass1.getFs(), eqClass2.getFs(),
+                env);
+
+        resultBuilder = resultBuilder.fs(fsForResult);
+        return resultBuilder.build();
     }
 }
