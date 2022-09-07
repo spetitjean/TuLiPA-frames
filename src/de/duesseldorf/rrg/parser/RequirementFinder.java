@@ -53,8 +53,9 @@ public class RequirementFinder {
      *
      * @param currentItem
      */
+    //!!Deducer needs to compute subset of possible Mothers where 3. is fulfilled, req only checks if such a mother exists
     public boolean moveupReq(RRGParseItem currentItem) {
-        boolean res = currentItem.getEqClass().isTopClass();
+        boolean res = currentItem.getEqClass().isTopClass(); //1
         if(res == false) {
             return res;
         }
@@ -159,17 +160,19 @@ public class RequirementFinder {
      * @return
      */
     public boolean substituteReq(RRGParseItem currentItem) {
-        boolean res = currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP) // 1.
-                // the current node has no mother, i.e. it is a root
-                && currentItem.getNode().getGornaddress().mother() == null
-                && currentItem.getNode().getType() != RRGNodeType.STAR;
+
+        boolean res = currentItem.getEqClass().isTopClass();//1
+        if(res == false){return res;}
+
+        res = res && !(((EqClassTop)currentItem.getEqClass()).isRoot()) // 2.
+                && (((EqClassTop)currentItem.getEqClass()).type != RRGNodeType.STAR); //3.
         return res;
     }
 
     /**
      * needed:
-     * 1. in root node with star mark
-     * 2. in TOP position
+     * 1. in TOP position
+     * 2. in root node with star mark
      * 3. no ws
      *
      * @param item
@@ -177,11 +180,13 @@ public class RequirementFinder {
      * adjunction tree
      */
     public boolean isSisadjRoot(RRGParseItem item) {
-        boolean result = item.getNode().getGornaddress().mother() == null && // 1a
-                item.getNode().getType().equals(RRGNodeType.STAR) && // 1b
-                item.getNodePos().equals(RRGParseItem.NodePos.TOP) && // 2.
-                !item.getwsflag(); // 3
-        return result;
+        boolean res = item.getEqClass().isTopClass(); 1.
+        if(res == false){return res;}
+
+        res = res && ((EqClassTop) item.getEqClass()).isRoot()//2a
+                && item.getEqClass().type == RRGNodeType.STAR //2b
+                && !item.getwsflag();//3
+        return res;
     }
 
     /**
