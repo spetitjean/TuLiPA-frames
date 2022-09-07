@@ -1,5 +1,8 @@
 package de.duesseldorf.rrg.parser;
 
+import de.duesseldorf.factorizer.EqClassBot;
+import de.duesseldorf.factorizer.EqClassTop;
+import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.*;
@@ -45,22 +48,28 @@ public class RRGParser {
     private RequirementFinder requirementFinder;
     private Deducer deducer;
 
+    private FactorizingInterface factorizer;
+
     private boolean verbosePrintsToStdOut = false;
-    private LinkedList<RRGTree> treesInvolvedInParsing;
+    private LinkedList<EqClassBot> treesInvolvedInParsing;
 
     private boolean noExtractionForBigCharts = false;
     private String axiom;
 
-    public RRGParser(String axiom, Set<RRGTree> treesInvolvedInParsing) {
+    public RRGParser(String axiom, FactorizingInterface factorizer) {
         this.axiom = (axiom == null) ? "" : axiom;
         this.requirementFinder = new RequirementFinder();
         this.deducer = new Deducer();
         //this.treesInvolvedInParsing = treesInvolvedInParsing;
         this.treesInvolvedInParsing = new LinkedList<>();
-        for (RRGTree rrgtree : treesInvolvedInParsing) {
+        this.factorizer = factorizer;
+        /*for (RRGTree rrgtree : treesInvolvedInParsing) {
             RRGTree another_rrgtree = new RRGTree(rrgtree);
             another_rrgtree.setEnv(new Environment(5));
             this.treesInvolvedInParsing.add(another_rrgtree);
+        }*/
+        for(EqClassBot eqClass : factorizer.bottomEqClasses){
+            this.treesInvolvedInParsing.add(eqClass);
         }
         //Collections.sort(this.treesInvolvedInParsing);
         //System.err.println("Trees involved in parsing (RRGParser): "+this.treesInvolvedInParsing);;
@@ -89,12 +98,11 @@ public class RRGParser {
         this.requirementFinder = new RequirementFinder();
 
         System.out.println("Found fitting lexical items in the following "
-                + agenda.size() + " trees: ");
+                + agenda.size() + " eqClasses: ");
         if (!ParsingInterface.omitPrinting) {
             for (RRGParseItem item : agenda.getAllItems()) {
-                System.out.println(item.getTree().getId());
-                System.out.println(RRGTreeTools
-                        .recursivelyPrintNode(item.getTree().getRoot()));
+                System.out.println(item.getEqClass().getId()+", ");
+                System.out.println(item.getEqClass().toString());
                 System.out.println("--------------------------------");
             }
         }
@@ -108,7 +116,7 @@ public class RRGParser {
                 System.out.println("step: " + i + "\t" + currentItem);
             }
             i++;
-            if (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) {
+            if (currentItem.getEqClass().isBottomClass()) {
                 noleftsister(currentItem);
             } else {
                 moveup(currentItem);
@@ -195,31 +203,31 @@ public class RRGParser {
         if (rootItem) {
             for (Gap gap : currentItem.getGaps()) {
                 //System.out.println(gap);
-                Set<RRGParseItem> completeWrappingFillterAntecedents =
+                Set<RRGParseItem> completeWrappingFilterAntecedents =
                         requirementFinder.findCompleteWrappingFillers(currentItem, gap, chart);
-                //System.out.println(completeWrappingFillterAntecedents);
+                //System.out.println(completeWrappingFilterAntecedents);
                 // keep only those where the node of the filler is a daughter of the root
-                completeWrappingFillterAntecedents = completeWrappingFillterAntecedents.stream().filter(
+                /*completeWrappingFilterAntecedents = completeWrappingFilterAntecedents.stream().filter( //GenWrapping warum mother,mother?
                         item -> item.getNode().getGornaddress().mother().mother() == null
-                ).collect(Collectors.toSet());
-                //System.out.println(completeWrappingFillterAntecedents);
+                ).collect(Collectors.toSet());*/
+                //System.out.println(completeWrappingFilterAntecedents);
                 // find out if you moved one up or if you try to wrap around a single node
                 Set<Set<RRGParseItem>> combineSisAntecedents = chart.getBackPointers(currentItem).getAntecedents(Operation.COMBINESIS);
                 boolean wrappedAroundSameNode = false;
                 for (Set<RRGParseItem> combsisants : combineSisAntecedents) {
-                    RRGParseItem botCSAntecedent = combsisants.stream().filter(item -> item.getNodePos().equals(NodePos.BOT)).findFirst().orElse(null);
+                    RRGParseItem botCSAntecedent = combsisants.stream().filter(item -> item.getEqClass().isBottomClass()).findFirst().orElse(null);
                     if (botCSAntecedent != null) {
                         Set<Set<RRGParseItem>> pwantecedents = chart.getBackPointers(botCSAntecedent).getAntecedents(Operation.PREDICTWRAPPING);
                         for (Set<RRGParseItem> pwantecedent : pwantecedents) {
                             RRGParseItem pwantecedentItem = pwantecedent.stream().findFirst().orElse(null);
-                            if (completeWrappingFillterAntecedents.stream().anyMatch((item) -> item.equals(pwantecedentItem))) {
+                            if (completeWrappingFilterAntecedents.stream().anyMatch((item) -> item.equals(pwantecedentItem))) {
                                 wrappedAroundSameNode = true;
                             }
                         }
                     }
                 }
                 if (!wrappedAroundSameNode) {
-                    for (RRGParseItem fillerddaughterItem : completeWrappingFillterAntecedents) {
+                    for (RRGParseItem fillerddaughterItem : completeWrappingFilterAntecedents) {
                         RRGParseItem consequent = deducer.applyGeneralizedCompleteWrapping(currentItem, fillerddaughterItem, gap);
                         //System.out.println("Adding by generalizedCompleteWrapping: " + consequent);
                         //System.out.println("Previous item: " + currentItem);
@@ -261,7 +269,7 @@ public class RRGParser {
             for (RRGParseItem rootAntecedent :
                     completeWrappingRootAntecedents) {
                 for (Gap gap : rootAntecedent.getGaps()) {
-                    if (gap.start != currentItem.startPos() || gap.end != currentItem.getEnd() || !gap.nonterminal.equals(currentItem.getNode().getCategory())) {
+                    if (gap.start != currentItem.startPos() || gap.end != currentItem.getEnd() || !gap.nonterminal.equals(currentItem.getEqClass().cat)) {
                         continue;
                     }
                     RRGParseItem consequent = deducer.applyCompleteWrapping(
@@ -281,38 +289,36 @@ public class RRGParser {
     private void predictwrapping(RRGParseItem currentItem) {
         if (requirementFinder.predWrappingReqs(currentItem)) {
             // look at the whole grammar and find fitting substitution nodes
-            String cat = currentItem.getNode().getCategory();
+            String cat = currentItem.getEqClass().cat;
             // System.out.println("got to predict: " + currentItem);
-            for (RRGTree tree : treesInvolvedInParsing) {
-                Set<RRGNode> substNodes = tree.getInstance().getSubstNodes().get(cat);
-                if (substNodes != null) {
-                    HashSet<Gap> gaps = new HashSet<Gap>();
-                    gaps.add(new Gap(currentItem.startPos(),
-                            currentItem.getEnd(), cat));
-                    for (RRGNode substNode : substNodes) {
-                        boolean nodeUnificationPossible = true;
-                        try {
-                            // RRGTreeTools.unifyNodes(substNode,
-                            //         currentItem.getNode(),
-                            //         currentItem.getTree().getEnv());
-                            RRGTreeTools.unifyNodes(substNode.copyNode(),
-                                    currentItem.getNode().copyNode(),
-                                    new Environment(5));
-                        } catch (UnifyException e) {
-                            nodeUnificationPossible = false;
-                        }
 
-                        if (nodeUnificationPossible) {
-                            // System.out.println("got to for: " + substNode);
-                            RRGParseItem cons = new RRGParseItem.Builder()
-                                    .tree(tree.getInstance()).node(substNode.copyNode())
-                                    .nodepos(NodePos.BOT)
-                                    .start(currentItem.startPos())
-                                    .end(currentItem.getEnd()).gaps(gaps)
-                                    .ws(false).build();
-                            addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
-                                    currentItem);
-                        }
+            Set<EqClassBot> substClasses = factorizer.getSubstClasses(cat);
+            if (!substClasses.isEmpty()) {
+                HashSet<Gap> gaps = new HashSet<Gap>();
+                gaps.add(new Gap(currentItem.startPos(),
+                        currentItem.getEnd(), cat));
+                for (EqClassBot substClass : substClasses) {
+                    boolean nodeUnificationPossible = true;
+                    try {
+                        // RRGTreeTools.unifyNodes(substClass,
+                        //         currentItem.getNode(),
+                        //         currentItem.getTree().getEnv());
+                        factorizer.unifyClasses(substClass.copyClass(),
+                                currentItem.getEqClass().copyClass(),
+                                new Environment(5));
+                    } catch (UnifyException e) {
+                        nodeUnificationPossible = false;
+                    }
+
+                    if (nodeUnificationPossible) {
+                        // System.out.println("got to for: " + substClass);
+                        RRGParseItem cons = new RRGParseItem.Builder()
+                                .eqClass(substClass.copyClass())
+                                .start(currentItem.startPos())
+                                .end(currentItem.getEnd()).gaps(gaps)
+                                .ws(false).build();
+                        addToChartAndAgenda(cons, Operation.PREDICTWRAPPING,
+                                currentItem);
                     }
                 }
             }
@@ -385,38 +391,35 @@ public class RRGParser {
     private void substitute(RRGParseItem currentItem) {
         //System.out.println("substitute");
         //System.out.println(currentItem.getNode());
-        if (requirementFinder.substituteReq(currentItem)) {
-            for (RRGTree tree : treesInvolvedInParsing) {
-                Set<RRGNode> substNodes = tree.getInstance().getSubstNodes()
-                        .get(currentItem.getNode().getCategory());
-                if (substNodes != null) {
-                    for (RRGNode substNode : substNodes) {
-                        // System.out.println("got to for: " + substNode);
-                        boolean checkIfUnificationWorks = true;
-                        try {
-                            // RRGTreeTools.unifyNodes(substNode,
-                            //         currentItem.getNode(),
-                            //         currentItem.getTree().getEnv());
-                            RRGTreeTools.unifyNodes(substNode.copyNode(),
-                                    currentItem.getNode().copyNode(),
-                                    new Environment(5));
-                        } catch (UnifyException e) {
-                            //System.out.println("Failed unification");
-                            checkIfUnificationWorks = false;
-                        }
-                        if (checkIfUnificationWorks) {
-                            RRGParseItem cons = new RRGParseItem.Builder()
-                                    .tree(tree.getInstance()).node(substNode.copyNode())
-                                    .nodepos(NodePos.BOT)
-                                    .start(currentItem.startPos())
-                                    .end(currentItem.getEnd())
-                                    .gaps(currentItem.getGaps()).ws(false)
-                                    .genwrappingjumpback(currentItem.getGenwrappingjumpback())
-                                    .build();
 
-                            addToChartAndAgenda(cons, Operation.SUBSTITUTE,
-                                    currentItem);
-                        }
+        if (requirementFinder.substituteReq(currentItem)) {
+            Set<EqClassBot> substClasses = factorizer.getSubstClasses(currentItem.getEqClass().cat);
+            if (substClasses != null) {
+                for (EqClassBot substClass : substClasses) {
+                    // System.out.println("got to for: " + substClass);
+                    boolean checkIfUnificationWorks = true;
+                    try {
+                        // RRGTreeTools.unifyNodes(substClass,
+                        //         currentItem.getNode(),
+                        //         currentItem.getTree().getEnv());
+                        factorizer.unifyClasses(substClass.copyClass(),
+                                currentItem.getEqClass().copyClass(),
+                                new Environment(5));
+                    } catch (UnifyException e) {
+                        //System.out.println("Failed unification");
+                        checkIfUnificationWorks = false;
+                    }
+                    if (checkIfUnificationWorks) {
+                        RRGParseItem cons = new RRGParseItem.Builder()
+                                .eqClass(substClass)
+                                .start(currentItem.startPos())
+                                .end(currentItem.getEnd())
+                                .gaps(currentItem.getGaps()).ws(false)
+                                .genwrappingjumpback(currentItem.getGenwrappingjumpback())
+                                .build();
+
+                        addToChartAndAgenda(cons, Operation.SUBSTITUTE,
+                                currentItem);
                     }
                 }
             }
@@ -484,21 +487,21 @@ public class RRGParser {
         //System.out.println("scan");
         Set<String> scannedWords = new HashSet<>();
         // Look at all trees
-        for (RRGTree tree : treesInvolvedInParsing) {
+        for (EqClassBot eqClass : treesInvolvedInParsing) {
             //System.out.println("RRGParser scan: "+tree);
             // Look at all words
             for (int start = 0; start < sentence.size(); start++) {
                 String word = sentence.get(start);
 
                 // See if the word is a lex Node of the tree
-                Set<RRGNode> candidates = tree.getLexNodes().get(word);
+                Set<EqClassBot> candidates = factorizer.getLexClasses(word);
                 if (candidates != null) {
                     scannedWords.add(word + "_" + start);
-                    for (RRGNode lexLeaf : candidates) {
+                    for (EqClassBot lexLeaf : candidates) {
                         // If so, create a new item and add it to the chart and
                         // agenda
                         RRGParseItem scannedItem = new RRGParseItem.Builder()
-                                .tree(tree.getInstance()).node(lexLeaf.copyNode()).nodepos(NodePos.BOT)
+                                .eqClass(lexLeaf)
                                 .start(start).end(start + 1)
                                 .gaps(new HashSet<Gap>()).ws(false).build();
                         addToChartAndAgenda(scannedItem, Operation.SCAN);
