@@ -4,6 +4,7 @@ package de.duesseldorf.rrg.parser;
 import java.util.Objects;
 import java.util.Set;
 
+import de.duesseldorf.factorizer.EqClassBot;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 
@@ -35,20 +36,20 @@ import de.duesseldorf.rrg.RRGTree;
  */
 public class RRGParseItem implements Comparable<RRGParseItem> {
 
-    private final RRGTree tree;
-    private final RRGNode node;
-    private final NodePos nodepos;
+    //private final RRGTree tree;
+    //private final RRGNode node;
+    //private final NodePos nodepos;
+
+    private final EqClassBot eqClass;
     private final int start;
     private final int end;
     private final Set<Gap> gaps;
     private final boolean ws;
     private final RRGParseItem genwrappingjumpback;
 
-    private RRGParseItem(RRGTree tree, RRGNode node, NodePos nodepos, int start,
+    private RRGParseItem(EqClassBot eqClass, int start,
                          int end, Set<Gap> gaps, boolean ws, RRGParseItem genwrappingjumpback) {
-        this.tree = tree;
-        this.node = node;
-        this.nodepos = nodepos;
+        this.eqClass = eqClass;
         this.start = start;
         this.end = end;
         this.gaps = gaps;
@@ -56,20 +57,32 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         this.genwrappingjumpback = genwrappingjumpback;
     }
 
+/*
     public RRGTree getTree() {
         return tree;
     }
+*/
 
+/*
     public RRGTree getTreeInstance() {
         return tree.getInstance();
     }
+*/
 
+/*
     public NodePos getNodePos() {
         return this.nodepos;
     }
+*/
 
+/*
     public RRGNode getNode() {
         return node;
+    }
+*/
+
+    public EqClassBot getEqClass() {
+        return this.eqClass;
     }
 
     public int startPos() {
@@ -94,7 +107,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tree.getId(), start, end, node.getType(), node.getName(), node.getCategory(), gaps, nodepos, ws, genwrappingjumpback);
+        return Objects.hash(eqClass.getId(), start, end, eqClass.type, eqClass.cat, gaps, ws, genwrappingjumpback);
     }
 
     @Override
@@ -114,8 +127,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
             gapstr += gap.toString();
         }
         gapstr += "]";
-        String itemstr = "[" + this.tree.getId() + ", "
-                + this.node.toStringWithoutFs() + ", " + this.nodepos + ", "
+        String itemstr = "[" + this.eqClass.getId() + ", "
+                + this.eqClass.toString() + ", "
                 + this.start + ", " + this.end + ", " + gapstr + ", " + ws;
         if (genwrappingjumpback != null) {
             itemstr += ", " + genwrappingjumpback.toString();
@@ -125,8 +138,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     public int compareTo(RRGParseItem o) {
-        if (!this.getTree().getId().equals(o.getTree().getId())) {
-            return getTree().getId().compareTo(o.getTree().getId());
+        if (!this.getEqClass().getId().equals(o.getEqClass().getId())) {
+            return getEqClass().getId().compareTo(o.getEqClass().getId());
         }
         if (this.start != o.start) {
             return this.start - o.start;
@@ -148,11 +161,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     }
 
     public static class Builder {
-        // all of the properties are initialized with their default
-        // (underspecified) values).
-        private RRGTree tree = null;
-        private RRGNode node = null;
-        private NodePos nodepos = null;
+        private EqClassBot eqClass = null;
         private int start = -2;
         private int end = -2;
         private Set<Gap> gaps = null;
@@ -162,18 +171,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         public Builder() {
         }
 
-        public Builder tree(RRGTree tree) {
-            this.tree = tree;
-            return this;
-        }
-
-        public Builder node(RRGNode node) {
-            this.node = node;
-            return this;
-        }
-
-        public Builder nodepos(NodePos nodepos) {
-            this.nodepos = nodepos;
+        public Builder eqClass(EqClassBot eqClass){
+            this.eqClass = eqClass;
             return this;
         }
 
@@ -210,7 +209,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
              * System.out.println();
              * System.out.println();
              */
-            return new RRGParseItem(tree, node, nodepos, start, end, gaps, ws, genwrappingjumpback);
+            return new RRGParseItem(eqClass, start, end, gaps, ws, genwrappingjumpback);
         }
     }
 }
