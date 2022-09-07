@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
+import de.duesseldorf.factorizer.EqClassBot;
 import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.ui.webgui.RRGLocalWebGUI;
 import org.w3c.dom.Document;
@@ -840,8 +841,7 @@ public class ParsingInterface {
                 ExecutorService executor = Executors.newCachedThreadPool();
                 Callable<RRGParseResult> task = new Callable<RRGParseResult>() {
                     public RRGParseResult call() {
-                        RRGParser rrgparser = new RRGParser(op.getVal("a"),
-                                treesInvolvedInParsing);
+                        RRGParser rrgparser = new RRGParser(op.getVal("a"),Fi);
                         return rrgparser.parseSentence(toksentence);
                     }
                 };
