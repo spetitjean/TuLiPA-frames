@@ -52,7 +52,7 @@ public class EqClassTop extends EqClassBot{
         return leftSisters;
     }
 
-    private Map<EqClassBot, Boolean> getPossibleMothers() {
+    public Map<EqClassBot, Boolean> getPossibleMothers() {
         return possibleMothers;
     }
 
@@ -68,6 +68,8 @@ public class EqClassTop extends EqClassBot{
     @Override
     public boolean isBottomClass(){return false;}
 
+    @Override
+    public boolean isTopClass(){return true;}
 
     @Override
     public String toString() {

@@ -106,6 +106,8 @@ public class EqClassBot {
     }
 
     public boolean isBottomClass(){return true;}
+    public boolean isTopClass(){return false;}
+
 
 
     /**
