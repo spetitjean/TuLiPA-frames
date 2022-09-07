@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.duesseldorf.factorizer.EqClassBot;
+import de.duesseldorf.factorizer.EqClassTop;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
@@ -52,12 +54,13 @@ public class RequirementFinder {
      * @param currentItem
      */
     public boolean moveupReq(RRGParseItem currentItem) {
-        boolean res = currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP); // 1
-        GornAddress currentAddress = currentItem.getNode().getGornaddress();
+        boolean res = currentItem.getEqClass().isTopClass();
+        if(res == false) {
+            return res;
+        }
+        res = res && !(((EqClassTop)currentItem.getEqClass()).isRoot()); // 2
 
-        res = res && (currentAddress.mother() != null); // 2
-        res = res && (currentItem.getTree()
-                .findNode(currentAddress.rightSister()) == null); // 3
+        res = res && (((EqClassTop)currentItem.getEqClass()).getPossibleMothers().containsValue(true)); // 3
         res = res && !currentItem.getwsflag(); // 4
         return res;
 
@@ -72,8 +75,10 @@ public class RequirementFinder {
      * @return
      */
     public boolean nlsReq(RRGParseItem currentItem) {
-        return currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT) // 1
-                && !currentItem.getNode().getGornaddress().hasLeftSister(); // 2
+        boolean res = currentItem.getEqClass().isBottomClass();// 1
+        res = res && currentItem.getEqClass().noLeftSisters();// 2
+
+        return res;
     }
 
     /**
