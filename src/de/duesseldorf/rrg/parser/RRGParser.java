@@ -117,9 +117,9 @@ public class RRGParser {
             }
             i++;
             if (currentItem.getEqClass().isBottomClass()) {
-                noleftsister(currentItem);
+                noleftsister(currentItem); //done
             } else {
-                moveup(currentItem);
+                moveup(currentItem); //done
                 substitute(currentItem);
                 sisteradjoin(currentItem);
             }
@@ -394,33 +394,32 @@ public class RRGParser {
 
         if (requirementFinder.substituteReq(currentItem)) {
             Set<EqClassBot> substClasses = factorizer.getSubstClasses(currentItem.getEqClass().cat);
-            if (substClasses != null) {
-                for (EqClassBot substClass : substClasses) {
-                    // System.out.println("got to for: " + substClass);
-                    boolean checkIfUnificationWorks = true;
-                    try {
-                        // RRGTreeTools.unifyNodes(substClass,
-                        //         currentItem.getNode(),
-                        //         currentItem.getTree().getEnv());
-                        factorizer.unifyClasses(substClass.copyClass(),
-                                currentItem.getEqClass().copyClass(),
-                                new Environment(5));
-                    } catch (UnifyException e) {
-                        //System.out.println("Failed unification");
-                        checkIfUnificationWorks = false;
-                    }
-                    if (checkIfUnificationWorks) {
-                        RRGParseItem cons = new RRGParseItem.Builder()
-                                .eqClass(substClass)
-                                .start(currentItem.startPos())
-                                .end(currentItem.getEnd())
-                                .gaps(currentItem.getGaps()).ws(false)
-                                .genwrappingjumpback(currentItem.getGenwrappingjumpback())
-                                .build();
+            Iterator it = substClasses.iterator();
+            while(it.hasNext()){
+                EqClassBot substClass = (EqClassBot) it.next();
+                boolean checkIfUnificationWorks = true;
+                try {
+                    // RRGTreeTools.unifyNodes(substClass,
+                    //         currentItem.getNode(),
+                    //         currentItem.getTree().getEnv());
+                    factorizer.unifyClasses(substClass.copyClass(),
+                            currentItem.getEqClass().copyClass(),
+                            new Environment(5));
+                } catch (UnifyException e) {
+                    //System.out.println("Failed unification");
+                    checkIfUnificationWorks = false;
+                }
+                if (checkIfUnificationWorks) {
+                    RRGParseItem cons = new RRGParseItem.Builder()
+                            .eqClass(substClass)
+                            .start(currentItem.startPos())
+                            .end(currentItem.getEnd())
+                            .gaps(currentItem.getGaps()).ws(false)
+                            .genwrappingjumpback(currentItem.getGenwrappingjumpback())
+                            .build();
 
-                        addToChartAndAgenda(cons, Operation.SUBSTITUTE,
-                                currentItem);
-                    }
+                    addToChartAndAgenda(cons, Operation.SUBSTITUTE,
+                            currentItem);
                 }
             }
         }
@@ -431,7 +430,7 @@ public class RRGParser {
         // System.out.println("currentnode: " + currentItem.getNode());
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
-            List<RRGParseItem> newItems = deducer.applyMoveUp(currentItem);
+            Set<RRGParseItem> newItems = deducer.applyMoveUp(currentItem);
             for(RRGParseItem item: newItems) {
                 addToChartAndAgenda(item, Operation.MOVEUP, currentItem);
             }
@@ -476,7 +475,7 @@ public class RRGParser {
         boolean nlsrequirements = requirementFinder.nlsReq(currentItem);
         if (nlsrequirements) {
 
-            List<RRGParseItem> newItems = deducer.applyNoLeftSister(currentItem);
+            Set<RRGParseItem> newItems = deducer.applyNoLeftSister(currentItem);
             for(RRGParseItem item: newItems){
                 addToChartAndAgenda(item, Operation.NLS, currentItem);
             }

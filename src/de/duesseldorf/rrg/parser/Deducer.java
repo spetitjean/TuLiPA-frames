@@ -69,9 +69,9 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public List<RRGParseItem> applyMoveUp(RRGParseItem currentItem) {
+    public Set<RRGParseItem> applyMoveUp(RRGParseItem currentItem) {
 
-        List<RRGParseItem> newItems = new ArrayList<RRGParseItem>();
+        Set<RRGParseItem> newItems = new HashSet<>();
 
         Map<EqClassBot, Boolean> possMothers = ((EqClassTop)currentItem.getEqClass()).getPossibleMothers();
         List<EqClassBot> nrsMothers = possMothers.entrySet().stream()
@@ -98,8 +98,8 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public List<RRGParseItem> applyNoLeftSister(RRGParseItem currentItem) {
-        List<RRGParseItem> items = new ArrayList<RRGParseItem>();
+    public Set<RRGParseItem> applyNoLeftSister(RRGParseItem currentItem) {
+        Set<RRGParseItem> items = new HashSet<>();
         List<EqClassTop> topClasses = currentItem.getEqClass().getTopClasses();
         topClasses.stream().filter(topClass -> topClass.noLeftSisters() == true).collect(Collectors.toList());
 
