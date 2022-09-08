@@ -108,6 +108,13 @@ public class EqClassBot {
     public boolean isBottomClass(){return true;}
     public boolean isTopClass(){return false;}
 
+    public boolean noLeftSisters() {
+        ArrayList<Boolean> ba = new ArrayList<>();
+        for(EqClassTop tc: topClasses){
+            ba.add(Boolean.valueOf(tc.noLeftSisters()));
+        }
+        return ba.contains(Boolean.valueOf(true));
+    }
 
 
     /**

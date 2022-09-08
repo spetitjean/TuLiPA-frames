@@ -431,9 +431,10 @@ public class RRGParser {
         // System.out.println("currentnode: " + currentItem.getNode());
         boolean moveupreq = requirementFinder.moveupReq(currentItem);
         if (moveupreq) {
-            RRGParseItem newItem = deducer.applyMoveUp(currentItem);
-
-            addToChartAndAgenda(newItem, Operation.MOVEUP, currentItem);
+            List<RRGParseItem> newItems = deducer.applyMoveUp(currentItem);
+            for(RRGParseItem item: newItems) {
+                addToChartAndAgenda(item, Operation.MOVEUP, currentItem);
+            }
         }
     }
 
@@ -475,8 +476,10 @@ public class RRGParser {
         boolean nlsrequirements = requirementFinder.nlsReq(currentItem);
         if (nlsrequirements) {
 
-            RRGParseItem newItem = deducer.applyNoLeftSister(currentItem);
-            addToChartAndAgenda(newItem, Operation.NLS, currentItem);
+            List<RRGParseItem> newItems = deducer.applyNoLeftSister(currentItem);
+            for(RRGParseItem item: newItems){
+                addToChartAndAgenda(item, Operation.NLS, currentItem);
+            }
         }
     }
 

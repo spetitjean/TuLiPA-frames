@@ -1,8 +1,10 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import de.duesseldorf.factorizer.EqClassBot;
+import de.duesseldorf.factorizer.EqClassTop;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.util.GornAddress;
@@ -67,22 +69,26 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public RRGParseItem applyMoveUp(RRGParseItem currentItem) {
-        GornAddress motheraddress = currentItem.getNode().getGornaddress()
-                .mother();
-        RRGNode mothernode = currentItem.getTree().findNode(motheraddress).copyNode();
-        boolean newwsflag = mothernode.getType().equals(RRGNodeType.DDAUGHTER);
-        Set<RRGParseItem> backpointers = new HashSet<RRGParseItem>();
-        backpointers.add(currentItem);
+    public List<RRGParseItem> applyMoveUp(RRGParseItem currentItem) {
 
-        // Debug
-        // System.out.println(motheraddress + " is the mother of "
-        // + currentItem.getNode().getGornaddress());
-        return new RRGParseItem.Builder().tree(currentItem.getTree().getInstance())
-                .node(mothernode).nodepos(RRGParseItem.NodePos.BOT)
-                .start(currentItem.startPos()).end(currentItem.getEnd())
-                .gaps(currentItem.getGaps()).ws(newwsflag)
-                .genwrappingjumpback(currentItem.getGenwrappingjumpback()).build();
+        List<RRGParseItem> newItems = new ArrayList<RRGParseItem>();
+
+        Map<EqClassBot, Boolean> possMothers = ((EqClassTop)currentItem.getEqClass()).getPossibleMothers();
+        List<EqClassBot> nrsMothers = possMothers.entrySet().stream()
+                .filter(e -> e.getValue() == true)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        for(EqClassBot mom: nrsMothers) {
+            boolean newwsflag = mom.type.equals(RRGNodeType.DDAUGHTER);
+            RRGParseItem newItem = new RRGParseItem.Builder().eqClass(mom)
+                    .start(currentItem.startPos()).end(currentItem.getEnd())
+                    .gaps(currentItem.getGaps()).ws(newwsflag)
+                    .genwrappingjumpback(currentItem.getGenwrappingjumpback()).build();
+
+            newItems.add(newItem);
+        }
+
+        return newItems;
     }
 
     /**
@@ -92,13 +98,20 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public RRGParseItem applyNoLeftSister(RRGParseItem currentItem) {
-        return new RRGParseItem.Builder().tree(currentItem.getTree().getInstance())
-                .node(currentItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
-                .start(currentItem.startPos()).end(currentItem.getEnd())
-                .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
-                .genwrappingjumpback(currentItem.getGenwrappingjumpback())
-                .build();
+    public List<RRGParseItem> applyNoLeftSister(RRGParseItem currentItem) {
+        List<RRGParseItem> items = new ArrayList<RRGParseItem>();
+        List<EqClassTop> topClasses = currentItem.getEqClass().getTopClasses();
+        topClasses.stream().filter(topClass -> topClass.noLeftSisters() == true).collect(Collectors.toList());
+
+        for(EqClassTop tc : topClasses) {
+            RRGParseItem topItem = new RRGParseItem.Builder().eqClass(tc)
+                    .start(currentItem.startPos()).end(currentItem.getEnd())
+                    .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
+                    .genwrappingjumpback(currentItem.getGenwrappingjumpback())
+                    .build();
+            items.add(topItem);
+        }
+        return items;
     }
 
     /**
