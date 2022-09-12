@@ -374,8 +374,8 @@ public class RequirementFinder {
      * @param currentItem
      */
     public boolean predWrappingReqs(RRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
-                && (currentItem.getwsflag() == true); // 2
+        return (currentItem.getEqClass().isBottomClass()) // 1
+                && (currentItem.getwsflag()); // 2
     }
 
     /**
