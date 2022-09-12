@@ -39,6 +39,7 @@ import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tree.Node;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static de.duesseldorf.rrg.RRGNode.RRGNodeType.STD;
 
@@ -184,6 +185,17 @@ public class EqClassBot {
             out += topClass.toString();
         }
         return out;
+    }
+
+    public Set<EqClassBot> findRightSisters(EqClassBot leftSis){
+        Set<EqClassBot> rightSisters = new HashSet<>();
+        int[] indices = IntStream.range(0, daughterEQClasses.size())
+                .filter(i -> daughterEQClasses.get(i).equals(leftSis))
+                .toArray();
+        for(int i : indices){
+            if(i<daughterEQClasses.size()-1){rightSisters.add(daughterEQClasses.get(i+1));}
+        }
+        return rightSisters;
     }
 
     public void setDaughters(ArrayList<EqClassBot> daughters){this.daughterEQClasses = daughters;};
