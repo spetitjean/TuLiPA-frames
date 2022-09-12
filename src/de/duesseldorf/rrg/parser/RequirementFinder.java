@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.duesseldorf.factorizer.EqClassBot;
 import de.duesseldorf.factorizer.EqClassTop;
+import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
@@ -180,7 +182,7 @@ public class RequirementFinder {
      * adjunction tree
      */
     public boolean isSisadjRoot(RRGParseItem item) {
-        boolean res = item.getEqClass().isTopClass(); 1.
+        boolean res = item.getEqClass().isTopClass(); //1.
         if(res == false){return res;}
 
         res = res && ((EqClassTop) item.getEqClass()).isRoot()//2a
@@ -203,20 +205,22 @@ public class RequirementFinder {
         // RRGParseItem model = new RRGParseItem(null, null,
         // RRGParseItem.NodePos.TOP, sisAdjRoot.getEnd(), -2, null,
         // false);
-        RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
+        RRGParseItem model = new RRGParseItem.Builder()
                 .start(sisAdjRoot.getEnd()).ws(false).build();
         // find all items matching the template in the chart
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
+        //Make sure items are in TOP position
+        Set<RRGParseItem> candidatesTop = candidates.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
         // filter all that have matching labels
-        Set<RRGParseItem> suitableMother = filterByMother(sisAdjRoot,
-                candidates);
+        Set<RRGParseItem> suitableSisters = filterByMother(sisAdjRoot,
+                candidatesTop);
         Set<RRGParseItem> result = new HashSet<RRGParseItem>();
-        for (RRGParseItem item : suitableMother) {
-            if (!item.getNode().getGornaddress().hasLeftSister()) {
-                result.add(item);
+        for (RRGParseItem sister : suitableSisters) {
+            if (sister.getEqClass().noLeftSisters()) {
+                result.add(sister);
             }
         }
         return result;
@@ -232,19 +236,20 @@ public class RequirementFinder {
     public Set<RRGParseItem> findRightAdjoinTargets(RRGParseItem sisadjroot,
                                                     RRGParseChart chart) {
         // RRGParseItem model = new RRGParseItem(null, null, RRGParseItem
-        // .NodePos.TOP,
         // -2, sisadjroot.startPos(), null,
         // false);
-        RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
+        RRGParseItem model = new RRGParseItem.Builder()
                 .end(sisadjroot.startPos()).ws(false).build();
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
-        return filterByMother(sisadjroot, candidates);
+        //Filter for TOP position
+        Set<RRGParseItem> candidatesTops = candidates.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+        return filterByMother(sisadjroot, candidatesTops);
     }
 
     /**
-     * @param sisadjroot
-     * @param targetCandidates
+     * @param sisadjroot root node
+     * @param targetCandidates poss sisters for root node by sisadj
      * @return A set of items X such that every item in X is in targetCandidates
      * and the mother of the node has the same label as the mother of
      * the (sister adjunction) root item sisadjroot.
@@ -266,17 +271,14 @@ public class RequirementFinder {
     /**
      * @param root
      * @param target
-     * @return true iff the node in root has the same label as the mother of the
-     * node in target
+     * @return true iff there is a possible mother for the target eqClass that has the same label as the eqClass of the root item
      */
     private boolean suitableMother(RRGParseItem root, RRGParseItem target) {
-        RRGNode targetMother = target.getTree()
-                .findNode(target.getNode().getGornaddress().mother());
-        if (targetMother != null) {
-            targetMother = targetMother.copyNode();
+        Map<EqClassBot, Boolean> possMothers = ((EqClassTop)target.getEqClass()).getPossibleMothers();
+        for(EqClassBot mother: possMothers.keySet()){
             boolean nodeUnificationPossible = true;
             try {
-                RRGTreeTools.unifyNodes(root.getNode().copyNode(), targetMother,
+                FactorizingInterface.unifyClasses(root.getEqClass().copyClass(), mother.copyClass(),
                         new Environment(5));
             } catch (UnifyException e) {
                 nodeUnificationPossible = false;
@@ -284,7 +286,6 @@ public class RequirementFinder {
             return nodeUnificationPossible;
         }
         return false;
-
     }
 
     /**
@@ -301,7 +302,7 @@ public class RequirementFinder {
         result.put("r", new HashSet<RRGParseItem>());
 
         // left adjunction
-        if (!currentItem.getNode().getGornaddress().hasLeftSister()) {
+        if (currentItem.getEqClass().noLeftSisters()) {
             /*
              * RRGParseItem leftAdjModel = new RRGParseItem(null, null,
              * RRGParseItem.NodePos.TOP, -2,
@@ -309,12 +310,14 @@ public class RequirementFinder {
              * false);
              */
             RRGParseItem leftAdjModel = new RRGParseItem.Builder()
-                    .nodepos(NodePos.TOP).end(currentItem.startPos()).ws(false)
+                    .end(currentItem.startPos()).ws(false)
                     .build();
             Set<RRGParseItem> leftAdj = chart
                     .findUnderspecifiedItem(leftAdjModel, false);
 
-            for (RRGParseItem item : leftAdj) {
+            Set<RRGParseItem> leftAdjTops = leftAdj.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+
+            for (RRGParseItem item : leftAdjTops) {
                 if (isSisadjRoot(item) && suitableMother(item, currentItem)) {
                     result.get("l").add(item);
                 }
@@ -328,11 +331,13 @@ public class RequirementFinder {
          * false);
          */
         RRGParseItem rightAdjModel = new RRGParseItem.Builder()
-                .nodepos(NodePos.TOP).start(currentItem.getEnd()).ws(false)
+                .start(currentItem.getEnd()).ws(false)
                 .build();
         Set<RRGParseItem> rightAdj = chart.findUnderspecifiedItem(rightAdjModel,
                 false);
-        for (RRGParseItem item : rightAdj) {
+        Set<RRGParseItem> rightAdjTops = rightAdj.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+
+        for (RRGParseItem item : rightAdjTops) {
             // if the item is really a sisadjrot (specification for the
             // chart method can't be this detailled
             if (isSisadjRoot(item) && suitableMother(item, currentItem)) {
@@ -354,8 +359,10 @@ public class RequirementFinder {
      */
     public boolean isSisadjTarget(RRGParseItem currentItem) {
         boolean result = !currentItem.getwsflag() // 1
-                && currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP) // 2
-                && currentItem.getNode().getGornaddress().mother() != null; // 3
+                && currentItem.getEqClass().isTopClass(); // 2
+        if(result == false){return result;}
+        result = result
+                && !(((EqClassTop) currentItem.getEqClass()).isRoot()); // 3
         return result;
     }
 

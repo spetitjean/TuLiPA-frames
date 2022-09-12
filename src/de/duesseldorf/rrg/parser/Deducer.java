@@ -101,9 +101,9 @@ public class Deducer {
     public Set<RRGParseItem> applyNoLeftSister(RRGParseItem currentItem) {
         Set<RRGParseItem> items = new HashSet<>();
         List<EqClassTop> topClasses = currentItem.getEqClass().getTopClasses();
-        topClasses.stream().filter(topClass -> topClass.noLeftSisters() == true).collect(Collectors.toList());
+        List<EqClassTop> topClassesNls = topClasses.stream().filter(topClass -> topClass.noLeftSisters() == true).collect(Collectors.toList());
 
-        for(EqClassTop tc : topClasses) {
+        for(EqClassTop tc : topClassesNls) {
             RRGParseItem topItem = new RRGParseItem.Builder().eqClass(tc)
                     .start(currentItem.startPos()).end(currentItem.getEnd())
                     .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
@@ -134,8 +134,8 @@ public class Deducer {
         if (targetSister.getGenwrappingjumpback() != null && auxTreeRoot.getGenwrappingjumpback() != null) {
             System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + targetSister + ", a: " + auxTreeRoot);
         }
-        return new RRGParseItem.Builder().tree(targetSister.getTree().getInstance())
-                .node(targetSister.getNode().copyNode()).nodepos(targetSister.getNodePos())
+        return new RRGParseItem.Builder()
+                .eqClass(targetSister.getEqClass().copyClass())
                 .start(auxTreeRoot.startPos()).end(targetSister.getEnd())
                 .gaps(gaps).ws(false)
                 .genwrappingjumpback(jumpBackItem).build();
@@ -162,8 +162,8 @@ public class Deducer {
             System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + target + ", a: " + auxTreeRoot);
         }
         // System.out.print(target.getTree());
-        return new RRGParseItem.Builder().tree(target.getTree().getInstance())
-                .node(target.getNode().copyNode()).nodepos(target.getNodePos())
+        return new RRGParseItem.Builder()
+                .eqClass(target.getEqClass().copyClass())
                 .start(target.startPos()).end(auxTreeRoot.getEnd()).gaps(gaps)
                 .ws(target.getwsflag())
                 .genwrappingjumpback(jumpBackItem).build();

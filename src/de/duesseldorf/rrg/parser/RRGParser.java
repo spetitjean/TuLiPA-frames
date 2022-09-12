@@ -120,8 +120,8 @@ public class RRGParser {
                 noleftsister(currentItem); //done
             } else {
                 moveup(currentItem); //done
-                substitute(currentItem);
-                sisteradjoin(currentItem);
+                substitute(currentItem); //done
+                sisteradjoin(currentItem);//done
             }
             predictwrapping(currentItem);
             combinesisters(currentItem);

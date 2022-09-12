@@ -169,7 +169,7 @@ public class FactorizingInterface {
         return substClasses;
     }
 
-    public EqClassBot unifyClasses(EqClassBot eqClass1, EqClassBot eqClass2,
+    public static EqClassBot unifyClasses(EqClassBot eqClass1, EqClassBot eqClass2,
                                    Environment env) throws UnifyException {
 
         EqClassBot.Builder resultBuilder = new EqClassBot.Builder(eqClass1);

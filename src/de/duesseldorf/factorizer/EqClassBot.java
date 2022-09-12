@@ -108,6 +108,10 @@ public class EqClassBot {
     public boolean isBottomClass(){return true;}
     public boolean isTopClass(){return false;}
 
+    /**
+     *
+     * @return true iff at least one Topclass has no left sisters
+     */
     public boolean noLeftSisters() {
         ArrayList<Boolean> ba = new ArrayList<>();
         for(EqClassTop tc: topClasses){
