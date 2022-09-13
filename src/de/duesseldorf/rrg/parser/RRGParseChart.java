@@ -77,15 +77,15 @@ public class RRGParseChart {
                     // no more ws
                     rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
                     // TOP position
-                    && rrgitem.getNodePos().equals(RRGParseItem.NodePos.TOP)
+                    && rrgitem.getEqClass().isTopClass()
                     // in a root
-                    && rrgitem.getNode().getGornaddress().mother() == null
+                    && rrgitem.getEqClass().isRoot()
                     // in a STD node
-                    && rrgitem.getNode().getType().equals(RRGNodeType.STD)
+                    && rrgitem.getEqClass().type.equals(RRGNodeType.STD)
                     // no backpointers
                     && rrgitem.getGenwrappingjumpback() == null;
             boolean axiomFits = axiom.equals("")
-                    || rrgitem.getNode().getCategory().equals(axiom);
+                    || rrgitem.getEqClass().cat.equals(axiom);
             if (goalReqsFromItem) {
                 if (axiomFits) {
                     goals.add(rrgitem);
@@ -122,11 +122,11 @@ public class RRGParseChart {
      */
     public Set<RRGParseItem> findUnderspecifiedItem(RRGParseItem model,
                                                     boolean gapSubSet) {
-        Set<RRGParseItem> result = new HashSet<RRGParseItem>();
+        Set<RRGParseItem> result = new HashSet<>();
 
         // collect all the items that might fit the model
         // first find out in which area of the chart to look
-        Set<RRGParseItem> toCheck = new HashSet<RRGParseItem>();
+        Set<RRGParseItem> toCheck = new HashSet<>();
         int startboundary = model.startPos() == -2 ? 0 : model.startPos();
         int endboundary = model.startPos() == -2 ? chart.size() - 1
                 : startboundary;
@@ -139,18 +139,11 @@ public class RRGParseChart {
         // this needs to be refactored!
         for (RRGParseItem s : toCheck) {
             boolean endCheck = model.getEnd() == -2
-                    || model.getEnd() == ((RRGParseItem) s).getEnd();
+                    || model.getEnd() == s.getEnd();
             if (endCheck) {
-                boolean treeCheck = model.getTree() == null
-                        || model.getTree().getInstance().equals(((RRGParseItem) s).getTree().getInstance());
-                if (treeCheck) {
-                    boolean nodeCheck = model.getNode() == null || model
-                            .getNode().copyNode().equals(((RRGParseItem) s).getNode().copyNode());
-                    if (nodeCheck) {
-                        boolean posCheck = model.getNodePos() == null
-                                || model.getNodePos().equals(
-                                ((RRGParseItem) s).getNodePos());
-                        if (posCheck) {
+                boolean eqCheck = model.getEqClass() == null
+                        || model.getEqClass().copyClass().equals(((RRGParseItem) s).getEqClass().copyClass());
+                if (eqCheck) {
                             // several cases: 1. no gaps given - gaps = null. 2.
                             // gaps given, equal to the gaps we look for
                             // (boolean is false), 3. gaps given, subset of the
@@ -183,8 +176,6 @@ public class RRGParseChart {
                                     result.add((RRGParseItem) s);
                                 }
                             }
-                        }
-                    }
                 }
             }
 
