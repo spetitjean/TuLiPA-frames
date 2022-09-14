@@ -41,13 +41,14 @@ public class Deducer {
      * Assuming that both parameters are fitting antecedents, apply the
      * combineSisters deduction rule
      *
-     * @param leftItem
-     * @param rightItem
-     * @return
+     * @param leftItem (TOP)
+     * @param rightItem (BOT)
+     * @return all new items with fitting eqClasses in Top position coming from the right sister
      */
-    public RRGParseItem applyCombineSisters(RRGParseItem leftItem,
+    public Set<RRGParseItem> applyCombineSisters(RRGParseItem leftItem,
                                             RRGParseItem rightItem) {
-        Set<Gap> gaps = new HashSet<Gap>(leftItem.getGaps());
+        Set<RRGParseItem> newItems = new HashSet<>();
+        Set<Gap> gaps = new HashSet<>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
         RRGParseItem jumpBackItem = (leftItem.getGenwrappingjumpback() != null) ?
                 leftItem.getGenwrappingjumpback() :
@@ -55,11 +56,22 @@ public class Deducer {
         if (leftItem.getGenwrappingjumpback() != null && rightItem.getGenwrappingjumpback() != null) {
             System.out.println("something strange: two jumpback items not zero during CSis: l: " + leftItem + ", r: " + rightItem);
         }
-        return new RRGParseItem.Builder().tree(rightItem.getTree().getInstance())
-                .node(rightItem.getNode().copyNode()).nodepos(RRGParseItem.NodePos.TOP)
-                .start(leftItem.startPos()).end(rightItem.getEnd()).gaps(gaps)
-                .ws(false)
-                .genwrappingjumpback(jumpBackItem).build();
+
+        Set<EqClassTop> newSis = rightItem.getEqClass().getTopClasses().stream()
+                .filter(tc -> tc.getLeftSisters().contains(leftItem.getEqClass()))
+                .collect(Collectors.toSet());
+
+        for(EqClassTop sis: newSis){
+            RRGParseItem item = new RRGParseItem.Builder()
+                    .eqClass(sis)
+                    .start(leftItem.startPos()).end(rightItem.getEnd()).gaps(gaps)
+                    .ws(false)
+                    .genwrappingjumpback(jumpBackItem).build();
+            newItems.add(item);
+        }
+
+
+        return newItems;
     }
 
     /**

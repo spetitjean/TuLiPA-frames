@@ -108,7 +108,7 @@ public class RRGParser {
                 sisteradjoin(currentItem);//done
             }
             predictwrapping(currentItem);//done
-            combinesisters(currentItem);
+            combinesisters(currentItem);//done
             completeWrapping(currentItem);
             generalizedCompleteWrapping(currentItem);
             jumpBackAfterGenWrapping(currentItem);
@@ -416,29 +416,31 @@ public class RRGParser {
     }
 
     private void combinesisters(RRGParseItem currentItem) {
-        //System.out.println("combinesisters");
-        // case 1: currentItem is the left node of the combination
+         // case 1: currentItem is the left node of the combination
         Set<RRGParseItem> rightSisterCandidates = requirementFinder
                 .findCombineSisRightSisters(currentItem, chart);
-        // System.out.println("currentItem: " + leftSisterAntecedentItem);
         for (RRGParseItem rightSisterAntecedentItem : rightSisterCandidates) {
-            // System.out.println(
-            // "mate with: " + rightSisterAntecedentItem + "results in");
-            RRGParseItem rightSisTopItem = deducer.applyCombineSisters(
+
+            Set<RRGParseItem> rightSisTopItems = deducer.applyCombineSisters(
                     currentItem, rightSisterAntecedentItem);
-            // System.out.println(rightSisTopItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                    currentItem, rightSisterAntecedentItem);
+
+            for (RRGParseItem ti : rightSisTopItems) {
+                addToChartAndAgenda(ti, Operation.COMBINESIS,
+                        currentItem, rightSisterAntecedentItem);
+            }
         }
         // case 2: currentItem is the right node of the combination
         Set<RRGParseItem> leftSisterCandidates = requirementFinder
                 .findCombineSisLeftSisters(currentItem, chart);
         for (RRGParseItem leftSisterAntecedentItem : leftSisterCandidates) {
-            RRGParseItem rightSisTopItem = deducer
-                    .applyCombineSisters(leftSisterAntecedentItem, currentItem);
-            addToChartAndAgenda(rightSisTopItem, Operation.COMBINESIS,
-                    leftSisterAntecedentItem, currentItem);
 
+            Set<RRGParseItem> rightSisTopItems = deducer
+                    .applyCombineSisters(leftSisterAntecedentItem, currentItem);
+
+            for (RRGParseItem ti : rightSisTopItems) {
+                addToChartAndAgenda(ti, Operation.COMBINESIS,
+                        leftSisterAntecedentItem, currentItem);
+            }
         }
     }
 

@@ -1,9 +1,6 @@
 package de.duesseldorf.rrg.parser;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import de.duesseldorf.factorizer.EqClassBot;
@@ -86,67 +83,85 @@ public class RequirementFinder {
 
     /**
      * needed:
-     * - same tree
-     * - neighbouring nodes, one in TOP and one in BOT pos
+     * - neighbouring classes, one in TOP and one in BOT pos
      * - ws no both times
      * - end of left item is start of right item
      *
      * @param leftSister
      * @param chart      look up here
-     * @return
+     * @return all possible right sisters in BOT position
      */
     public Set<RRGParseItem> findCombineSisRightSisters(RRGParseItem leftSister,
                                                         RRGParseChart chart) {
-        Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
-        // find the right sister, which already ensures we are in the same tree
-        RRGNode rightSis = leftSister.getTree()
-                .findNode(leftSister.getNode().getGornaddress().rightSister());
+        Set<RRGParseItem> candidates = new HashSet<>();
+        //Left sister is in Top position
+        if(leftSister.getEqClass().isBottomClass()){return candidates;}
 
-        boolean leftReq = rightSis != null // there is a right sister
-                && !leftSister.getwsflag() // no WS
-                && leftSister.getNodePos() // the left item is in TOP position
-                .equals(RRGParseItem.NodePos.TOP);
+        Set<EqClassBot> possMothers = ((EqClassTop) leftSister.getEqClass()).getPossibleMothers().entrySet()
+                .stream()
+                .filter(e -> e.getValue().equals(Boolean.FALSE)) //leftSister is NOT rightmost daughter
+                .map(e -> e.getKey())
+                .collect(Collectors.toSet());
+
+        boolean leftReq = !leftSister.getwsflag() // no WS
+                && !possMothers.isEmpty();// there is a right sister
 
         if (leftReq) {
-            // System.out.println("starter: " + leftSister);
+            Set<EqClassBot> possSisters = findRightSisters(leftSister,possMothers);
 
-            RRGParseItem model = new RRGParseItem.Builder()
-                    .tree(leftSister.getTree().getInstance()).node(rightSis.copyNode())
-                    .nodepos(NodePos.BOT).start(leftSister.getEnd()).ws(false)
-                    .build();
-            // System.out.println("model: " + model);
-            candidates = chart.findUnderspecifiedItem(model, false);
+            for(EqClassBot sis: possSisters) {
+                RRGParseItem model = new RRGParseItem.Builder()
+                        .eqClass(sis.copyClass())
+                        .start(leftSister.getEnd()).ws(false)
+                        .build();
+                candidates.addAll(chart.findUnderspecifiedItem(model, false));
+            }
+
         }
-        // System.out.println("currI" + currentItem + "\nmate with: ");
-        // for (RRGParseItem simpleRRGParseItem : candidates) {
-        // System.out.println(simpleRRGParseItem);
-        // }
         return candidates;
 
     }
 
+    /**
+     *
+     * @param leftSister current class
+     * @param possMothers all mothers that have {@code leftSister} as a daughter in any position but the rightmost
+     * @return all right sisters
+     */
+    private Set<EqClassBot> findRightSisters(RRGParseItem leftSister, Set<EqClassBot> possMothers) {
+        Set<EqClassBot> rightSisters = new HashSet<>();
+        for(EqClassBot mother: possMothers) {
+            rightSisters.addAll(mother.findRightSisters(leftSister.getEqClass()));
+        }
+        return rightSisters;
+    }
+
     public Set<RRGParseItem> findCombineSisLeftSisters(RRGParseItem rightSister,
                                                        RRGParseChart chart) {
-        Set<RRGParseItem> candidates = new HashSet<RRGParseItem>();
-        // case 2: current item is the right node of the combination
-        RRGNode leftSis = rightSister.getTree()
-                .findNode(rightSister.getNode().getGornaddress().leftSister());
+        //Current class is right node of combination
+        Set<RRGParseItem> candidates = new HashSet<>();
+        if(rightSister.getEqClass().isTopClass()){return candidates;} //Is Bottom class
 
-        boolean rightReq = leftSis != null // there is a left sister
-                && rightSister.getNode().getGornaddress().hasLeftSister()
-                && !rightSister.getwsflag() // no WS
-                && rightSister.getNodePos() // the right item is in BOT
-                // position
-                .equals(RRGParseItem.NodePos.BOT);
+        List<EqClassTop> hasLeftSisterCandidates = rightSister.getEqClass().getTopClasses()
+                .stream()
+                .filter(tc -> tc.noLeftSisters() == false) //Filter all TopClasses that have a possible left Sister
+                .collect(Collectors.toList());
+
+        boolean rightReq = !hasLeftSisterCandidates.isEmpty() // there is a left sister
+                && !rightSister.getwsflag(); // no WS
+
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
-            RRGParseItem model = new RRGParseItem.Builder()
-                    .tree(rightSister.getTree().getInstance()).node(leftSis.copyNode())
-                    .nodepos(NodePos.TOP).end(rightSister.startPos()).ws(false)
-                    .build();
-            // System.out.println("right req met for: " + currentItem);
-            // System.out.println("model: " + model);
-            candidates = chart.findUnderspecifiedItem(model, false);
+            for (EqClassTop leftSis : hasLeftSisterCandidates) {
+                RRGParseItem model = new RRGParseItem.Builder()
+                        .eqClass(leftSis.copyClass())
+                        .end(rightSister.startPos())
+                        .ws(false)
+                        .build();
+                // System.out.println("right req met for: " + currentItem);
+                // System.out.println("model: " + model);
+                candidates.addAll(chart.findUnderspecifiedItem(model, false));
+            }
         }
         // System.out.println(candidates);
         return candidates;
@@ -211,18 +226,19 @@ public class RequirementFinder {
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
         //Make sure items are in TOP position
-        Set<RRGParseItem> candidatesTop = candidates.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+        Set<RRGParseItem> candidatesTop = candidates.stream()
+                .filter(item -> item.getEqClass().isTopClass() == true)
+                .collect(Collectors.toSet());
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
         // filter all that have matching labels
         Set<RRGParseItem> suitableSisters = filterByMother(sisAdjRoot,
                 candidatesTop);
-        Set<RRGParseItem> result = new HashSet<RRGParseItem>();
-        for (RRGParseItem sister : suitableSisters) {
-            if (sister.getEqClass().noLeftSisters()) {
-                result.add(sister);
-            }
-        }
+
+        Set<RRGParseItem> result = suitableSisters.stream()
+                .filter(item -> item.getEqClass().noLeftSisters())
+                .collect(Collectors.toSet());
+
         return result;
 
     }
@@ -243,7 +259,9 @@ public class RequirementFinder {
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
                 false);
         //Filter for TOP position
-        Set<RRGParseItem> candidatesTops = candidates.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+        Set<RRGParseItem> candidatesTops = candidates.stream()
+                .filter(item -> item.getEqClass().isTopClass() == true)
+                .collect(Collectors.toSet());
         return filterByMother(sisadjroot, candidatesTops);
     }
 
@@ -315,7 +333,9 @@ public class RequirementFinder {
             Set<RRGParseItem> leftAdj = chart
                     .findUnderspecifiedItem(leftAdjModel, false);
 
-            Set<RRGParseItem> leftAdjTops = leftAdj.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+            Set<RRGParseItem> leftAdjTops = leftAdj.stream()
+                    .filter(item -> item.getEqClass().isTopClass() == true)
+                    .collect(Collectors.toSet());
 
             for (RRGParseItem item : leftAdjTops) {
                 if (isSisadjRoot(item) && suitableMother(item, currentItem)) {
@@ -335,7 +355,9 @@ public class RequirementFinder {
                 .build();
         Set<RRGParseItem> rightAdj = chart.findUnderspecifiedItem(rightAdjModel,
                 false);
-        Set<RRGParseItem> rightAdjTops = rightAdj.stream().filter(item -> item.getEqClass().isTopClass() == true).collect(Collectors.toSet());
+        Set<RRGParseItem> rightAdjTops = rightAdj.stream()
+                .filter(item -> item.getEqClass().isTopClass() == true)
+                .collect(Collectors.toSet());
 
         for (RRGParseItem item : rightAdjTops) {
             // if the item is really a sisadjrot (specification for the
@@ -360,9 +382,9 @@ public class RequirementFinder {
     public boolean isSisadjTarget(RRGParseItem currentItem) {
         boolean result = !currentItem.getwsflag() // 1
                 && currentItem.getEqClass().isTopClass(); // 2
-        if(result == false){return result;}
+        if(result == false){return false;}
         result = result
-                && !(((EqClassTop) currentItem.getEqClass()).isRoot()); // 3
+                && !(currentItem.getEqClass().isRoot()); // 3
         return result;
     }
 
