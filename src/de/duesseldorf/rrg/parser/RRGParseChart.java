@@ -26,14 +26,9 @@
  */
 package de.duesseldorf.rrg.parser;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import de.duesseldorf.rrg.RRGNode;
 
-import de.duesseldorf.rrg.RRGNode.RRGNodeType;
+import java.util.*;
 
 public class RRGParseChart {
 
@@ -45,12 +40,12 @@ public class RRGParseChart {
     public RRGParseChart(int sentencelength, String axiom) {
 
         this.sentencelength = sentencelength;
-        this.axiom = (axiom == null) ? "" : axiom;
+        this.axiom = (null == axiom) ? "" : axiom;
         // chart = new HashMap<RRGTree, HashMap<RRGNode, HashMap<Integer,
         // HashMap<Integer, HashMap<Boolean, HashSet<Gap>>>>>>();
-        chart = new HashMap<Integer, Map<RRGParseItem, Backpointer>>();
+        chart = new HashMap<>();
         for (int i = 0; i <= sentencelength; i++) {
-            chart.put(i, new HashMap<RRGParseItem, Backpointer>());
+            chart.put(i, new HashMap<>());
         }
     }
 
@@ -66,33 +61,32 @@ public class RRGParseChart {
      * met:<br>
      * - start = 0, end = sentencelength<br>
      * - ws is false<br>
-     * - in TOP position in a STD root node<br>
+     * - in TOP position in an STD root node<br>
      * - axiom fits
      */
     public Set<RRGParseItem> retrieveGoalItems() {
-        Set<RRGParseItem> goals = new HashSet<RRGParseItem>();
+        Set<RRGParseItem> goals = new HashSet<>();
         for (RRGParseItem item : chart.get(0).keySet()) {
-            RRGParseItem rrgitem = (RRGParseItem) item;
-            boolean goalReqsFromItem = rrgitem.getEnd() == sentencelength && // end=n
+            boolean goalReqsFromItem = item.getEnd() == sentencelength && // end=n
                     // no more ws
-                    rrgitem.getwsflag() == false && rrgitem.getGaps().isEmpty()
+                    !item.getwsflag() && item.getGaps().isEmpty()
                     // TOP position
-                    && rrgitem.getEqClass().isTopClass()
+                    && item.getEqClass().isTopClass()
                     // in a root
-                    && rrgitem.getEqClass().isRoot()
-                    // in a STD node
-                    && rrgitem.getEqClass().type.equals(RRGNodeType.STD)
+                    && item.getEqClass().isRoot()
+                    // in an STD node
+                    && RRGNode.RRGNodeType.STD == item.getEqClass().type
                     // no backpointers
-                    && rrgitem.getGenwrappingjumpback() == null;
-            boolean axiomFits = axiom.equals("")
-                    || rrgitem.getEqClass().cat.equals(axiom);
+                    && null == item.getGenwrappingjumpback();
+            boolean axiomFits = axiom.isEmpty()
+                    || item.getEqClass().cat.equals(axiom);
             if (goalReqsFromItem) {
                 if (axiomFits) {
-                    goals.add(rrgitem);
+                    goals.add(item);
                 } else {
                     System.out.println(
                             "item not taken as goal item because axiom did not fit: "
-                                    + rrgitem);
+                                    + item);
 
                 }
             }
@@ -101,7 +95,6 @@ public class RRGParseChart {
     }
 
     /**
-     * @param item
      * @return A Set of the backpointers of item, i.e. a Set of all sets of
      * items that created the item.
      */
@@ -126,9 +119,9 @@ public class RRGParseChart {
 
         // collect all the items that might fit the model
         // first find out in which area of the chart to look
-        Set<RRGParseItem> toCheck = new HashSet<>();
-        int startboundary = model.startPos() == -2 ? 0 : model.startPos();
-        int endboundary = model.startPos() == -2 ? chart.size() - 1
+        Collection<RRGParseItem> toCheck = new HashSet<>();
+        int startboundary = -2 == model.startPos() ? 0 : model.startPos();
+        int endboundary = -2 == model.startPos() ? chart.size() - 1
                 : startboundary;
 
         // then, look up in the chart
@@ -138,11 +131,11 @@ public class RRGParseChart {
 
         // this needs to be refactored!
         for (RRGParseItem s : toCheck) {
-            boolean endCheck = model.getEnd() == -2
+            boolean endCheck = -2 == model.getEnd()
                     || model.getEnd() == s.getEnd();
             if (endCheck) {
-                boolean eqCheck = model.getEqClass() == null
-                        || model.getEqClass().copyClass().equals(((RRGParseItem) s).getEqClass().copyClass());
+                boolean eqCheck = null == model.getEqClass()
+                        || model.getEqClass().copyClass().equals(s.getEqClass().copyClass());
                 if (eqCheck) {
                             // several cases: 1. no gaps given - gaps = null. 2.
                             // gaps given, equal to the gaps we look for
@@ -150,30 +143,30 @@ public class RRGParseChart {
                             // gaps we look for (boolean is true)
 
                             // case 1
-                            boolean gapCheck = model.getGaps() == null;
+                            boolean gapCheck = null == model.getGaps();
                             if (!gapCheck) {
                                 // case 2
-                                if (!gapSubSet) {
-                                    gapCheck = model.getGaps().equals(
-                                            ((RRGParseItem) s).getGaps());
-                                } else {
+                                if (gapSubSet) {
                                     // case 3
-                                    gapCheck = ((RRGParseItem) s).getGaps()
+                                    gapCheck = s.getGaps()
                                             .containsAll(model.getGaps());
                                     // System.out.print(gapCheck);
                                     // System.out.println("yay: "
                                     // + ((RRGParseItem) s).getGaps()
                                     // + model.getGaps());
+                                } else {
+                                    gapCheck = model.getGaps().equals(
+                                            s.getGaps());
                                 }
                             }
 
                             if (gapCheck) {
-                                boolean wsCheck = (Boolean) model
-                                        .getwsflag() == null
-                                        || ((Boolean) model.getwsflag()).equals(
-                                        ((RRGParseItem) s).getwsflag());
+                                model
+                                        .getwsflag();
+                                boolean wsCheck = ((Boolean) model.getwsflag()).equals(
+                                s.getwsflag());
                                 if (wsCheck) {
-                                    result.add((RRGParseItem) s);
+                                    result.add(s);
                                 }
                             }
                 }
@@ -193,10 +186,10 @@ public class RRGParseChart {
     public boolean addItem(RRGParseItem consequent, Operation operation,
                            RRGParseItem... antecedents) {
         Set<RRGParseItem> antes;
-        if (antecedents.length > 0) {
-            antes = new HashSet<RRGParseItem>(Arrays.asList(antecedents));
+        if (0 < antecedents.length) {
+            antes = new HashSet<>(Arrays.asList(antecedents));
         } else {
-            antes = new HashSet<RRGParseItem>();
+            antes = new HashSet<>();
         }
         int startpos = consequent.startPos();
 
@@ -205,8 +198,8 @@ public class RRGParseChart {
         boolean alreadythere = chart.get(startpos).containsKey(consequent);
         if (alreadythere) {
             // just put the additional backpointers
-            boolean antesAlreadyThere = chart.get(startpos)
-                    .get(consequent) != null
+            boolean antesAlreadyThere = null != chart.get(startpos)
+                    .get(consequent)
                     && chart.get(startpos).get(consequent)
                     .getAntecedents(operation).contains(antes);
             if (!antesAlreadyThere) {
@@ -229,7 +222,7 @@ public class RRGParseChart {
 
     public int computeSize() {
         int result = 0;
-        for (Entry<Integer, Map<RRGParseItem, Backpointer>> startingPos : chart
+        for (Map.Entry<Integer, Map<RRGParseItem, Backpointer>> startingPos : chart
                 .entrySet()) {
             result += startingPos.getValue().keySet().size();
         }
@@ -239,14 +232,12 @@ public class RRGParseChart {
     @Override
     public String toString() {
         String alphaOmega = "----------------------------------------------------------------------\n----------------------------------------------------------------------";
-        StringBuffer sb = new StringBuffer("Printing chart\n");
+        StringBuilder sb = new StringBuilder("Printing chart\n");
         sb.append(alphaOmega);
         for (Integer i = 0; i < chart.size(); i++) {
-            if (i < chart.size()) {
-                sb.append("\nstart index " + i + "\n");
-            }
+            sb.append("\nstart index ").append(i).append("\n");
             // print the items
-            for (Entry<RRGParseItem, Backpointer> chartEntry : chart.get(i)
+            for (Map.Entry<RRGParseItem, Backpointer> chartEntry : chart.get(i)
                     .entrySet()) {
                 sb.append(chartEntry.getKey().toString());
 
@@ -257,7 +248,7 @@ public class RRGParseChart {
 
             }
         }
-        sb.append("size of the chart: " + computeSize() + " items.");
+        sb.append("size of the chart: ").append(computeSize()).append(" items.");
         sb.append(alphaOmega);
         return sb.toString();
     }
