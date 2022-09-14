@@ -95,6 +95,24 @@ public class EqClassTop extends EqClassBot{
         return newEqClass;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        EqClassBot c = (EqClassBot) o;
+        if(c.isBottomClass()){return false;}
+
+        EqClassTop t = (EqClassTop) o;
+        boolean req = this.checkType(t.type)
+                && this.getDaughterEQClasses().equals(t.getDaughterEQClasses())
+                && this.getFs().equals(t.getFs())
+                && this.getLeftSisters().equals(t.getLeftSisters())
+                ;
+
+        return req;
+    }
+
     public static class Builder extends EqClassBot.Builder<Builder> {
 
         private List<EqClassBot> leftSisters = new ArrayList<>();
@@ -127,7 +145,7 @@ public class EqClassTop extends EqClassBot{
             this.root = root;
             return this;
         }
-
+        @Override
         public EqClassTop build() {
             EqClassTop newClass = new EqClassTop(this.build().getDaughterEQClasses(), this.factorizedTrees, this.cat,
                     this.type, this.build().getId(), this.build().getFs(), this.leftSisters, this.root);

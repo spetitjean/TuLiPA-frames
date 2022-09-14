@@ -132,18 +132,21 @@ public class EqClassBot {
         if (daughters.isEmpty()) {
             if(cat.equals(node.getCategory())
                     && daughterEQClasses.isEmpty()
-                    && checkType(node.getType())) {return true;}
+                    && checkType(node.getType())
+                    &&  fs.equals(node.getNodeFs())){return true;}
 
         } else {
             if(cat.equals(node.getCategory())
                     && daughters.equals(daughterEQClasses)
-                    && checkType(node.getType())) {return true;}
+                    && checkType(node.getType())
+                    &&  fs.equals(node.getNodeFs())){return true;}
         }
+
         return false;
     }
 
 
-    private boolean checkType(RRGNodeType type) {
+    boolean checkType(RRGNodeType type) {
         if(type == this.type) {return true;}
         return false;
     }
@@ -187,6 +190,11 @@ public class EqClassBot {
         return out;
     }
 
+    /**
+     *
+     * @param leftSis current class
+     * @return all right sisters
+     */
     public Set<EqClassBot> findRightSisters(EqClassBot leftSis){
         Set<EqClassBot> rightSisters = new HashSet<>();
         int[] indices = IntStream.range(0, daughterEQClasses.size())
@@ -203,8 +211,8 @@ public class EqClassBot {
     public EqClassBot copyClass(){return this.copyClass(new NameFactory());};
 
     public EqClassBot copyClass(NameFactory nf) {
-        EqClassBot newEqClass = new EqClassBot(new ArrayList<EqClassBot>(), this.factorizedTrees, this.cat, this.type, this.id, new Fs(this.fs, nf));
-        ArrayList<EqClassBot> daughters = new ArrayList<EqClassBot>();
+        EqClassBot newEqClass = new EqClassBot(new ArrayList<>(), this.factorizedTrees, this.cat, this.type, this.id, new Fs(this.fs, nf));
+        ArrayList<EqClassBot> daughters = new ArrayList<>();
         if (this.numDaughters > 0) {
             for(EqClassBot eqClass : daughterEQClasses){
                 daughters.add(eqClass.copyClass(nf));
@@ -218,6 +226,31 @@ public class EqClassBot {
             }
         }
         return newEqClass;
+    }
+
+    public boolean isRoot() {
+        for(EqClassTop tc: topClasses) {
+            if(tc.isRoot()){return true;}
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        EqClassBot c = (EqClassBot) o;
+        if (!( c.isBottomClass())) {
+            return false;
+        }
+
+        boolean req = this.checkType(c.type)
+                && this.getDaughterEQClasses().equals(c.getDaughterEQClasses())
+                && this.getFs().equals(c.getFs());
+
+        return req;
     }
 
     public static class Builder<S extends Builder> {
