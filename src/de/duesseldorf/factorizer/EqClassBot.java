@@ -248,6 +248,7 @@ public class EqClassBot {
 
         boolean req = this.checkType(c.type)
                 && this.getDaughterEQClasses().equals(c.getDaughterEQClasses())
+                && this.cat.equals(c.cat)
                 && this.getFs().equals(c.getFs());
 
         return req;

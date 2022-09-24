@@ -108,6 +108,7 @@ public class EqClassTop extends EqClassBot{
                 && this.getDaughterEQClasses().equals(t.getDaughterEQClasses())
                 && this.getFs().equals(t.getFs())
                 && this.getLeftSisters().equals(t.getLeftSisters())
+                && this.cat.equals(t.cat)
                 ;
 
         return req;
