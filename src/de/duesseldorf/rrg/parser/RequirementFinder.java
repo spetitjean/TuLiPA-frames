@@ -7,11 +7,7 @@ import de.duesseldorf.factorizer.EqClassBot;
 import de.duesseldorf.factorizer.EqClassTop;
 import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.UnifyException;
-import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.rrg.RRGTreeTools;
-import de.duesseldorf.rrg.parser.RRGParseItem.NodePos;
-import de.duesseldorf.util.GornAddress;
 import de.tuebingen.tag.Environment;
 
 /**
@@ -55,10 +51,10 @@ public class RequirementFinder {
     //!!Deducer needs to compute subset of possible Mothers where 3. is fulfilled, req only checks if such a mother exists
     public boolean moveupReq(RRGParseItem currentItem) {
         boolean res = currentItem.getEqClass().isTopClass(); //1
-        if(res == false) {
+        if(!res) {
             return res;
         }
-        res = res && !(((EqClassTop)currentItem.getEqClass()).isRoot()); // 2
+        res = res && !((currentItem.getEqClass()).isRoot()); // 2
 
         res = res && (((EqClassTop)currentItem.getEqClass()).getPossibleMothers().containsValue(true)); // 3
         res = res && !currentItem.getwsflag(); // 4
@@ -100,7 +96,7 @@ public class RequirementFinder {
         Set<EqClassBot> possMothers = ((EqClassTop) leftSister.getEqClass()).getPossibleMothers().entrySet()
                 .stream()
                 .filter(e -> e.getValue().equals(Boolean.FALSE)) //leftSister is NOT rightmost daughter
-                .map(e -> e.getKey())
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
 
         boolean leftReq = !leftSister.getwsflag() // no WS
@@ -128,7 +124,7 @@ public class RequirementFinder {
      * @param possMothers all mothers that have {@code leftSister} as a daughter in any position but the rightmost
      * @return all right sisters
      */
-    private Set<EqClassBot> findRightSisters(RRGParseItem leftSister, Set<EqClassBot> possMothers) {
+    private Set<EqClassBot> findRightSisters(RRGParseItem leftSister, Iterable<EqClassBot> possMothers) {
         Set<EqClassBot> rightSisters = new HashSet<>();
         for(EqClassBot mother: possMothers) {
             rightSisters.addAll(mother.findRightSisters(leftSister.getEqClass()));
@@ -144,8 +140,7 @@ public class RequirementFinder {
 
         List<EqClassTop> hasLeftSisterCandidates = rightSister.getEqClass().getTopClasses()
                 .stream()
-                .filter(tc -> tc.noLeftSisters() == false) //Filter all TopClasses that have a possible left Sister
-                .collect(Collectors.toList());
+                .filter(tc -> !tc.noLeftSisters()).toList();
 
         boolean rightReq = !hasLeftSisterCandidates.isEmpty() // there is a left sister
                 && !rightSister.getwsflag(); // no WS
@@ -179,10 +174,10 @@ public class RequirementFinder {
     public boolean substituteReq(RRGParseItem currentItem) {
 
         boolean res = currentItem.getEqClass().isTopClass();//1
-        if(res == false){return res;}
+        if(!res){return res;}
 
-        res = res && !(((EqClassTop)currentItem.getEqClass()).isRoot()) // 2.
-                && (((EqClassTop)currentItem.getEqClass()).type != RRGNodeType.STAR); //3.
+        res = res && !(currentItem.getEqClass().isRoot()) // 2.
+                && (RRGNodeType.STAR != currentItem.getEqClass().type); //3.
         return res;
     }
 
@@ -198,10 +193,10 @@ public class RequirementFinder {
      */
     public boolean isSisadjRoot(RRGParseItem item) {
         boolean res = item.getEqClass().isTopClass(); //1.
-        if(res == false){return res;}
+        if(!res){return res;}
 
-        res = res && ((EqClassTop) item.getEqClass()).isRoot()//2a
-                && item.getEqClass().type == RRGNodeType.STAR //2b
+        res = res && item.getEqClass().isRoot()//2a
+                && RRGNodeType.STAR == item.getEqClass().type //2b
                 && !item.getwsflag();//3
         return res;
     }
@@ -227,7 +222,7 @@ public class RequirementFinder {
                 false);
         //Make sure items are in TOP position
         Set<RRGParseItem> candidatesTop = candidates.stream()
-                .filter(item -> item.getEqClass().isTopClass() == true)
+                .filter(item -> item.getEqClass().isTopClass())
                 .collect(Collectors.toSet());
         // System.out.println("sisadj currentItem: " + currentItem);
         // System.out.println("model: " + model);
@@ -260,7 +255,7 @@ public class RequirementFinder {
                 false);
         //Filter for TOP position
         Set<RRGParseItem> candidatesTops = candidates.stream()
-                .filter(item -> item.getEqClass().isTopClass() == true)
+                .filter(item -> item.getEqClass().isTopClass())
                 .collect(Collectors.toSet());
         return filterByMother(sisadjroot, candidatesTops);
     }
@@ -273,8 +268,8 @@ public class RequirementFinder {
      * the (sister adjunction) root item sisadjroot.
      */
     private Set<RRGParseItem> filterByMother(RRGParseItem sisadjroot,
-                                             Set<RRGParseItem> targetCandidates) {
-        Set<RRGParseItem> filteredCandidates = new HashSet<RRGParseItem>();
+                                             Iterable<RRGParseItem> targetCandidates) {
+        Set<RRGParseItem> filteredCandidates = new HashSet<>();
         for (RRGParseItem candidate : targetCandidates) {
             if (suitableMother(sisadjroot, candidate))
                 filteredCandidates.add(candidate);
@@ -315,9 +310,9 @@ public class RequirementFinder {
      */
     public Map<String, Set<RRGParseItem>> findSisAdjRoots(
             RRGParseItem currentItem, RRGParseChart chart) {
-        Map<String, Set<RRGParseItem>> result = new HashMap<String, Set<RRGParseItem>>();
-        result.put("l", new HashSet<RRGParseItem>());
-        result.put("r", new HashSet<RRGParseItem>());
+        Map<String, Set<RRGParseItem>> result = new HashMap<>();
+        result.put("l", new HashSet<>());
+        result.put("r", new HashSet<>());
 
         // left adjunction
         if (currentItem.getEqClass().noLeftSisters()) {
@@ -334,7 +329,7 @@ public class RequirementFinder {
                     .findUnderspecifiedItem(leftAdjModel, false);
 
             Set<RRGParseItem> leftAdjTops = leftAdj.stream()
-                    .filter(item -> item.getEqClass().isTopClass() == true)
+                    .filter(item -> item.getEqClass().isTopClass())
                     .collect(Collectors.toSet());
 
             for (RRGParseItem item : leftAdjTops) {
@@ -344,19 +339,14 @@ public class RequirementFinder {
             }
         }
         // right adjunction
-        /*
-         * RRGParseItem rightAdjModel = new RRGParseItem(null, null,
-         * RRGParseItem.NodePos.TOP,
-         * currentItem.getEnd(), -2, null,
-         * false);
-         */
+
         RRGParseItem rightAdjModel = new RRGParseItem.Builder()
                 .start(currentItem.getEnd()).ws(false)
                 .build();
         Set<RRGParseItem> rightAdj = chart.findUnderspecifiedItem(rightAdjModel,
                 false);
         Set<RRGParseItem> rightAdjTops = rightAdj.stream()
-                .filter(item -> item.getEqClass().isTopClass() == true)
+                .filter(item -> item.getEqClass().isTopClass())
                 .collect(Collectors.toSet());
 
         for (RRGParseItem item : rightAdjTops) {
@@ -382,7 +372,7 @@ public class RequirementFinder {
     public boolean isSisadjTarget(RRGParseItem currentItem) {
         boolean result = !currentItem.getwsflag() // 1
                 && currentItem.getEqClass().isTopClass(); // 2
-        if(result == false){return false;}
+        if(!result){return false;}
         result = result
                 && !(currentItem.getEqClass().isRoot()); // 3
         return result;
@@ -410,9 +400,12 @@ public class RequirementFinder {
      * @return
      */
     public boolean isCompleteWrappingRootItem(RRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
-                && currentItem.getGaps().size() > 0 // 3
-                && currentItem.getNode().getGornaddress().mother() == null; // 2
+        boolean req = currentItem.getEqClass().isTopClass();//1
+        if(!req){return false;}
+
+        req = req  && !currentItem.getGaps().isEmpty() // 3
+                && currentItem.getEqClass().isRoot(); // 2
+        return  req;
     }
 
     /**
@@ -425,9 +418,12 @@ public class RequirementFinder {
      * @return
      */
     public boolean isGeneralizedCompleteWrappingTargetItem(RRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.TOP)) // 1
-                && currentItem.getGaps().size() > 0 // 2
-                && currentItem.getNode().getGornaddress().mother() != null;
+        boolean req = currentItem.getEqClass().isTopClass();//1
+        if(!req){return false;}
+
+        req = req  && !currentItem.getGaps().isEmpty() // 3
+                && !currentItem.getEqClass().isRoot(); // 2
+        return  req;
     }
 
     /**
@@ -437,12 +433,15 @@ public class RequirementFinder {
      * 3. not in a root node<br>
      *
      * @param currentItem
-     * @return
+     * @return true iff there is at least one TOP class that is not a root and the currentItem fits the other criteria
      */
     public boolean isCompleteWrappingFillerItem(RRGParseItem currentItem) {
-        return (currentItem.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
-                && currentItem.getwsflag() == true // 2
-                && currentItem.getNode().getGornaddress().mother() != null; // 3
+        boolean req = currentItem.getEqClass().isBottomClass();//1
+        if(!req){return false;}
+
+        req = req  && !currentItem.getEqClass().isRoot() // 3
+                && currentItem.getwsflag(); // 2
+        return  req;
     }
 
     /**
@@ -455,9 +454,20 @@ public class RequirementFinder {
      * @return
      */
     public boolean isInternalCompleteWrappingFillerItem(RRGParseItem item) {
-        return (item.getNodePos().equals(RRGParseItem.NodePos.BOT)) // 1
-                && item.getwsflag() //2
-                && item.getNode().getGornaddress().getAddress().size() == 1;
+        boolean req = item.getEqClass().isBottomClass();//1
+        if(!req){return false;}
+        Set<EqClassBot> isDaughterOfRoot = new HashSet<>();
+
+        for(EqClassTop tc : item.getEqClass().getTopClasses()){ //For each possible TOP variation of the current BOT class,
+            tc.getPossibleMothers().keySet().stream()// find all possible mothers and
+                    .filter(EqClassBot::isRoot) // we only want the mothers who can be root nodes
+                    .forEach(isDaughterOfRoot::add); //If there are any add them to the result
+        }
+
+        req = req  && !isDaughterOfRoot.isEmpty() // 3 TODO: Do a flip!
+                && item.getwsflag(); // 2
+
+        return  req;
     }
 
     /**
@@ -471,33 +481,28 @@ public class RequirementFinder {
      * @return
      */
     public Set<RRGParseItem> findCompleteWrappingFillers(RRGParseItem targetRootItem, Gap gap, RRGParseChart chart) {
-        /*
-         * RRGParseItem model = new RRGParseItem(null, null, NodePos.BOT,
-         * gap.start,
-         * gap.end, null, true);
-         */
-        RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.BOT)
+
+        RRGParseItem model = new RRGParseItem.Builder()
                 .start(gap.start).end(gap.end).ws(true).build();
+
         Set<RRGParseItem> candidates = chart.findUnderspecifiedItem(model,
-                false);
-        Set<RRGParseItem> candidatesWithFittingCats = new HashSet<RRGParseItem>();
+                false).stream()
+                .filter(item -> item.getEqClass().isBottomClass())
+                .filter(item -> item.getEqClass().cat.equals(gap.nonterminal)) //gapHasRightLabel
+                .collect(Collectors.toSet());
+
+        Set<RRGParseItem> candidatesWithFittingCats = new HashSet<>();
         for (RRGParseItem item : candidates) {
-            boolean gapHasRightLabel = item.getNode().getCategory()
-                    .equals(gap.nonterminal);
+
             boolean targetRootSuitsDMother = true;
             try {
-                RRGTreeTools.unifyNodes(targetRootItem.getNode().copyNode(),
-                        item.getTree().findNode(
-                                item.getNode().getGornaddress().mother()).copyNode(),
+                FactorizingInterface.unifyClasses(targetRootItem.getEqClass().copyClass(),
+                        item.getEqClass().copyClass(),
                         new Environment(5));
             } catch (UnifyException e) {
                 targetRootSuitsDMother = false;
             }
-            if (gapHasRightLabel && targetRootSuitsDMother) {
-                // && targetRootItem.getNode().getCategory()
-                // .equals(item.getTree()
-                // .findNode(item.getNode().getGornaddress().mother())
-                // .getCategory())) {
+            if (targetRootSuitsDMother) {
                 candidatesWithFittingCats.add(item);
             }
         }
@@ -518,28 +523,36 @@ public class RequirementFinder {
     public Set<RRGParseItem> findCompleteWrappingRoots(RRGParseItem fillerItem,
                                                        RRGParseChart chart) {
         Gap modelgap = new Gap(fillerItem.startPos(), fillerItem.getEnd(),
-                fillerItem.getNode().getCategory());
-        Set<Gap> modelgaps = new HashSet<Gap>();
+                fillerItem.getEqClass().cat);
+        Set<Gap> modelgaps = new HashSet<>();
         modelgaps.add(modelgap);
         /*
          * RRGParseItem model = new RRGParseItem(null, null, NodePos.TOP, -2,
          * -2,
          * modelgaps, false);
          */
-        RRGParseItem model = new RRGParseItem.Builder().nodepos(NodePos.TOP)
+        RRGParseItem model = new RRGParseItem.Builder()
                 .gaps(modelgaps).ws(false).build();
-        return chart.findUnderspecifiedItem(model, true);
+        Set<RRGParseItem> items = chart.findUnderspecifiedItem(model, true).stream()
+                .filter(i -> i.getEqClass().isTopClass())
+                .collect(Collectors.toSet());
+
+        return items;
     }
 
     /**
-     * in root pos (1) and TOP position (1) and has a jumpback item (3)
+     * in root pos (1) and TOP position (2) and has a jumpback item (3)
      *
      * @param currentItem
      * @return
      */
     public boolean isJumpBackAntecedent(RRGParseItem currentItem) {
-        return currentItem.getNode().getGornaddress().mother() == null && // 1
-                currentItem.getNodePos() == NodePos.TOP && // 2
-                currentItem.getGenwrappingjumpback() != null; // 3
+        boolean req = currentItem.getEqClass().isTopClass();//2
+        if(!req){return false;}
+
+        req = req && currentItem.getEqClass().isRoot() //1
+                && null != currentItem.getGenwrappingjumpback();//3
+
+        return req;
     }
 }
