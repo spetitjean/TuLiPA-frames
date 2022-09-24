@@ -29,6 +29,7 @@ package de.duesseldorf.rrg.parser;
 import de.duesseldorf.rrg.RRGNode;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RRGParseChart {
 
@@ -115,7 +116,7 @@ public class RRGParseChart {
      */
     public Set<RRGParseItem> findUnderspecifiedItem(RRGParseItem model,
                                                     boolean gapSubSet) {
-        Set<RRGParseItem> result = new HashSet<>();
+        Set<RRGParseItem> result;
 
         // collect all the items that might fit the model
         // first find out in which area of the chart to look
@@ -129,8 +130,16 @@ public class RRGParseChart {
             toCheck.addAll(chart.get(i).keySet());
         }
 
+        result = toCheck.stream()
+                .filter( i -> -2 != model.getEnd() && model.getEnd() == i.getEnd())
+                .filter( i -> null != model.getEqClass() && model.getEqClass().copyClass().equals(i.getEqClass().copyClass()))
+                .filter( i -> null != model.getNodePos() && model.getNodePos() == i.getNodePos()) // TODO: Compiling fix 101: if (!linker.CanCompile) compile
+                .filter( i -> null != model.getGaps() && i.getGaps().containsAll(model.getGaps())) // TODO: Replace with something usefull
+                .filter( i -> model.getwsflag() == i.getwsflag()) // TODO: You're a wizzard harry, you can do it :)
+                .collect(Collectors.toSet());
+
         // this needs to be refactored!
-        for (RRGParseItem s : toCheck) {
+        /*for (RRGParseItem s : toCheck) {
             boolean endCheck = -2 == model.getEnd()
                     || model.getEnd() == s.getEnd();
             if (endCheck) {
@@ -172,7 +181,7 @@ public class RRGParseChart {
                 }
             }
 
-        }
+        }*/
         return result;
     }
 
