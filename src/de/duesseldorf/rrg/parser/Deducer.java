@@ -191,12 +191,11 @@ public class Deducer {
     }
 
     private RRGParseItem applyCW(RRGParseItem targetItem, RRGParseItem fillerddaughterItem, Gap gap, boolean generalized) {
-        Set<Gap> gaps = new HashSet<Gap>(targetItem.getGaps());
+        Set<Gap> gaps = new HashSet<>(targetItem.getGaps());
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
-        RRGParseItem.Builder builder = new RRGParseItem.Builder().tree(fillerddaughterItem.getTree().getInstance())
-                .node(fillerddaughterItem.getNode().copyNode())
-                .nodepos(fillerddaughterItem.getNodePos())
+        RRGParseItem.Builder builder = new RRGParseItem.Builder()
+                .eqClass(fillerddaughterItem.getEqClass())
                 .start(targetItem.startPos()).end(targetItem.getEnd())
                 .gaps(gaps).ws(false);
         if (generalized) {
@@ -212,9 +211,8 @@ public class Deducer {
         Set<Gap> gaps = new HashSet<>(currentItem.getGaps());
         return new RRGParseItem.Builder().start(currentItem.startPos())
                 .end(currentItem.getEnd())
-                .tree(jumpBackItem.getTree())
-                .node(jumpBackItem.getNode())
-                .nodepos(RRGParseItem.NodePos.TOP)
+                .eqClass(jumpBackItem.getEqClass())
+                //.nodepos(RRGParseItem.NodePos.TOP)
                 .gaps(gaps)
                 .ws(false).build();
     }
