@@ -5,8 +5,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.duesseldorf.factorizer.EqClassBot;
-import de.duesseldorf.rrg.RRGNode;
-import de.duesseldorf.rrg.RRGTree;
 
 /*
  *  File RRGParseItem.java
@@ -47,6 +45,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
     private final boolean ws;
     private final RRGParseItem genwrappingjumpback;
 
+    private final NodePos nodePos;
+
     private RRGParseItem(EqClassBot eqClass, int start,
                          int end, Set<Gap> gaps, boolean ws, RRGParseItem genwrappingjumpback) {
         this.eqClass = eqClass;
@@ -55,31 +55,14 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         this.gaps = gaps;
         this.ws = ws;
         this.genwrappingjumpback = genwrappingjumpback;
+        this.nodePos =  eqClass.isTopClass() ? NodePos.TOP : NodePos.BOT;
     }
 
-/*
-    public RRGTree getTree() {
-        return tree;
-    }
-*/
 
-/*
-    public RRGTree getTreeInstance() {
-        return tree.getInstance();
-    }
-*/
 
-/*
     public NodePos getNodePos() {
-        return this.nodepos;
+        return this.nodePos;
     }
-*/
-
-/*
-    public RRGNode getNode() {
-        return node;
-    }
-*/
 
     public EqClassBot getEqClass() {
         return this.eqClass;
@@ -167,6 +150,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         private Set<Gap> gaps = null;
         private Boolean ws;
         private RRGParseItem genwrappingjumpback = null;
+
 
         public Builder() {
         }
