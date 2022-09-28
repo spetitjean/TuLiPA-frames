@@ -13,16 +13,16 @@ public class Agenda {
     private ConcurrentSkipListSet<RRGParseItem> INITROOT;
 
     public Agenda() {
-        this.WITHIN = new ConcurrentSkipListSet<RRGParseItem>();
-        this.AUXROOT = new ConcurrentSkipListSet<RRGParseItem>();
-        this.DDAUGHTER = new ConcurrentSkipListSet<RRGParseItem>();
-        this.INITROOT = new ConcurrentSkipListSet<RRGParseItem>();
+        this.WITHIN = new ConcurrentSkipListSet<>();
+        this.AUXROOT = new ConcurrentSkipListSet<>();
+        this.DDAUGHTER = new ConcurrentSkipListSet<>();
+        this.INITROOT = new ConcurrentSkipListSet<>();
     }
 
     public void add(RRGParseItem item) {
         if (item.getwsflag()) {
             this.DDAUGHTER.add(item);
-        } else if (item.getEqClass().type.equals(RRGNode.RRGNodeType.STAR) && item.getNodePos() == RRGParseItem.NodePos.TOP) {
+        } else if (RRGNode.RRGNodeType.STAR == item.getEqClass().type && RRGParseItem.NodePos.TOP == item.getNodePos()) {
             this.AUXROOT.add(item);
         } else if (item.getEqClass().isTopClass() && item.getEqClass().isRoot()) {
             this.INITROOT.add(item);

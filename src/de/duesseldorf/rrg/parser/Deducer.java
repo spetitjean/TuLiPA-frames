@@ -5,9 +5,7 @@ import java.util.stream.Collectors;
 
 import de.duesseldorf.factorizer.EqClassBot;
 import de.duesseldorf.factorizer.EqClassTop;
-import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
-import de.duesseldorf.util.GornAddress;
 
 /*
  *  File Deducer.java
@@ -50,10 +48,10 @@ public class Deducer {
         Set<RRGParseItem> newItems = new HashSet<>();
         Set<Gap> gaps = new HashSet<>(leftItem.getGaps());
         gaps.addAll(rightItem.getGaps());
-        RRGParseItem jumpBackItem = (leftItem.getGenwrappingjumpback() != null) ?
+        RRGParseItem jumpBackItem = (null != leftItem.getGenwrappingjumpback()) ?
                 leftItem.getGenwrappingjumpback() :
                 rightItem.getGenwrappingjumpback();
-        if (leftItem.getGenwrappingjumpback() != null && rightItem.getGenwrappingjumpback() != null) {
+        if (null != leftItem.getGenwrappingjumpback() && null != rightItem.getGenwrappingjumpback()) {
             System.out.println("something strange: two jumpback items not zero during CSis: l: " + leftItem + ", r: " + rightItem);
         }
 
@@ -87,11 +85,10 @@ public class Deducer {
 
         Map<EqClassBot, Boolean> possMothers = ((EqClassTop)currentItem.getEqClass()).getPossibleMothers();
         List<EqClassBot> nrsMothers = possMothers.entrySet().stream()
-                .filter(e -> e.getValue() == true)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey).toList();
         for(EqClassBot mom: nrsMothers) {
-            boolean newwsflag = mom.type.equals(RRGNodeType.DDAUGHTER);
+            boolean newwsflag = RRGNodeType.DDAUGHTER == mom.type;
             RRGParseItem newItem = new RRGParseItem.Builder().eqClass(mom)
                     .start(currentItem.startPos()).end(currentItem.getEnd())
                     .gaps(currentItem.getGaps()).ws(newwsflag)
@@ -113,7 +110,7 @@ public class Deducer {
     public Set<RRGParseItem> applyNoLeftSister(RRGParseItem currentItem) {
         Set<RRGParseItem> items = new HashSet<>();
         List<EqClassTop> topClasses = currentItem.getEqClass().getTopClasses();
-        List<EqClassTop> topClassesNls = topClasses.stream().filter(topClass -> topClass.noLeftSisters() == true).collect(Collectors.toList());
+        List<EqClassTop> topClassesNls = topClasses.stream().filter(EqClassTop::noLeftSisters).toList();
 
         for(EqClassTop tc : topClassesNls) {
             RRGParseItem topItem = new RRGParseItem.Builder().eqClass(tc)
@@ -138,12 +135,12 @@ public class Deducer {
     public RRGParseItem applyLeftAdjoin(RRGParseItem targetSister,
                                         RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
-        Set<Gap> gaps = new HashSet<Gap>(auxTreeRoot.getGaps());
+        Set<Gap> gaps = new HashSet<>(auxTreeRoot.getGaps());
         gaps.addAll(targetSister.getGaps());
-        RRGParseItem jumpBackItem = (targetSister.getGenwrappingjumpback() != null) ?
+        RRGParseItem jumpBackItem = (null != targetSister.getGenwrappingjumpback()) ?
                 targetSister.getGenwrappingjumpback() :
                 auxTreeRoot.getGenwrappingjumpback();
-        if (targetSister.getGenwrappingjumpback() != null && auxTreeRoot.getGenwrappingjumpback() != null) {
+        if (null != targetSister.getGenwrappingjumpback() && null != auxTreeRoot.getGenwrappingjumpback()) {
             System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + targetSister + ", a: " + auxTreeRoot);
         }
         return new RRGParseItem.Builder()
@@ -165,12 +162,12 @@ public class Deducer {
     public RRGParseItem applyRightAdjoin(RRGParseItem target,
                                          RRGParseItem auxTreeRoot) {
         // create the list of gaps of the consequent
-        Set<Gap> gaps = new HashSet<Gap>(target.getGaps());
+        Set<Gap> gaps = new HashSet<>(target.getGaps());
         gaps.addAll(auxTreeRoot.getGaps());
-        RRGParseItem jumpBackItem = (target.getGenwrappingjumpback() != null) ?
+        RRGParseItem jumpBackItem = (null != target.getGenwrappingjumpback()) ?
                 target.getGenwrappingjumpback() :
                 auxTreeRoot.getGenwrappingjumpback();
-        if (target.getGenwrappingjumpback() != null && auxTreeRoot.getGenwrappingjumpback() != null) {
+        if (null != target.getGenwrappingjumpback() && null != auxTreeRoot.getGenwrappingjumpback()) {
             System.out.println("something strange: two jumpback items not zero during LeftSisadj: t: " + target + ", a: " + auxTreeRoot);
         }
         // System.out.print(target.getTree());
