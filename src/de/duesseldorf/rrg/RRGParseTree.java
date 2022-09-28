@@ -159,7 +159,11 @@ public class RRGParseTree extends RRGTree {
         if (wrappedNode == null) {
             return this;
         }
-        RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
+        //RRGTree artificialWrappedTree = new RRGParseTree(wrappedNode, ddaughterItem.getTree().getId());
+        //
+        //
+        // Only changed because not needed anymore
+        RRGTree artificialWrappedTree = null;
         return insertWrappedTree(artificialWrappedTree, ddaughterAddress, ddaughterItem, true);
     }
 
