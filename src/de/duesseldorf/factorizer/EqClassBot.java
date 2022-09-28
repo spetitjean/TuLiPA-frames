@@ -36,21 +36,19 @@ import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.anchoring.NameFactory;
-import de.tuebingen.tree.Node;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static de.duesseldorf.rrg.RRGNode.RRGNodeType.STD;
-
 /**
  * Equivalence class that are equal in daughters
  */
+@SuppressWarnings("RedundantIfStatement")
 public class EqClassBot {
 
     private ArrayList<EqClassBot> daughterEQClasses;
 
-    private ArrayList<EqClassTop> topClasses = new ArrayList<EqClassTop>();
+    private ArrayList<EqClassTop> topClasses = new ArrayList<>();
 
     public Map<GornAddress, RRGTree> factorizedTrees;
 
@@ -94,7 +92,7 @@ public class EqClassBot {
         topClasses.add(topClass);
     }
 
-    public ArrayList<EqClassTop> getTopClasses() {
+    public List<EqClassTop> getTopClasses() {
         return this.topClasses;
     }
 
@@ -114,7 +112,7 @@ public class EqClassBot {
      * @return true iff at least one Topclass has no left sisters
      */
     public boolean noLeftSisters() {
-        ArrayList<Boolean> ba = new ArrayList<>();
+        Collection<Boolean> ba = new ArrayList<>();
         for(EqClassTop tc: topClasses){
             ba.add(Boolean.valueOf(tc.noLeftSisters()));
         }
@@ -128,7 +126,7 @@ public class EqClassBot {
      * @param daughters daughters of node
      * @return true if node belongs to this Eq class
      */
-    public boolean belongs(RRGNode node, ArrayList<EqClassBot> daughters) {
+    public boolean belongs(RRGNode node, Collection<EqClassBot> daughters) {
         if (daughters.isEmpty()) {
             if(cat.equals(node.getCategory())
                     && daughterEQClasses.isEmpty()
@@ -154,21 +152,21 @@ public class EqClassBot {
 
     @Override
     public String toString() {
-        String out = "{BOTTOM Cat = "+ cat + " " + this.id + ", daughters = ";
-        if(numDaughters == 0) {
-            out += "No Daughters \n";
+        StringBuilder out = new StringBuilder("{BOTTOM Cat = " + cat + " " + this.id + ", daughters = ");
+        if(0 == numDaughters) {
+            out.append("No Daughters \n");
         }
         int i = 1;
         for(EqClassBot daughter : daughterEQClasses) {
-            out += i + ". Daughter = " + daughter.cat + " " + daughter.id + "\n";
+            out.append(i).append(". Daughter = ").append(daughter.cat).append(" ").append(daughter.id).append("\n");
             i++;
         }
-        out += "}";
-        return out;
+        out.append("}");
+        return out.toString();
     }
 
     public EqClassTop checkTopClasses(List <EqClassBot> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
-        boolean root = gornaddress.mother() == null;
+        boolean root = null == gornaddress.mother();
         for(EqClassTop topClass : topClasses) {
             if(topClass.belongs(leftSisters, root)) {
                 topClass.add(gornaddress, tree);
@@ -182,12 +180,12 @@ public class EqClassBot {
     }
 
     public String printTopClasses() {
-        String out = "";
+        StringBuilder out = new StringBuilder();
         int i = 1;
         for(EqClassTop topClass: topClasses) {
-            out += topClass.toString();
+            out.append(topClass.toString());
         }
-        return out;
+        return out.toString();
     }
 
     /**
@@ -206,19 +204,19 @@ public class EqClassBot {
         return rightSisters;
     }
 
-    public void setDaughters(ArrayList<EqClassBot> daughters){this.daughterEQClasses = daughters;};
+    public void setDaughters(ArrayList<EqClassBot> daughters){this.daughterEQClasses = daughters;}
 
-    public EqClassBot copyClass(){return this.copyClass(new NameFactory());};
+    public EqClassBot copyClass(){return this.copyClass(new NameFactory());}
 
     public EqClassBot copyClass(NameFactory nf) {
         EqClassBot newEqClass = new EqClassBot(new ArrayList<>(), this.factorizedTrees, this.cat, this.type, this.id, new Fs(this.fs, nf));
         ArrayList<EqClassBot> daughters = new ArrayList<>();
-        if (this.numDaughters > 0) {
+        if (0 < this.numDaughters) {
             for(EqClassBot eqClass : daughterEQClasses){
                 daughters.add(eqClass.copyClass(nf));
             }
         }
-        newEqClass.setDaughters(daughters);
+        newEqClass.daughterEQClasses = daughters;
 
         if(!this.topClasses.isEmpty()){
             for(EqClassTop topClass : this.getTopClasses()){
@@ -247,11 +245,16 @@ public class EqClassBot {
         }
 
         boolean req = this.checkType(c.type)
-                && this.getDaughterEQClasses().equals(c.getDaughterEQClasses())
+                && this.daughterEQClasses.equals(c.daughterEQClasses)
                 && this.cat.equals(c.cat)
                 && this.getFs().equals(c.getFs());
 
         return req;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(daughterEQClasses, cat, type, fs);
     }
 
     public static class Builder<S extends Builder> {
@@ -259,7 +262,7 @@ public class EqClassBot {
         private String id = "";
         private ArrayList<EqClassBot> daughterEQClasses = new ArrayList<>();
 
-        private ArrayList<EqClassTop> topClasses = new ArrayList<EqClassTop>();
+        private Iterable<EqClassTop> topClasses = new ArrayList<>();
 
         public Map<GornAddress, RRGTree> factorizedTrees = new HashMap<>();
 
@@ -267,9 +270,9 @@ public class EqClassBot {
 
         public String cat = "";
 
-        public RRGNodeType type = STD;
+        public RRGNodeType type = RRGNodeType.STD;
 
-        private Fs fs = null;
+        private Fs fs;
 
         public Builder() {}
 
@@ -288,14 +291,14 @@ public class EqClassBot {
             return (S) this;
         }
 
-        public S daughters(List<EqClassBot> daughters) {
+        public S daughters(Collection<EqClassBot> daughters) {
             this.daughterEQClasses = (ArrayList<EqClassBot>) daughters;
             this.numDaughters = daughters.size();
             return (S) this;
         }
 
         public S topClasses(List<EqClassTop> topClasses) {
-            this.topClasses = (ArrayList<EqClassTop>) topClasses;
+            this.topClasses = topClasses;
             return (S) this;
         }
 
@@ -309,7 +312,7 @@ public class EqClassBot {
             return (S) this;
         }
 
-        public S factorizedTrees(HashMap<GornAddress, RRGTree> factorizedTrees) {
+        public S factorizedTrees(Map<GornAddress, RRGTree> factorizedTrees) {
             this.factorizedTrees = factorizedTrees;
             return (S) this;
         }
