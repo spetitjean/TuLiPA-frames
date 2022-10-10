@@ -34,9 +34,6 @@ import de.duesseldorf.factorizer.EqClassBot;
  */
 public class RRGParseItem implements Comparable<RRGParseItem> {
 
-    //private final RRGTree tree;
-    //private final RRGNode node;
-    //private final NodePos nodepos;
 
     private final EqClassBot eqClass;
     private final int start;
@@ -55,7 +52,8 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
         this.gaps = gaps;
         this.ws = ws;
         this.genwrappingjumpback = genwrappingjumpback;
-        this.nodePos =  eqClass.isTopClass() ? NodePos.TOP : NodePos.BOT;
+        if(eqClass != null) {        this.nodePos =  eqClass.isTopClass() ? NodePos.TOP : NodePos.BOT;
+        } else {nodePos = null;}
     }
 
 

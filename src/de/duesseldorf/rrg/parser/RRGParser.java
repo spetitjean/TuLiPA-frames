@@ -135,8 +135,8 @@ public class RRGParser {
 
 
             // extract parse results from chart
-            ParseForestExtractor extractor = new ParseForestExtractor(chart,
-                    toksentence);
+            //ParseForestExtractor extractor = new ParseForestExtractor(chart, TODO: Just for testing, needs to work
+            //        toksentence);
 
             // System.out.println("Environments after extraction:");
 
@@ -144,7 +144,8 @@ public class RRGParser {
             // 	System.out.println(rrgtree.getEnv());
             // }
 
-            return extractor.extractParseTrees();
+            //return extractor.extractParseTrees(); TODO: Just for testing, needs to work
+            return new RRGParseResult.Builder().build();
         }
 
     }

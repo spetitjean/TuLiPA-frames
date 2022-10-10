@@ -37,7 +37,7 @@ public class Backpointer {
     private Map<Operation, Set<Set<RRGParseItem>>> store;
 
     public Backpointer() {
-        store = new HashMap<Operation, Set<Set<RRGParseItem>>>();
+        store = new HashMap<>();
     }
 
     /**
@@ -52,7 +52,7 @@ public class Backpointer {
         if (store.containsKey(op)) {
             store.get(op).add(antecedents);
         } else {
-            Set<Set<RRGParseItem>> value = new HashSet<Set<RRGParseItem>>();
+            Set<Set<RRGParseItem>> value = new HashSet<>();
             value.add(antecedents);
             store.put(op, value);
         }
@@ -66,11 +66,11 @@ public class Backpointer {
     public Set<Set<RRGParseItem>> getAntecedents(Operation op) {
         Set<Set<RRGParseItem>> res = store.get(op);
 
-        return (res != null) ? res : new HashSet<Set<RRGParseItem>>();
+        return (res != null) ? res : new HashSet<>();
     }
 
     public Set<Set<RRGParseItem>> getAntecedents(Collection<Operation> ops) {
-        Set<Set<RRGParseItem>> result = new HashSet<Set<RRGParseItem>>();
+        Set<Set<RRGParseItem>> result = new HashSet<>();
         for (Operation op : ops) {
             result.addAll(getAntecedents(op));
         }
