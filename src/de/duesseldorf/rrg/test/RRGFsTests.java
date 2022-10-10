@@ -3,14 +3,18 @@ package de.duesseldorf.rrg.test;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
+import de.duesseldorf.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGParseResult;
 import de.duesseldorf.rrg.RRGParseTree;
+import de.duesseldorf.rrg.RRGTree;
+import de.duesseldorf.rrg.anchoring.RRGAnchorMan;
 import de.duesseldorf.rrg.io.BracketedRRGFromStringsReader;
 import de.duesseldorf.rrg.io.RRGXMLBuilder;
 import de.duesseldorf.rrg.parser.RRGParser;
@@ -81,8 +85,12 @@ public class RRGFsTests {
             RRG grammar = BracketedRRGFromStringsReader
                     .createRRGFromListOfBracketedStrings(trees.get(i));
             Situation.instantiate(grammar, null, null);
+            RRGAnchorMan anchorman = new RRGAnchorMan(sentences.get(i));
+            Set<RRGTree> treesInvolvedInParsing = anchorman.anchor();
+            FactorizingInterface Fi = new FactorizingInterface();
+
             // parse
-            RRGParseResult parseResult = new RRGParser("", grammar.getTrees())
+            RRGParseResult parseResult = new RRGParser("", Fi)
                     .parseSentence(sentences.get(i));
             System.out.println("parsed sentence: " + sentences.get(i));
             for (RRGParseTree parseTree : parseResult.getSuccessfulParses()) {
