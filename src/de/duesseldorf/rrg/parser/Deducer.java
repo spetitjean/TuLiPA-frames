@@ -209,7 +209,7 @@ public class Deducer {
         return new RRGParseItem.Builder().start(currentItem.startPos())
                 .end(currentItem.getEnd())
                 .eqClass(jumpBackItem.getEqClass())
-                //.nodepos(RRGParseItem.NodePos.TOP)
+                //.nodepos(RRGParseItem.NodePos.TOP), currentItem is ALWAYS in TOP position
                 .gaps(gaps)
                 .ws(false).build();
     }

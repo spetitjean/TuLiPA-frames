@@ -464,7 +464,7 @@ public class RequirementFinder {
                     .forEach(isDaughterOfRoot::add); //If there are any add them to the result
         }
 
-        req = req  && !isDaughterOfRoot.isEmpty() // 3 TODO: Do a flip!
+        req = req  && !isDaughterOfRoot.isEmpty() // 3
                 && item.getwsflag(); // 2
 
         return  req;

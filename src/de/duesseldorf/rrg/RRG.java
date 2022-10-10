@@ -51,15 +51,15 @@ public class RRG implements Grammar {
     private Set<RRGTree> anchoredTrees;
 
     public RRG() {
-        trees = new HashSet<RRGTree>();
-        anchoredTrees = new HashSet<RRGTree>();
+        trees = new HashSet<>();
+        anchoredTrees = new HashSet<>();
         isLexicalised = lookForLexicalisation();
         needsAnchoring = lookForAnchors();
     }
 
     public RRG(Set<RRGTree> trees) {
         this.trees = trees;
-        this.anchoredTrees = new HashSet<RRGTree>();
+        this.anchoredTrees = new HashSet<>();
         isLexicalised = lookForLexicalisation();
         needsAnchoring = lookForAnchors();
     }
@@ -69,7 +69,7 @@ public class RRG implements Grammar {
      */
     private boolean lookForAnchors() {
         boolean thereAreAnchors = trees.parallelStream()
-                .anyMatch(tree -> tree.getAnchorNode() != null);
+                .anyMatch(tree -> null != tree.getAnchorNode());
         return thereAreAnchors;
     }
 
@@ -124,7 +124,7 @@ public class RRG implements Grammar {
 
     public Map<String, List<Tuple>> getGrammar() {
         // TODO Auto-generated method stub
-        return new HashMap<String, List<Tuple>>();
+        return new HashMap<>();
     }
 
     public Set<RRGTree> getTreesByFamily(String family) {
@@ -147,7 +147,7 @@ public class RRG implements Grammar {
     }
 
     public void resetAnchoredTrees() {
-        this.anchoredTrees = new HashSet<RRGTree>();
+        this.anchoredTrees = new HashSet<>();
     }
 
 }

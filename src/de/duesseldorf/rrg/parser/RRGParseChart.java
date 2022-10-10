@@ -129,13 +129,13 @@ public class RRGParseChart {
         for (int i = startboundary; i <= endboundary; i++) {
             toCheck.addAll(chart.get(i).keySet());
         }
-
+        //Check if refactoring still does the same thing
         result = toCheck.stream()
                 .filter( i -> -2 != model.getEnd() && model.getEnd() == i.getEnd())
                 .filter( i -> null != model.getEqClass() && model.getEqClass().copyClass().equals(i.getEqClass().copyClass()))
-                .filter( i -> null != model.getNodePos() && model.getNodePos() == i.getNodePos()) // TODO: Compiling fix 101: if (!linker.CanCompile) compile
-                .filter( i -> null != model.getGaps() && i.getGaps().containsAll(model.getGaps())) // TODO: Replace with something usefull
-                .filter( i -> model.getwsflag() == i.getwsflag()) // TODO: You're a wizzard harry, you can do it :)
+                .filter( i -> null != model.getNodePos() && model.getNodePos() == i.getNodePos())
+                .filter( i -> null != model.getGaps() && i.getGaps().containsAll(model.getGaps()))
+                .filter( i -> model.getwsflag() == i.getwsflag())
                 .collect(Collectors.toSet());
 
         // this needs to be refactored!
