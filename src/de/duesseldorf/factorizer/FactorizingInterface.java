@@ -161,6 +161,14 @@ public class FactorizingInterface {
         return lexClasses;
     }
 
+    public Set<EqClassBot> getSpecialClasses(RRGNode.RRGNodeType type) {
+        Set<EqClassBot> substClasses = new HashSet<>();
+        for(EqClassBot eqClass : bottomEqClasses) {
+            if(eqClass.type.equals(type)) {substClasses.add(eqClass);}
+        }
+        return substClasses;
+    }
+
     public Set<EqClassBot> getSubstClasses(String cat) {
         Set<EqClassBot> substClasses = new HashSet<>();
         for(EqClassBot eqClass : bottomEqClasses) {
