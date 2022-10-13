@@ -126,7 +126,7 @@ public class RRGParser {
             return new RRGParseResult.Builder().build();
         } else {
 
-
+            Set<RRGParseItem> goals = chart.retrieveGoalItems();
             // System.out.println("Environments after parsing:");
 
             // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
@@ -389,6 +389,7 @@ public class RRGParser {
                     checkIfUnificationWorks = false;
                 }
                 if (checkIfUnificationWorks) {
+                    substClass.setDaughters(currentItem.getEqClass().getDaughterEQClasses());
                     RRGParseItem cons = new RRGParseItem.Builder()
                             .eqClass(substClass)
                             .start(currentItem.startPos())
