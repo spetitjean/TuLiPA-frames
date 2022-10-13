@@ -204,7 +204,14 @@ public class EqClassBot {
         return rightSisters;
     }
 
-    public void setDaughters(ArrayList<EqClassBot> daughters){this.daughterEQClasses = daughters;}
+    public void setDaughters(ArrayList<EqClassBot> daughters){
+        this.daughterEQClasses = daughters;
+        if(daughters.isEmpty()) {
+            numDaughters = 0;
+        } else {
+            numDaughters = daughters.size();
+        }
+    }
 
     public EqClassBot copyClass(){return this.copyClass(new NameFactory());}
 
