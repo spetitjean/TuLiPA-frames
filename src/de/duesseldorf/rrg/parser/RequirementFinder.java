@@ -176,7 +176,7 @@ public class RequirementFinder {
         boolean res = currentItem.getEqClass().isTopClass();//1
         if(!res){return res;}
 
-        res = res && !(currentItem.getEqClass().isRoot()) // 2.
+        res = res && (currentItem.getEqClass().isRoot()) // 2.
                 && (RRGNodeType.STAR != currentItem.getEqClass().type); //3.
         return res;
     }
