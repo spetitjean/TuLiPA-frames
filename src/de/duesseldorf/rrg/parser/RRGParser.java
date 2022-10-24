@@ -294,7 +294,7 @@ public class RRGParser {
                 if (nodeUnificationPossible) {
                     // System.out.println("got to for: " + substClass);
                     RRGParseItem cons = new RRGParseItem.Builder()
-                            .eqClass(substClass.copyClass())
+                            .eqClass(substClass)
                             .start(currentItem.startPos())
                             .end(currentItem.getEnd()).gaps(gaps)
                             .ws(false).build();
