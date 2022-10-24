@@ -113,7 +113,7 @@ public class Deducer {
         List<EqClassTop> topClassesNls = topClasses.stream().filter(EqClassTop::noLeftSisters).toList();
 
         for(EqClassTop tc : topClassesNls) {
-            RRGParseItem topItem = new RRGParseItem.Builder().eqClass(tc)
+            RRGParseItem topItem = new RRGParseItem.Builder().eqClass(tc.copyClass())
                     .start(currentItem.startPos()).end(currentItem.getEnd())
                     .gaps(currentItem.getGaps()).ws(currentItem.getwsflag())
                     .genwrappingjumpback(currentItem.getGenwrappingjumpback())
@@ -192,7 +192,7 @@ public class Deducer {
         gaps.remove(gap);
         gaps.addAll(fillerddaughterItem.getGaps());
         RRGParseItem.Builder builder = new RRGParseItem.Builder()
-                .eqClass(fillerddaughterItem.getEqClass())
+                .eqClass(fillerddaughterItem.getEqClass().copyClass())
                 .start(targetItem.startPos()).end(targetItem.getEnd())
                 .gaps(gaps).ws(false);
         if (generalized) {
@@ -208,7 +208,7 @@ public class Deducer {
         Set<Gap> gaps = new HashSet<>(currentItem.getGaps());
         return new RRGParseItem.Builder().start(currentItem.startPos())
                 .end(currentItem.getEnd())
-                .eqClass(jumpBackItem.getEqClass())
+                .eqClass(jumpBackItem.getEqClass().copyClass())
                 //.nodepos(RRGParseItem.NodePos.TOP), currentItem is ALWAYS in TOP position
                 .gaps(gaps)
                 .ws(false).build();
