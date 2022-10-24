@@ -92,6 +92,10 @@ public class EqClassTop extends EqClassBot{
             daughters.add(kid.copyClass());
         }
         EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), new Fs(this.getFs(), nf), this.getLeftSisters(), isRoot());
+
+        for(Map.Entry<EqClassBot, Boolean> e: this.possibleMothers.entrySet()) {
+            newEqClass.addMother(e.getKey(), e.getValue());
+        }
         return newEqClass;
     }
 
