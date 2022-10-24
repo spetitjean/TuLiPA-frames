@@ -165,6 +165,14 @@ public class EqClassBot {
         return out.toString();
     }
 
+    /**
+     * CHeck if TopClass with given parameters already exists, add if not
+     * @param leftSisters
+     * @param gornaddress
+     * @param tree
+     * @param nf
+     * @return
+     */
     public EqClassTop checkTopClasses(List <EqClassBot> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
         boolean root = null == gornaddress.mother();
         for(EqClassTop topClass : topClasses) {
@@ -199,7 +207,7 @@ public class EqClassBot {
                 .filter(i -> daughterEQClasses.get(i).equals(leftSis))
                 .toArray();
         for(int i : indices){
-            if(i<daughterEQClasses.size()-1){rightSisters.add(daughterEQClasses.get(i+1));}
+            if(i<daughterEQClasses.size()-1){rightSisters.add((daughterEQClasses.get(i+1)).copyClass());}
         }
         return rightSisters;
     }
