@@ -42,6 +42,7 @@ import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FactorizingInterface {
 
@@ -82,9 +83,9 @@ public class FactorizingInterface {
      * @return root EQ class of factorization
      */
     private EqClassBot checkDaughters(RRGNode root, RRGTree tree) {
-        ArrayList<EqClassBot> daughtersEq = new ArrayList<EqClassBot>();
-        ArrayList<EqClassTop> topClasses = new ArrayList<EqClassTop>();
-        EqClassBot rootClass = null;
+        ArrayList<EqClassBot> daughtersEq = new ArrayList<>();
+        ArrayList<EqClassTop> topClasses = new ArrayList<>();
+        EqClassBot rootClass;
         for (Node child: root.getChildren()) {
             EqClassBot childClass;
             if(child.getChildren().size() > 0) {
@@ -98,9 +99,9 @@ public class FactorizingInterface {
             EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree, nf);
             daughtersEq.add(childClass);
             topClasses.add(topClass);
+            //Add only new topClasses to general list
+            if(!topEqClasses.contains(topClass)){topEqClasses.add(topClass);}
         }
-        //Add only new topClasses to general list
-        topClasses.stream().filter(tc -> !(topEqClasses.contains(tc))).forEach(topClass -> topEqClasses.add(topClass));
 
         for (EqClassBot botClass : bottomEqClasses) {
             if(botClass.belongs(root, daughtersEq)) {
@@ -110,7 +111,7 @@ public class FactorizingInterface {
                 return botClass;
             }
         }
-        rootClass = new EqClassBot(daughtersEq, new HashMap<GornAddress, RRGTree>(),root.getCategory(),
+        rootClass = new EqClassBot(daughtersEq, new HashMap<>(),root.getCategory(),
                 root.getType(), nf.getUniqueName(), root.getNodeFs());
         rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
@@ -132,7 +133,7 @@ public class FactorizingInterface {
                 eqClassBot.add(leaf.getGornaddress(), tree);
                 return eqClassBot;
             }
-        } EqClassBot newClass = new EqClassBot(new ArrayList<EqClassBot>(), new HashMap<GornAddress, RRGTree>(),
+        } EqClassBot newClass = new EqClassBot(new ArrayList<>(), new HashMap<>(),
                 leaf.getCategory(), leaf.getType(), nf.getUniqueName(), leaf.getNodeFs());
         newClass.add(leaf.getGornaddress() , tree);
         bottomEqClasses.add(newClass);
@@ -156,7 +157,7 @@ public class FactorizingInterface {
         Set<EqClassBot> lexClasses = new HashSet<>();
 
         for(EqClassBot leafClass : getClassesByNumOfDaughters(0)){
-            if(leafClass.cat.equals(lex)){lexClasses.add(leafClass);}
+            if(leafClass.cat.equals(lex)){lexClasses.add(leafClass.copyClass());}
         }
         return lexClasses;
     }
@@ -164,15 +165,16 @@ public class FactorizingInterface {
     public Set<EqClassBot> getSpecialClasses(RRGNode.RRGNodeType type) {
         Set<EqClassBot> substClasses = new HashSet<>();
         for(EqClassBot eqClass : bottomEqClasses) {
-            if(eqClass.type.equals(type)) {substClasses.add(eqClass);}
+            if(eqClass.type.equals(type)) {substClasses.add(eqClass.copyClass());}
         }
         return substClasses;
     }
 
     public Set<EqClassBot> getSubstClasses(String cat) {
         Set<EqClassBot> substClasses = new HashSet<>();
-        for(EqClassBot eqClass : bottomEqClasses) {
-            if(eqClass.cat.equals(cat) && eqClass.type.equals(RRGNode.RRGNodeType.SUBST)) {substClasses.add(eqClass);}
+        //Sub classes have no daughters
+        for(EqClassBot eqClass : bottomEqClasses.stream().filter(eqClass -> eqClass.numDaughters == 0).collect(Collectors.toSet())) {
+            if(eqClass.cat.equals(cat) && eqClass.type.equals(RRGNode.RRGNodeType.SUBST)) {substClasses.add(eqClass.copyClass());}
         }
         return substClasses;
     }
