@@ -6,10 +6,7 @@ import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.util.GornAddress;
 import de.tuebingen.anchoring.NameFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EqClassTop extends EqClassBot{
 
@@ -116,6 +113,11 @@ public class EqClassTop extends EqClassBot{
                 ;
 
         return req;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(leftSisters, cat, type, possibleMothers);
     }
 
     public static class Builder extends EqClassBot.Builder<Builder> {
