@@ -127,6 +127,10 @@ public class RRGParser {
         } else {
 
             Set<RRGParseItem> goals = chart.retrieveGoalItems();
+            if(!goals.isEmpty()) {
+                System.out.println("Found goal items:");
+                System.out.println(goals);
+            }
             // System.out.println("Environments after parsing:");
 
             // for (RRGTree rrgtree : ((RRG) Situation.getGrammar()).getTrees()){
