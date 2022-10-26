@@ -88,7 +88,7 @@ public class RRGParseItem implements Comparable<RRGParseItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(eqClass.getId(), start, end, eqClass.type, eqClass.cat, gaps, ws, genwrappingjumpback);
+        return Objects.hash(start, end, eqClass, gaps, ws, genwrappingjumpback);
     }
 
     @Override
