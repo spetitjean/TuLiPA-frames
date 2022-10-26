@@ -79,14 +79,15 @@ public class Deducer {
      * @param currentItem
      * @return
      */
-    public Set<RRGParseItem> applyMoveUp(RRGParseItem currentItem) {
-
+    public Set<RRGParseItem> applyMoveUp(RRGParseItem currentItem) { // ci is TOP and at least one mother with NRS
         Set<RRGParseItem> newItems = new HashSet<>();
 
         Map<EqClassBot, Boolean> possMothers = ((EqClassTop)currentItem.getEqClass()).getPossibleMothers();
         List<EqClassBot> nrsMothers = possMothers.entrySet().stream()
                 .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey).toList();
+                .map(Map.Entry::getKey)
+                .toList();
+
         for(EqClassBot mom: nrsMothers) {
             boolean newwsflag = RRGNodeType.DDAUGHTER == mom.type;
             RRGParseItem newItem = new RRGParseItem.Builder().eqClass(mom)
@@ -213,4 +214,5 @@ public class Deducer {
                 .gaps(gaps)
                 .ws(false).build();
     }
+
 }
