@@ -10,7 +10,7 @@ import java.util.*;
 
 public class EqClassTop extends EqClassBot{
 
-    private List<EqClassBot> leftSisters;
+    private List<EqClassTop> leftSisters;
 
     //Boolean = is this class the rightmost sister
     private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
@@ -25,18 +25,18 @@ public class EqClassTop extends EqClassBot{
      * @param id
      * @param leftSisters left sister bottom Eq classes
      */
-    public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassBot> leftSisters, boolean root) {
+    public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassTop> leftSisters, boolean root) {
         super(daughters, factorizedTrees, cat, type, id, fs);
         this.leftSisters = leftSisters;
         this.root = root;
     }
 
-    public EqClassTop(EqClassBot botClass, String id, List<EqClassBot> leftSisters, boolean root) {
+    public EqClassTop(EqClassBot botClass, String id, List<EqClassTop> leftSisters, boolean root) {
         super(botClass.getDaughterEQClasses(), botClass.factorizedTrees, botClass.cat, botClass.type, id, botClass.getFs());
         this.leftSisters = leftSisters;
         this.root = root;
     }
-    public boolean belongs(List<EqClassBot> leftSisters, boolean root){
+    public boolean belongs(List<EqClassTop> leftSisters, boolean root){
         if(leftSisters.equals(this.leftSisters) && root == this.root){
             return true;
         }
@@ -45,7 +45,7 @@ public class EqClassTop extends EqClassBot{
 
     public boolean isRoot(){return root;}
 
-    public List<EqClassBot> getLeftSisters() {
+    public List<EqClassTop> getLeftSisters() {
         return leftSisters;
     }
 
@@ -111,22 +111,21 @@ public class EqClassTop extends EqClassBot{
                 && this.getLeftSisters().equals(t.getLeftSisters())
                 && this.cat.equals(t.cat)
                 ;
-
         return req;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(leftSisters, cat, type, possibleMothers);
+        return Objects.hash(leftSisters, cat, type, root);
     }
 
     public static class Builder extends EqClassBot.Builder<Builder> {
 
-        private List<EqClassBot> leftSisters = new ArrayList<>();
+        private List<EqClassTop> leftSisters = new ArrayList<>();
 
         private Map<EqClassBot, Boolean> possibleMothers = new HashMap<>();
 
-        private boolean root = false;
+        private boolean root;
 
 
         public Builder() {
@@ -139,7 +138,7 @@ public class EqClassTop extends EqClassBot{
             this.root = otherClass.isRoot();
         }
 
-        public Builder leftSisters(List<EqClassBot> leftSisters) {
+        public Builder leftSisters(List<EqClassTop> leftSisters) {
             this.leftSisters = leftSisters;
             return this;
         }
