@@ -38,6 +38,7 @@ import de.duesseldorf.util.GornAddress;
 import de.tuebingen.anchoring.NameFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -51,8 +52,6 @@ public class EqClassBot {
     private ArrayList<EqClassTop> topClasses = new ArrayList<>();
 
     public Map<GornAddress, RRGTree> factorizedTrees;
-
-    public int numDaughters;
 
     public String cat;
 
@@ -69,11 +68,6 @@ public class EqClassBot {
         this.id = id;
         daughterEQClasses = daughters;
         this.cat = cat;
-        if(daughters.isEmpty()) {
-            numDaughters = 0;
-        } else {
-            numDaughters = daughters.size();
-        }
         this.type = type;
         this.fs = fs;
         this.factorizedTrees = factorizedTrees;
@@ -86,6 +80,17 @@ public class EqClassBot {
 
     public ArrayList<EqClassBot> getDaughterEQClasses() {
         return this.daughterEQClasses;
+    }
+
+    public Map<EqClassBot, List<EqClassTop>> getDaughterTOPClasses() {
+        Map<EqClassBot, List<EqClassTop>> daughterTops = new HashMap<>();
+        for (EqClassBot daughter : getDaughterEQClasses()){
+            List<EqClassTop> topClasses = daughter.getTopClasses().stream()
+                    .filter(tc -> tc.getPossibleMothers().keySet().contains(this))
+                    .collect(Collectors.toList());
+            daughterTops.put(daughter, topClasses);
+        }
+        return daughterTops;
     }
 
     public void addTopClasses(EqClassTop topClass) {
@@ -153,9 +158,7 @@ public class EqClassBot {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder("{BOTTOM Cat = " + cat + " " + this.id + ", daughters = ");
-        if(0 == numDaughters) {
-            out.append("No Daughters \n");
-        }
+
         int i = 1;
         for(EqClassBot daughter : daughterEQClasses) {
             out.append(i).append(". Daughter = ").append(daughter.cat).append(" ").append(daughter.id).append("\n");
@@ -173,7 +176,7 @@ public class EqClassBot {
      * @param nf
      * @return
      */
-    public EqClassTop checkTopClasses(List <EqClassBot> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
+    public EqClassTop checkTopClasses(List <EqClassTop> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
         boolean root = null == gornaddress.mother();
         for(EqClassTop topClass : topClasses) {
             if(topClass.belongs(leftSisters, root)) {
@@ -203,8 +206,9 @@ public class EqClassBot {
      */
     public Set<EqClassBot> findRightSisters(EqClassBot leftSis){
         Set<EqClassBot> rightSisters = new HashSet<>();
+
         int[] indices = IntStream.range(0, daughterEQClasses.size())
-                .filter(i -> daughterEQClasses.get(i).equals(leftSis))
+                .filter(i -> daughterEQClasses.get(i).getTopClasses().contains(leftSis))
                 .toArray();
         for(int i : indices){
             if(i<daughterEQClasses.size()-1){rightSisters.add((daughterEQClasses.get(i+1)).copyClass());}
@@ -214,11 +218,6 @@ public class EqClassBot {
 
     public void setDaughters(ArrayList<EqClassBot> daughters){
         this.daughterEQClasses = daughters;
-        if(daughters.isEmpty()) {
-            numDaughters = 0;
-        } else {
-            numDaughters = daughters.size();
-        }
     }
 
     public EqClassBot copyClass(){return this.copyClass(new NameFactory());}
@@ -226,7 +225,7 @@ public class EqClassBot {
     public EqClassBot copyClass(NameFactory nf) {
         EqClassBot newEqClass = new EqClassBot(new ArrayList<>(), this.factorizedTrees, this.cat, this.type, this.id, new Fs(this.fs, nf));
         ArrayList<EqClassBot> daughters = new ArrayList<>();
-        if (0 < this.numDaughters) {
+        if (!daughterEQClasses.isEmpty()) {
             for(EqClassBot eqClass : daughterEQClasses){
                 daughters.add(eqClass.copyClass(nf));
             }
@@ -260,12 +259,16 @@ public class EqClassBot {
         }
 
         boolean req = this.checkType(c.type)
-                && this.daughterEQClasses.equals(c.daughterEQClasses)
                 && this.cat.equals(c.cat)
                 && this.getFs().equals(c.getFs());
 
+        if(!type.equals(RRGNodeType.SUBST)){
+            req = req && this.daughterEQClasses.equals(c.daughterEQClasses);
+        }
+
         return req;
     }
+
 
     @Override
     public int hashCode() {
@@ -296,7 +299,6 @@ public class EqClassBot {
             daughterEQClasses = otherClass.daughterEQClasses;
             this.topClasses = otherClass.topClasses;
             this.factorizedTrees = otherClass.factorizedTrees;
-            this.numDaughters = otherClass.numDaughters;
             this.cat = otherClass.cat;
             this.type = otherClass.type;
             this.fs = otherClass.fs;
