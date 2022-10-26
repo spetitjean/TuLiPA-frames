@@ -129,12 +129,14 @@ public class RRGParseChart {
         for (int i = startboundary; i <= endboundary; i++) {
             toCheck.addAll(chart.get(i).keySet());
         }
-        //Check if refactoring still does the same thing
+        //Check if refactoring still does the same thing, split streams easier for debugging
         result = toCheck.stream()
-                .filter( i -> -2 != model.getEnd() && model.getEnd() == i.getEnd())
-                .filter( i -> null != model.getEqClass() && model.getEqClass().copyClass().equals(i.getEqClass().copyClass()))
-                .filter( i -> null != model.getNodePos() && model.getNodePos() == i.getNodePos())
-                .filter( i -> null != model.getGaps() && i.getGaps().containsAll(model.getGaps()))
+                .filter( i -> -2 == model.getEnd() ? true : model.getEnd() == i.getEnd()).collect(Collectors.toSet());
+        result = result.stream()
+                .filter( i -> null == model.getEqClass() ? true : model.getEqClass().copyClass().equals(i.getEqClass().copyClass())).collect(Collectors.toSet());
+        result = result.stream()
+                .filter( i -> null == model.getGaps() ? true : i.getGaps().containsAll(model.getGaps())).collect(Collectors.toSet());
+        result = result.stream()
                 .filter( i -> model.getwsflag() == i.getwsflag())
                 .collect(Collectors.toSet());
 
