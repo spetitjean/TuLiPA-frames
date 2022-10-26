@@ -138,29 +138,32 @@ public class RequirementFinder {
         Set<RRGParseItem> candidates = new HashSet<>();
         if(rightSister.getEqClass().isTopClass()){return candidates;} //Is Bottom class
 
-        List<EqClassTop> hasLeftSisterCandidates = rightSister.getEqClass().getTopClasses()
+        List<EqClassTop> rightSisterWithLS = rightSister.getEqClass().getTopClasses()
                 .stream()
                 .filter(tc -> !tc.noLeftSisters()).toList();
 
-        boolean rightReq = !hasLeftSisterCandidates.isEmpty() // there is a left sister
+        boolean rightReq = !rightSisterWithLS.isEmpty() // there is a left sister
                 && !rightSister.getwsflag(); // no WS
 
         if (rightReq) {
             // hier liegt der Hund begraben: Die Gaps werden falsch modelliert
-            for (EqClassTop leftSis : hasLeftSisterCandidates) {
+            for (EqClassTop rightTop : rightSisterWithLS) {
+                int size = rightTop.getLeftSisters().size();
+                EqClassTop leftSis = rightTop.getLeftSisters().get(size-1);
+
                 RRGParseItem model = new RRGParseItem.Builder()
                         .eqClass(leftSis.copyClass())
                         .end(rightSister.startPos())
                         .ws(false)
                         .build();
-                // System.out.println("right req met for: " + currentItem);
-                // System.out.println("model: " + model);
+
                 candidates.addAll(chart.findUnderspecifiedItem(model, false));
             }
         }
         // System.out.println(candidates);
         return candidates;
     }
+
 
     /**
      * needed:
