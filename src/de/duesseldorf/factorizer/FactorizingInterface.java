@@ -62,7 +62,7 @@ public class FactorizingInterface {
             EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree, nf);
             topEqClasses.add(topClass);
         }
-        //System.out.println("\n FACTORIZED TREES:" + this);
+        //System.out.println(bottomEqClasses);
         //System.out.println(topEqClasses);
     }
     @Override
@@ -96,11 +96,11 @@ public class FactorizingInterface {
             }
 
             // Create top eq class with left sisters
-            EqClassTop topClass = childClass.checkTopClasses(new ArrayList(daughtersEq), ((RRGNode) child).getGornaddress(), tree, nf);
+            EqClassTop topClass = childClass.checkTopClasses(new ArrayList(topClasses), ((RRGNode) child).getGornaddress(), tree, nf);
             daughtersEq.add(childClass);
             topClasses.add(topClass);
             //Add only new topClasses to general list
-            if(!topEqClasses.contains(topClass)){topEqClasses.add(topClass);}
+            topEqClasses.add(topClass);
         }
 
         for (EqClassBot botClass : bottomEqClasses) {
@@ -148,7 +148,7 @@ public class FactorizingInterface {
     private Set<EqClassBot> getClassesByNumOfDaughters(int numDaughters) {
         Set<EqClassBot> possClasses = new HashSet<>();
         for (EqClassBot eqClassBot : bottomEqClasses) {
-            if(numDaughters == eqClassBot.numDaughters){possClasses.add(eqClassBot);}
+            if(numDaughters == eqClassBot.getDaughterEQClasses().size()){possClasses.add(eqClassBot);}
         }
         return possClasses;
     }
@@ -173,7 +173,7 @@ public class FactorizingInterface {
     public Set<EqClassBot> getSubstClasses(String cat) {
         Set<EqClassBot> substClasses = new HashSet<>();
         //Sub classes have no daughters
-        for(EqClassBot eqClass : bottomEqClasses.stream().filter(eqClass -> eqClass.numDaughters == 0).collect(Collectors.toSet())) {
+        for(EqClassBot eqClass : bottomEqClasses.stream().filter(eqClass -> eqClass.getDaughterEQClasses().isEmpty()).collect(Collectors.toSet())) {
             if(eqClass.cat.equals(cat) && eqClass.type.equals(RRGNode.RRGNodeType.SUBST)) {substClasses.add(eqClass.copyClass());}
         }
         return substClasses;
