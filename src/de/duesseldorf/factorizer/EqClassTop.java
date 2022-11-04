@@ -29,17 +29,19 @@ public class EqClassTop extends EqClassBot{
      */
     public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassTop> leftSisters, boolean root) {
         super(daughters, factorizedTrees, cat, type, id, fs);
+        this.fs = fs;
         this.leftSisters = leftSisters;
         this.root = root;
     }
 
     public EqClassTop(EqClassBot botClass, String id, List<EqClassTop> leftSisters, boolean root) {
         super(botClass.getDaughterEQClasses(), botClass.factorizedTrees, botClass.cat, botClass.type, id, botClass.getFs());
+        this.fs = botClass.getFs();
         this.leftSisters = leftSisters;
         this.root = root;
     }
-    public boolean belongs(List<EqClassTop> leftSisters, boolean root){
-        if(leftSisters.equals(this.leftSisters) && root == this.root){
+    public boolean belongs(List<EqClassTop> leftSisters, boolean root, Fs fs){
+        if(leftSisters.equals(this.leftSisters) && root == this.root && fs.equals(this.fs)){
             return true;
         }
         return false;
