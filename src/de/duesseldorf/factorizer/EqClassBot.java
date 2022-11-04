@@ -179,7 +179,7 @@ public class EqClassBot {
     public EqClassTop checkTopClasses(List <EqClassTop> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
         boolean root = null == gornaddress.mother();
         for(EqClassTop topClass : topClasses) {
-            if(topClass.belongs(leftSisters, root)) {
+            if(topClass.belongs(leftSisters, root, fs)) {
                 topClass.add(gornaddress, tree);
                 return topClass;
             }
