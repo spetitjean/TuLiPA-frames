@@ -17,6 +17,8 @@ public class EqClassTop extends EqClassBot{
 
     private boolean root;
 
+    private Fs fs;
+
     /**
      * Eq classes that are equal in daughters and left sisters
      * @param daughters daughter bottom EQ classes
@@ -116,7 +118,7 @@ public class EqClassTop extends EqClassBot{
 
     @Override
     public int hashCode() {
-        return Objects.hash(leftSisters, cat, type, root);
+        return Objects.hash(leftSisters, cat, type, root, fs);
     }
 
     public static class Builder extends EqClassBot.Builder<Builder> {
