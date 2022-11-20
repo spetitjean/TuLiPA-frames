@@ -497,19 +497,37 @@ public class RequirementFinder {
         Set<RRGParseItem> candidatesWithFittingCats = new HashSet<>();
         for (RRGParseItem item : candidates) {
 
-            boolean targetRootSuitsDMother = true;
-            try {
-                FactorizingInterface.unifyClasses(targetRootItem.getEqClass().copyClass(),
-                        item.getEqClass().copyClass(),
-                        new Environment(5));
-            } catch (UnifyException e) {
-                targetRootSuitsDMother = false;
-            }
+            Map<EqClassBot, Boolean> possMoms =  item.getEqClass().getAllPossibleMothers();
+
+            boolean targetRootSuitsDMother = checkDmother(targetRootItem, possMoms.keySet());
+
             if (targetRootSuitsDMother) {
                 candidatesWithFittingCats.add(item);
             }
         }
         return candidatesWithFittingCats;
+    }
+
+    private boolean checkDmother(RRGParseItem targetRootItem, Collection<EqClassBot> possMoms) {
+        Set<EqClassTop> possMomsTop = possMoms.stream()
+                .map(EqClassBot::getTopClasses)
+                .flatMap(Collection::stream)
+                .filter(tc -> tc.isRoot())
+                .collect(Collectors.toSet());
+
+        ArrayList<Boolean> targetRootSuitsDMother = new ArrayList<>();
+
+        for(EqClassTop momTc : possMomsTop){
+            try {
+                FactorizingInterface.unifyClasses(targetRootItem.getEqClass().copyClass(),
+                        momTc.copyClass(), //Needs to check mother
+                        new Environment(5));
+                targetRootSuitsDMother.add(true);
+            } catch (UnifyException e) {
+                targetRootSuitsDMother.add(false);
+            }
+        }
+        return targetRootSuitsDMother.contains(true);
     }
 
     /**
