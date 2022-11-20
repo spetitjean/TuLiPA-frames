@@ -154,6 +154,15 @@ public class EqClassBot {
         return false;
     }
 
+    public Map<EqClassBot, Boolean> getAllPossibleMothers() {
+        Map<EqClassBot, Boolean> possMoms = new HashMap<>();
+        for(EqClassTop tc : topClasses) {
+            possMoms.putAll(tc.getPossibleMothers());
+        }
+        return possMoms;
+    }
+
+
 
     @Override
     public String toString() {
