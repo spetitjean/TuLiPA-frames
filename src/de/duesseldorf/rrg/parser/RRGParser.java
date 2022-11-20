@@ -190,7 +190,7 @@ public class RRGParser {
                 Set<RRGParseItem> completeWrappingFilterAntecedents =
                         requirementFinder.findCompleteWrappingFillers(currentItem, gap, chart);
                 //System.out.println(completeWrappingFilterAntecedents);
-                // keep only those where the node of the filler is a daughter of the root
+                // Checking for mother == root IS DONE IN THE METHOD ABOVE NOW
                 /*completeWrappingFilterAntecedents = completeWrappingFilterAntecedents.stream().filter( //GenWrapping warum mother,mother?
                         item -> item.getNode().getGornaddress().mother().mother() == null
                 ).collect(Collectors.toSet());*/
