@@ -62,6 +62,12 @@ public class FactorizingInterface {
             EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree, nf);
             topEqClasses.add(topClass);
         }
+        /*for(EqClassBot bc: bottomEqClasses) {
+            for(Map.Entry<GornAddress, RRGTree> e: bc.factorizedTrees.entrySet()){
+                System.out.println("Tree: "+ e.getValue());
+                System.out.println("Node: "+ e.getKey());
+            }
+        }*/
         //System.out.println(bottomEqClasses);
         //System.out.println(topEqClasses);
     }
@@ -112,7 +118,7 @@ public class FactorizingInterface {
             }
         }
         rootClass = new EqClassBot(daughtersEq, new HashMap<>(),root.getCategory(),
-                root.getType(), nf.getUniqueName(), root.getNodeFs());
+                root.getType(), nf.getUniqueName());
         rootClass.add(root.getGornaddress(), tree);
         bottomEqClasses.add(rootClass);
         EqClassBot finalRootClass = rootClass;
@@ -134,7 +140,7 @@ public class FactorizingInterface {
                 return eqClassBot;
             }
         } EqClassBot newClass = new EqClassBot(new ArrayList<>(), new HashMap<>(),
-                leaf.getCategory(), leaf.getType(), nf.getUniqueName(), leaf.getNodeFs());
+                leaf.getCategory(), leaf.getType(), nf.getUniqueName());
         newClass.add(leaf.getGornaddress() , tree);
         bottomEqClasses.add(newClass);
         return newClass;
@@ -197,11 +203,6 @@ public class FactorizingInterface {
             // System.err.println(eqClass2);
             throw new UnifyException();
         }
-        // unify might throw another exception
-        Fs fsForResult = FsTools.unify(eqClass1.getFs(), eqClass2.getFs(),
-                env);
-
-        resultBuilder = resultBuilder.fs(fsForResult);
         return resultBuilder.build();
     }
 }

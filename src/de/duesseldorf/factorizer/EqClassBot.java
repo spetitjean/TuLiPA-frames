@@ -30,7 +30,6 @@ package de.duesseldorf.factorizer;
  */
 
 
-import de.duesseldorf.frames.Fs;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
@@ -59,24 +58,21 @@ public class EqClassBot {
 
     private String id;
 
-    private Fs fs;
 
 
 
     public EqClassBot(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees,
-                      String cat, RRGNodeType type, String id, Fs fs){
+                      String cat, RRGNodeType type, String id){
         this.id = id;
         daughterEQClasses = daughters;
         this.cat = cat;
         this.type = type;
-        this.fs = fs;
         this.factorizedTrees = factorizedTrees;
     }
 
 
     public String getId() {return id;}
 
-    public Fs getFs() {return fs;}
 
     public ArrayList<EqClassBot> getDaughterEQClasses() {
         return this.daughterEQClasses;
@@ -135,14 +131,12 @@ public class EqClassBot {
         if (daughters.isEmpty()) {
             if(cat.equals(node.getCategory())
                     && daughterEQClasses.isEmpty()
-                    && checkType(node.getType())
-                    &&  fs.equals(node.getNodeFs())){return true;}
+                    && checkType(node.getType())){return true;}
 
         } else {
             if(cat.equals(node.getCategory())
                     && daughters.equals(daughterEQClasses)
-                    && checkType(node.getType())
-                    &&  fs.equals(node.getNodeFs())){return true;}
+                    && checkType(node.getType())){return true;}
         }
 
         return false;
@@ -188,7 +182,7 @@ public class EqClassBot {
     public EqClassTop checkTopClasses(List <EqClassTop> leftSisters, GornAddress gornaddress, RRGTree tree, NameFactory nf) {
         boolean root = null == gornaddress.mother();
         for(EqClassTop topClass : topClasses) {
-            if(topClass.belongs(leftSisters, root, fs)) {
+            if(topClass.belongs(leftSisters, root)) {
                 topClass.add(gornaddress, tree);
                 return topClass;
             }
@@ -232,7 +226,7 @@ public class EqClassBot {
     public EqClassBot copyClass(){return this.copyClass(new NameFactory());}
 
     public EqClassBot copyClass(NameFactory nf) {
-        EqClassBot newEqClass = new EqClassBot(new ArrayList<>(), this.factorizedTrees, this.cat, this.type, this.id, new Fs(this.fs, nf));
+        EqClassBot newEqClass = new EqClassBot(new ArrayList<>(), this.factorizedTrees, this.cat, this.type, this.id);
         ArrayList<EqClassBot> daughters = new ArrayList<>();
         if (!daughterEQClasses.isEmpty()) {
             for(EqClassBot eqClass : daughterEQClasses){
@@ -268,8 +262,7 @@ public class EqClassBot {
         }
 
         boolean req = this.checkType(c.type)
-                && this.cat.equals(c.cat)
-                && this.getFs().equals(c.getFs());
+                && this.cat.equals(c.cat);
 
         if(!type.equals(RRGNodeType.SUBST)){
             req = req && this.daughterEQClasses.equals(c.daughterEQClasses);
@@ -281,7 +274,7 @@ public class EqClassBot {
 
     @Override
     public int hashCode() {
-        return Objects.hash(daughterEQClasses, cat, type, fs);
+        return Objects.hash(daughterEQClasses, cat, type);
     }
 
     public static class Builder<S extends Builder> {
@@ -299,7 +292,6 @@ public class EqClassBot {
 
         public RRGNodeType type = RRGNodeType.STD;
 
-        private Fs fs;
 
         public Builder() {}
 
@@ -310,7 +302,6 @@ public class EqClassBot {
             this.factorizedTrees = otherClass.factorizedTrees;
             this.cat = otherClass.cat;
             this.type = otherClass.type;
-            this.fs = otherClass.fs;
         }
         public S id(String id) {
             this.id = id;
@@ -343,13 +334,8 @@ public class EqClassBot {
             return (S) this;
         }
 
-        public S fs(Fs fs) {
-            this.fs = fs;
-            return (S) this;
-        }
-
         public EqClassBot build() {
-            EqClassBot newClass = new EqClassBot(daughterEQClasses, factorizedTrees, cat, type, id, fs);
+            EqClassBot newClass = new EqClassBot(daughterEQClasses, factorizedTrees, cat, type, id);
             for(EqClassTop tc : this.topClasses){
                 newClass.addTopClasses(tc);
             }

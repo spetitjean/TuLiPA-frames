@@ -1,6 +1,5 @@
 package de.duesseldorf.factorizer;
 
-import de.duesseldorf.frames.Fs;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.util.GornAddress;
@@ -17,8 +16,6 @@ public class EqClassTop extends EqClassBot{
 
     private boolean root;
 
-    private Fs fs;
-
     /**
      * Eq classes that are equal in daughters and left sisters
      * @param daughters daughter bottom EQ classes
@@ -27,21 +24,19 @@ public class EqClassTop extends EqClassBot{
      * @param id
      * @param leftSisters left sister bottom Eq classes
      */
-    public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, Fs fs, List<EqClassTop> leftSisters, boolean root) {
-        super(daughters, factorizedTrees, cat, type, id, fs);
-        this.fs = fs;
+    public EqClassTop(ArrayList<EqClassBot> daughters, Map<GornAddress, RRGTree> factorizedTrees, String cat, RRGNode.RRGNodeType type, String id, List<EqClassTop> leftSisters, boolean root) {
+        super(daughters, factorizedTrees, cat, type, id);
         this.leftSisters = leftSisters;
         this.root = root;
     }
 
     public EqClassTop(EqClassBot botClass, String id, List<EqClassTop> leftSisters, boolean root) {
-        super(botClass.getDaughterEQClasses(), botClass.factorizedTrees, botClass.cat, botClass.type, id, botClass.getFs());
-        this.fs = botClass.getFs();
+        super(botClass.getDaughterEQClasses(), botClass.factorizedTrees, botClass.cat, botClass.type, id);
         this.leftSisters = leftSisters;
         this.root = root;
     }
-    public boolean belongs(List<EqClassTop> leftSisters, boolean root, Fs fs){
-        if(leftSisters.equals(this.leftSisters) && root == this.root && fs.equals(this.fs)){
+    public boolean belongs(List<EqClassTop> leftSisters, boolean root){
+        if(leftSisters.equals(this.leftSisters) && root == this.root ){
             return true;
         }
         return false;
@@ -92,7 +87,7 @@ public class EqClassTop extends EqClassBot{
         for(EqClassBot kid: getDaughterEQClasses()) {
             daughters.add(kid.copyClass());
         }
-        EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), new Fs(this.getFs(), nf), this.getLeftSisters(), isRoot());
+        EqClassTop newEqClass = new EqClassTop(this.getDaughterEQClasses(), this.factorizedTrees, this.cat, this.type, this.getId(), this.getLeftSisters(), isRoot());
 
         for(Map.Entry<EqClassBot, Boolean> e: this.possibleMothers.entrySet()) {
             newEqClass.addMother(e.getKey(), e.getValue());
@@ -111,7 +106,6 @@ public class EqClassTop extends EqClassBot{
         EqClassTop t = (EqClassTop) o;
         boolean req = this.checkType(t.type)
                 && this.getDaughterEQClasses().equals(t.getDaughterEQClasses())
-                && this.getFs().equals(t.getFs())
                 && this.getLeftSisters().equals(t.getLeftSisters())
                 && this.cat.equals(t.cat)
                 ;
@@ -120,7 +114,7 @@ public class EqClassTop extends EqClassBot{
 
     @Override
     public int hashCode() {
-        return Objects.hash(leftSisters, cat, type, root, fs);
+        return Objects.hash(leftSisters, cat, type, root);
     }
 
     public static class Builder extends EqClassBot.Builder<Builder> {
@@ -158,7 +152,7 @@ public class EqClassTop extends EqClassBot{
         @Override
         public EqClassTop build() {
             EqClassTop newClass = new EqClassTop(this.build().getDaughterEQClasses(), this.factorizedTrees, this.cat,
-                    this.type, this.build().getId(), this.build().getFs(), this.leftSisters, this.root);
+                    this.type, this.build().getId(), this.leftSisters, this.root);
             for(Map.Entry<EqClassBot, Boolean> entry : this.possibleMothers.entrySet()) {
                 newClass.addMother(entry.getKey(), entry.getValue());
             }

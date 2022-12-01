@@ -125,7 +125,6 @@ public class RRGParser {
                             + chart.computeSize());
             return new RRGParseResult.Builder().build();
         } else {
-
             Set<RRGParseItem> goals = chart.retrieveGoalItems();
             if(!goals.isEmpty()) {
                 System.out.println("Found goal items:");
