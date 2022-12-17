@@ -1,13 +1,14 @@
 package de.duesseldorf.rrg.parser;
 
-import de.duesseldorf.factorizer.*;
+import de.duesseldorf.rrg.factorizer.*;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.*;
-import de.duesseldorf.rrg.extractor.ParseForestExtractor;
 import de.duesseldorf.ui.ParsingInterface;
 import de.tuebingen.tag.Environment;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -60,6 +61,7 @@ public class RRGParser {
     }
 
     public RRGParseResult parseSentence(List<String> toksentence) {
+        Instant startTime = Instant.now();
         System.out.println("\nstart parsing sentence " + toksentence);
         System.out.println("number of trees in the grammar: "
                 + ((RRG) Situation.getGrammar()).getTrees().size());
@@ -101,14 +103,14 @@ public class RRGParser {
             }
             i++;
             if (currentItem.getEqClass().isBottomClass()) {
-                noleftsister(currentItem); //done
+                noleftsister(currentItem);
             } else {
-                moveup(currentItem); //done
-                substitute(currentItem); //done
-                sisteradjoin(currentItem);//done
+                moveup(currentItem);
+                substitute(currentItem);
+                sisteradjoin(currentItem);
             }
-            predictwrapping(currentItem);//done
-            combinesisters(currentItem);//done
+            predictwrapping(currentItem);
+            combinesisters(currentItem);
             completeWrapping(currentItem);
             generalizedCompleteWrapping(currentItem);
             jumpBackAfterGenWrapping(currentItem);
@@ -126,6 +128,13 @@ public class RRGParser {
             return new RRGParseResult.Builder().build();
         } else {
             Set<RRGParseItem> goals = chart.retrieveGoalItems();
+            Instant endTime = Instant.now();
+            Duration duration = Duration.between(startTime, endTime);
+            long HH = duration.toHours();
+            long MM = duration.toMinutesPart();
+            long SS = duration.toSecondsPart();
+            String timeInHHMMSS = String.format("%02d:%02d:%02d", HH, MM, SS);
+            System.out.println("Duration of parse: "+ timeInHHMMSS);
             if(!goals.isEmpty()) {
                 System.out.println("Found goal items:");
                 System.out.println(goals);
