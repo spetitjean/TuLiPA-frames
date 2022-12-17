@@ -1,4 +1,4 @@
-package de.duesseldorf.factorizer;
+package de.duesseldorf.rrg.factorizer;
 /*
  *  File FactorizingInterface.java
  *
@@ -30,13 +30,9 @@ package de.duesseldorf.factorizer;
  */
 
 
-import de.duesseldorf.frames.Fs;
-import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;
-import de.duesseldorf.rrg.parser.RRGParseItem;
-import de.duesseldorf.util.GornAddress;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tree.Node;
@@ -62,14 +58,6 @@ public class FactorizingInterface {
             EqClassTop topClass = finClass.checkTopClasses(new ArrayList<>(), ((RRGNode) tree.getRoot()).getGornaddress(), tree, nf);
             topEqClasses.add(topClass);
         }
-        /*for(EqClassBot bc: bottomEqClasses) {
-            for(Map.Entry<GornAddress, RRGTree> e: bc.factorizedTrees.entrySet()){
-                System.out.println("Tree: "+ e.getValue());
-                System.out.println("Node: "+ e.getKey());
-            }
-        }*/
-        //System.out.println(bottomEqClasses);
-        //System.out.println(topEqClasses);
     }
     @Override
     public String toString() {

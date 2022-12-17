@@ -1,4 +1,4 @@
-package de.duesseldorf.factorizer;
+package de.duesseldorf.rrg.factorizer;
 /*
  *  File EqClass.java
  *

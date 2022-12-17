@@ -1,4 +1,4 @@
-package de.duesseldorf.factorizer;
+package de.duesseldorf.rrg.factorizer;
 
 import de.duesseldorf.rrg.RRGNode;
 import de.duesseldorf.rrg.RRGTree;

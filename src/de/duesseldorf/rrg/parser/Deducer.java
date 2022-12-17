@@ -3,8 +3,8 @@ package de.duesseldorf.rrg.parser;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.duesseldorf.factorizer.EqClassBot;
-import de.duesseldorf.factorizer.EqClassTop;
+import de.duesseldorf.rrg.factorizer.EqClassBot;
+import de.duesseldorf.rrg.factorizer.EqClassTop;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 
 /*

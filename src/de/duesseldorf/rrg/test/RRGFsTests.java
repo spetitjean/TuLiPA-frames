@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
-import de.duesseldorf.factorizer.FactorizingInterface;
+import de.duesseldorf.rrg.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.Situation;
 import de.duesseldorf.rrg.RRG;
 import de.duesseldorf.rrg.RRGParseResult;

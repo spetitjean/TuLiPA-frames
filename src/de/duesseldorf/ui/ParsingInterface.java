@@ -56,8 +56,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
-import de.duesseldorf.factorizer.EqClassBot;
-import de.duesseldorf.factorizer.FactorizingInterface;
+import de.duesseldorf.rrg.factorizer.FactorizingInterface;
 import de.duesseldorf.ui.webgui.RRGLocalWebGUI;
 import org.w3c.dom.Document;
 

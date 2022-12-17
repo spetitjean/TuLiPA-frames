@@ -1,13 +1,12 @@
 package de.duesseldorf.rrg.test;
 
-import de.duesseldorf.factorizer.FactorizingInterface;
+import de.duesseldorf.rrg.factorizer.FactorizingInterface;
 import de.duesseldorf.rrg.RRGTree;
 import de.duesseldorf.rrg.io.TreeFromBracketedStringRetriever;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 class FactorizingInterfaceTest {
 

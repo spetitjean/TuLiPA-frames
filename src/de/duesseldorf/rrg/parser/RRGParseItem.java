@@ -4,7 +4,7 @@ package de.duesseldorf.rrg.parser;
 import java.util.Objects;
 import java.util.Set;
 
-import de.duesseldorf.factorizer.EqClassBot;
+import de.duesseldorf.rrg.factorizer.EqClassBot;
 
 /*
  *  File RRGParseItem.java

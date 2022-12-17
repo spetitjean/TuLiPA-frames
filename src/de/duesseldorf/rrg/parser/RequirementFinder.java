@@ -3,9 +3,9 @@ package de.duesseldorf.rrg.parser;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.duesseldorf.factorizer.EqClassBot;
-import de.duesseldorf.factorizer.EqClassTop;
-import de.duesseldorf.factorizer.FactorizingInterface;
+import de.duesseldorf.rrg.factorizer.EqClassBot;
+import de.duesseldorf.rrg.factorizer.EqClassTop;
+import de.duesseldorf.rrg.factorizer.FactorizingInterface;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.rrg.RRGNode.RRGNodeType;
 import de.tuebingen.tag.Environment;
