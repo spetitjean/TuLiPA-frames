@@ -40,12 +40,14 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeConstraint;
 import de.duesseldorf.frames.TypeHierarchy;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
+import de.duesseldorf.frames.HierarchyConstraint;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.util.XMLUtilities;
@@ -76,7 +78,10 @@ public class XMLTypeHierarchyReader extends FileReader {
         Element e = (Element) l.item(0);
         NodeList entries = e.getElementsByTagName("entry");
         List<Type> typeCollector = getTypesfromNL(entries);
-        TypeHierarchy result = new TypeHierarchy(typeCollector);
+	NodeList hc = root.getElementsByTagName("type_constraints");
+	NodeList hc_entries = hc.item(0).getChildNodes();
+        List<HierarchyConstraint> hierarchyConstraints = getHierarchyConstraintsfromNL(hc_entries);
+        TypeHierarchy result = new TypeHierarchy(typeCollector, hierarchyConstraints);
         // System.out.println(result + "\n\n\n");
         return result;
     }
@@ -113,6 +118,7 @@ public class XMLTypeHierarchyReader extends FileReader {
             // }
             typeCollector.add(t);
         }
+	System.out.println(typeCollector);
         return typeCollector;
     }
 
@@ -192,9 +198,134 @@ public class XMLTypeHierarchyReader extends FileReader {
             typeConstraints
                     .add(new TypeConstraint(attrsInPathParsed, type, val));
         }
+	//System.out.println("typeConstraints:");
+	//System.out.println(typeConstraints);
         return typeConstraints;
     }
 
+    private List<String> getPath(Element litteral){
+	Element path = litteral;
+	if (path.getTagName() != "path")
+	    path = (Element) litteral.getElementsByTagName("path")
+		.item(0);
+	List<String> attrsInPathParsed = new LinkedList<String>();
+	NodeList attrsInPath = path.getElementsByTagName("attr");
+	for (int j = 0; j < attrsInPath.getLength(); j++) {
+	    attrsInPathParsed.add(
+				  ((Element) path.getElementsByTagName("attr")
+				   .item(j)).getAttribute("val"));
+	}
+	return attrsInPathParsed;
+    }
+
+    private List<String> getCType(Element litteral){
+	Element path = litteral;
+	if (path.getTagName() != "ctype"){
+	    if(litteral.getElementsByTagName("ctype").getLength() > 0){
+		path = (Element) litteral.getElementsByTagName("ctype")
+		    .item(0);
+	    }
+	    else return null;
+	}
+	List<String> attrsInPathParsed = new LinkedList<String>();
+	NodeList attrsInPath = path.getElementsByTagName("type");
+	for (int j = 0; j < attrsInPath.getLength(); j++) {
+	    attrsInPathParsed.add(
+				  ((Element) path.getElementsByTagName("type")
+				   .item(j)).getAttribute("val"));
+	}
+	return attrsInPathParsed;
+    }
+
+    private List<List<String>> getPaths(Element litteral){
+        NodeList paths = litteral.getElementsByTagName("path");
+	List<List<String>> result = new LinkedList<List<String>>();
+	if(paths == null)
+	    return result;
+	for (int i = 0 ; i < paths.getLength(); i++){
+	    result.add(getPath((Element) (paths.item(i))));
+	}
+	return result;
+    }
+
+    private List<HierarchyConstraint> getHierarchyConstraintsfromNL(NodeList entries) {
+        for (int i = 0; i < entries.getLength(); i++) {
+	    if (entries.item(i).getNodeType() != Node.ELEMENT_NODE)
+		continue;
+	    Element elem = (Element)entries.item(i);
+	    System.out.println("########################################");
+	    //System.out.println("Next entry:");
+	    //System.out.println(elem.getTagName() );
+	    String constraintType = elem.getTagName();
+	    Element antecedent = (Element)(elem
+					   .getElementsByTagName("antecedent").item(0));
+	    Element consequent = (Element)(elem
+					   .getElementsByTagName("consequent").item(0));
+	    if(constraintType == "type_constraint"){
+		System.out.println("type_constraint:");
+		System.out.println("Antecedent:");
+		System.out.println("type:");
+		System.out.println(getCType(antecedent));
+		System.out.println("Consequent");
+		System.out.println("type:");
+		System.out.println(getCType(consequent));
+	    }
+	    else if (constraintType == "type_to_path_constraint"){
+		System.out.println("type_to_path:");
+		System.out.println("Antecedent:");
+		System.out.println("type:");
+		System.out.println(getCType(antecedent));
+		System.out.println("Consequent");
+		System.out.println("paths:");
+		System.out.println(getPaths(consequent));
+	       
+	    }
+	    else if (constraintType == "type_to_attr_constraint"){
+		System.out.println("type_to_attr:");
+		System.out.println("Antecedent:");
+		System.out.println("type:");
+		System.out.println(getCType(antecedent));
+		System.out.println("Consequent");
+		System.out.println("path:");
+		System.out.println(getPath(consequent));		
+		System.out.println("type:");
+		System.out.println(getCType(consequent));
+	    }
+	    else if (constraintType == "attr_to_path_constraint"){
+		System.out.println("attr_to_path:");
+		System.out.println("Antecedent:");
+		System.out.println("path:");
+		System.out.println(getPath(antecedent));
+		System.out.println("type");
+		System.out.println(getCType(antecedent));
+		System.out.println("Consequent");
+		System.out.println("paths:");
+		System.out.println(getPaths(consequent));
+	    }
+	    else if (constraintType == "attr_to_attr_constraint"){
+		System.out.println("attr_to_attr");
+		System.out.println("Antecedent:");
+		System.out.println("path:");
+		System.out.println(getPath(antecedent));
+		System.out.println("type");
+		System.out.println(getCType(antecedent));
+		System.out.println("Consequent");
+		System.out.println("path:");
+		System.out.println(getPath(consequent));
+		System.out.println("type");
+		System.out.println(getCType(consequent));
+	    }
+	    else{
+		System.out.println("Unsupported constraint:");
+		System.out.println(elem.getTagName() );
+	    }
+	     
+	    
+	}
+	return new LinkedList<HierarchyConstraint>();
+    }
+
+    
     /**
      * only testing...
      *
