@@ -32,9 +32,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.HierarchyConstraint;
+import de.duesseldorf.frames.HierarchyConstraints;
 
 /**
  *
@@ -44,16 +46,17 @@ import de.duesseldorf.frames.HierarchyConstraint;
 public class TypeHierarchy {
 
     private HashMap<Integer, Set<Type>> tyHi;
-    private Set<HierarchyConstraint> tyCo;
+    private HierarchyConstraints tyCo;
 
     /**
      * given a Collection of Types, create a type hierarchy.
      *
      * @param l
      */
-    public TypeHierarchy(Iterable<Type> l, Iterable<HierarchyConstraint> hc) {
+    public TypeHierarchy(Iterable<Type> l, List<HierarchyConstraint> hc) {
         this.tyHi = new HashMap<Integer, Set<Type>>();
-	this.tyCo = new HashSet<HierarchyConstraint>();
+	this.tyCo = new HierarchyConstraints(hc);
+	System.out.println(this.tyCo);
         for (Type type : l) {
             int spec = type.getSpec();
             if (!tyHi.containsKey(spec)) {
@@ -61,9 +64,6 @@ public class TypeHierarchy {
             }
             tyHi.get(type.getSpec()).add(new Type(type));
         }
-	for (HierarchyConstraint hierarchyConstraint : hc){
-	    tyCo.add(hierarchyConstraint);
-	}
     }
 
 
@@ -111,5 +111,9 @@ public class TypeHierarchy {
             System.out.println();
         }
         return sb.toString();
+    }
+
+    public HierarchyConstraints getHierarchyConstraints(){
+	return this.tyCo;
     }
 }

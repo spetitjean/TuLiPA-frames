@@ -29,4 +29,16 @@ public class HierarchyConstraint{
 	this.right = right;
     }
 
+    public String toString(){
+	return "Type constraint\n Left: "+this.left+"\nRight: "+this.right;
+    }
+
+    public ConstraintLiteral getLeft(){
+	return this.left;
+    }
+
+    public ConstraintLiteral getRight(){
+	return this.right;
+    }
+
 }

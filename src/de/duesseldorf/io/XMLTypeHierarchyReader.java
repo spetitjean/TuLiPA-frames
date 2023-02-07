@@ -48,6 +48,7 @@ import de.duesseldorf.frames.TypeHierarchy;
 import de.duesseldorf.frames.UnifyException;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.frames.HierarchyConstraint;
+import de.duesseldorf.frames.ConstraintLiteral;
 import de.tuebingen.anchoring.NameFactory;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.util.XMLUtilities;
@@ -249,71 +250,48 @@ public class XMLTypeHierarchyReader extends FileReader {
     }
 
     private List<HierarchyConstraint> getHierarchyConstraintsfromNL(NodeList entries) {
-        for (int i = 0; i < entries.getLength(); i++) {
+	List<HierarchyConstraint> constraints = new LinkedList<HierarchyConstraint>();
+	for (int i = 0; i < entries.getLength(); i++) {
 	    if (entries.item(i).getNodeType() != Node.ELEMENT_NODE)
 		continue;
 	    Element elem = (Element)entries.item(i);
-	    System.out.println("########################################");
-	    //System.out.println("Next entry:");
-	    //System.out.println(elem.getTagName() );
 	    String constraintType = elem.getTagName();
 	    Element antecedent = (Element)(elem
 					   .getElementsByTagName("antecedent").item(0));
 	    Element consequent = (Element)(elem
 					   .getElementsByTagName("consequent").item(0));
 	    if(constraintType == "type_constraint"){
-		System.out.println("type_constraint:");
-		System.out.println("Antecedent:");
-		System.out.println("type:");
-		System.out.println(getCType(antecedent));
-		System.out.println("Consequent");
-		System.out.println("type:");
-		System.out.println(getCType(consequent));
+		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+		ConstraintLiteral right = new ConstraintLiteral(getCType(consequent));
+		constraints.add(new HierarchyConstraint(left, right));
+		//System.out.println(new HierarchyConstraint(left, right));
 	    }
 	    else if (constraintType == "type_to_path_constraint"){
-		System.out.println("type_to_path:");
-		System.out.println("Antecedent:");
-		System.out.println("type:");
-		System.out.println(getCType(antecedent));
-		System.out.println("Consequent");
-		System.out.println("paths:");
-		System.out.println(getPaths(consequent));
+		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+		ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
+		constraints.add(new HierarchyConstraint(left, right));
+		//System.out.println(new HierarchyConstraint(left, right));
 	       
 	    }
 	    else if (constraintType == "type_to_attr_constraint"){
-		System.out.println("type_to_attr:");
-		System.out.println("Antecedent:");
-		System.out.println("type:");
-		System.out.println(getCType(antecedent));
-		System.out.println("Consequent");
-		System.out.println("path:");
-		System.out.println(getPath(consequent));		
-		System.out.println("type:");
-		System.out.println(getCType(consequent));
+		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+		ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
+		constraints.add(new HierarchyConstraint(left, right));
+		//System.out.println(new HierarchyConstraint(left, right));
+
 	    }
 	    else if (constraintType == "attr_to_path_constraint"){
-		System.out.println("attr_to_path:");
-		System.out.println("Antecedent:");
-		System.out.println("path:");
-		System.out.println(getPath(antecedent));
-		System.out.println("type");
-		System.out.println(getCType(antecedent));
-		System.out.println("Consequent");
-		System.out.println("paths:");
-		System.out.println(getPaths(consequent));
+		ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
+		ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
+		constraints.add(new HierarchyConstraint(left, right));
+		//System.out.println(new HierarchyConstraint(left, right));
 	    }
 	    else if (constraintType == "attr_to_attr_constraint"){
-		System.out.println("attr_to_attr");
-		System.out.println("Antecedent:");
-		System.out.println("path:");
-		System.out.println(getPath(antecedent));
-		System.out.println("type");
-		System.out.println(getCType(antecedent));
-		System.out.println("Consequent");
-		System.out.println("path:");
-		System.out.println(getPath(consequent));
-		System.out.println("type");
-		System.out.println(getCType(consequent));
+		ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
+		ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
+		constraints.add(new HierarchyConstraint(left, right));
+		//System.out.println(new HierarchyConstraint(left, right));
+
 	    }
 	    else{
 		System.out.println("Unsupported constraint:");
@@ -322,7 +300,7 @@ public class XMLTypeHierarchyReader extends FileReader {
 	     
 	    
 	}
-	return new LinkedList<HierarchyConstraint>();
+	return constraints;
     }
 
     

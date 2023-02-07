@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.tuebingen.tag.Environment;
+import de.duesseldorf.frames.TypeHierarchy;
 
 /**
  *
@@ -276,4 +277,38 @@ public class FsTools {
         }
         return resType;
     }
+
+    public static List<Fs> checkTypeConstraints(List<Fs> frames){
+	List<Fs> output_frames = new LinkedList<Fs>();
+	HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
+	for (Fs frame : frames){
+	    output_frames.add(checkTypeConstraints(frame, constraints));
+	}
+	return output_frames;
+    }
+
+    public static Fs checkTypeConstraints(Fs frame, HierarchyConstraints constraints){
+	System.out.println("Checking constraints on "+frame.toString());
+	for(HierarchyConstraint constraint : constraints.getAttrToAttrConstraints()){
+	    System.out.println(constraint);
+	    if (checkAttrConstraint(frame, constraint.getLeft())){
+		frame = applyAttrConstraint(frame, constraint.getRight());
+	    }
+	}
+	// ToDo getAttrToPathConstraints
+	return frame;
+    }
+
+    static boolean checkAttrConstraint(Fs frame, ConstraintLiteral left){
+	return false;
+    }
+
+    // ToDo: chech(Path/Type)Constraint (Actually, Type should be taken care of by the original hierarchy)
+
+    static Fs applyAttrConstraint(Fs frame, ConstraintLiteral right){
+	return frame;
+    }
+
+    // ToDo: apply(Path/Type)Constraint
+    
 }
