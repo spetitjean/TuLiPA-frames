@@ -56,7 +56,7 @@ public class TypeHierarchy {
     public TypeHierarchy(Iterable<Type> l, List<HierarchyConstraint> hc) {
         this.tyHi = new HashMap<Integer, Set<Type>>();
 	this.tyCo = new HierarchyConstraints(hc);
-	System.out.println(this.tyCo);
+	//System.out.println(this.tyCo);
         for (Type type : l) {
             int spec = type.getSpec();
             if (!tyHi.containsKey(spec)) {

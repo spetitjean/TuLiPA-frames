@@ -654,7 +654,7 @@ public class ElementaryTree {
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }
-	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames);
+	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames, env);
         // System.out.println("Environment: "+env);
         // System.out.println("New relations: "+newRelations);
         return new Frame(cleanedFrames, newRelations);

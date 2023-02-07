@@ -66,5 +66,13 @@ public class ConstraintLiteral{
     public Kind getConstraintType(){
 	return this.constraint_type;
     }
+
+    public List<String> getType(){
+	return this.type;
+    }
+
+    public List<String> getPath(){
+	return this.path;
+    }
     
 }

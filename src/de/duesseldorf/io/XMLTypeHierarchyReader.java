@@ -119,7 +119,7 @@ public class XMLTypeHierarchyReader extends FileReader {
             // }
             typeCollector.add(t);
         }
-	System.out.println(typeCollector);
+	//System.out.println(typeCollector);
         return typeCollector;
     }
 
