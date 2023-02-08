@@ -302,7 +302,7 @@ public class FsTools {
 		
 		LinkedList<String> rightPath = new LinkedList(constraint.getRight().getPath());
 		List<String> rightType = constraint.getRight().getType();
-		frame = applyAttrConstraint(frame, rightPath, rightType, env);
+		applyAttrConstraint(frame, rightPath, rightType, env);
 	    }
 	}
 	// ToDo getAttrToPathConstraints
@@ -339,7 +339,7 @@ public class FsTools {
 
     // ToDo: chech(Path/Type)Constraint (Actually, Type should be taken care of by the original hierarchy)
 
-    static Fs applyAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env)
+    static void applyAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env)
 	throws UnifyException {
 	System.out.println("Applying constraint");
 	System.out.println("path: " + path.toString());
@@ -373,14 +373,13 @@ public class FsTools {
 	    // check if the path exists, so if path.get(0) is an attribute of frame
 	    if (features.get(path.get(0)) != null && features.get(path.get(0)).is(Value.Kind.AVM)){
 		String attr = path.removeFirst();
-		return applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
+		//return applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
+		applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
 	    }
 	    else{
 		System.out.println("path doesn't exist, need to create it!");			
 	    }
-	}
-	return frame;
-	
+	}	
     }
 
     // ToDo: apply(Path/Type)Constraint
