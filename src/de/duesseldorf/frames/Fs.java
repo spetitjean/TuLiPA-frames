@@ -605,6 +605,8 @@ public class Fs {
         AVlist = vlist;
     }
 
+    // CAREFUL: This does not seem to work, and should not be used
+    // (empty FSs with different types and different corefs are apparently considered equal)
     @Override
     public boolean equals(Object obj) {
         return equals(obj, true);
@@ -655,6 +657,7 @@ public class Fs {
                 cleanFrames.add(fs);
             }
         }
+	
         for (Fs fs : cleanFrames) {
             // System.out.println("Collecting corefs (l.723) in: "+fs);
             // System.out.println("with environment "+env);
@@ -672,6 +675,7 @@ public class Fs {
                 System.err.println("Exception during update of " + fs);
             }
         }
+	
         // We do as many update rounds as there are FS in our solution
         // that should be the upper bound
         int i = cleanFrames.size();
@@ -697,7 +701,7 @@ public class Fs {
             i--;
 
         }
-
+	
         for (Fs cleanFrame : cleanFrames) {
             try {
                 // System.out.println("Updating FS [1] ");

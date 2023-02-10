@@ -126,7 +126,8 @@ public class FsTools {
      */
     public static Fs unify(Fs fs1, Fs fs2, Environment env)
             throws UnifyException {
-        return FsTools.unify(fs1, fs2, env, new HashSet<Value>());
+	Fs result = FsTools.unify(fs1, fs2, env, new HashSet<Value>());
+        return result;
     }
 
     /**
@@ -152,8 +153,7 @@ public class FsTools {
         Hashtable<String, Value> avm2 = fs2.getAVlist();
 
         if (fs1.getCoref() != null && seen.contains(fs1.getCoref())) {
-            // System.out.println("Stopping unification because of recursion:
-            // "+fs1);
+            //System.out.println("Stopping unification because of recursion: " + fs1);
             return fs1;
         } else {
             seen.add(fs1.getCoref());

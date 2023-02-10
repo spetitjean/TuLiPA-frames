@@ -625,14 +625,16 @@ public class ElementaryTree {
         List<Fs> newFs = new LinkedList<Fs>();
         // System.out.println("Environment before update: "+env);
 
-        for (Fs fs : frameSem.getFeatureStructures()) {
-            if (fs != null)
+	for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null){
                 newFs.add(Fs.updateFS(fs, env, finalUpdate));
+	    }
         }
         // do not know why 2 merges are now necessary...
         List<Fs> mergedFrames = Fs.mergeFS(newFs, env, nf);
         if (mergedFrames != null)
             mergedFrames = Fs.mergeFS(newFs, env, nf);
+
         List<Fs> cleanedFrames = new LinkedList<Fs>();
         if (mergedFrames == null) {
             System.err.println("Frame unification failed, tree discarded!\n");

@@ -51,10 +51,8 @@ public class ValueTools {
     static Value unify(Value a, Value b, Environment env, Set<Value> seen)
             throws UnifyException {
 
-        // System.err.println("Unification: " + a.toString() + " and " +
-        // b.toString());
-        if (a.equals(b)) { // no need to compute anything
-            return b;
+        if (!(a.getType()==Value.Kind.AVM) && a.equals(b)) { // no need to compute anything, except for AVM because equals is not properly defined
+	    return b;
         }
         Value res = null;
         switch (a.getType()) {
@@ -87,7 +85,6 @@ public class ValueTools {
                 }
                 break;
             case AVM: // a is an avm
-                // System.out.println("A is an AVM");
                 switch (b.getType()) {
                     case AVM: // b is an avm
                         res = new Value(
