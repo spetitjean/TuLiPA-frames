@@ -282,14 +282,14 @@ public class FsTools {
     }
 
     // ToDo: Do not only check at the root of every Fs
-    public static List<Fs> checkTypeConstraints(List<Fs> frames, Environment env)
+    public static List<Fs> checkTypeConstraints(List<Fs> frames, Environment env, NameFactory nf)
 	throws UnifyException{
-	NameFactory nf = new NameFactory();
 	List<Fs> output_frames = new LinkedList<Fs>();
 	HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
 	for (Fs frame : frames){
 	    // ToDo: recursive calls on the subframes
-	    output_frames.add(checkTypeConstraints(frame, constraints, env, nf));
+	    Fs checkedFs = checkTypeConstraints(frame, constraints, env, nf);
+	    output_frames.add(checkedFs);
 	}
 	return output_frames;
     }

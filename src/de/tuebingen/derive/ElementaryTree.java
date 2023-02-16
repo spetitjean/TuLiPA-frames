@@ -630,11 +630,15 @@ public class ElementaryTree {
                 newFs.add(Fs.updateFS(fs, env, finalUpdate));
 	    }
         }
+	
         // do not know why 2 merges are now necessary...
         List<Fs> mergedFrames = Fs.mergeFS(newFs, env, nf);
         if (mergedFrames != null)
             mergedFrames = Fs.mergeFS(newFs, env, nf);
 
+	mergedFrames = FsTools.checkTypeConstraints(mergedFrames, env, nf);
+
+	
         List<Fs> cleanedFrames = new LinkedList<Fs>();
         if (mergedFrames == null) {
             System.err.println("Frame unification failed, tree discarded!\n");
@@ -656,7 +660,10 @@ public class ElementaryTree {
             }
             newRelations.add(new Relation(oldRel.getName(), newArgs));
         }
-	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames, env);
+
+	// apparently a second round is needed
+	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames, env, nf);
+
         // System.out.println("Environment: "+env);
         // System.out.println("New relations: "+newRelations);
         return new Frame(cleanedFrames, newRelations);
