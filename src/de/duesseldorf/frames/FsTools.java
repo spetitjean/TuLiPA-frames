@@ -37,6 +37,8 @@ import java.util.Set;
 import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.Value;
 import de.duesseldorf.frames.TypeHierarchy;
+import de.tuebingen.anchoring.NameFactory;
+
 
 /**
  *
@@ -282,34 +284,40 @@ public class FsTools {
     // ToDo: Do not only check at the root of every Fs
     public static List<Fs> checkTypeConstraints(List<Fs> frames, Environment env)
 	throws UnifyException{
+	NameFactory nf = new NameFactory();
 	List<Fs> output_frames = new LinkedList<Fs>();
 	HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
 	for (Fs frame : frames){
 	    // ToDo: recursive calls on the subframes
-	    output_frames.add(checkTypeConstraints(frame, constraints, env));
+	    output_frames.add(checkTypeConstraints(frame, constraints, env, nf));
 	}
 	return output_frames;
     }
 
-    public static Fs checkTypeConstraints(Fs frame, HierarchyConstraints constraints, Environment env)
+    public static Fs checkTypeConstraints(Fs frame, HierarchyConstraints constraints, Environment env, NameFactory nf)
 	throws UnifyException {
 	System.out.println("Checking constraints on "+frame.toString());
 	for(HierarchyConstraint constraint : constraints.getAttrToAttrConstraints()){
 	    System.out.println(constraint);
 	    LinkedList<String> path = new LinkedList(constraint.getLeft().getPath());
 	    List<String> type = constraint.getLeft().getType();
-	    if (checkAttrConstraint(frame, path, type, env)){
+	    if (checkAttrConstraint(frame, path, type, env, nf)){
 		
 		LinkedList<String> rightPath = new LinkedList(constraint.getRight().getPath());
 		List<String> rightType = constraint.getRight().getType();
-		applyAttrConstraint(frame, rightPath, rightType, env);
+		applyAttrConstraint(frame, rightPath, rightType, env, nf);
+	    }
+	}
+	for (Value child : frame.getAVlist().values()){
+	    if (child.is(Value.Kind.AVM)){
+		checkTypeConstraints(child.getAvmVal(), constraints, env, nf);
 	    }
 	}
 	// ToDo getAttrToPathConstraints
 	return frame;
     }
 
-    static boolean checkAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env)
+    static boolean checkAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env, NameFactory nf)
 	throws UnifyException {
 
 	Hashtable<String, Value> features = frame.getAVlist();
@@ -317,11 +325,28 @@ public class FsTools {
 	    // check if the attribute is present
 	    // if yes, check if it has the right type
 	    if(features.get(path.get(0)) != null){
-		if(features.get(path.get(0)).getType() != null && features.get(path.get(0)).is(Value.Kind.AVM) && features.get(path.get(0)).getAvmVal().getType().getElementaryTypes().contains(type.get(0))){
-		    System.out.println("Found "+path.get(0).toString());
-		    System.out.println("Type: "+features.get(path.get(0)).getAvmVal().getType().toString());
-		    System.out.println("contains: "+type.get(0));
-		    return true;
+		if(features.get(path.get(0)).getType() != null && features.get(path.get(0)).is(Value.Kind.AVM)){
+		    if (features.get(path.get(0)).getAvmVal().getType().getElementaryTypes().contains(type.get(0))){
+			System.out.println("Found "+path.get(0).toString());
+			System.out.println("Type: "+features.get(path.get(0)).getAvmVal().getType().toString());
+			System.out.println("contains: "+type.get(0));
+			return true;
+		    }
+		    else{
+			// this should be done in a way cleaner way
+			// this is when the type is a variable (typically, the type true)
+			if (type.get(0).charAt(0) == '@'){
+			    System.out.println("Found "+path.get(0).toString());
+			    System.out.println("Type: "+features.get(path.get(0)).getAvmVal().getType().toString());
+			    System.out.println("Unifiable with variable "+type.get(0));
+			    return true;
+			}
+			else{
+			    System.out.println("Found "+path.get(0).toString());
+			    System.out.println("Type: "+features.get(path.get(0)).getAvmVal().getType().toString());
+			    System.out.println("Doesn't contain: "+type.get(0));
+			}
+		    }
 		}
 	    }
 	    return false;
@@ -330,7 +355,7 @@ public class FsTools {
 	    // check if the path exists, so if path.get(0) is an attribute of frame
 	    if (features.get(path.get(0)) != null && features.get(path.get(0)).is(Value.Kind.AVM)){
 		String attr = path.removeFirst();
-		return checkAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
+		return checkAttrConstraint(features.get(attr).getAvmVal(), path, type, env, nf);
 	    }
 	    
 	    return false;
@@ -339,7 +364,7 @@ public class FsTools {
 
     // ToDo: chech(Path/Type)Constraint (Actually, Type should be taken care of by the original hierarchy)
 
-    static void applyAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env)
+    static void applyAttrConstraint(Fs frame, LinkedList<String> path, List<String> type, Environment env, NameFactory nf)
 	throws UnifyException {
 	System.out.println("Applying constraint");
 	System.out.println("path: " + path.toString());
@@ -356,8 +381,15 @@ public class FsTools {
 		    System.out.println("Type: "+features.get(path.get(0)).getAvmVal().getType().toString());
 		    System.out.println("contains: "+type.get(0));
 		    // Here you want to unify the types (so that if fails when not compatible)
-		    features.get(path.get(0)).setAvmVal(unify(features.get(path.get(0)).getAvmVal(),new Fs(new Type(type), new Value(Value.Kind.VAR,"X")), env));
-		   
+		    // this should be done in a way cleaner way
+		    // this is when the type is a variable (typically, the type true)
+		    Value typeValue;
+		    if (type.get(0).charAt(0) == '@'){
+			// nothing to do
+		    }
+		    else{
+			features.get(path.get(0)).setAvmVal(unify(features.get(path.get(0)).getAvmVal(),new Fs(new Type(type), new Value(Value.Kind.VAR,nf.getUniqueName())), env));
+		    }
 		}
 		else{
 		    System.out.println("feature exists but is not an AVM! Do something if it is a variable.");
@@ -367,6 +399,15 @@ public class FsTools {
 	    }
 	    else{
 		System.out.println("feature doesn't exist, need to create it!");
+		// this should be done in a way cleaner way
+		// this is when the type is a variable (typically, the type true)
+		if (type.get(0).charAt(0) == '@'){
+		    // nothing to do
+		    features.put(path.get(0), new Value (Value.Kind.VAR, nf.getUniqueName()));
+		}
+		else{
+		    features.put(path.get(0), new Value (new Fs (new Type (type), new Value (Value.Kind.VAR, nf.getUniqueName()))));
+		}
 	    }
 	}
 	else{
@@ -374,10 +415,13 @@ public class FsTools {
 	    if (features.get(path.get(0)) != null && features.get(path.get(0)).is(Value.Kind.AVM)){
 		String attr = path.removeFirst();
 		//return applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
-		applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env);
+		applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env, nf);
 	    }
 	    else{
 		System.out.println("path doesn't exist, need to create it!");			
+		features.put(path.get(0), new Value (new Fs (new Type (new LinkedList()), new Value (Value.Kind.VAR, nf.getUniqueName()))));
+		String attr = path.removeFirst();
+		applyAttrConstraint(features.get(attr).getAvmVal(), path, type, env, nf);
 	    }
 	}	
     }
