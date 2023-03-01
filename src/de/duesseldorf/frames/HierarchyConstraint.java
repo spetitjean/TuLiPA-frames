@@ -1,10 +1,7 @@
 
 package de.duesseldorf.frames;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import de.tuebingen.tag.Environment;
 import de.duesseldorf.frames.ConstraintLiteral;
@@ -15,8 +12,8 @@ import de.duesseldorf.frames.ConstraintLiteral;
  */
 public class HierarchyConstraint{
 
-    private ConstraintLiteral left;
-    private ConstraintLiteral right;
+    private List<ConstraintLiteral> left;
+    private List<ConstraintLiteral> right;
 
      /**
      * for type constraints (of the form "path : type -> path = path" for instance)
@@ -24,20 +21,21 @@ public class HierarchyConstraint{
      * @param left
      * @param right
      */
-    public HierarchyConstraint(ConstraintLiteral left, ConstraintLiteral right) {
+    public HierarchyConstraint(List<ConstraintLiteral> left, List<ConstraintLiteral> right) {
         this.left = left;
 	this.right = right;
     }
 
     public String toString(){
-	return "Type constraint\n Left: "+this.left+"\nRight: "+this.right;
+	String result = "Type constraint\n Left: "+this.left+"\nRight: "+this.right;
+	return result;
     }
 
-    public ConstraintLiteral getLeft(){
+    public List<ConstraintLiteral> getLeft(){
 	return this.left;
     }
 
-    public ConstraintLiteral getRight(){
+    public List<ConstraintLiteral> getRight(){
 	return this.right;
     }
 

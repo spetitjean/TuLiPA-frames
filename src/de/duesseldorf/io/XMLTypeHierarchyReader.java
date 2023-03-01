@@ -83,7 +83,6 @@ public class XMLTypeHierarchyReader extends FileReader {
 	NodeList hc_entries = hc.item(0).getChildNodes();
         List<HierarchyConstraint> hierarchyConstraints = getHierarchyConstraintsfromNL(hc_entries);
         TypeHierarchy result = new TypeHierarchy(typeCollector, hierarchyConstraints);
-        // System.out.println(result + "\n\n\n");
         return result;
     }
 
@@ -249,6 +248,34 @@ public class XMLTypeHierarchyReader extends FileReader {
 	return result;
     }
 
+    private List<ConstraintLiteral> getConstraintLiterals(NodeList literals){
+	List<ConstraintLiteral> result = new LinkedList<ConstraintLiteral>();
+	for (int i = 0; i < literals.getLength(); i++){
+	    if (literals.item(i).getNodeType() == Node.ELEMENT_NODE){
+		Element current = (Element)literals.item(i);
+		String constraintType = current.getNodeName();
+		ConstraintLiteral new_literal = null;
+		// create the literal depending on its type (type_constraint, )
+		if (constraintType == "type_constraint"){
+		    new_literal = new ConstraintLiteral(getCType(current));
+		}
+		else if (constraintType == "path_identity"){
+		    new_literal = new ConstraintLiteral(getPaths(current).get(0), getPaths(current).get(1));
+		}
+		else if (constraintType == "attr_type"){
+		    new_literal = new ConstraintLiteral(getPath(current), getCType(current), null);
+		}
+		else{
+		    System.out.println("Constraint literal type not supported: "+constraintType);
+		}
+		if (new_literal != null){
+		    result.add(new_literal);
+		}
+	    }
+	}
+	return result; 
+    }
+    
     private List<HierarchyConstraint> getHierarchyConstraintsfromNL(NodeList entries) {
 	List<HierarchyConstraint> constraints = new LinkedList<HierarchyConstraint>();
 	for (int i = 0; i < entries.getLength(); i++) {
@@ -260,46 +287,61 @@ public class XMLTypeHierarchyReader extends FileReader {
 					   .getElementsByTagName("antecedent").item(0));
 	    Element consequent = (Element)(elem
 					   .getElementsByTagName("consequent").item(0));
-	    if(constraintType == "type_constraint"){
-		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
-		ConstraintLiteral right = new ConstraintLiteral(getCType(consequent));
-		constraints.add(new HierarchyConstraint(left, right));
-		//System.out.println(new HierarchyConstraint(left, right));
-	    }
-	    else if (constraintType == "type_to_path_constraint"){
-		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
-		ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
-		constraints.add(new HierarchyConstraint(left, right));
-		//System.out.println(new HierarchyConstraint(left, right));
+	    NodeList antecedents = antecedent.getChildNodes();
+	    NodeList consequents = consequent.getChildNodes();
+	    
+	   
+	    HierarchyConstraint newConstraint = new HierarchyConstraint(getConstraintLiterals(antecedents), getConstraintLiterals(consequents));
+	    constraints.add(newConstraint);
+	    System.out.println(newConstraint);
+	    // for (int j = 0; j<antecedents.getLength(); j++){
+	    // 	if (antecedents.item(j).getNodeType() == Node.ELEMENT_NODE){
+	    // 	    Node current = antecedents.item(j);
+		    
+	    // 	    System.out.println((antecedents.item(j).getNodeName()));
+	    // 	}
+	    // }
+	    // if(constraintType == "type_constraint"){
+	    // 	ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+	    // 	ConstraintLiteral right = new ConstraintLiteral(getCType(consequent));
+	    // 	constraints.add(new HierarchyConstraint(left, right));
+	    // 	//System.out.println(new HierarchyConstraint(left, right));
+	    // }
+	    // else if (constraintType == "type_to_path_constraint"){
+	    // 	ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+	    // 	ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
+	    // 	constraints.add(new HierarchyConstraint(left, right));
+	    // 	//System.out.println(new HierarchyConstraint(left, right));
 	       
-	    }
-	    else if (constraintType == "type_to_attr_constraint"){
-		ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
-		ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
-		constraints.add(new HierarchyConstraint(left, right));
-		//System.out.println(new HierarchyConstraint(left, right));
+	    // }
+	    // else if (constraintType == "type_to_attr_constraint"){
+	    // 	ConstraintLiteral left = new ConstraintLiteral(getCType(antecedent));
+	    // 	ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
+	    // 	constraints.add(new HierarchyConstraint(left, right));
+	    // 	//System.out.println(new HierarchyConstraint(left, right));
 
-	    }
-	    else if (constraintType == "attr_to_path_constraint"){
-		ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
-		ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
-		constraints.add(new HierarchyConstraint(left, right));
-		//System.out.println(new HierarchyConstraint(left, right));
-	    }
-	    else if (constraintType == "attr_to_attr_constraint"){
-		ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
-		ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
-		constraints.add(new HierarchyConstraint(left, right));
-		//System.out.println(new HierarchyConstraint(left, right));
+	    // }
+	    // else if (constraintType == "attr_to_path_constraint"){
+	    // 	ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
+	    // 	ConstraintLiteral right = new ConstraintLiteral(getPaths(consequent).get(0), getPaths(consequent).get(1));
+	    // 	constraints.add(new HierarchyConstraint(left, right));
+	    // 	//System.out.println(new HierarchyConstraint(left, right));
+	    // }
+	    // else if (constraintType == "attr_to_attr_constraint"){
+	    // 	ConstraintLiteral left = new ConstraintLiteral(getPath(antecedent), getCType(antecedent), null);
+	    // 	ConstraintLiteral right = new ConstraintLiteral(getPath(consequent), getCType(consequent), null);
+	    // 	constraints.add(new HierarchyConstraint(left, right));
+	    // 	//System.out.println(new HierarchyConstraint(left, right));
 
-	    }
-	    else{
-		System.out.println("Unsupported constraint:");
-		System.out.println(elem.getTagName() );
-	    }
+	    // }
+	    // else{
+	    // 	System.out.println("Unsupported constraint:");
+	    // 	System.out.println(elem.getTagName() );
+	    // }
 	     
 	    
 	}
+	System.out.println("Finished!");
 	return constraints;
     }
 

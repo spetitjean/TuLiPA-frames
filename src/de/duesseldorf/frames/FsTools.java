@@ -281,13 +281,11 @@ public class FsTools {
         return resType;
     }
 
-    // ToDo: Do not only check at the root of every Fs
     public static List<Fs> checkTypeConstraints(List<Fs> frames, Environment env, NameFactory nf)
 	throws UnifyException{
 	List<Fs> output_frames = new LinkedList<Fs>();
 	HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
 	for (Fs frame : frames){
-	    // ToDo: recursive calls on the subframes
 	    Fs checkedFs = checkTypeConstraints(frame, constraints, env, nf);
 	    output_frames.add(checkedFs);
 	}
@@ -297,15 +295,23 @@ public class FsTools {
     public static Fs checkTypeConstraints(Fs frame, HierarchyConstraints constraints, Environment env, NameFactory nf)
 	throws UnifyException {
 	System.out.println("Checking constraints on "+frame.toString());
-	for(HierarchyConstraint constraint : constraints.getAttrToAttrConstraints()){
-	    System.out.println(constraint);
-	    LinkedList<String> path = new LinkedList(constraint.getLeft().getPath());
-	    List<String> type = constraint.getLeft().getType();
-	    if (checkAttrConstraint(frame, path, type, env, nf)){
-		
-		LinkedList<String> rightPath = new LinkedList(constraint.getRight().getPath());
-		List<String> rightType = constraint.getRight().getType();
-		applyAttrConstraint(frame, rightPath, rightType, env, nf);
+	// attr : type -> attr : type constraints
+	for(HierarchyConstraint constraint : constraints.getConstraints()){
+	    // we support only attr : type -> attr : type
+	    if(constraint.getLeft().size() > 1 || constraint.getRight().size() > 1){
+		System.out.println("Only constraints literal of length one are supported");
+		continue;
+	    }
+	    if(constraint.getLeft().get(0).getConstraintType() == ConstraintLiteral.Kind.Attribute_type
+	       && constraint.getRight().get(0).getConstraintType() == ConstraintLiteral.Kind.Attribute_type){
+		LinkedList<String> path = new LinkedList(constraint.getLeft().get(0).getPath());
+		List<String> type = constraint.getLeft().get(0).getType();
+		if (checkAttrConstraint(frame, path, type, env, nf)){
+		    
+		    LinkedList<String> rightPath = new LinkedList(constraint.getRight().get(0).getPath());
+		    List<String> rightType = constraint.getRight().get(0).getType();
+		    applyAttrConstraint(frame, rightPath, rightType, env, nf);
+		}
 	    }
 	}
 	for (Value child : frame.getAVlist().values()){
