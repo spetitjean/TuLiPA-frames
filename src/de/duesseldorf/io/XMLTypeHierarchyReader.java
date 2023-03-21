@@ -41,6 +41,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.OutputKeys; 
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult; 
+
+import java.io.StringWriter;
 
 import de.duesseldorf.frames.Type;
 import de.duesseldorf.frames.TypeConstraint;
@@ -278,6 +285,7 @@ public class XMLTypeHierarchyReader extends FileReader {
     
     private List<HierarchyConstraint> getHierarchyConstraintsfromNL(NodeList entries) {
 	List<HierarchyConstraint> constraints = new LinkedList<HierarchyConstraint>();
+	try{
 	for (int i = 0; i < entries.getLength(); i++) {
 	    if (entries.item(i).getNodeType() != Node.ELEMENT_NODE)
 		continue;
@@ -287,6 +295,19 @@ public class XMLTypeHierarchyReader extends FileReader {
 					   .getElementsByTagName("antecedent").item(0));
 	    Element consequent = (Element)(elem
 					   .getElementsByTagName("consequent").item(0));
+	    if (antecedent == null || consequent == null){
+		
+		TransformerFactory transFactory = TransformerFactory.newInstance();
+		Transformer transformer = transFactory.newTransformer();
+		StringWriter buffer = new StringWriter();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.transform(new DOMSource(elem),
+				      new StreamResult(buffer));
+		String str = buffer.toString();
+
+		System.out.println("Ill-formed constraint: " + str + ", please recompile the type hierarchy with the current version of XMG");
+		continue;
+	    }
 	    NodeList antecedents = antecedent.getChildNodes();
 	    NodeList consequents = consequent.getChildNodes();
 	    
@@ -341,8 +362,11 @@ public class XMLTypeHierarchyReader extends FileReader {
 	     
 	    
 	}
-	System.out.println("Finished!");
 	return constraints;
+	}
+	catch(Exception e){
+        return null;
+	}
     }
 
     
