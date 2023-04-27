@@ -46,6 +46,7 @@ import org.w3c.dom.Node;
 
 import de.duesseldorf.frames.ConstraintChecker;
 import de.duesseldorf.frames.Frame;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.UnifyException;
 import de.tuebingen.tag.Environment;
 import de.tuebingen.tag.TagTree;
@@ -178,7 +179,7 @@ public class TreeDeriver {
             // DA addRelations
 
             //System.out.println("\n\nOld sem: "+derivedTree.getFrameSem());
-            Frame newFrameSem = ElementaryTree.updateFrameSemWithMerge(
+            Frame newFrameSem = FsTools.updateFrameSemWithMerge(
                     derivedTree.getFrameSem(), derivedTree.env, true);
 
             if (newFrameSem == null) {
@@ -197,7 +198,7 @@ public class TreeDeriver {
                 Environment.rename(derivedTree.env);
                 derivedTree.updateFeatures(derivedTree.root, derivedTree.env, nf,
                         true);
-                derivedTree.setFrameSem(ElementaryTree
+                derivedTree.setFrameSem(FsTools
                         .updateFrameSem(newFrameSem, derivedTree.env, true));
                 // System.out.println("env: " + derivedTree.env);
             }

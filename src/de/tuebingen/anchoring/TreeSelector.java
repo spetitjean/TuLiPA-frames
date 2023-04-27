@@ -388,7 +388,7 @@ public class TreeSelector {
                                     try {
                                         FsTools.unify(frameIface,
                                                 oneTree.getIface(), env);
-                                        oneFrame = ElementaryTree.updateFrameSem(oneFrame, env, false);
+                                        oneFrame = FsTools.updateFrameSem(oneFrame, env, false);
                                         //oneTree.setFrameSem(oneFrame);
                                         oneTree.getFrameSem().addOtherFrame(oneFrame);
                                         anchorRRG(il, oneTree, env);
@@ -836,7 +836,7 @@ public class TreeSelector {
                 // tt.setFrames(newFrames);
 
                 // DA do the same thing to the FrameSem
-                tt.setFrameSem(ElementaryTree.updateFrameSem(tt.getFrameSem(),
+                tt.setFrameSem(FsTools.updateFrameSem(tt.getFrameSem(),
                         env, false));
 
                 List<Fs> newFrames = tt.getFrameSem().getFeatureStructures();
@@ -904,7 +904,7 @@ public class TreeSelector {
                         // System.out.println(" with : " + tt.getIface());
 
                         tt.setIface(FsTools.unify(semFs, tt.getIface(), env));
-                        tt.setFrameSem(ElementaryTree
+                        tt.setFrameSem(FsTools
                                 .updateFrameSem(tt.getFrameSem(), env, false));
                         // System.out.println(
                         // "Result in FrameSem: " + tt.getFrameSem());

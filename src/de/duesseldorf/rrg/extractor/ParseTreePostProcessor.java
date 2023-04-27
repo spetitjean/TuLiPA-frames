@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.duesseldorf.frames.Fs;
+import de.duesseldorf.frames.FsTools;
 import de.duesseldorf.frames.Frame;
 import de.duesseldorf.frames.Relation;
 import de.duesseldorf.frames.Value;
@@ -55,7 +56,7 @@ public class ParseTreePostProcessor {
 
     private Frame postProcessFrame(Frame frame, Environment env) {
         try {
-            frame = ElementaryTree.updateFrameSemWithMerge(frame, env, true);
+            frame = FsTools.updateFrameSemWithMerge(frame, env, true);
         } catch (UnifyException e) {
         }
         for (Fs fs : frame.getFeatureStructures()) {

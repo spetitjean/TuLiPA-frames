@@ -449,5 +449,106 @@ public class FsTools {
     }
 
     // ToDo: apply(Path/Type)Constraint
+
+
+    
+    /**
+     * similar to the old updateFs method. changes the variables in the frameSem
+     *
+     * @param frameSem
+     * @param env
+     * @param finalUpdate
+     * @return
+     * @throws UnifyException
+     */
+    public static Frame updateFrameSem(Frame frameSem, Environment env,
+                                       boolean finalUpdate) throws UnifyException {
+
+        List<Fs> newFs = new LinkedList<Fs>();
+        if (frameSem != null && frameSem.getFeatureStructures() != null)
+            for (Fs fs : frameSem.getFeatureStructures()) {
+                if (fs != null)
+                    newFs.add(Fs.updateFS(fs, env, finalUpdate));
+            }
+
+        Set<Relation> newRelations = new HashSet<Relation>();
+        if (frameSem != null && frameSem.getRelations() != null)
+            for (Relation oldRel : frameSem.getRelations()) {
+                List<Value> newArgs = new LinkedList<Value>();
+                for (Value oldVal : oldRel.getArguments()) {
+                    Value oldCopy = new Value(oldVal);
+                    oldCopy.update(env, finalUpdate);
+                    // Value newVal = env.deref(oldVal);
+                    newArgs.add(oldCopy);
+                }
+                newRelations.add(new Relation(oldRel.getName(), newArgs));
+            }
+
+        return new Frame(newFs, newRelations);
+    }
+
+
+    /**
+     * Like updateFrameSem, but merging the frames in the end
+     *
+     * @param frameSem
+     * @param env
+     * @param finalUpdate
+     * @return
+     * @throws UnifyException
+     */
+    public static Frame updateFrameSemWithMerge(Frame frameSem, Environment env,
+                                                boolean finalUpdate) throws UnifyException {
+        NameFactory nf = new NameFactory();
+        List<Fs> newFs = new LinkedList<Fs>();
+        // System.out.println("Environment before update: "+env);
+
+	for (Fs fs : frameSem.getFeatureStructures()) {
+            if (fs != null){
+                newFs.add(Fs.updateFS(fs, env, finalUpdate));
+	    }
+        }
+	
+        // do not know why 2 merges are now necessary...
+        List<Fs> mergedFrames = Fs.mergeFS(newFs, env, nf);
+        if (mergedFrames != null)
+            mergedFrames = Fs.mergeFS(newFs, env, nf);
+
+	mergedFrames = FsTools.checkTypeConstraints(mergedFrames, env, nf);
+
+	
+        List<Fs> cleanedFrames = new LinkedList<Fs>();
+        if (mergedFrames == null) {
+            System.err.println("Frame unification failed, tree discarded!\n");
+            return null;
+        } else {
+            cleanedFrames = FsTools.cleanup(mergedFrames);
+        }
+
+        Set<Relation> newRelations = new HashSet<Relation>();
+        // System.out.println("Old relations: "+frameSem.getRelations());
+
+        for (Relation oldRel : frameSem.getRelations()) {
+            List<Value> newArgs = new LinkedList<Value>();
+            for (Value oldVal : oldRel.getArguments()) {
+                Value oldCopy = new Value(oldVal);
+                oldCopy.update(env, finalUpdate);
+                // Value newVal = env.deref(oldVal);
+                newArgs.add(oldCopy);
+            }
+            newRelations.add(new Relation(oldRel.getName(), newArgs));
+        }
+
+	// apparently a second round is needed
+	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames, env, nf);
+	// and another round...
+	// this is for type constraints which target variables refering to FS, which then need propagation through the environment
+	cleanedFrames = Fs.mergeFS(cleanedFrames, env, nf);
+	cleanedFrames = FsTools.cleanup(cleanedFrames);
+        // System.out.println("Environment: "+env);
+        // System.out.println("New relations: "+newRelations);
+        return new Frame(cleanedFrames, newRelations);
+    }
+
     
 }
