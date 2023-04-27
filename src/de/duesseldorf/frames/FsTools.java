@@ -284,10 +284,15 @@ public class FsTools {
     public static List<Fs> checkTypeConstraints(List<Fs> frames, Environment env, NameFactory nf)
 	throws UnifyException{
 	List<Fs> output_frames = new LinkedList<Fs>();
-	HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
-	for (Fs frame : frames){
-	    Fs checkedFs = checkTypeConstraints(frame, constraints, env, nf);
-	    output_frames.add(checkedFs);
+	if(Situation.getTypeHierarchy() != null){
+	    HierarchyConstraints constraints = Situation.getTypeHierarchy().getHierarchyConstraints();
+	    for (Fs frame : frames){
+		Fs checkedFs = checkTypeConstraints(frame, constraints, env, nf);
+		output_frames.add(checkedFs);
+	    }
+	}
+	else{
+	    output_frames = frames;
 	}
 	return output_frames;
     }
@@ -398,8 +403,19 @@ public class FsTools {
 		    }
 		}
 		else{
-		    System.out.println("feature exists but is not an AVM! Do something if it is a variable.");
-		    System.out.println(features.get(path.get(0)).getAvmVal().getType().getElementaryTypes());
+		    if (features.get(path.get(0)).is(Value.Kind.AVM)){
+			System.out.println(features.get(path.get(0)).getAvmVal().getType().getElementaryTypes());
+		    }
+		    else {
+			if (features.get(path.get(0)).is(Value.Kind.VAR)){
+			    //System.out.println("Variable: "+features.get(path.get(0)));
+			    features.replace(path.get(0),ValueTools.unify(features.get(path.get(0)), new Value(new Fs(new Type(type), new Value(Value.Kind.VAR,nf.getUniqueName()))), env));
+			}
+			else{
+			    System.out.println("feature exists but is not an AVM nor a variable!");
+			}
+		    }
+		    
 		}
 		
 	    }

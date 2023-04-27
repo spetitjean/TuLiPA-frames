@@ -663,7 +663,10 @@ public class ElementaryTree {
 
 	// apparently a second round is needed
 	cleanedFrames = FsTools.checkTypeConstraints(cleanedFrames, env, nf);
-
+	// and another round...
+	// this is for type constraints which target variables refering to FS, which then need propagation through the environment
+	cleanedFrames = Fs.mergeFS(cleanedFrames, env, nf);
+	cleanedFrames = FsTools.cleanup(cleanedFrames);
         // System.out.println("Environment: "+env);
         // System.out.println("New relations: "+newRelations);
         return new Frame(cleanedFrames, newRelations);
